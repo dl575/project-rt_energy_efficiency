@@ -5,13 +5,16 @@
 #ifndef __TIMING_H__
 #define __TIMING_H__
 
-extern struct timeval start, end;
+extern struct timeval start, end, moment;
 
 void start_timing();
 void end_timing();
+void moment_timing();
 void print_timing();
-void print_slice_timing();
-void print_set_dvfs_timing();
+int print_slice_timing();
+int print_dvfs_timing();
+int fprint_slice_timing();
+int fprint_dvfs_timing();
 int exec_timing();
 void write_timing();
 void write_array(int *array, int array_len);
@@ -32,6 +35,13 @@ void end_timing() {
 }
 
 /*
+ * Moment timing, record end time.
+ */
+void moment_timing() {
+  gettimeofday(&moment, NULL);
+}
+
+/*
  * Print timing information to stdout.
  */
 void print_timing() {
@@ -44,22 +54,52 @@ void print_timing() {
 /*
  * Print timing information to stdout.
  */
-void print_slice_timing() {
+int print_slice_timing() {
   static int instance_number = 0;
   printf("time_slice %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
+  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
 }
 
 /*
  * Print timing information to stdout.
  */
-void print_set_dvfs_timing() {
+int print_dvfs_timing() {
   static int instance_number = 0;
-  printf("time_set_dvfs %d = %d us\n", instance_number, 
+  printf("time_dvfs %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
+  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
 }
+/*
+ * Print timing information to stdout.
+ */
+int fprint_slice_timing() {
+  static int instance_number = 0;
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+  fprintf(time_file, "time_slice %d = %d us\n", instance_number, 
+    (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+  instance_number++;
+  fclose(time_file);
+  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+}
+
+/*
+ * Print timing information to stdout.
+ */
+int fprint_dvfs_timing() {
+  static int instance_number = 0;
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+  fprintf(time_file, "time_dvfs %d = %d us\n", instance_number, 
+    (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+  instance_number++;
+  fclose(time_file);
+  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+}
+
 
 /*
  * Print timing information to stdout.
