@@ -6,24 +6,27 @@ some of all benchmarks use.
 #define __MY_COMMON_H__
 
 #include "timing.h"
+#include "deadline_big.h"
+#include "deadline_little.h"
 //constant
 #define MILLION 1000000L
+#define ERROR_DEFINE -1
 
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
 
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on
-
-#define ORACLE_EN 0 //0:oracle off, 1:oracle on
-#define PID_EN 0 //0:pid off, 1:pid on
 
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define ORACLE_EN 0 //0:oracle off, 1:oracle on
+#define PID_EN 1 //0:pid off, 1:pid on
+
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (60) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
 
 //always set this as 1 on ODROID
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
@@ -40,8 +43,37 @@ some of all benchmarks use.
 #define _curseofwar_ 0
 #define _uzbl_ 0
 
+struct timeval start, end, moment;
+int slice_time = 0;
+int dvfs_time = 0;
 
 FILE *fp_max_freq; //File pointer scaling_max_freq
+
+int check_define(void){
+    int flag_cnt = 0;
+    int bench_cnt = 0;
+
+    if(GET_PREDICT)     {flag_cnt++;}
+    if(GET_OVERHEAD)    {flag_cnt++;}
+    if(GET_DEADLINE)    {flag_cnt++;}
+    if(PREDICT_EN)      {flag_cnt++;}
+    if(ORACLE_EN)       {flag_cnt++;}
+    if(PID_EN)          {flag_cnt++;}
+
+    if(_pocketsphinx_)      {bench_cnt++;}
+    if(_stringsearch_)      {bench_cnt++;}
+    if(_sha_preread_)       {bench_cnt++;}
+    if(_rijndael_preread_)  {bench_cnt++;}
+    if(_xpilot_)            {bench_cnt++;}
+    if(_2048_)              {bench_cnt++;}
+    if(_curseofwar_)        {bench_cnt++;}
+    if(_uzbl_)              {bench_cnt++;}
+
+    if( (flag_cnt==0 && PREDICT_EN==0) || flag_cnt==1 || bench_cnt==1 )
+        return 0;
+    else
+        return ERROR_DEFINE;
+}
 
 void fopen_all(void){
 #if DVFS_EN
@@ -164,67 +196,49 @@ void print_freq(void){
     return;
 #endif
 }
-
-
-
-void fprint_deadline(int deadline_time){
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "============ deadline time : %d us ===========\n", deadline_time);//TJSong
-    fclose(time_file);
-}
-
-void print_deadline(int deadline_time){
-    printf("============ deadline time : %d us ===========\n", deadline_time);//TJSong
-}
-
-void fprint_predicted_time(float predicted_exec_time){
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "predicted time = %f\n", predicted_exec_time);
-    fclose(time_file);
-}
-
-void print_predicted_time(float predicted_exec_time){
-    printf("predicted time = %f\n", predicted_exec_time);
-}
-
-void fprint_exec_time(int exec_time){
-    static int instance_number = 1;
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
-    instance_number++;
-    fclose(time_file);
-}
-
-void print_exec_time(int exec_time){
-    static int instance_number = 1;
-    printf("time %d = %d us\n", instance_number, exec_time);
-    instance_number++;
-}
-
-void fprint_total_time(int exec_time){
-    static int instance_number = 1;
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "time_total %d = %d us\n", instance_number, exec_time);
-    instance_number++;
-    fclose(time_file);
-}
-
-void print_total_time(int exec_time){
-    static int instance_number = 1;
-    printf("time_total %d = %d us\n", instance_number, exec_time);
-    instance_number++;
-}
-
 /*
  * PID-based prediction of execution time.
  */
-#define PID_P 0.9 
-#define PID_I 0
-#define PID_D 0.05
+#if _sha_preread_
+    #define PID_P 0.200000
+    #define PID_I 0.200000
+    #define PID_D 0.000000
+#endif
+#if _xpilot_slice_
+    #define PID_P 0.350000
+    #define PID_I 0.000000
+    #define PID_D 0.250000
+#endif
+#if _stringsearch_
+    #define PID_P 0.300000
+    #define PID_I 0.100000
+    #define PID_D 0.000000
+#endif
+#if _2048_slice_
+    #define PID_P 0.050000
+    #define PID_I 0.700000
+    #define PID_D 0.000000
+#endif
+#if _curseofwar_slice_
+    #define PID_P 0.050000
+    #define PID_I 0.900000
+    #define PID_D 0.000000
+#endif
+#if _pocketsphinx_
+    #define PID_P 0.400000
+    #define PID_I 0.100000
+    #define PID_D 0.250000
+#endif
+#if _uzbl_
+    #define PID_P 0.050000
+    #define PID_I 1.500000
+    #define PID_D 0.000000
+#endif
+#if _rijndael_preread_
+    #define PID_P 0.050000
+    #define PID_I 0.200000
+    #define PID_D 0.250000
+#endif
 float pid_controller(int last_time) {
   // Define variables
   float d_error;

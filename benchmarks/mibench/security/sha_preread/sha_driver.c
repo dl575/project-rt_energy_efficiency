@@ -6,29 +6,6 @@
 #include <time.h>
 #include "sha.h"
 #include "timing.h"
-#include "my_common.h"
-
-//---------------------modified by TJSong----------------------//
-//set global variables
-struct timeval start, end, moment;
-int slice_time = 0;
-int dvfs_time = 0;
-
-//define benchmarks-depenent varaibles & constants
-#if CORE //big
-#define OVERHEAD_TIME 2579 //overhead deadline
-#define AVG_OVERHEAD_TIME 392 //avg overhead deadline
-#define DEADLINE_TIME (int)((44888*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2400 //max dvfs time
-#define AVG_DVFS_TIME 368 //average dvfs time
-#else //LITTLE
-#define OVERHEAD_TIME 60026 //overhead deadline
-#define AVG_OVERHEAD_TIME 18813 //avg overhead deadline
-#define DEADLINE_TIME (int)((116719*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2532 //max dvfs time
-#define AVG_DVFS_TIME 1283 //average dvfs time
-#endif
-//---------------------modified by TJSong----------------------//
 
 float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
 {
@@ -236,6 +213,14 @@ int main(int argc, char **argv)
     FILE *fin;
     SHA_INFO sha_info;
 
+//---------------------modified by TJSong----------------------//
+    int exec_time = 0;
+    if(check_define()==ERROR_DEFINE){
+        printf("%s", "DEFINE ERROR!!\n");
+        return ERROR_DEFINE;
+    }
+//---------------------modified by TJSong----------------------//
+
     if (argc < 2) {
       printf("stdin read not currently supported for slicing. Please implement.\n");
       exit(1);
@@ -330,7 +315,19 @@ int main(int argc, char **argv)
               moment_timing_print(1); //moment_start
               job_cnt++;
           #elif PID_EN /* CASE 6 */
-              //
+              moment_timing_print(0); //moment_start
+              
+              start_timing();
+              predicted_exec_time = pid_controller(exec_time); //pid == slice
+              end_timing();
+              slice_time = print_slice_timing();
+              
+              start_timing();
+              set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+              end_timing();
+              dvfs_time = print_dvfs_timing();
+              
+              moment_timing_print(1); //moment_start
           #endif
 
 //---------------------modified by TJSong----------------------//
@@ -343,7 +340,7 @@ int main(int argc, char **argv)
 
           end_timing();
 //---------------------modified by TJSong----------------------//
-          int exec_time = exec_timing();
+          exec_time = exec_timing();
           int delay_time = 0;
 
           #if GET_PREDICT /* CASE 0 */
