@@ -13,17 +13,21 @@ if [[ $# < 1 ]] ; then
     exit 1
 fi
 
-if [ $1 != "big" -a $1 != "little" ] ; then
-    echo 'USAGE : only big or little'
+if [ $1 != "big_with_overhead" -a $1 != "big_wo_overhead" ] ; then
+    echo 'USAGE : only big_with_overhead or big_wo_overhead'
+    exit 1
+fi
+if [ $1 != "little_with_overhead" -a $1 = "little_wo_overhead" ] ; then
+    echo 'USAGE : only little_with_overhead or little_wo_overhead'
     exit 1
 fi
 
-if [ $1 == "big" ] ; then
+if [ $1 == "big_with_overhead" -o $1 == "big_wo_overhead" ] ; then
     WHICH_CPU="cpu4"
     TASKSET_FLAG="0xf0"
     MAX_FREQ=2000000
     SENSOR_ID="3-0040"
-elif [ $1 == "little" ] ; then
+elif [ $1 == "little_with_overhead" -o $1 == "little_wo_overhead" ] ; then
     WHICH_CPU="cpu0"
     TASKSET_FLAG="0x0f"
     MAX_FREQ=1400000
