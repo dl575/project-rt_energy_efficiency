@@ -15,7 +15,7 @@ if len(sys.argv) != 2:
 f = open(sys.argv[1], 'r')
 
 # Separately save times that are above or below the threshold
-threshold = 10000
+threshold = 41700
 fast_times = {}
 slow_times = {}
 # For each line
