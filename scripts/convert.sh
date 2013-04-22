@@ -1,2 +1,2 @@
- ffmpeg -i $1 -s 1000x1000 output.avi -benchmark -y > out
+ffmpeg -i $1 -benchmark -y -an output.avi > out
 

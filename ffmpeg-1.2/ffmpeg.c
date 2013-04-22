@@ -23,6 +23,8 @@
  * multimedia converter based on the FFmpeg libraries
  */
 
+#include <assert.h>
+
 #include "config.h"
 #include <ctype.h>
 #include <string.h>
@@ -3130,8 +3132,15 @@ static int transcode(void)
     InputStream *ist;
     int64_t timer_start;
 
-    // dlo: end time of frame processing
-    int64_t end_time;
+    // Save last frame number to find when we finish a frame
+    static int last_frame_number = 0;
+    // Current frame being handled
+    int current_frame_number;
+    static int64_t last_frame_time = -1;
+    // Initialize time for first frame
+    if (last_frame_time < 0) {
+      last_frame_time = av_gettime();
+    }
 
     ret = transcode_init();
     if (ret < 0)
@@ -3174,9 +3183,18 @@ static int transcode(void)
         /* dump report by using the output first video and audio streams */
         print_report(0, timer_start, cur_time);
 
-        // dlo: Print out execution time
-        end_time = av_gettime();
-        printf("dlo: Execution time = %" PRId64 "us\n", end_time - cur_time);
+        // ** dlo **
+        // output_streams[0] is the video stream from what I can tell
+        current_frame_number = output_streams[0]->frame_number;
+        // If frame finished
+        if (current_frame_number != last_frame_number) {
+          // Output execution time
+          printf("dlo: Frame %d = %" PRId64 "us\n", last_frame_number, av_gettime() - last_frame_time);
+          // Set time for start of next frame
+          last_frame_time = av_gettime();
+        }
+        last_frame_number = current_frame_number;
+
     }
 #if HAVE_PTHREADS
     free_input_threads();
