@@ -3130,6 +3130,9 @@ static int transcode(void)
     InputStream *ist;
     int64_t timer_start;
 
+    // dlo: end time of frame processing
+    int64_t end_time;
+
     ret = transcode_init();
     if (ret < 0)
         goto fail;
@@ -3170,6 +3173,10 @@ static int transcode(void)
 
         /* dump report by using the output first video and audio streams */
         print_report(0, timer_start, cur_time);
+
+        // dlo: Print out execution time
+        end_time = av_gettime();
+        printf("dlo: Execution time = %" PRId64 "us\n", end_time - cur_time);
     }
 #if HAVE_PTHREADS
     free_input_threads();
