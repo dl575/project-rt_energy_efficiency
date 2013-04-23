@@ -42,22 +42,15 @@ if len(sys.argv) != 3:
 
 threshold = 41700
 (slow1, fast1) = read_execution_time(sys.argv[1], threshold)
-times1 = slow1 + fast1
 (slow2, fast2) = read_execution_time(sys.argv[2], threshold)
-times2 = slow2 + fast2
-
-# Power usage of first and second CPUs
-power1 = 2.5 # W, Atom N270
-power2 = 95 # W, Core i5-2500K
 
 # Find limits of data for setting graph scales
 xmin = 0
-xmax = max(len(times1), len(times2))
+xmax = max(len(slow1) + len(fast1), len(slow2) + len(fast2))
 ymin = 0
-ymax = max(times1.values() + times2.values())
+ymax = max(slow1.values() + fast1.values() + slow2.values() + fast2.values())
 
 # Plot
-"""
 fig = plot.figure()
 
 ax1 = plot.subplot(121)
@@ -73,10 +66,9 @@ ax2 = plot.subplot(122)
 ax2.scatter(fast2.keys(), fast2.values(), c='b', marker='.')
 ax2.scatter(slow2.keys(), slow2.values(), c='r', marker='.')
 ax2.set_xlabel("Frame")
-ax2.set_xlim([0, len(fast2) + len(slow2)])
 ax2.set_xlim([xmin, xmax])
 ax2.set_ylim([ymin, ymax])
 ax2.set_title("i5")
 
 plot.show()
-"""
+
