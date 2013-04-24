@@ -55,7 +55,7 @@ all: $(PROGS)
 
 $(PROGS): %$(EXESUF): %_g$(EXESUF)
 	$(CP) $< $@
-	$(STRIP) $@
+	#$(STRIP) $@
 
 $(TOOLS): %$(EXESUF): %.o $(EXEOBJS)
 	$(LD) $(LDFLAGS) $(LD_O) $^ $(ELIBS)
@@ -102,8 +102,10 @@ endef
 
 $(foreach P,$(PROGS-yes),$(eval $(call DOPROG,$(P))))
 
-%$(PROGSSUF)_g$(EXESUF): %.o $(FF_DEP_LIBS)
-	$(LD) $(LDFLAGS) $(LD_O) $(OBJS-$*) $(FF_EXTRALIBS)
+ptrace.o: ptrace.c
+	gcc -c ptrace.c
+%$(PROGSSUF)_g$(EXESUF): %.o $(FF_DEP_LIBS) ptrace.o
+	$(LD) $(LDFLAGS) $(LD_O) ptrace.o $(OBJS-$*) $(FF_EXTRALIBS)
 
 OBJDIRS += tools
 

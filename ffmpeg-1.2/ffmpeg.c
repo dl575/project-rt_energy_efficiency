@@ -3361,8 +3361,12 @@ int main(int argc, char **argv)
 //     }
 
     current_time = ti = getutime();
+// dlo: enable function tracing
+setenv("PTRACE_ENABLE", "1", 1);
     if (transcode() < 0)
         exit(1);
+// dlo: disable function tracing
+setenv("PTRACE_ENABLE", "0", 1);
     ti = getutime() - ti;
     if (do_benchmark) {
         printf("bench: utime=%0.3fs\n", ti / 1000000.0);
