@@ -3188,8 +3188,21 @@ static int transcode(void)
         current_frame_number = output_streams[0]->frame_number;
         // If frame finished
         if (current_frame_number != last_frame_number) {
+          // Start call logging
+          if (current_frame_number == 300) {
+            // dlo: enable function tracing
+            setenv("PTRACE_ENABLE", "1", 1);
+          }
+
           // Output execution time
           printf("dlo: Frame %d = %" PRId64 "us\n", last_frame_number, av_gettime() - last_frame_time);
+
+          // End call logging
+          if (current_frame_number  == 400) {
+            // dlo: disable function tracing
+            setenv("PTRACE_ENABLE", "0", 1);
+          }
+
           // Set time for start of next frame
           last_frame_time = av_gettime();
         }
@@ -3361,12 +3374,8 @@ int main(int argc, char **argv)
 //     }
 
     current_time = ti = getutime();
-// dlo: enable function tracing
-setenv("PTRACE_ENABLE", "1", 1);
     if (transcode() < 0)
         exit(1);
-// dlo: disable function tracing
-setenv("PTRACE_ENABLE", "0", 1);
     ti = getutime() - ti;
     if (do_benchmark) {
         printf("bench: utime=%0.3fs\n", ti / 1000000.0);

@@ -156,8 +156,11 @@ gnu_ptrace(char * what, void * p)
             return;
 	}
 	
+  /*
 	fprintf(TRACE, "%s %p\n", what, p);
     fflush(TRACE);
+  */
+	printf("call: %s %p\n", what, p);
 	return;
 }
 
