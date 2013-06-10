@@ -144,6 +144,9 @@ gnu_ptrace(char * what, void * p)
 	static int first=1;
 	static int active=1;
 
+  // Function call depth
+  static unsigned int depth = 0;
+
 	if (active == 0)
 		return;
 	
@@ -160,7 +163,15 @@ gnu_ptrace(char * what, void * p)
 	fprintf(TRACE, "%s %p\n", what, p);
     fflush(TRACE);
   */
-	printf("call: %s %p\n", what, p);
+
+  if (strcmp(what, FUNCTION_EXIT) == 0) {
+    depth--;
+  }
+  if (strcmp(what, FUNCTION_ENTRY) == 0) {
+    printf("call[%d]: %s %p\n", depth, what, p);
+    depth++;
+  }
+
 	return;
 }
 
@@ -179,15 +190,18 @@ __cyg_profile_func_enter(void *this_fn, void *call_site)
 }
 
 /** According to gcc documentation: called upon function exit */
-/*
 void
 __NON_INSTRUMENT_FUNCTION__
 __cyg_profile_func_exit(void *this_fn, void *call_site)
 {
-	gnu_ptrace(FUNCTION_EXIT, this_fn);
-	(void)call_site;
+  char* ptrace_enable = getenv("PTRACE_ENABLE");
+  if (ptrace_enable) {
+    if (strcmp(ptrace_enable, "1") == 0) {
+      gnu_ptrace(FUNCTION_EXIT, this_fn);
+      (void)call_site;
+    }
+  }
 }
-*/
 
 #endif
 /* vim: set ts=4 et sw=4 tw=75 */
