@@ -3109,6 +3109,26 @@ static int transcode_step(void)
         ist = input_streams[ost->source_index];
     }
 
+    // dlo
+    char *temp = malloc(sizeof(*ist));
+    memcpy(temp, ist, sizeof(*ist));
+    int i;
+    printf("ist = ");
+    for (i = 0; i < sizeof(*ist); i++) {
+      printf("%x", temp[i]);
+    }
+    free(temp);
+
+    // Add ost
+    temp = malloc(sizeof(*ost));
+    memcpy(temp, ost, sizeof(*ost));
+    for (i = 0; i < sizeof(*ost); i++) {
+      printf("%x", temp[i]);
+    }
+    free(temp);
+
+    printf("\n");
+
     ret = process_input(ist->file_index);
     if (ret == AVERROR(EAGAIN)) {
         if (input_files[ist->file_index]->eagain)
