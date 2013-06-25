@@ -3088,6 +3088,10 @@ static int transcode_step(void)
     InputStream  *ist;
     int ret;
 
+    // dlo: For outputting ist
+    char *temp = malloc(sizeof(*ist));
+    int i;
+
     ost = choose_output();
     if (!ost) {
         if (got_eagain()) {
@@ -3110,9 +3114,9 @@ static int transcode_step(void)
     }
 
     // dlo
-    char *temp = malloc(sizeof(*ist));
+    // Copy ist into character array
     memcpy(temp, ist, sizeof(*ist));
-    int i;
+    // Print out ist bytes
     printf("ist = ");
     for (i = 0; i < sizeof(*ist); i++) {
       printf("%x", temp[i]);
@@ -3120,12 +3124,12 @@ static int transcode_step(void)
     free(temp);
 
     // Add ost
-    temp = malloc(sizeof(*ost));
-    memcpy(temp, ost, sizeof(*ost));
-    for (i = 0; i < sizeof(*ost); i++) {
-      printf("%x", temp[i]);
-    }
-    free(temp);
+    //temp = malloc(sizeof(*ost));
+    //memcpy(temp, ost, sizeof(*ost));
+    //for (i = 0; i < sizeof(*ost); i++) {
+    //  printf("%x", temp[i]);
+    //}
+    //free(temp);
 
     printf("\n");
 
