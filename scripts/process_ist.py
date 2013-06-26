@@ -16,7 +16,7 @@ Break ist into a series of integers.
 """
 def break_ist(ist):
   int_list = []
-  chunk_len = 1
+  chunk_len = 4
   for i in range(0, len(ist), chunk_len):
     int_list.append(int(ist[i:i+chunk_len], 16))
   return int_list
@@ -70,6 +70,7 @@ tracefile.close()
 
 # Classify based on average frame time
 avg_frame_time = float(total_frame_time)/total_frames
+print avg_frame_time
 quart50 = avg_frame_time
 quart75 = (avg_frame_time + max_frame_time)/2
 quart25 = (avg_frame_time + min_frame_time)/2
