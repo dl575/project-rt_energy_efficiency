@@ -2861,6 +2861,9 @@ static int process_input(int file_index)
     is  = ifile->ctx;
     ret = get_input_packet(ifile, &pkt);
 
+    // dlo: Print out information about packet
+    printf("packet size = %d\n", pkt.size);
+
     if (ret == AVERROR(EAGAIN)) {
         ifile->eagain = 1;
         return ret;
@@ -3132,6 +3135,8 @@ static int transcode_step(void)
     //free(temp);
 
     printf("\n");
+    printf("resample: %d, %d, %d\n", ist->resample_height, ist->resample_width, ist->resample_pix_fmt);
+
 
     ret = process_input(ist->file_index);
     if (ret == AVERROR(EAGAIN)) {

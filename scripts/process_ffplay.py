@@ -3,7 +3,8 @@
 """
 Parse output of ffmpeg which includes frame timing and hex dump
 of ist data structure. Dumps out to format for use with libsvm.
-Treshold can be passed. If not, average frame time is used.
+Treshold in microseconds can be passed. If not, average frame 
+time is used.
 
 usage: process_ist.py tracefile svm_file [threshold]
 """
@@ -27,7 +28,7 @@ if len(sys.argv) <= 1 or len(sys.argv) >= 5:
 trace_filename = sys.argv[1]
 svm_filename = sys.argv[2]
 if len(sys.argv) == 4:
-  threshold = int(sys.argv[3])
+  threshold = float(sys.argv[3])/1000000
 else:
   # Threshold will be set to average later
   threshold = None
@@ -45,25 +46,23 @@ trace = []
 # Start parsing traces
 for line in tracefile:
   # Look for feature data
-  # Look for ist dump
-  res = re.search("ist = ([0-9a-f]+)", line)
+  res = re.search("metrics = ([0-9]+), ([0-9]+), ([01]), ([01]), ([01])", line)
   if res:
-    ist = res.group(1)
-  # Frame height/width
-  res = re.search("resample: ([0-9]+), ([0-9]+)", line)
-  if res:
-    height = int(res.group(1))
-    width = int(res.group(2))
-  # Packet size
-  res = re.search("packet size = ([0-9]+)", line)
-  if res:
-    packet_size = int(res.group(1))
+    #metrics = [int(res.group(1)), int(res.group(2)), int(res.group(3)), int(res.group(4)), int(res.group(5))]
+    metrics = [int(res.group(1)), int(res.group(2))]
+    metrics.append(1 if int(res.group(3)) else -1)
+    metrics.append(1 if int(res.group(4)) else -1)
+    metrics.append(1 if int(res.group(5)) else -1)
 
   # Look for frame line
-  res = re.search("dlo: Frame ([0-9]+) = ([0-9]+)us", line)
+  res = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
   if res:
     frame_num = int(res.group(1))
-    frame_time = int(res.group(2))
+    frame_time = float(res.group(2))
+
+    # Skip first frame
+    if frame_num == 1:
+      continue
 
     # Save information to calculate max/min/average
     total_frame_time += frame_time
@@ -74,7 +73,7 @@ for line in tracefile:
       min_frame_time = frame_time
 
     #trace.append([frame_time, height, width, packet_size])
-    trace.append([frame_time, packet_size])
+    trace.append([frame_time] + metrics)
 
 tracefile.close()
 
@@ -83,7 +82,7 @@ svm_file = open(svm_filename, 'w')
 
 # Calculate average frame time
 avg_frame_time = float(total_frame_time)/total_frames
-print "Frame time range = (%d, %d)" % (min_frame_time, max_frame_time)
+print "Frame time range = (%f, %f)" % (min_frame_time, max_frame_time)
 print "Average frame time = %f" % avg_frame_time
 # Default treshold is the average
 if threshold == None:

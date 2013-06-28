@@ -1,6 +1,10 @@
 #!/bin/bash -x
 
-for i in {10000..70000..5000}
+###################################################################
+# test_svm.sh data_file
+###################################################################
+
+for i in {30000..50000..1000}
 do
   echo "Threshold of $i us"
 
@@ -14,13 +18,18 @@ do
   # svm-predict out_mu out_dm2.model results
 
   # Create train and test set
-  ../scripts/process_ist.py ../data/atom_mu_ist $i > ist
-  head -n 100 ist > train
-  tail -n +101 ist > test
+  ../scripts/process_ffplay.py $1 ist $i
+  ../scripts/svm_self.sh ist
+  # # First 100 lines for training
+  # head -n 100 ist > train
+  # # Everything else for testing
+  # tail -n +101 ist > test
 
-  svm-train train
-  svm-predict test train.model results
+  # # Train SVM
+  # svm-train train
+  # # Test SVM
+  # svm-predict test train.model results
 
-  # Cleanup
-  rm train train.model test results ist
+  # # Cleanup
+  # #rm train train.model test results ist
 done

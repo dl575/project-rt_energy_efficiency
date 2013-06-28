@@ -53,12 +53,16 @@
 # include "libavfilter/buffersrc.h"
 #endif
 
-#include <SDL.h>
-#include <SDL_thread.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 
 #include "cmdutils.h"
 
 #include <assert.h>
+
+// dlo
+#include "nalu.h"
+#include <sys/time.h>
 
 const char program_name[] = "ffplay";
 const int program_birth_year = 2003;
@@ -2562,6 +2566,9 @@ static int read_thread(void *arg)
     int orig_nb_streams;
     SDL_mutex *wait_mutex = SDL_CreateMutex();
 
+    // ATLAS
+    nalu_read_t *nalu = nalu_read_alloc();
+
     memset(st_index, -1, sizeof(st_index));
     is->last_video_stream = is->video_stream = -1;
     is->last_audio_stream = is->audio_stream = -1;
@@ -2794,6 +2801,53 @@ static int read_thread(void *arg)
         if (pkt->stream_index == is->audio_stream && pkt_in_play_range) {
             packet_queue_put(&is->audioq, pkt);
         } else if (pkt->stream_index == is->video_stream && pkt_in_play_range) {
+
+        // dlo
+        static struct timeval start, end;
+        static frame_count = 0;
+        frame_count++;
+        gettimeofday(&end, NULL);
+        // Calculate difference time
+        end.tv_sec -= start.tv_sec;
+        end.tv_usec -= start.tv_usec;
+        // Overflow
+        if (end.tv_usec < 0) {
+          end.tv_sec -= 1;
+          end.tv_usec += 1000000;
+        }
+        printf("\nFrame %d time = %d.%06d \n", frame_count, (int)end.tv_sec, (int)end.tv_usec);
+        gettimeofday(&start, NULL);
+
+          // ATLAS
+          /* extract metadata from custom NALU and submit job */
+          //double metrics[METRICS_COUNT] = { 0.0 };
+          const uint8_t *metadata;
+   
+#define NAL_METADATA 0x1F
+          /* the metadata NALU is at the end */
+          for (metadata = pkt->data + pkt->size; metadata >= pkt->data +      4; metadata--)
+            if (metadata[-4] == 0 && metadata[-3] == 0 && metadata[-2]      == 1 && metadata[-1] == NAL_METADATA)
+               break;
+
+          uint_fast16_t mb_width, mb_height;
+          uint_fast8_t slice_count;
+          uint_fast8_t slice_type;
+
+          nalu_read_start(nalu, metadata);
+          mb_width = nalu_read_uint16(nalu);
+          mb_height = nalu_read_uint16(nalu);
+          slice_count = nalu_read_uint8(nalu);
+          slice_type = nalu_read_uint8(nalu);
+          int64_t metrics[5];
+          metrics[0] = mb_width * mb_height;
+          metrics[1] = pkt->size;
+          metrics[2] = (slice_type == 0);
+          metrics[3] = (slice_type == 1);
+          metrics[4] = (slice_type == 2);
+          printf("\nmetrics = %llu, %d, %d, %d, %d\n", metrics[0], 
+              (int)metrics[1], (int)metrics[2], (int)metrics[3], 
+              (int)metrics[4]);
+
             packet_queue_put(&is->videoq, pkt);
         } else if (pkt->stream_index == is->subtitle_stream && pkt_in_play_range) {
             packet_queue_put(&is->subtitleq, pkt);

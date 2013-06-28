@@ -16,6 +16,8 @@ f = open(filename, 'r')
 
 thresholds = []
 accuracy = []
+slow_percentages = []
+fast_percentages = []
 for line in f:
   res = re.search("Threshold of ([0-9]+)", line)
   if res:
@@ -25,18 +27,35 @@ for line in f:
   if res:
     accuracy.append(float(res.group(1)))
 
+  res = re.search("Slow frames = ([0-9\.]+)", line)
+  if res:
+    slow_percentages.append(100*float(res.group(1)))
+  res = re.search("Fast frames = ([0-9\.]+)", line)
+  if res:
+    fast_percentages.append(100*float(res.group(1)))
+
 f.close()
+
+best_percentages = [max(a, b) for (a, b) in zip(slow_percentages, fast_percentages)]
 
 # for (threshold, accuracies) in data.iteritems():
 #   print "%d, %f, %f" % (threshold, accuracies[0], accuracies[1])
 
 # Plot
 fig = plot.figure()
-ax1 = plot.subplot(111)
+ax1 = plot.subplot(211)
+
 ax1.plot(thresholds, accuracy, 'bo-')
+ax1.plot(thresholds, best_percentages, 'rx', markeredgewidth=2)
 ax1.set_ylim([50, 110])
 ax1.set_xlabel("Threshold [us]")
 ax1.set_ylabel("Accuracy [%]")
 ax1.set_title("mu-train100")
+ax1.legend(("SVM", "Constant guess"))
+
+ax2 = plot.subplot(212)
+ax2.plot(thresholds, [(a - b) for (a, b) in zip(accuracy, best_percentages)], 'ko-')
+ax2.set_xlabel("Threshold [us]")
+ax2.set_ylabel("(SVM - Constant guess) Accuracy [%]")
+
 plot.show()
-ax1.scatter
