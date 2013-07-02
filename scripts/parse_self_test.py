@@ -18,6 +18,9 @@ thresholds = []
 accuracy = []
 slow_percentages = []
 fast_percentages = []
+# Percentage of each frame type correctly classified
+slow_accuracies = []
+fast_accuracies = []
 for line in f:
   res = re.search("Threshold of ([0-9]+)", line)
   if res:
@@ -34,6 +37,13 @@ for line in f:
   if res:
     fast_percentages.append(100*float(res.group(1)))
 
+  res = re.search("Slow accuracy: [0-9]+/[0-9]+ = ([0-9\.]+)", line)
+  if res:
+    slow_accuracies.append(100*float(res.group(1)))
+  res = re.search("Fast accuracy: [0-9]+/[0-9]+ = ([0-9\.]+)", line)
+  if res:
+    fast_accuracies.append(100*float(res.group(1)))
+
 f.close()
 
 best_percentages = [max(a, b) for (a, b) in zip(slow_percentages, fast_percentages)]
@@ -43,8 +53,8 @@ best_percentages = [max(a, b) for (a, b) in zip(slow_percentages, fast_percentag
 
 # Plot
 fig = plot.figure()
-ax1 = plot.subplot(211)
 
+ax1 = plot.subplot(311)
 ax1.plot(thresholds, accuracy, 'bo-')
 ax1.plot(thresholds, best_percentages, 'rx', markeredgewidth=2)
 ax1.set_ylim([50, 110])
@@ -53,9 +63,20 @@ ax1.set_ylabel("Accuracy [%]")
 ax1.set_title("mu-train100")
 ax1.legend(("SVM", "Constant guess"))
 
-ax2 = plot.subplot(212)
+ax2 = plot.subplot(312)
 ax2.plot(thresholds, [(a - b) for (a, b) in zip(accuracy, best_percentages)], 'ko-')
+ax2.set_title("SVM - Constant guess")
 ax2.set_xlabel("Threshold [us]")
-ax2.set_ylabel("(SVM - Constant guess) Accuracy [%]")
+ax2.set_ylabel("Accuracy [%]")
 
+ax3 = plot.subplot(313)
+ax3.plot(thresholds, slow_accuracies)
+ax3.plot(thresholds, fast_accuracies)
+ax3.plot(thresholds, [50 for x in range(len(thresholds))], 'r:')
+ax3.set_xlabel("Threshold [us]")
+ax3.set_ylabel("Accuracy [%]")
+ax3.set_ylim([-5, 105])
+ax3.legend(("Slow frames", "Fast frames"))
+
+plot.tight_layout()
 plot.show()

@@ -3,7 +3,7 @@
 """
 Parse output of ffmpeg which includes frame timing and hex dump
 of ist data structure. Dumps out to format for use with libsvm.
-Treshold in microseconds can be passed. If not, average frame 
+Threshold in microseconds can be passed. If not, average frame 
 time is used.
 
 usage: process_ist.py tracefile svm_file [threshold]
@@ -11,16 +11,6 @@ usage: process_ist.py tracefile svm_file [threshold]
 
 import re
 import sys
-
-"""
-Break ist into a series of integers.
-"""
-def break_ist(ist):
-  int_list = []
-  chunk_len = 4
-  for i in range(0, len(ist), chunk_len):
-    int_list.append(int(ist[i:i+chunk_len], 16))
-  return int_list
 
 # Parse inputs
 if len(sys.argv) <= 1 or len(sys.argv) >= 5:
@@ -42,36 +32,29 @@ min_frame_time = sys.maxint
 total_frames = 0
 
 num_metrics = 5
-metrics = [0]*num_metrics
-# trace elements are [frame_time, data1, data2, ...]
-trace = []
+# First data item is frame time followed by metrics
+data = [list() for n in range(num_metrics + 1)]
 # Start parsing traces
 for line in tracefile:
   # # Look for feature data
-  # res = re.search("metrics = ([0-9]+), ([0-9]+), ([01]), ([01]), ([01])", line)
-  # if res:
-  #   #metrics = [int(res.group(1)), int(res.group(2)), int(res.group(3)), int(res.group(4)), int(res.group(5))]
-  #   metrics = [int(res.group(1)), int(res.group(2))]
-  #   metrics.append(1 if int(res.group(3)) else -1)
-  #   metrics.append(1 if int(res.group(4)) else -1)
-  #   metrics.append(1 if int(res.group(5)) else -1)
   res = re.search("height/width = \(([0-9]+), ([0-9]+)\)", line)
   if res:
-    metrics[0] = int(res.group(1)) * int(res.group(2))
+    data[1].append(int(res.group(1)) * int(res.group(2)))
   res = re.search("Packet size = ([0-9]+)", line)
   if res:
-    metrics[1] = int(res.group(1))
+    data[2].append(int(res.group(1)))
   res = re.search("slice type = ([0-9]+)", line)
   if res:
+    data[3].append(-1)
+    data[4].append(-1)
+    data[5].append(-1)
     slice_type = int(res.group(1))
     if slice_type == 1:
-      metrics[2:5] = [ 1, -1, -1]
+      data[3][-1] = 1
     elif slice_type == 2:
-      metrics[2:5] = [-1,  1, -1]
+      data[4][-1] = 1
     elif slice_type == 3:
-      metrics[2:5] = [-1, -1,  1]
-    else:
-      metrics[2:5] = [-1, -1, -1]
+      data[5][-1] = 1
 
   # Look for frame line
   res1 = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
@@ -95,8 +78,7 @@ for line in tracefile:
     if frame_time < min_frame_time:
       min_frame_time = frame_time
 
-    #trace.append([frame_time, height, width, packet_size])
-    trace.append([frame_time] + metrics)
+    data[0].append(frame_time)
 
 tracefile.close()
 
@@ -114,8 +96,8 @@ if threshold == None:
 num_slow_frames = 0
 num_fast_frames = 0
 # Write out to file for libsvm format
-for trace_item in trace:
-  frame_time = trace_item[0]
+for i in range(len(data[0])):
+  frame_time = data[0][i]
   # 2 class
   if frame_time < threshold:
     svm_file.write("-1 ")
@@ -125,15 +107,8 @@ for trace_item in trace:
     num_fast_frames += 1
 
   # Features
-  for i in range(1, len(trace_item)):
-    svm_file.write("%d:%d " % (i, trace_item[i]))
-
-  # Use length of ist
-  #svm_file.write("0:%d " % len(ist))
-  # Break ist string into individual integers
-  # ist_list = break_ist(ist)
-  # for (i, ist_chunk) in enumerate(ist_list):
-  #   svm_file.write("%d:%d " % (i + 1, ist_chunk))
+  for j in range(1, num_metrics + 1):
+    svm_file.write("%d:%d " % (j, data[j][i]))
 
   svm_file.write("\n")
 

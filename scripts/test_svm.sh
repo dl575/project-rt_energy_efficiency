@@ -4,7 +4,13 @@
 # test_svm.sh data_file
 ###################################################################
 
-for i in {30000..50000..1000}
+if [ -z "$1" ]
+then
+  echo "No input file specified"
+  exit
+fi
+
+for i in {10000..50000..2000}
 do
   echo "Threshold of $i us"
 

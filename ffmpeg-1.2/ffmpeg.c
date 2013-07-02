@@ -2862,7 +2862,7 @@ static int process_input(int file_index)
     ret = get_input_packet(ifile, &pkt);
 
     // dlo: Print out information about packet
-    printf("packet size = %d\n", pkt.size);
+    printf("Packet size = %d\n", pkt.size);
 
     if (ret == AVERROR(EAGAIN)) {
         ifile->eagain = 1;
