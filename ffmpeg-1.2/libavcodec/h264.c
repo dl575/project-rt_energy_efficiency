@@ -4176,6 +4176,18 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
     H264Context *h = *(void **)arg;
     int lf_x_start = h->mb_x;
 
+    // dlo
+    static unsigned bits_gone_by = 0;
+    printf("\nmb_height/width = (%d, %d)\n", h->mb_height, h->mb_width);
+    printf("\nheight/width = (%d, %d)\n", h->height, h->width);
+    printf("\nslice type = %d\n", h->slice_type);
+    //bits_gone_by = (h->cabac.bytestream - h->cabac.bytestream_start) * 8;
+    printf("\nbits gone by = %d\n", bits_gone_by);
+    bits_gone_by = 0;
+    //bits_gone_by = get_bits_count(&h->gb);
+      
+
+
     h->mb_skip_run = -1;
 
     av_assert0(h->block_offset[15] == (4 * ((scan8[15] - scan8[0]) & 7) << h->pixel_shift) + 4 * h->linesize * ((scan8[15] - scan8[0]) >> 3));
@@ -4215,6 +4227,11 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
                 h->mb_y--;
             }
             eos = get_cabac_terminate(&h->cabac);
+
+    // dlo:
+    //bits_gone_by = get_bits_count(&h->gb);
+    //printf("\n1. bits gone by = %d\n", bits_gone_by);
+    printf("\nBrashman\n");
 
             if ((h->workaround_bugs & FF_BUG_TRUNCATED) &&
                 h->cabac.bytestream > h->cabac.bytestream_end + 2) {
@@ -4274,6 +4291,10 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
                     ff_h264_hl_decode_mb(h);
                 h->mb_y--;
             }
+
+    // dlo
+    bits_gone_by = get_bits_count(&h->gb);
+    //printf("\n2. bits gone by = %d\n", bits_gone_by);
 
             if (ret < 0) {
                 av_log(h->avctx, AV_LOG_ERROR,

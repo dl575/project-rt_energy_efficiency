@@ -103,7 +103,7 @@ for trace_item in trace:
 
   # Features
   for i in range(1, len(trace_item)):
-    svm_file.write("%d:%d " % (i - 1, trace_item[i]))
+    svm_file.write("%d:%d " % (i, trace_item[i]))
 
   # Use length of ist
   #svm_file.write("0:%d " % len(ist))
