@@ -5,7 +5,7 @@ Parse output of ffmpeg which includes frame timing and hex dump
 of ist data structure. Dumps out to format for use with libsvm.
 Treshold can be passed. If not, average frame time is used.
 
-usage: process_ist.py tracefile svm_file [threshold]
+usage: process_ist.py tracefile [threshold]
 """
 
 import re
@@ -40,24 +40,13 @@ max_frame_time = 0
 min_frame_time = sys.maxint
 total_frames = 0
 
-# trace elements are [frame_time, data1, data2, ...]
-trace = []
+trace = {}
 # Start parsing traces
 for line in tracefile:
-  # Look for feature data
   # Look for ist dump
   res = re.search("ist = ([0-9a-f]+)", line)
   if res:
     ist = res.group(1)
-  # Frame height/width
-  res = re.search("resample: ([0-9]+), ([0-9]+)", line)
-  if res:
-    height = int(res.group(1))
-    width = int(res.group(2))
-  # Packet size
-  res = re.search("packet size = ([0-9]+)", line)
-  if res:
-    packet_size = int(res.group(1))
 
   # Look for frame line
   res = re.search("dlo: Frame ([0-9]+) = ([0-9]+)us", line)
@@ -65,7 +54,6 @@ for line in tracefile:
     frame_num = int(res.group(1))
     frame_time = int(res.group(2))
 
-    # Save information to calculate max/min/average
     total_frame_time += frame_time
     total_frames += 1
     if frame_time > max_frame_time:
@@ -73,50 +61,50 @@ for line in tracefile:
     if frame_time < min_frame_time:
       min_frame_time = frame_time
 
-    #trace.append([frame_time, height, width, packet_size])
-    trace.append([frame_time, packet_size])
+    if ist in trace:
+      trace[ist].append(frame_time)
+      print "Duplicate ist"
+    else:
+      trace[ist] = [frame_time]
 
 tracefile.close()
 
-# Write out libsvm file
-svm_file = open(svm_filename, 'w')
-
-# Calculate average frame time
+# Classify based on average frame time
 avg_frame_time = float(total_frame_time)/total_frames
-print "Frame time range = (%d, %d)" % (min_frame_time, max_frame_time)
-print "Average frame time = %f" % avg_frame_time
-# Default treshold is the average
-if threshold == None:
-  threshold = avg_frame_time
+print avg_frame_time
+quart50 = avg_frame_time
+quart75 = (avg_frame_time + max_frame_time)/2
+quart25 = (avg_frame_time + min_frame_time)/2
 
-num_slow_frames = 0
-num_fast_frames = 0
-# Write out to file for libsvm format
-for trace_item in trace:
-  frame_time = trace_item[0]
+svm_file = open(svm_filename, 'w')
+# Print out for libsvm format
+for (ist, [frame_time]) in trace.iteritems():
   # 2 class
+  if threshold == None:
+    threshold = avg_frame_time
   if frame_time < threshold:
     svm_file.write("-1 ")
-    num_slow_frames += 1
   else:
-    svm_file.write("+1 ")
-    num_fast_frames += 1
-
-  # Features
-  for i in range(1, len(trace_item)):
-    svm_file.write("%d:%d " % (i - 1, trace_item[i]))
-
-  # Use length of ist
-  #svm_file.write("0:%d " % len(ist))
+    svm_file.write("1 ")
+  # 4 class
+  """
+  if frame_time < quart25:
+    print "0 ",
+  elif frame_time < quart50:
+    print "1 ",
+  elif frame_time < quart75:
+    print "2 ",
+  else:
+    print "3 ",
+  """
+  # Print execution time for regression
+  """
+  print "%d " % frame_time,
+  """
   # Break ist string into individual integers
   # ist_list = break_ist(ist)
   # for (i, ist_chunk) in enumerate(ist_list):
   #   svm_file.write("%d:%d " % (i + 1, ist_chunk))
-
+  svm_file.write("1:%d" % len(ist))
   svm_file.write("\n")
 
-svm_file.close()
-
-# Print out percentage above and below threshold
-print "Slow frames = %f" % (float(num_slow_frames)/total_frames)
-print "Fast frames = %f" % (float(num_fast_frames)/total_frames)

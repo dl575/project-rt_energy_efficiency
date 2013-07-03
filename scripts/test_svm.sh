@@ -10,7 +10,8 @@ then
   exit
 fi
 
-for i in {10000..50000..2000}
+for i in {4000..7000..100}
+#for i in {10000..70000..5000}
 do
   echo "Threshold of $i us"
 
@@ -24,18 +25,9 @@ do
   # svm-predict out_mu out_dm2.model results
 
   # Create train and test set
+  #../scripts/process_ist.py $1 ist $i
   ../scripts/process_ffplay.py $1 ist $i
+  # Attempts to shift information to frame
+  #../scripts/process_ffmpeg.py $1 ist $i
   ../scripts/svm_self.sh ist
-  # # First 100 lines for training
-  # head -n 100 ist > train
-  # # Everything else for testing
-  # tail -n +101 ist > test
-
-  # # Train SVM
-  # svm-train train
-  # # Test SVM
-  # svm-predict test train.model results
-
-  # # Cleanup
-  # #rm train train.model test results ist
 done

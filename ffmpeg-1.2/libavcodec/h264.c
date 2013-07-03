@@ -4179,13 +4179,11 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
     // dlo
     printf("\n");
     //printf("mb_height/width = (%d, %d)\n", h->mb_height, h->mb_width);
-    /*
     printf("h264: height/width = (%d, %d)\n", h->height, h->width);
     printf("h264: slice type = %d\n", h->slice_type);
-    */
-    h->avctx->metrics.frame_height = h->height;
-    h->avctx->metrics.frame_width = h->width;
-    h->avctx->metrics.slice_type = h->slice_type;
+    //h->avctx->metrics.frame_height = h->height;
+    //h->avctx->metrics.frame_width = h->width;
+    //h->avctx->metrics.slice_type = h->slice_type;
 
     h->mb_skip_run = -1;
 

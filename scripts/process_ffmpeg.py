@@ -107,8 +107,9 @@ for i in range(len(data[0])):
     num_fast_frames += 1
 
   # Features
-  for j in range(1, num_metrics + 1):
-    svm_file.write("%d:%d " % (j, data[j][i]))
+  #for j in range(1, num_metrics + 1):
+  #  svm_file.write("%d:%d " % (j, data[j][i]))
+  svm_file.write("1:%d " % (data[2][i]))
 
   svm_file.write("\n")
 
