@@ -4,4 +4,4 @@ bitcnts: ${FILE} Makefile
 	gcc -static ${FILE} -O3 -o bitcnts
 
 clean:
-	rm -rf bitcnts output*
+	rm -rf bitcnts output* run

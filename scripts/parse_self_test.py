@@ -8,9 +8,13 @@ import re
 import sys
 import matplotlib.pyplot as plot
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 2 and len(sys.argv) != 3:
   raise Exception(__doc__)
 filename = sys.argv[1]
+if len(sys.argv) == 3:
+  experiment_name = sys.argv[2]
+else:
+  experiment_name = ""
 
 f = open(filename, 'r')
 
@@ -60,7 +64,7 @@ ax1.plot(thresholds, best_percentages, 'rx', markeredgewidth=2)
 ax1.set_ylim([50, 110])
 ax1.set_xlabel("Threshold [us]")
 ax1.set_ylabel("Accuracy [%]")
-ax1.set_title("mu-train500")
+ax1.set_title(experiment_name)
 ax1.legend(("SVM", "Constant guess"), loc="lower left")
 
 ax2 = plot.subplot(312)
