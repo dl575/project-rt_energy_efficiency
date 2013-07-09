@@ -308,6 +308,22 @@ typedef float      TOTAL_TYPE; /* for my PowerPC accelerator only */
 typedef  unsigned char uchar;
 typedef  struct {int x,y,info, dx, dy, I;} CORNER_LIST[MAX_CORNERS];
 
+//dlo
+struct timeval start, end;
+void start_timing() {
+  gettimeofday(&start, NULL);
+}
+void end_timing() {
+  gettimeofday(&end, NULL);
+  end.tv_sec -= start.tv_sec;
+  end.tv_usec -= start.tv_usec;
+  if (end.tv_usec < 0) {
+    end.tv_sec--;
+    end.tv_usec += 1000000;
+  }
+  printf("Execution time = %d us\n", (int)end.tv_sec*1000000 + (int)end.tv_usec);
+}
+
 /* }}} */
 /* {{{ usage() */
 
@@ -469,6 +485,7 @@ void setup_brightness_lut(bp,thresh,form)
   uchar **bp;
   int   thresh, form;
 {
+
 int   k;
 float temp;
 
@@ -484,6 +501,7 @@ float temp;
     temp=100.0*exp(-temp);
     *(*bp+k)= (uchar)temp;
   }
+
 }
 
 /* }}} */
@@ -2048,6 +2066,29 @@ CORNER_LIST corner_list;
 /* }}} */
   /* {{{ main processing */
 
+  // dlo
+  start_timing();
+
+  printf("metrics = [");
+  printf("%d ", mode);
+  printf("%d ", sizeof(bp));
+  printf("%d ", bt);
+  printf("%d ", three_by_three);
+  printf("%d ", sizeof(in));
+  printf("%f ", dt);
+  printf("%d ", x_size);
+  printf("%d ", y_size);
+  printf("%d ", principle);
+  printf("%d ", sizeof(r));
+  printf("%d ", max_no_edges);
+  printf("%d ", sizeof(mid));
+  printf("%d ", thin_post_proc);
+  printf("%d ", drawing_mode);
+  printf("%d ", susan_quick);
+  printf("%d ", max_no_corners);
+  printf("%d ", sizeof(corner_list));
+  printf("]\n");
+
   switch (mode)
   {
     case 0:
@@ -2113,6 +2154,10 @@ CORNER_LIST corner_list;
 
 /* }}} */
   }    
+
+  // dlo
+  end_timing();
+
 
 /* }}} */
 
