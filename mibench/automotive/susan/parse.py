@@ -56,17 +56,36 @@ if threshold == None:
 # Print average time
 print "Average time = %f us" % avg_time
 
+import numpy
+from sklearn.decomposition import PCA
+# Create numpy array of metrics
+np_data = numpy.array([x[1:-1] for x in data])
+# Perform PCA 
+pca = PCA(n_components=5)
+pca.fit(np_data)
+# print
+print "PCA vectors:"
+print pca.components_
+print
+print "PCA variance:"
+print pca.explained_variance_ratio_
+# Transform data
+pca_data = pca.transform(np_data)
+
 # Write SVM file
 svm_file = open(svm_filename, 'w')
-for datum in data:
+for (x, datum) in enumerate(data):
+  # Classification
   time = datum[0]
   if time > threshold:
     svm_file.write("1 ")
   else:
     svm_file.write("-1 ")
   # Write out metrics
-  for i in range(1, len(datum)):
-    svm_file.write("%d:%d " % (i, datum[i]))
+  #for i in range(1, len(datum)):
+  #  svm_file.write("%d:%d " % (i, datum[i]))
+  for y in range(pca_data.shape[1]):
+    svm_file.write("%d:%f " % (y + 1, pca_data[x][y]))
   svm_file.write("\n")
 svm_file.close()
 

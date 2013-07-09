@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ ! -f bitcnts ]
+then
+  echo "bitcnts missing. Run make first"
+  exit
+fi
+
 RUNDIR=run
 
 mkdir $RUNDIR
