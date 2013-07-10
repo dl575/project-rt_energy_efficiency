@@ -55,6 +55,9 @@ best_percentages = [max(a, b) for (a, b) in zip(slow_percentages, fast_percentag
 # for (threshold, accuracies) in data.iteritems():
 #   print "%d, %f, %f" % (threshold, accuracies[0], accuracies[1])
 
+print thresholds
+print accuracy
+
 # Plot
 fig = plot.figure()
 

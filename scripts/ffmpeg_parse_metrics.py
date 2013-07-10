@@ -41,13 +41,13 @@ max_frame_time = 0
 min_frame_time = sys.maxint
 total_frames = 0
 
-num_metrics = 1
+num_metrics = 4
 metrics = [0]*num_metrics
 # trace elements are [frame_time, data1, data2, ...]
 trace = []
 # Start parsing traces
 for line in tracefile:
-  # # Look for feature data
+  # Look for feature data
   # res = re.search("metrics = ([0-9]+), ([0-9]+), ([01]), ([01]), ([01])", line)
   # if res:
   #   #metrics = [int(res.group(1)), int(res.group(2)), int(res.group(3)), int(res.group(4)), int(res.group(5))]
@@ -61,17 +61,17 @@ for line in tracefile:
   res = re.search("Packet size = ([0-9]+)", line)
   if res:
     metrics[0] = int(res.group(1))
-  #res = re.search("slice type = ([0-9]+)", line)
-  #if res:
-  #  slice_type = int(res.group(1))
-  #  if slice_type == 1:
-  #    metrics[1:4] = [ 1, -1, -1]
-  #  elif slice_type == 2:
-  #    metrics[1:4] = [-1,  1, -1]
-  #  elif slice_type == 3:
-  #    metrics[1:4] = [-1, -1,  1]
-  #  else:
-  #    metrics[1:4] = [-1, -1, -1]
+  res = re.search("slice type = ([0-9]+)", line)
+  if res:
+    slice_type = int(res.group(1))
+    if slice_type == 1:
+      metrics[1:4] = [ 1, -1, -1]
+    elif slice_type == 2:
+      metrics[1:4] = [-1,  1, -1]
+    elif slice_type == 3:
+      metrics[1:4] = [-1, -1,  1]
+    else:
+      metrics[1:4] = [-1, -1, -1]
 
   # Look for frame line
   res1 = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
