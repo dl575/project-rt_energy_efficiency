@@ -29,5 +29,5 @@ do
   ../scripts/process_ffplay.py $1 ist $i
   # Attempts to shift information to frame
   #../scripts/process_ffmpeg.py $1 ist $i
-  ../scripts/svm_self.sh ist
+  ../scripts/svm_one.sh ist
 done
