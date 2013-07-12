@@ -31,30 +31,30 @@ max_frame_time = 0
 min_frame_time = sys.maxint
 total_frames = 0
 
-num_metrics = 5
+num_metrics = 4
 # First data item is frame time followed by metrics
 data = [list() for n in range(num_metrics + 1)]
 # Start parsing traces
 for line in tracefile:
   # # Look for feature data
-  res = re.search("height/width = \(([0-9]+), ([0-9]+)\)", line)
-  if res:
-    data[1].append(int(res.group(1)) * int(res.group(2)))
+  # res = re.search("height/width = \(([0-9]+), ([0-9]+)\)", line)
+  # if res:
+  #   data[1].append(int(res.group(1)) * int(res.group(2)))
   res = re.search("Packet size = ([0-9]+)", line)
   if res:
-    data[2].append(int(res.group(1)))
+    data[1].append(int(res.group(1)))
   res = re.search("slice type = ([0-9]+)", line)
   if res:
+    data[2].append(-1)
     data[3].append(-1)
     data[4].append(-1)
-    data[5].append(-1)
     slice_type = int(res.group(1))
     if slice_type == 1:
-      data[3][-1] = 1
+      data[2][-1] = 1
     elif slice_type == 2:
-      data[4][-1] = 1
+      data[3][-1] = 1
     elif slice_type == 3:
-      data[5][-1] = 1
+      data[4][-1] = 1
 
   # Look for frame line
   res1 = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
@@ -103,13 +103,13 @@ for i in range(len(data[0])):
     svm_file.write("-1 ")
     num_slow_frames += 1
   else:
-    svm_file.write("+1 ")
+    svm_file.write("1 ")
     num_fast_frames += 1
 
   # Features
-  #for j in range(1, num_metrics + 1):
-  #  svm_file.write("%d:%d " % (j, data[j][i]))
-  svm_file.write("1:%d " % (data[2][i]))
+  for j in range(1, num_metrics + 1):
+    svm_file.write("%d:%d " % (j, data[j][i]))
+  #svm_file.write("1:%d " % (data[2][i]))
 
   svm_file.write("\n")
 

@@ -28,7 +28,7 @@ for results_line in results_file:
   truth = truth_line.split()[0]
 
   # Slow frames
-  if truth == "1":
+  if truth == "1" or truth == "+1":
     slow_total += 1
     if result == truth:
       slow_correct += 1

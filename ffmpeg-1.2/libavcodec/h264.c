@@ -50,6 +50,24 @@
 // #undef NDEBUG
 #include <assert.h>
 
+// dlo
+#define PSEUDO_SLICE_FRAME_START  -1
+#define PSEUDO_SLICE_FRAME_END    -2
+struct {
+  int type;
+  int bits;
+  int intra_pcm;
+  int intra_4x4;
+  int intra_8x8;
+  int intra_16x16;
+  int inter_4x4;
+  int inter_8x8;
+  int inter_16x16;
+  int idct_4x4;
+  int idct_8x8;
+  int deblock_edges;
+} metrics;
+
 const uint16_t ff_h264_mb_sizes[4] = { 256, 384, 512, 768 };
 
 static const uint8_t rem6[QP_MAX_NUM + 1] = {
@@ -101,6 +119,35 @@ static const enum AVPixelFormat h264_hwaccel_pixfmt_list_jpeg_420[] = {
     AV_PIX_FMT_YUVJ420P,
     AV_PIX_FMT_NONE
 };
+
+// dlo
+// Print out everything from metrics struct
+void print_metrics() {
+  printf("\n");
+  printf("metrics: ");
+  printf("%d ", metrics.type);
+  printf("%d ", metrics.bits);
+  printf("%d ", metrics.intra_pcm);
+  printf("%d ", metrics.intra_4x4);
+  printf("%d ", metrics.intra_8x8);
+  printf("%d ", metrics.intra_16x16);
+  printf("%d ", metrics.inter_4x4);
+  printf("%d ", metrics.inter_8x8);
+  printf("%d ", metrics.inter_16x16);
+  printf("%d ", metrics.idct_4x4);
+  printf("%d ", metrics.idct_8x8);
+  printf("%d ", metrics.deblock_edges);
+  printf("\n");
+}
+
+void process_slice() {
+  if (metrics.type != PSEUDO_SLICE_FRAME_START && 
+    metrics.type != PSEUDO_SLICE_FRAME_END) {
+    print_metrics();
+  }
+  // Clear metrics
+  memset(&metrics, 0, sizeof(metrics));
+}
 
 int avpriv_h264_has_num_reorder_frames(AVCodecContext *avctx)
 {
@@ -2223,6 +2270,10 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
                 idct_add    = h->h264dsp.h264_idct8_add;
             }
             for (i = 0; i < 16; i += 4) {
+
+                // dlo
+                metrics.intra_8x8++;
+
                 uint8_t *const ptr = dest_y + block_offset[i];
                 const int dir      = h->intra4x4_pred_mode_cache[scan8[i]];
                 if (transform_bypass && h->sps.profile_idc == 244 && dir <= 1) {
@@ -2232,6 +2283,10 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
                     h->hpc.pred8x8l[dir](ptr, (h->topleft_samples_available << i) & 0x8000,
                                          (h->topright_samples_available << i) & 0x4000, linesize);
                     if (nnz) {
+                        // dlo
+                        if (transform_bypass) {
+                          metrics.idct_8x8++;
+                        }
                         if (nnz == 1 && dctcoef_get(h->mb, pixel_shift, i * 16 + p * 256))
                             idct_dc_add(ptr, h->mb + (i * 16 + p * 256 << pixel_shift), linesize);
                         else
@@ -2248,6 +2303,10 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
                 idct_add    = h->h264dsp.h264_idct_add;
             }
             for (i = 0; i < 16; i++) {
+
+                // dlo
+                metrics.intra_4x4++;
+
                 uint8_t *const ptr = dest_y + block_offset[i];
                 const int dir      = h->intra4x4_pred_mode_cache[scan8[i]];
 
@@ -2277,6 +2336,8 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
                     nnz = h->non_zero_count_cache[scan8[i + p * 16]];
                     if (nnz) {
                         if (is_h264) {
+                            // dlo
+                            metrics.idct_4x4++;
                             if (nnz == 1 && dctcoef_get(h->mb, pixel_shift, i * 16 + p * 256))
                                 idct_dc_add(ptr, h->mb + (i * 16 + p * 256 << pixel_shift), linesize);
                             else
@@ -2288,6 +2349,8 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
             }
         }
     } else {
+        // dlo
+        metrics.intra_16x16++;
         h->hpc.pred16x16[h->intra16x16_pred_mode](dest_y, linesize);
         if (is_h264) {
             if (h->non_zero_count_cache[scan8[LUMA_DC_BLOCK_INDEX + p]]) {
@@ -2332,6 +2395,9 @@ static av_always_inline void hl_decode_mb_idct_luma(H264Context *h, int mb_type,
                     if (h->sps.profile_idc == 244 &&
                         (h->intra16x16_pred_mode == VERT_PRED8x8 ||
                          h->intra16x16_pred_mode == HOR_PRED8x8)) {
+                        // dlo
+                        metrics.intra_16x16++;
+
                         h->hpc.pred16x16_add[h->intra16x16_pred_mode](dest_y, block_offset,
                                                                       h->mb + (p * 256 << pixel_shift),
                                                                       linesize);
@@ -2344,6 +2410,8 @@ static av_always_inline void hl_decode_mb_idct_luma(H264Context *h, int mb_type,
                                                                   linesize);
                     }
                 } else {
+                    // dlo
+                    metrics.idct_4x4 += 16;
                     h->h264dsp.h264_idct_add16intra(dest_y, block_offset,
                                                     h->mb + (p * 256 << pixel_shift),
                                                     linesize,
@@ -2360,6 +2428,12 @@ static av_always_inline void hl_decode_mb_idct_luma(H264Context *h, int mb_type,
                                      h->mb + (i * 16 + p * 256 << pixel_shift),
                                      linesize);
                 } else {
+                    // dlo
+                    if IS_8x8DCT(mb_type) {
+                      metrics.idct_8x8 += 4;
+                    } else {
+                      metrics.idct_4x4 += 16;
+                    }
                     if (IS_8x8DCT(mb_type))
                         h->h264dsp.h264_idct8_add4(dest_y, block_offset,
                                                    h->mb + (p * 256 << pixel_shift),
@@ -4184,6 +4258,9 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
     //h->avctx->metrics.frame_height = h->height;
     //h->avctx->metrics.frame_width = h->width;
     //h->avctx->metrics.slice_type = h->slice_type;
+    unsigned bits_gone_by = 0;
+    printf("metrics: process_slice\n");
+    process_slice();
 
     h->mb_skip_run = -1;
 
@@ -4224,6 +4301,16 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
                 h->mb_y--;
             }
             eos = get_cabac_terminate(&h->cabac);
+
+            // dlo
+            /*
+            printf("metrics: bits -= bits_gone_by\n");
+            printf("metrics: bits_gone_by = %d\n", (h->cabac.bytestream - h->cabac.bytestream_start)*8);
+            printf("metrics: bits += bits_gone_by\n");
+            */
+            metrics.bits -= bits_gone_by;
+            bits_gone_by = (h->cabac.bytestream - h->cabac.bytestream_start) * 8;
+            metrics.bits += bits_gone_by;
 
             if ((h->workaround_bugs & FF_BUG_TRUNCATED) &&
                 h->cabac.bytestream > h->cabac.bytestream_end + 2) {
@@ -4283,6 +4370,16 @@ static int decode_slice(struct AVCodecContext *avctx, void *arg)
                     ff_h264_hl_decode_mb(h);
                 h->mb_y--;
             }
+
+            // dlo
+            /*
+            printf("metrics: bits -= bits_gone_by\n");
+            printf("metrics: bits_gone_by = %d\n", get_bits_count(&h->gb));
+            printf("metrics: bits += bits_gone_by\n");
+            */
+            metrics.bits -= bits_gone_by;
+            bits_gone_by = get_bits_count(&h->gb);
+            metrics.bits += bits_gone_by;
 
             if (ret < 0) {
                 av_log(h->avctx, AV_LOG_ERROR,
@@ -4792,6 +4889,11 @@ static int decode_frame(AVCodecContext *avctx, void *data,
             *pict      = out->f;
         }
 
+        // dlo
+        metrics.type = PSEUDO_SLICE_FRAME_END;
+        printf("metrics: process_slice\n");
+        process_slice();
+
         return buf_index;
     }
     if(h->is_avc && buf_size >= 9 && buf[0]==1 && buf[2]==0 && (buf[4]&0xFC)==0xFC && (buf[5]&0x1F) && buf[8]==0x67){
@@ -4816,10 +4918,17 @@ static int decode_frame(AVCodecContext *avctx, void *data,
         return ff_h264_decode_extradata(h, buf, buf_size);
     }
 not_extra:
+    // dlo
+    metrics.type = PSEUDO_SLICE_FRAME_START;
 
     buf_index = decode_nal_units(h, buf, buf_size, 0);
     if (buf_index < 0)
         return -1;
+
+    // dlo
+    printf("metrics: process_slice\n");
+    process_slice();
+    metrics.type = PSEUDO_SLICE_FRAME_END;
 
     if (!h->cur_pic_ptr && h->nal_unit_type == NAL_END_SEQUENCE) {
         av_assert0(buf_index <= buf_size);
@@ -4848,6 +4957,10 @@ not_extra:
             *pict      = h->next_output_pic->f;
         }
     }
+
+    // dlo
+    printf("metrics: process_slice\n");
+    process_slice();
 
     assert(pict->data[0] || !*got_frame);
 
