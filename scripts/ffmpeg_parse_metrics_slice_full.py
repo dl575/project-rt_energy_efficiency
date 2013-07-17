@@ -23,7 +23,7 @@ def break_ist(ist):
   return int_list
 
 # Parse inputs
-if len(sys.argv) <= 1 or len(sys.argv) >= 5:
+if len(sys.argv) <= 2 or len(sys.argv) >= 5:
   raise Exception(__doc__)
 trace_filename = sys.argv[1]
 svm_filename = sys.argv[2]
@@ -43,25 +43,18 @@ total_frames = 0
 
 num_metrics = 4
 metrics = [0]*num_metrics
-past_times = [0]*1
+# Array of extra metrics used by ATLAS for full metrics case
+full_metrics = None
 # trace elements are [frame_time, data1, data2, ...]
 trace = []
 # Start parsing traces
 for line in tracefile:
   # Look for feature data
-  # res = re.search("metrics = ([0-9]+), ([0-9]+), ([01]), ([01]), ([01])", line)
-  # if res:
-  #   #metrics = [int(res.group(1)), int(res.group(2)), int(res.group(3)), int(res.group(4)), int(res.group(5))]
-  #   metrics = [int(res.group(1)), int(res.group(2))]
-  #   metrics.append(1 if int(res.group(3)) else -1)
-  #   metrics.append(1 if int(res.group(4)) else -1)
-  #   metrics.append(1 if int(res.group(5)) else -1)
-  #res = re.search("height/width = \(([0-9]+), ([0-9]+)\)", line)
-  #if res:
-  #  metrics[0] = int(res.group(1)) * int(res.group(2))
+  # Packet size
   res = re.search("Packet size = ([0-9]+)", line)
   if res:
     metrics[0] = int(res.group(1))
+  # Slice type
   res = re.search("slice type = ([0-9]+)", line)
   if res:
     slice_type = int(res.group(1))
@@ -73,10 +66,14 @@ for line in tracefile:
       metrics[1:4] = [-1, -1,  1]
     else:
       metrics[1:4] = [-1, -1, -1]
+  # Extra metrics for ATLAS full case
+  res = re.search("metrics: ([0-9 ]+)", line)
+  if res:
+    full_metrics = [int(x) for x in res.group(1).strip().split(" ")]
 
   # Look for frame line
-  res1 = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
-  res2 = re.search("dlo: Frame ([0-9]+) = ([0-9]+)us", line)
+  res1 = re.search("Slice ([0-9]+) time = ([0-9\.]+)", line)
+  res2 = re.search("dlo: Slice ([0-9]+) = ([0-9]+)us", line)
   if res1:
     frame_num = int(res1.group(1))
     frame_time = float(res1.group(2))
@@ -97,13 +94,7 @@ for line in tracefile:
       min_frame_time = frame_time
 
     #trace.append([frame_time, height, width, packet_size])
-    #trace.append([frame_time] + metrics)
-    trace.append([frame_time] + metrics + past_times)
-    #trace.append([frame_time] + past_times)
-
-    # Use last couple execution times in prediction
-    past_times.append(frame_time*1000000)
-    past_times.pop(0)
+    trace.append([frame_time] + metrics + full_metrics)
 
 tracefile.close()
 
@@ -112,8 +103,8 @@ svm_file = open(svm_filename, 'w')
 
 # Calculate average frame time
 avg_frame_time = float(total_frame_time)/total_frames
-print "Frame time range = (%f, %f)" % (min_frame_time*1000000, max_frame_time*1000000)
-print "Average frame time = %f" % (avg_frame_time*1000000)
+print "Frame time range = (%d us, %d us)" % (min_frame_time*1000000, max_frame_time*1000000)
+print "Average frame time = %d us" % (avg_frame_time*1000000)
 # Default treshold is the average
 if threshold == None:
   threshold = avg_frame_time

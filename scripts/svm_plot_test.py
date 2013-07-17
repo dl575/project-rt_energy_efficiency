@@ -63,6 +63,9 @@ fig = plot.figure()
 
 ax1 = plot.subplot(311)
 ax1.plot(thresholds, accuracy, 'bo-')
+# Mark the actual value of these accuracies
+for i in range(len(accuracy)):
+  plot.annotate(accuracy[i], (thresholds[i], accuracy[i]))
 ax1.plot(thresholds, best_percentages, 'rx', markeredgewidth=2)
 ax1.set_ylim([50, 110])
 ax1.set_xlabel("Threshold [us]")

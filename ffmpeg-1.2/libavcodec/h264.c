@@ -51,6 +51,7 @@
 #include <assert.h>
 
 // dlo
+#include "libavutil/time.h"
 #define PSEUDO_SLICE_FRAME_START  -1
 #define PSEUDO_SLICE_FRAME_END    -2
 struct {
@@ -141,12 +142,21 @@ void print_metrics() {
 }
 
 void process_slice() {
+  static int last_slice_number = 0;
+  static int64_t last_slice_time = -1;
+
   if (metrics.type != PSEUDO_SLICE_FRAME_START && 
     metrics.type != PSEUDO_SLICE_FRAME_END) {
     print_metrics();
+    // Output execution time
+    printf("dlo: Slice %d = %" PRId64 "us\n", last_slice_number, av_gettime() - last_slice_time);
   }
   // Clear metrics
   memset(&metrics, 0, sizeof(metrics));
+
+  // Start timing for next one
+  last_slice_number++;
+  last_slice_time = av_gettime();
 }
 
 int avpriv_h264_has_num_reorder_frames(AVCodecContext *avctx)

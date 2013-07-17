@@ -43,7 +43,7 @@ total_frames = 0
 
 num_metrics = 4
 metrics = [0]*num_metrics
-past_times = [0]*1
+past_times = [0]*10
 # trace elements are [frame_time, data1, data2, ...]
 trace = []
 # Start parsing traces
@@ -72,11 +72,11 @@ for line in tracefile:
     elif slice_type == 3:
       metrics[1:4] = [-1, -1,  1]
     else:
-      metrics[1:4] = [-1, -1, -1]
+      raise Exception("Unknown slice type = %d" % slice_type)
 
   # Look for frame line
-  res1 = re.search("Frame ([0-9]+) time = ([0-9\.]+)", line)
-  res2 = re.search("dlo: Frame ([0-9]+) = ([0-9]+)us", line)
+  res1 = re.search("Slice ([0-9]+) time = ([0-9\.]+)", line)
+  res2 = re.search("dlo: Slice ([0-9]+) = ([0-9]+)us", line)
   if res1:
     frame_num = int(res1.group(1))
     frame_time = float(res1.group(2))
@@ -96,16 +96,37 @@ for line in tracefile:
     if frame_time < min_frame_time:
       min_frame_time = frame_time
 
-    #trace.append([frame_time, height, width, packet_size])
-    #trace.append([frame_time] + metrics)
     trace.append([frame_time] + metrics + past_times)
     #trace.append([frame_time] + past_times)
+    #trace.append([frame_time] + metrics)
 
-    # Use last couple execution times in prediction
+    # Save execution for use in future predictions
     past_times.append(frame_time*1000000)
     past_times.pop(0)
 
 tracefile.close()
+
+
+run_pca = False
+if run_pca:
+  # PCA Analysis
+  import numpy
+  from sklearn.decomposition import PCA
+  # Create numpy array of metrics
+  np_data = numpy.array([x[1:-1] for x in trace])
+  # Perform PCA 
+  pca = PCA(n_components=5)
+  pca.fit(np_data)
+  # print
+  print "PCA vectors:"
+  print pca.components_
+  print
+  print "PCA variance:"
+  print pca.explained_variance_ratio_
+  # Transform data
+  pca_data = pca.transform(np_data)
+
+
 
 # Write out libsvm file
 svm_file = open(svm_filename, 'w')
