@@ -1,23 +1,19 @@
 #!/bin/bash
 
 ###################################################
-# usage: svm_one.sh libsvmfile 
+# usage: svm_one.sh libsvmfile [numtrain]
 ###################################################
 
-# Chop off first 500 frames, maybe noise or initialization issues
-#tail -n +501 $1 > short
-#svm-scale $1 > scale
-#cat $1 > scale
+# Parse argument for number of samples for training
+if [ -z "$2" ]
+then
+  numtrain=100
+else
+  numtrain=$2
+fi
 
-# First 100 lines for training
-head -n 500 $1 > train
-# Everything else for testing
-tail -n +501 $1 > test
-
-# # Train SVM
-# svm-train train
-# # Test SVM
-# svm-predict test train.model results
+# Create training and test sets
+svm-subset -s 0 $1 $numtrain train test
 
 # Run SVM
 svm-easy train test

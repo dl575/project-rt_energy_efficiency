@@ -14,8 +14,6 @@ echo "  [1] ffmpeg_parse_metrics.py"
 echo "  [2] ffmpeg_parse_metrics_full.py"
 echo "  [3] ffmpeg_parse_metrics_slice.py"
 echo "  [4] ffmpeg_parse_metrics_slice_full.py"
-echo "  [5] ffmpeg_parse_metrics_atlas.py"
-echo "  [6] ffmpeg_parse_metrics_atlas_time.py"
 read parse_option
 
 if [ -z $parse_option ] 
@@ -34,17 +32,10 @@ then
 elif [ $parse_option == 4 ]
 then
   PARSE_SCRIPT=ffmpeg_parse_metrics_slice_full.py
-elif [ $parse_option == 5 ]
-then
-  PARSE_SCRIPT=ffmpeg_parse_metrics_atlas.py
-elif [ $parse_option == 6 ]
-then
-  PARSE_SCRIPT=ffmpeg_parse_metrics_atlas_time.py
 else
   echo "Error: Unrecognized parse script option."
   exit
 fi
-echo "Parse script is $PARSE_SCRIPT" | tee --append $OUTFILE
 
 OUTFILE=svm_out.parse$parse_option
 
@@ -59,18 +50,14 @@ then
   average=${BASH_REMATCH[1]}
 fi
 
-# Step size 
-step=$[$average / 20]
-# Number of points
-numpoints=19
 rm parse_out
 
-for ((i = $[$average - ($numpoints - 1)/2*$step]; i <= $[$average + ($numpoints - 1)/2*$step]; i += $step))
+for ((numtrain = 32; numtrain <= 1024; numtrain*=2))
 do
-  echo "Threshold of $i us" | tee --append $OUTFILE
+  echo "Threshold of $numtrain us" | tee --append $OUTFILE
 
   # Parse metrics into libsvm format from raw trace file
-  $PARSE_SCRIPT $1 $SVMFILE $i
+  $PARSE_SCRIPT $1 $SVMFILE $average
   # Perform SVM classification with train and test from one data set
-  svm_one.sh $SVMFILE | tee --append $OUTFILE
+  svm_one.sh $SVMFILE $numtrain | tee --append $OUTFILE
 done

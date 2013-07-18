@@ -43,7 +43,7 @@ total_frames = 0
 
 num_metrics = 4
 metrics = [0]*num_metrics
-past_times = [0]*10
+past_times = [0]*5
 # trace elements are [frame_time, data1, data2, ...]
 trace = []
 # Start parsing traces
