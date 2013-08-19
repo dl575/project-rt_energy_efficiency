@@ -18,7 +18,7 @@ if len(sys.argv) <= 2 or len(sys.argv) >= 5:
 trace_filename = sys.argv[1]
 svm_filename = sys.argv[2]
 if len(sys.argv) == 4:
-  threshold = float(sys.argv[3])/1000000
+  threshold = float(sys.argv[3])
 else:
   # Threshold will be set to average later
   threshold = None
@@ -42,7 +42,7 @@ for line in tracefile:
     trace.append([0] + trace_vector)
 
   # Look for execution time
-  res = re.search("^([0-9\.]+) [0-9\.]+", line)
+  res = re.search("dlo: timing = ([0-9]+)", line)
   if res:
     frame_time = float(res.group(1))
 
@@ -83,15 +83,13 @@ if run_pca:
   # Transform data
   pca_data = pca.transform(np_data)
 
-
-
 # Write out libsvm file
 svm_file = open(svm_filename, 'w')
 
 # Calculate average frame time
 avg_frame_time = float(total_frame_time)/total_frames
-print "Frame time range = (%f, %f)" % (min_frame_time*1000000, max_frame_time*1000000)
-print "Average frame time = %f" % (avg_frame_time*1000000)
+print "Frame time range = (%f, %f)" % (min_frame_time, max_frame_time)
+print "Average frame time = %f" % (avg_frame_time)
 # Default treshold is the average
 if threshold == None:
   threshold = avg_frame_time
