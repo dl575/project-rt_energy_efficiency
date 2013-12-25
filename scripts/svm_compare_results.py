@@ -38,7 +38,7 @@ for results_line in results_file:
     if result == truth:
       fast_correct += 1
   else:
-    raise Exception("Unknown result")
+    raise Exception("Unknown result: %d", truth)
 
 truth_file.close()
 results_file.close()

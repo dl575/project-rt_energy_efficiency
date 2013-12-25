@@ -14,15 +14,19 @@ filename = sys.argv[1]
 
 f = open(filename, 'r')
 # Contains gcc expression strings indexed by object id #
-objects = {}
+objects = {0:""}
 # List of expression strings that are function call expressions
 call_exprs = []
+obj_no = 0
 for line in f:
   # Pull out expression ID and add to dict
   res = re.search("^@([0-9]+)", line)
   if res:
     obj_no = int(res.group(1))
     objects[obj_no] = line.strip()
+  # Continuation of last node
+  else:
+    objects[obj_no] += ' ' + line.strip()
 
   # Keep track of call expressions
   if "call_expr" in line:
@@ -34,25 +38,13 @@ arguments = []
 # For each call expressions
 for line in call_exprs:
   # Create tree
-  root = gcc_parse.expand2(line)
-  #print root
+  root = gcc_parse.parse(line)
+  #print root.id, root
 
-  # Add arguments to list
-  # root_args = str(root.children[1]).split(', ')
-  # for a in root_args:
-  #   if a not in arguments:
-  #     arguments.append(a)
-
-  print root
-  root_args = root.get_var_args()
-  print root_args
+  root_args = root.get_variables()
   for a in root_args:
     if str(a) not in arguments:
       arguments.append(str(a))
 
-print "Arguments: "
-print arguments
-
 for a in arguments:
-  print "printf(\"%%d\", (int)%s);" % (a)
-
+  print "printf(\"%%d, \", (int)%s);" % (a)

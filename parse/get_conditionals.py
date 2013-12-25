@@ -10,12 +10,18 @@ import re
 import sys
 import gcc_parse
 
+if len(sys.argv) != 2:
+  print __doc__
+  sys.exit()
 filename = sys.argv[1]
 
 f = open(filename, 'r')
 
+# Dict of all nodes <node number>:<string expression>
 objects = {}
+# List of condtional expressions
 cond_exprs = []
+# Parse out node strings from file
 for line in f:
   res = re.search("^@([0-9]+)", line)
   if res:
@@ -27,12 +33,17 @@ for line in f:
 
 f.close()
 
+# Feed gcc_parse library the object strings
 gcc_parse.objects = objects
+variables = []
+# For each conditional expression
 for line in cond_exprs:
-  #p = gcc_parse.parse(line)
-  #print gcc_parse.expand(p, objects)
+  # Expand out conditional expressions
+  root = gcc_parse.parse(line)
+  #print root.id, root
+  variables = root.get_variables(variables)
 
-  root = gcc_parse.expand2(line)
-  print root
-
+# Print out printf for each variable
+for v in variables:
+  print 'printf("%%d, ", (int)%s);' % (v)
 

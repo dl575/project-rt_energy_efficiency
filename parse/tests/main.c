@@ -32,6 +32,11 @@ int main() {
   }
   /* more multi-line
      */
+
+  int while_var;
+  while(while_var) {
+    a = 1;
+  }
   
   return 0;
 }

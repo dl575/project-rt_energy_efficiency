@@ -94,7 +94,7 @@ ax1.set_ylim([50, 110])
 ax1.set_xlabel("Threshold [us]")
 ax1.set_ylabel("Accuracy [%]")
 ax1.set_title(experiment_name)
-ax1.legend(("SVM", "Constant guess"), loc="lower left")
+ax1.legend(("SVM", "Constant guess"), loc="upper left")
 
 """
 # Difference in accuracy between SVM and guessing

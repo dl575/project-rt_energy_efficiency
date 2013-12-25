@@ -1,17 +1,52 @@
 
 """
 Functions for parsing -fdump-tree-original-raw from gcc.
+
+class ast_node
+  __init__(self, expr, children, id, typ)
+  __repr__(self)
+  get_children_exprs(self) 
+  get_identifier_nodes(self) 
+  get_var_args(self)
+  get_variables(self)
+  is_variable(self)
+  is_constant(self)
+
+get_argument(arg_name, expression)
+get_op0(expression)
+get_op1(expression)
+get_fn(expression)
+get_args(expression)
+get_valu(expression)
+get_chan(expression)
+get_name(expression)
+get_strg(expression)
+get_low(expression)
+get_high(expression)
+get_type(expression)
+
+parse2(line)
+expand2(expression)
+
+debug_print(i)
+recursive_debug_print(i)
+
+find_variables(i, variables)
 """
 
 import re
+import sys
 
 objects = {}
 
 class ast_node:
-  def __init__(self, expr = None, children = [], id = -1):
+  def __init__(self, expr = None, children = [], id = -1, typ = None):
     self.expr = expr
     self.children = children
+    # ID number from gcc output
     self.id = id
+    # Return type of node
+    self.typ = None
 
   def __repr__(self):
     # If statement
@@ -20,7 +55,12 @@ class ast_node:
     # Function call
     elif self.expr == "call_expr":
       return "%s(%s)" % (self.children[0], self.children[1])
-    elif self.expr == "addr_expr" or self.expr == "function_decl":
+    elif self.expr == "function_decl":
+      return "%s" % (self.children[0])
+    elif self.expr == "addr_expr":
+      # FIXME: If proceeded by call_expr, then no need to add &. Otherwise,
+      # should have &.
+      #return "&%s" % (self.children[0])
       return "%s" % (self.children[0])
     elif self.expr == "tree_list":
       # Remove braces
@@ -29,8 +69,11 @@ class ast_node:
     elif self.expr == "array_ref":
       return "%s[%s]" % (self.children[0], self.children[1])
     elif self.expr == "component_ref":
-      return "%s->%s" % (self.children[0], self.children[1])
-    elif self.expr == "indirect_ref" or self.expr == "var_decl" or self.expr == "field_decl" or self.expr == "identifier_node" or self.expr == "convert_expr":
+      if self.children[0].expr == "indirect_ref":
+        return "%s->%s" % (self.children[0], self.children[1])
+      else:
+        return "%s.%s" % (self.children[0], self.children[1])
+    elif self.expr == "indirect_ref" or self.expr == "var_decl" or self.expr == "field_decl" or self.expr == "identifier_node" or self.expr == "convert_expr" or self.expr == "parm_decl":
       return "%s" % self.children[0]
     # Comparison expressions
     elif self.expr == "eq_expr":
@@ -66,8 +109,14 @@ class ast_node:
       return "(%s >> %s)" % (self.children[0], self.children[1])
     elif self.expr == "preincrement_expr":
       return "++%s" % (self.children[0])
+    elif self.expr == "postincrement_expr":
+      return "%s++" % (self.children[0])
     elif self.expr == "nop_expr":
       return "%s" % (self.children[0])
+    elif self.expr == "pointer_plus_expr":
+      return "%s + %s" % (self.children[0], self.children[1])
+    elif self.expr == "modify_expr":
+      return "%s = %s" % (self.children[0], self.children[1])
     # Constants
     elif self.expr == "integer_cst" or self.expr == "string_cst":
       return "%s" % (self.children[0])
@@ -81,7 +130,7 @@ class ast_node:
     return [(c.expr if c else None) for c in self.children]
 
   """
-  Return a list of ast_node objects which are have an expr
+  Return a list of ast_node objects which have an expr
   type of "identifier_node".
   """
   def get_identifier_nodes(self):
@@ -99,29 +148,72 @@ class ast_node:
   Returns a list of the variable (non-constant) arguments of the function
   expression. Assumes that the node is a function expression.
   """
+  """
   def get_var_args(self):
+    # Only valid for function call
     assert(self.expr == "call_expr")
+
     args = []
     # Traverse tree
     tree_list = self.children[1]
+    # While more arguments in tree
     while len(tree_list.children) == 2:
-      if not tree_list.children[0].is_constant():
+      # Variable (not constant) found
+      #if not tree_list.children[0].is_constant():
+      if tree_list.children[0].is_variable():
         args.append(tree_list.children[0])
+      # Move to next argument
       tree_list = tree_list.children[1]
-    if not tree_list.is_constant():
+    # Handle final argument
+    # Don't add constant values
+    #if not tree_list.is_constant():
+    if tree_list.is_variable():
       args.append(tree_list.children[0])
     return args
+  """
 
+  """
+  Recursively get all variables contained in this expression. Return a list of strings of
+  all variables.
+  """
+  def get_variables(self, variables=[]):
+    # This is a variable, add to list and return
+    if self.is_variable():
+      if str(self) not in variables:
+        variables.append(str(self))
+      return variables
+    # Constant, return existing list
+    if self.is_constant():
+      return variables
+
+    # Recursively perform for all children
+    for c in self.children:
+      variables = c.get_variables(variables)
+    return variables
+
+  """
+  Return true if node reduces to a variable.
+  """
+  def is_variable(self):
+    if self.expr == "var_decl" or self.expr == "component_ref" or self.expr == "parm_decl":
+      return True
+    else:
+      return False
+        
   """
   Return true if node reduces to a constant, false otherwise.
   """
   def is_constant(self):
-    if self.expr == "string_cst" or self.expr == "integer_cst":
+    # Strings, integers, and nodes for variable names, etc. are constants
+    if self.expr == "string_cst" or self.expr == "integer_cst" or self.expr == "identifier_node":
       return True
-    elif self.expr == "identifier_node":
+    # Variables and function arguments are not constant
+    elif self.expr == "parm_decl" or self.expr == "var_decl":
       return False
+    # Multiple children implies non-constant node
     elif len(self.children) >=2:
       return False
+    # Otherwise, follow the node down to find its fundamental type
     else:
       return self.children[0].is_constant()
 
@@ -163,102 +255,14 @@ def get_low(expression):
 def get_high(expression):
   high = get_argument("high", expression)
   return int(high) if high else None
-
-def parse(line):
-  HOST_BITS_PER_INT = 64
-
-  op0 = get_op0(line)
-  op1 = get_op1(line)
-  name = get_name(line)
-  strg = get_strg(line)
-  low = get_low(line)
-  high = get_high(line)
-  fn = get_fn(line)
-  args = get_args(line)
-  valu = get_valu(line)
-  chan = get_chan(line)
-  # If statement
-  if "cond_expr" in line:
-    return "if (@%d)" % op0
-  # Function call
-  elif "call_expr" in line:
-    return "@%s(@%s)" % (fn, args)
-  elif "addr_expr" in line:
-    return "@%s" % (op0)
-  elif "function_decl" in line:
-    return "@%s" % (name)
-  elif "tree_list" in line:
-    if chan:
-      return "@%s, @%s" % (valu, chan)
-    else:
-      return "@%s" % (valu)
-  # Arrays and object members
-  elif "array_ref" in line:
-    return "@%s[@%s]" % (op0, op1)
-  elif "component_ref" in line:
-    return "@%s->@%s" % (op0, op1)
-  elif "indirect_ref" in line:
-    return "@%s" % (op0)
-  elif "var_decl" in line:
-    return "@%s" % (name)
-  elif "field_decl" in line:
-    return "@%s" % (name)
-  elif "identifier_node" in line:
-    return "%s" % (strg)
-  elif "convert_expr" in line:
-    return "@%s" % (op0)
-  # Comparison expressions
-  elif "eq_expr" in line:
-    return "@%s == @%s" % (op0, op1)
-  elif "ne_expr" in line:
-    return "@%s != @%s" % (op0, op1)
-  elif "ge_expr" in line:
-    return "@%s >= @%s" % (op0, op1)
-  elif "gt_expr" in line:
-    return "@%s > @%s" % (op0, op1)
-  elif "le_expr" in line:
-    return "@%s <= @%s" % (op0, op1)
-  elif "lt_expr" in line:
-    return "@%s < @%s" % (op0, op1)
-  elif "truth_orif_expr" in line:
-    return "(@%s) || (@%s)" % (op0, op1)
-  elif "truth_andif_expr" in line:
-    return "(@%s) && (@%s)" % (op0, op1)
-  # Arithmetic expressions
-  elif "plus_expr" in line:
-    return "(@%s + @%s)" % (op0, op1)
-  elif "minus_expr" in line:
-    return "(@%s - @%s)" % (op0, op1)
-  elif "mult_expr" in line:
-    return "(@%s * @%s)" % (op0, op1)
-  elif "trunc_div_expr" in line:
-    return "(@%s / @%s)" % (op0, op1)
-  elif "bit_and_expr" in line:
-    return "(@%s & @%s)" % (op0, op1)
-  elif "lshift_expr" in line:
-    return "(@%s << @%s)" % (op0, op1)
-  elif "rshift_expr" in line:
-    return "(@%s >> @%s)" % (op0, op1)
-  elif "preincrement_expr" in line:
-    return "++@%s" % (op0)
-  elif "nop_expr" in line:
-    return "@%s" % (op0)
-  # Constants
-  elif "integer_cst" in line:
-    # if high:
-    #   return "%d" % ((-high << 64) + -low)
-    # else:
-    return "%d" % low
-  elif "string_cst" in line:
-    return "\"%s\"" % (strg)
-  else:
-    return "[Unknown expression type: %s]" % line.split()[1]
-
+def get_type(expression):
+  typ = get_argument("type", expression)
+  return int(typ[1:]) if typ else None
 
 """
 Take a string line and return an ast_node.
 """
-def parse2(line):
+def parse(line):
   # Pull out the type of expression
   id_num = int(line.split()[0].lstrip('@'))
   expr = line.split()[1]
@@ -274,74 +278,86 @@ def parse2(line):
   args = get_args(line)
   valu = get_valu(line)
   chan = get_chan(line)
+  typ = get_type(line)
 
   # If statement
   if expr == "cond_expr":
-    ast = ast_node("cond_expr", [parse2(objects[op0])]) 
+    ast = ast_node("cond_expr", [parse(objects[op0])]) 
   # Function call
   elif expr == "call_expr":
     if args:
-      ast = ast_node("call_expr", [parse2(objects[fn]), parse2(objects[args])])
+      ast = ast_node("call_expr", [parse(objects[fn]), parse(objects[args])])
     else:
-      ast = ast_node("call_expr", [parse2(objects[fn]), ast_node("string_cst", ["void"])])
+      ast = ast_node("call_expr", [parse(objects[fn]), ast_node("string_cst", ["void"])])
   elif expr == "addr_expr":
-    ast = ast_node("addr_expr", [parse2(objects[op0])])
+    ast = ast_node("addr_expr", [parse(objects[op0])])
   elif expr == "function_decl":
-    ast = ast_node("function_decl", [parse2(objects[name])])
+    ast = ast_node("function_decl", [parse(objects[name])])
   elif expr == "tree_list":
     if chan:
-      ast = ast_node("tree_list", [parse2(objects[valu]), parse2(objects[chan])])
+      ast = ast_node("tree_list", [parse(objects[valu]), parse(objects[chan])])
     else:
-      ast = ast_node("tree_list", [parse2(objects[valu])])
+      ast = ast_node("tree_list", [parse(objects[valu])])
   # Arrays and object members
   elif expr == "array_ref":
-    ast = ast_node("array_ref", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("array_ref", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "component_ref":
-    ast = ast_node("component_ref", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("component_ref", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "indirect_ref":
-    ast = ast_node("indirect_ref", [parse2(objects[op0])])
+    ast = ast_node("indirect_ref", [parse(objects[op0])])
   elif expr == "var_decl":
-    ast = ast_node("var_decl", [parse2(objects[name])])
+    ast = ast_node("var_decl", [parse(objects[name])])
+  elif expr == "parm_decl":
+    ast = ast_node("parm_decl", [parse(objects[name])])
   elif expr == "field_decl":
-    ast = ast_node("field_decl", [parse2(objects[name])])
+    ast = ast_node("field_decl", [parse(objects[name])])
   elif expr == "convert_expr":
-    ast = ast_node("convert_expr", [parse2(objects[op0])])
+    ast = ast_node("convert_expr", [parse(objects[op0])])
   # Comparison expressions
   elif expr == "eq_expr":
-    ast = ast_node("eq_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("eq_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "ne_expr":
-    ast = ast_node("ne_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("ne_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "ge_expr":
-    ast = ast_node("ge_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("ge_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "gt_expr":
-    ast = ast_node("gt_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("gt_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "le_expr":
-    ast = ast_node("le_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("le_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "lt_expr":
-    ast = ast_node("lt_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("lt_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "truth_orif_expr":
-    ast = ast_node("truth_orif_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("truth_orif_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "truth_andif_expr":
-    ast = ast_node("truth_andif_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("truth_andif_expr", [parse(objects[op0]), parse(objects[op1])])
+  # FIXME
+  elif expr == "truth_and_expr":
+    ast = ast_node("string_cst", ["TRUE"])
   # Arithmetic expressions
   elif expr == "plus_expr":
-    ast = ast_node("plus_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("plus_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "minus_expr":
-    ast = ast_node("minus_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("minus_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "mult_expr":
-    ast = ast_node("mult_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("mult_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "trunc_div_expr":
-    ast = ast_node("trund_div_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("trund_div_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "bit_and_expr":
-    ast = ast_node("bit_and_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("bit_and_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "lshift_expr":
-    ast = ast_node("lshift_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("lshift_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "rshift_expr":
-    ast = ast_node("rshift_expr", [parse2(objects[op0]), parse2(objects[op1])])
+    ast = ast_node("rshift_expr", [parse(objects[op0]), parse(objects[op1])])
   elif expr == "preincrement_expr":
-    ast = ast_node("preincrement_expr", [parse2(objects[op0])])
+    ast = ast_node("preincrement_expr", [parse(objects[op0])])
+  elif expr == "postincrement_expr":
+    ast = ast_node("postincrement_expr", [parse(objects[op0])])
   elif expr == "nop_expr":
-    ast = ast_node("nop_expr", [parse2(objects[op0])])
+    ast = ast_node("nop_expr", [parse(objects[op0])])
+  elif expr == "pointer_plus_expr":
+    ast = ast_node("pointer_plus_expr", [parse(objects[op0]), parse(objects[op1])])
+  elif expr == "modify_expr":
+    ast = ast_node("modify_expr", [parse(objects[op0]), parse(objects[op1])])
   # Constants
   elif expr == "integer_cst":
     # if high:
@@ -353,24 +369,39 @@ def parse2(line):
   elif expr == "identifier_node":
     ast = ast_node("identifier_node", [strg])
   else:
-    raise Exception("[Unknown expression type: %s]" % line.split()[1])
+    print "Error: Unknown expression type %s" % line.split()[1]
+    print "  "  + line,
+    sys.exit()
+    #raise Exception("[Unknown expression type: %s]" % line.split()[1])
 
+  # Save node number
   ast.id = id_num
+  # Get type of expression (in string format)
+  ast.typ = objects[typ].split()[1] if typ else None
   return ast
 
-def expand(expression, objects):
-  res = re.search("@([0-9]+)", expression)
-  while res:
-    obj_id = res.group(1)
-    # Only replace first instance to avoid incorrectly overwriting others.
-    # For example replacing @355 when trying to replace @3
-    # FIXME: not really true
-    expression = expression.replace('@' + obj_id, parse(objects[int(obj_id)]), 1)
-    res = re.search("@([0-9]+)", expression)
-  return expression
+"""
+Print out information about the passed node number.
+"""
+def debug_print(i):
+  print
+  print objects[i]
+  root = expand2(objects[i])
+  print root
+  print root.typ
 
-def expand2(expression):
-  # Create root node
-  root = parse2(expression)
-  
-  return root
+"""
+Print out information about the passed node number and all its
+descendents.
+"""
+def debug_print_recursive(i, tab=""):
+  print tab, objects[i]
+  root = expand2(objects[i])
+  print tab, root
+  print tab, root.typ, root.is_constant(), root.is_variable()
+
+  for c in root.children:
+    try:
+      debug_print_recursive(c.id, tab + "  ")
+    except:
+      pass

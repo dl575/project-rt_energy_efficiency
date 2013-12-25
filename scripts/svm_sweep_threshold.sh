@@ -17,6 +17,7 @@ echo "  [4] ffmpeg_parse_metrics_slice_full.py"
 echo "  [5] ffmpeg_parse_metrics_atlas.py"
 echo "  [6] ffmpeg_parse_metrics_atlas_time.py"
 echo "  [7] spec_parse.py"
+echo "  [8] ffmpeg_parse_auto_metrics.py"
 read parse_option
 
 if [ -z $parse_option ] 
@@ -44,6 +45,9 @@ then
 elif [ $parse_option == 7 ]
 then
   PARSE_SCRIPT=spec_parse.py
+elif [ $parse_option == 8 ]
+then
+  PARSE_SCRIPT=ffmpeg_parse_auto_metrics.py
 else
   echo "Error: Unrecognized parse script option."
   exit
