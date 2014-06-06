@@ -1,4 +1,4 @@
-###### Instructions for running experiments from h264ref (SPEC2006)
+### Instructions for running experiments from h264ref (SPEC2006)
 
 1) Make SPEC benchmark using the -fdump-tree-original-raw flag.
 ```
