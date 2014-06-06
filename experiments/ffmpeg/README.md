@@ -1,18 +1,3 @@
-1. In ffmpeg-1.2/ do
-$ ./configure --extra-cflags=-fdump-tree-original-raw
-$ make
-This doesn't seem to work on Mac OSX (use Linux instead).
-
-On Mac OSX:
-$ ./configure --extra-cflags=-fdump-tree-cfg
-
-2. cp ffmpeg-1.2/libavcodec/h264.c.003t.original here
-3. Pull out just the function of interest
-$ ../../parse/parse_function.py h264.c.003t.original decode_slice > out
-4. Run get_functions.py and get_conditionals.py on function AST.
-
-
-
 ### Directions for running experiments for ffmpeg.
 
 1) Generate AST using gcc on hana.
