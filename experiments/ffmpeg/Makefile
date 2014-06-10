@@ -2,6 +2,8 @@ help:
 	@echo "Make options"
 	@echo "  auto_metrics.c"
 	@echo "  ffmpeg_convert_out"
+	@echo "  svm_out.parse8"
+	@echo "  svm_plot"
 	@echo "  clean"
 
 auto_metrics.c: h264.c.t02.original
@@ -20,4 +22,4 @@ svm_plot: svm_out.parse8
 	svm_plot_test.py svm_out.parse8
 
 clean:
-	rm -f parsed.function auto_metrics.c output.avi ffmpeg_convert_out ffmpeg_convert_out.svm svm_out.* test test.* train train.*
+	rm -f parsed.function auto_metrics.c output.avi ffmpeg_convert_out ffmpeg_convert_out.svm svm_out.* test test.* train train.* *.pdf

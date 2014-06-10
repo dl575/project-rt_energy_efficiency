@@ -10,7 +10,7 @@ hana$ runspec --action=build --config=dlo-linux-dumptree h264ref
 2) Find the produced AST file and copy it here.
 ```
 hana$ cp benchspec/CPU2006/464.h264ref/build/build_base_gcc43-64bit.0003/mv-search.c.t02.original ~
-$ scp hana:~/.original .
+$ scp hana:~/mv-search.c.t02.original .
 ```
 
 3) Run parsing scripts
@@ -20,12 +20,11 @@ $ ../../parse/get_conditionals.py parsed.function > auto_metrics.c
 $ ../../parse/get_functions.py parsed.function >> auto_metrics.c
 ```
 
+4) Manually copy the results in auto_metrics.c back into the start of mv-search.c in the h264ref source.
   > DEBUG: Remove the following (causes seg fault when running h264ref).
   ```
   printf("%d, ", (int)(img->mb_data + (img->current_mb_nr * 632))->mb_field);
   ```
-
-4) Manually copy the results in auto_metrics.c back into the start of mv-search.c in the h264ref source.
 
 5) Build and run spec with metrics printed out (either 5a or 5b).
 ```
