@@ -21,7 +21,7 @@ def parse():
   f = open(filename, 'r')
   for line in f:
     # Find metrics
-    res = re.search("auto metrics = \((.*)\)", line)
+    res = re.search("metrics = \((.*)\)", line)
     if res:
       # Remove any extra ',' and split into list
       res = res.group(1).strip().strip(',').split(',')
@@ -146,7 +146,6 @@ if __name__ == "__main__":
   f = open(svm_filename, 'w')
   f.write(output_str)
   f.close()
-
 
   # # Output raw
   # output_str = output_raw(slice_times, filtered)
