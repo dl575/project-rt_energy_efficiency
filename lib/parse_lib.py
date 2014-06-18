@@ -7,7 +7,11 @@ Functions:
   average(l)
   geomean(l)
 
+  data_remove_constant_cols(array)
+
   parse_execution_times(filename)
+  parse_frame_times(filename)
+  parse_metrics(filename)
 
   plot_histogram(data, nbins, figsize, xlabel, ylabel)
   plot_sequence(data, figsize, xlabel, ylabel)
@@ -55,6 +59,45 @@ def geomean(l):
   return prod**(1.0/n)
 
 """
+Return the median of the pass list.
+"""
+def median(l):
+  n = len(l)
+  l = sorted(l)
+  if n % 2 == 0:
+    return float(l[n/2] + l[n/2 - 1])/2
+  else:
+    return l[n/2]
+
+"""
+Remove columns from the passed numpy array which are always constant. The
+passed array is assumed to be 2-dimensional.
+"""
+def data_remove_constant_cols(array):
+  (nrows, ncols) = array.shape
+  delete_cols = []
+  for c in range(ncols):
+    same = True
+    for r in range(1, nrows):
+      # Non constant
+      if array[r][c] != array[r-1][c]:
+        same = False
+        break
+    # If constant, save column number to be deleted
+    if same:
+      delete_cols.append(c)
+  # Delete columns
+  ndeleted_cols = 0
+  print delete_cols
+  for c in delete_cols:
+    array = pylab.delete(array, c-ndeleted_cols, axis = 1)
+    # Reduce future column numbers now that array shape has changed
+    ndeleted_cols += 1
+  return array
+
+
+
+"""
 Parses the included files for execution times (of jobs). Returns a list of
 these times.
 Times are assumed to be recorded in the following format:
@@ -71,6 +114,59 @@ def parse_execution_times(filename):
       times.append(int(res.group(2)))
   f.close()
   return times
+
+"""
+Parses the included files for execution times of frames. Returns a list of
+these times.
+Times are assumed to be recorded in the following format:
+  Frame [0-9]+ = [0-9]+us
+  $1 is the frame instance.
+  $2 is the execution time in microseconds.
+"""
+def parse_frame_times(filename):
+  f = open(filename, 'r')
+  times = []
+  for line in f:
+    res = re.search("Frame ([0-9]+) = ([0-9]+)us", line)
+    if res:
+      times.append(int(res.group(2)))
+  f.close()
+  return times
+
+"""
+Parse the file for metrics. These are recorded in the following
+format:
+    .*metrics = (a, b, c, ...)
+"""
+def parse_metrics(filename):
+  f = open(filename, 'r')
+  metrics = []
+  for line in f:
+    res = re.search("metrics = \((.*)\)", line)
+    if res:
+      metrics.append([int(x[0:-1]) for x in res.group(1).split()])
+  f.close()
+  return metrics
+
+"""
+Parses the included files for execution times (of jobs). Returns a list of
+these times.
+Times are assumed to be recorded in the following format:
+  time [0-9]+ = [0-9]+ us
+  $1 is the job instance.
+  $2 is the execution time in microseconds.
+"""
+def parse_execution_times(filename):
+  f = open(filename, 'r')
+  times = []
+  for line in f:
+    res = re.search("time ([0-9]+) = ([0-9]+) us", line)
+    if res:
+      times.append(int(res.group(2)))
+  f.close()
+  return times
+
+
 
 """
 Plots the passed data into a histogram. data is a list of numbers.
