@@ -76,7 +76,12 @@ f.close()
 
 best_percentages = [max(a, b) for (a, b) in zip(slow_percentages, fast_percentages)]
 
-# Plot
+# print ','.join([str(x) for x in thresholds])
+# print ','.join([str(x/100) for x in accuracy])
+
+"""
+Plot
+"""
 fig = plot.figure()
 subplot_layout = 410
 subplot_count = 0
@@ -150,4 +155,35 @@ ax5.legend(("Slow frames", "Fast frames"))
 # Show plot
 plot.tight_layout()
 plot.show()
+
+"""
+Output data to csv
+"""
+csv_filename = filename + ".csv"
+csv_file = open(csv_filename, 'w')
+
+def columns(zipped_list):
+  s = '\n'.join([','.join([str(y) for y in x]) for x in zipped_list])
+  return s
+
+csv_file.write("Threshold [us], SVM, Constant guess\n")
+csv_file.write(columns(zip(thresholds, accuracy, best_percentages)))
+csv_file.write("\n\n\n")
+
+csv_file.write("Threshold [us], Slow frames, Fast frames\n")
+csv_file.write(columns(zip(thresholds, slow_accuracies, fast_accuracies)))
+csv_file.write("\n\n\n")
+
+csv_file.write("Test frames\n")
+csv_file.write("Threshold [us], Slow frames, Fast frames\n")
+csv_file.write(columns(zip(thresholds, slow_frames, fast_frames)))
+csv_file.write("\n\n\n")
+
+csv_file.write("Train frames\n")
+csv_file.write("Threshold [us], Slow frames, Fast frames\n")
+csv_file.write(columns(zip(thresholds, train_slow_frames, train_fast_frames)))
+
+csv_file.close()
+
+
 
