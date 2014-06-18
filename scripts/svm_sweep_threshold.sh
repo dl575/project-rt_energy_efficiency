@@ -81,5 +81,5 @@ do
   # Parse metrics into libsvm format from raw trace file
   $PARSE_SCRIPT $1 $SVMFILE $i
   # Perform SVM classification with train and test from one data set
-  svm_one.sh $SVMFILE | tee -a $OUTFILE
+  svm_one.sh $SVMFILE $1 | tee -a $OUTFILE
 done
