@@ -1,0 +1,461 @@
+\documentclass[11pt, letterpaper]{article}
+	\title{Designs and Approaches for Execution Time Prediction}
+	\author{Daniel Lo \{dl575\}}
+	
+	% Packages for math formatting
+	\usepackage{amsfonts}
+	\usepackage{amsmath}
+	\usepackage{amsthm}
+
+	% for letter paper
+	\usepackage[letterpaper]{geometry}
+	% 1 inch margins
+	\usepackage{fullpage}    
+	% allow enumerate numberings to be specified
+	\usepackage{enumerate}
+	% Insert images
+	\usepackage{graphicx}
+	% For syntax highlighting
+	\usepackage{listings}
+  % Graphviz
+  \usepackage{graphviz}
+  % Algorithms
+  \usepackage{algorithm}
+  \usepackage{algorithmic}
+		
+	% Header
+	\usepackage{fancyhdr}
+	\pagestyle{fancy}
+	\headheight 30pt
+	\rhead{}
+	\lhead{Designs and Approaches for Execution Time Prediction \\
+  Daniel Lo \{dl575@cornell.edu\}}
+  \headsep 0.1in
+	
+	% Scientific form
+	\providecommand{\e}[1]{\ensuremath{\cdot 10^{#1}}}
+	% Matrix - use mathbf font
+	\providecommand{\m}[1]{\mathbf{#1}}
+	% Degree symbol
+	\providecommand{\degrees}{^{\circ}}
+	% Insert figure
+	\providecommand{\fig}[1]{
+		\noindent
+		\begin{center}
+			\includegraphics[height=3.5in]{#1}
+		\end{center}
+	}
+  \providecommand{\figcol}[1]{
+    \noindent
+    \begin{center}
+      \includegraphics[width=\columnwidth]{#1}
+    \end{center}
+  }
+	\providecommand{\dualfig}[2]{
+		\noindent
+		\begin{center}
+		\includegraphics[width=3.2in]{#1} \hspace{-0.3in}
+		\includegraphics[width=3.2in]{#2}
+		\end{center}
+	}
+	\providecommand{\tripfig}[3]{
+		\noindent
+		\begin{center}
+		\hspace{-0.3in}
+		\includegraphics[width=2.3in]{#1} \hspace{-0.3in}
+		\includegraphics[width=2.3in]{#2} \hspace{-0.3in}
+		\includegraphics[width=2.3in]{#3} \hspace{-0.3in}
+		\end{center}
+	}
+	% begin/end align*
+	\providecommand{\eq}[1]{
+		\begin{align*}
+		#1
+		\end{align*}
+	}
+	% Use overline which is longer instead of bar
+	\renewcommand{\bar}[1]{
+		\overline{#1}
+	}
+  % Generate graph using dot/graphviz
+  % First argument is graph name
+  % Second argument is the dot notation of a graph, e.g.:
+  %   rankdir=LR; a->b
+  \providecommand{\dotgraph}[2]{
+    \vspace{-0.6in}
+    \begin{center}
+    \digraph[scale=0.75]{#1}{#2}
+    \end{center}
+    \vspace{-0.6in}
+  }
+		
+	% Insert a blank line between paragraphs
+	\setlength{\parskip}{\baselineskip}
+\begin{document}
+
+%\maketitle
+
+\section{Introduction}
+
+This document discusses approaches and trade-offs for performing execution time
+prediction (in the context of using it to inform DVFS).
+
+\textbf{Problem: } Given a set of data values, we want to predict the execution
+time of a job. The problem includes determining which data values are necessary
+as well as the algorithm for performing the prediction. We will assume that we
+have some number of jobs that are used for training. Training can include using
+certain jobs or operating points (i.e., DVFS setting) to aid the training. In
+addition, once training is complete, information from running jobs can be used
+to further improve the prediction model.
+
+\section{Machine Learning Background}
+\label{sec:ml}
+
+This section attempts to summarize some of the problems and
+algorithms/approaches addressed by machine learning which may be of interest
+for predicting execution times. The information is a combination of information
+from Wikipedia and personal knowledge.
+
+\subsection{Problems}
+\label{sec:ml.problems}
+
+There are two machine learning problems which are of interest to us in
+predicting execution times: \emph{classification} and \emph{regression}.
+
+\noindent\textbf{Regression: } Regression is the problem of identifying the relationship between independent
+and dependent variables. In our case, the execution time prediction problem can
+be framed as a regression problem to determine the relationship between
+execution time and input data values. The resulting solution is an equation
+relating the two which can be used to predict new data points.
+
+\noindent\textbf{Classification: } is the problem of determining which category an item belongs to.
+The execution time prediction problem can be framed as a classification problem
+where the categories are time bins that the execution time can fall in. For
+example, two simple categories are whether the execution time is slower or
+faster than the required response-time threshold. Alternatively, categories
+could be which minimal-power DVFS setting is required to meet the response-time
+threshold.
+
+\subsection{Algorithms}
+\label{sec:ml.algs}
+
+\noindent\textbf{Decision tree: } A decision tree is a tree used for classification
+where each leaf node indicates a category and each non-leaf node indicates a
+decision. A new data point can travel the decisions in the tree to reach a
+category prediction. There exist various algorithms for constructing and
+optimizing the tree. Decision trees require a discrete decision to be made at
+each node (e.g., yes/no, greater than/less than threshold). As a result, it
+seems to be a poor fit for execution time prediction as it would require
+translating the input values into decisions.
+
+\noindent\textbf{k-Nearest Neighbors (k-NN): } k-NN classifies a data point based on its
+k-nearest neighbors. Regression can also be performed by taking an average of
+the dependent variable value of the k-nearest neighbors. This is a relatively
+simple algorithm. The main challenge is in identifying the nearest neighbors. A
+naive solution requires checking all points, though better algorithms exist by
+organizing existing points in a tree. k-NN can suffer from local structure of
+the data and can also be dominated by categories which have a larger number of
+data points.
+
+\noindent\textbf{Linear Regression: } Linear regression is a simple version of
+regression where a linear relationship is assumed between the dependent
+variables and the independent variables. A linear model can be fit by using the
+method of least-squares. This is effectively a matrix multiplication which
+produces a linear equation that can be used to predict the execution time of
+new jobs.
+
+\noindent\textbf{Polynomial and Nonlinear Regression: } There also exist algorithms for
+fitting polynomial and nonlinear curves to data. Polynomial regression can be
+solved similar to linear regression through a set of matrix multiplications.
+Nonlinear regression models are more difficult to solve for, typically
+requiring some numerical approximation method or by approximating certain
+things as linear and then refining.
+
+\noindent\textbf{Artificial Neural Networks: } ANNs are neuron-inspired structures that
+have been shown to be effective for pattern recognition patterns. The basic
+element is a neuron which consists of some inputs and an output. In the
+simplest model, the output ``fires'' when the sum of the inputs exceed some
+threshold. A network of these is used to produce an output (typically a
+classification). Training involves determining the weights of inputs and
+thresholds to use for the neurons in these networks. ANNs have been shown to be
+successful at pattern recognition problems such as handwriting recognition that
+have been difficult for traditional algorithms. However, they can be
+difficult/expensive to train and the computation required can be high due to
+the need to simulate many neurons.
+
+\noindent\textbf{Support Vector Machines: }  SVMs in their simplest form are binary
+linear classifiers. Given a training set of labeled data, they attempt to
+construct a plane to divide the space into two categories. This can be applied
+to execution time prediction to predict whether jobs are slower or faster than
+a threshold. More complex forms of SVMs can classify into more than 2
+categories, perform non-linear classification, and perform regression. Training can
+be slow/expensive as it relies on solving a quadratic programming problem.
+
+The following table summarizes whether these approaches solve regression or
+classification problems. Items in parentheses indicate that extensions exist to
+solve these class of problems.
+
+\begin{tabular}{|l|l|}
+\hline
+Algorithm & Problem Type \\ \hline\hline
+Decision Tree & Classification \\ \hline
+k-NN & Classification (Regression) \\ \hline
+Linear Regression & Regression \\ \hline
+Polynomial and Nonlinear Regression & Regression \\ \hline
+Artificial Neural Networks & Classification \\ \hline
+Support Vector Machines & Classification (Regression) \\ \hline
+\end{tabular}
+
+\section{Design Choices}
+
+The following attempts to discuss some of the design choices that can be made
+in creating a method for predicting execution time.
+
+\noindent\textbf{Static Analysis: } Static analysis of source code can be used to find
+data values that are useful for prediction. However, this does require
+pre-processing and access to source code. Static analysis of the binary may
+provide useful information without the need for source code.
+
+\noindent\textbf{Offline vs. Online Training: } Whatever prediction mechanism is used
+will require some amount of training data in order to calibrate and learn the
+characteristics of an application. This training can be done either online,
+offline, or some combination of the two. Offline training can use more
+sophisticated techniques for training as its overheads do not contribute to the
+overheads of the application. However, it requires more programmer effort.
+Online training does not require extra programmer effort. It also is likely
+more easily applied to new applications as it does not require a separate
+training phase. In addition, it allows continuous updating of the prediction model.
+A hybrid approach would allow an offline-trained model to be updated as the
+application runs.
+
+\noindent\textbf{Feature Extraction: } A large challenge is determining which features
+(i.e., inputs, data values, metrics, etc.) should be used as inputs for
+prediction. This can be done entirely by the programmer or by automated
+processes or by some combination (e.g., programmer hints). Using the programmer
+to indicate features requires more programmer effort but likely has better
+results as they can provide domain-specific knowledge. An automated process can
+be more generally applied, possibly even to cases where source code is not
+available. However, it may require significant analysis time and prediction
+accuracy may be lower than a programmer-based approach.
+
+\noindent\textbf{Model Complexity: } In order to predict the execution time jobs, we are
+essentially building a model to relate the features to the execution time. More
+complex models will hopefully give better accuracy. However, they will likely
+require more computation and thus introduce performance and energy overheads.
+Less complex models introduce less overheads but may be inaccurate. Since our
+goal is to save energy, this is an important point since we need to be accurate
+enough to be able to find energy savings when they exist, but the overheads of
+prediction need to not outweigh the energy savings.
+
+\section{Limits of Prediction}
+\label{sec:limit}
+
+In this section, we study how much variation there is for frames across
+multiple runs. The following figure shows 10 runs of ffmpeg with the same
+input. This was run on a 2013 Macbook Air. All (obvious) user applications were
+terminated and wi-fi was disabled in an attempt to reduce competing processes.
+
+\figcol{figs/frames_overlay.png}
+
+At this granularity, it seems that there is some correlation in execution time
+for the average-case behavior. However, it is interesting to note that outliers
+do not seem to be consistent across runs.
+
+The following figure shows the difference between the execution time of each
+frame on an individual run and the median execution time across runs. The
+median was used instead of the average in order to reduce the effects of
+outliers. One arbitrary run (Run \#5) is highlighted in red. The second graph
+zooms in on the y-axis to be between -4 ms and +4 ms.
+
+\figcol{figs/frames_diff.png}
+
+\figcol{figs/frames_diff_reduced.png}
+
+There looks to be quite a bit of variation across runs including some large
+outliers. Most of the variation looks to be within 1ms of the median across
+runs. This inherently puts a limit to how accurate our prediction mechanism can
+be.
+
+\section{Related Work}
+
+We discuss some previous work that performs execution time prediction based on
+input values.
+
+Zhu and Reddi \footnote{Yuhao Zhu and Vijay Janapa Reddi. High-Performance and
+Energy-Efficient Mobile Web Browsing on Big/Little Systems. HPCA 2013.} use a
+restricted cubic spline-based model to model webpage load time and
+energy consumption based on 376 input variables. These input variables are
+selected from extensive profiling and micro-benchmarking. They use 2,500 sample
+to train the model. To prevent overfitting, they eliminate features which
+correlate poorly ($\rho^2 < 1$).  They also prune features which are highly
+correlated to each other. They also evaluate a linear regression model but the
+cubic spline-based model shows better prediction accuracy.
+
+ATLAS \footnote{Michael Roitzsch et al. ATLAS: Look-Ahed Scheduling Using
+Workload Metrics. RTAS 2013.} uses a linear regression model to predict
+execution times based on input
+values. This model is continuously updated as new jobs are executed. In
+addition, an ageing mechanism decreases the impact of older jobs on the model.
+Input metrics are identified by the programmer and larger metric values should
+correlate with higher execution times. They evaluate two sets of metrics. The
+first is a reduced set including the number of pixels in a frame, the number of
+bytes in the compressed frame, and the frame type  (I, P, or B). They also
+evaluate using a more extensive set of metrics based on programmer knowledge
+which are embedded into the video data through a pre-processing step (based on
+their previous work \footnote{Roitzsch and Pohlack. Principles for the
+prediction of video decoding times applied to MPEG-1/2 and MPEG-4 part 2 video.
+RTSS 2006.} \footnote{Roitzsch. Slice-balancing h.264 video encoding for
+improved scalability of multicore decoding. EMSOFT 2007.}). In theory these
+metrics could also be calculated at run-time by rewriting the video decoder to
+first calculate these metrics.
+
+
+Mantis \footnote{Yongin Kwon et al. Mantis: Automatic Performance Prediction
+for Smartphone Applications. ATC 2013.} predicts execution time based
+ultimately on program inputs, but uses
+intermediate values calculated in the code as the direct features for
+prediction. They use a multivariate polynomial regression model. This model is
+found by first using sparse linear regression to eliminate a number of
+features. They then perform sparse multivariate polynomial regression on the
+remaining features. Specifically, their sparse regression is done using the
+LASSO (Least Absolute Shrinkage and Selection Operator) method. The features
+they use are loop counts, method invocation counts, branch counts, exception
+counts, and the first k values assigned to each variable. The sparse regression
+analysis eliminates most of these features. The remaining features are used to
+find a minimal program slice. Thus, at runtime, the minimal program slice can
+be used to calculate the relevant feature values, which can then be fed into
+the regression model to predict execution time. There is an iterative process
+in order to minimize the program slice execution time and maximize the
+prediction accuracy.
+
+The following table attempts to summarize the prediction mechanisms used in these studies.
+
+\noindent
+\begin{small}
+\begin{tabular}{|l||l|l|}
+\hline
+Work & Prediction Model & Features \\\hline\hline
+
+Zhu \& Reddi & Restricted Cubic Spline-based Regression & Values selected through extensive profiling \\ \hline
+ATLAS & Linear Regression & Programmer specified values \\ \hline
+Mantis & Sparse Polynomial Regression & Automatically profiled values \\ \hline
+\end{tabular}
+\end{small}
+
+\section{Naive Approaches}
+
+\textbf{Utilization-based Approach: } This approach increases DVFS when the CPU
+is heavily utilized. This will likely perform poorly in terms of energy saving
+since during video decode the system will see that there is computation to be
+done and use the highest DVFS setting.
+
+\noindent\textbf{Previous or Time-Averaged Approach: } This approach uses information
+from the last n jobs to inform the setting for the current job. From our
+experimental data, we have seen large variation in execution time from job to
+job, indicating that using previous history is not enough to perform a good
+prediction.
+
+\section{Proposed Approach}
+
+\subsection{Feature Extraction}
+
+% \dotgraph{input_variation}{
+%   rankdir=LR;
+%   "input data"->"control flow"->"execution time"; 
+%   "input data"->"uarch state"->"execution time";
+%   "input data"->"variable time inst"->"execution time";
+%   "interfering process"->"execution time"; 
+%   "interfering process"->"uarch state";
+%   "previous uarch state"->"execution time"
+% }
+% 
+% We expect that most of the variation in execution time is due to different
+% input data. Here, we define input data as any data that is used by the
+% computation of the job that can have different initial values for different job
+% instances. This includes state that may be saved from previous jobs (e.g.,
+% frame number) but does not include intermediate calculated values which vary
+% from job to job. The other possible sources of variation are competing
+% processes and microarchitectural state. Other processes may compete for CPU
+% time and other shared resources which can impact a job's execution time.
+% We ignore this initially though there may be opportunities to account for this
+% in the prediction or to reduce this interference through scheduling mechanisms.
+% Microarchitectural state, such as cache state, can also cause jobs to have
+% different execution times. We expect this effect to be minimal on average and
+% will ignore it for now.
+
+In order to be general and easily applicable to new applications, we avoid
+having the programmer specify relevant features for execution time prediction.
+Instead, we will attempt to automatically identify features.
+
+Although it should be possible able to determine the execution time from input data, the
+function mapping input data to execution time may be complex. For example, one
+way to calculate the execution time from the inputs is to simply run the job
+and measure the execution time. However, in order to be useful, we need a
+faster and lower overhead method. We could simply use the input data and try to use various
+regression models, but this is unlikely to be successful due to the large
+and possibly complex ways in which the inputs relate to execution time.
+However, we do have some information about how these values
+affect program execution since we have the program source. From traditional
+WCET estimation, the most important factor in execution time variation is
+control flow decisions. For certain control flow, it should be relatively easy
+to correlate them to execution time. For example, for simple for loops, we can
+determine the number of loop iterations based on the control flow variables.
+Similarly, for if statements, by knowing which branch is taken and from
+execution time data, we should be able to correlate which direction is longer.
+However, more complicated control, such as iterating over all bytes in a file,
+may be difficult to calculate without actually performing the action.
+Once these values are identified, we can use a program-slicing approach,
+similar to Mantis, in order to generate a simple way to calculate these values.
+
+% A major challenge seems to be determining which data is most relevant to
+% execution time. Previous work has used domain-specific knowledge to identify
+% possible candidates and still requires experimentation to determine which exact
+% features are best. One reason this is challenging is because the amount of
+% input data can be large. For video decoding, it is the entire frame's data. For
+% web browsing, it is the entire web page data. In addition, transforming the raw
+% data into sensible metrics can be challenging. For video decoding, the raw data
+% is compressed and likely needs to be decompressed in order to be of any use.
+
+\subsection{Prediction Model}
+From the data in Section~\ref{sec:limit}, there is considerable noise in the
+execution time across runs. This can cause challenges for classification-based
+approaches for prediction. Classification approaches attempt to divide the
+input space into distinct categories. However, noise could change which
+category a data point will fall into. We saw these issues with our initial
+SVM-based prediction experiments where thresholds around the average value
+showed much lower prediction accuracy. From the algorithms presented in
+Section~\ref{sec:ml.algs}, this eliminates decision tress and ANNs. k-NNs and
+SVMs could work by using regression-based versions of them. Linear and
+polynomial regression seem to be the most promising as the method of least
+squares is a computationally simple way to solve for these models.
+
+On the other hand, classification-based approaches may make sense as there are
+typically discrete choices of DVFS settings. Our ultimate goal is to classify
+jobs into the DVFS bin to use. If classification-based approaches are used, it
+may make sense to use (or at least first use) k-NN in order to discover the
+underlying categories.
+
+\subsection{Possible Relaxations}
+
+There are possibly some ways to relax the problem that would make the
+prediction easier. One is that we could allow some portion of the job's code to
+execute before we make our prediction and our DVFS decision. For example, the
+execution time to decompress a video frame may correlate well with the
+execution time of the later decoding steps. Similarly, it may be that certain
+(early) control decisions quickly split the execution times into high and low
+clusters. We could wait until this branch decision to make our DVFS decision.
+Similarly, we could also attempt to use microarchitectural metrics (e.g., cache
+miss rate, branch mispredict, etc.) related to executing a portion of the job
+to aid in the prediction.
+
+% Another point is that we could assume that many consecutive jobs are run. In
+% this case, we can use the execution times of previous jobs as a baseline and
+% focus on predicting variation from this. This helps deal with macro-level
+% variations. For example, this could be used to handle the effect of competing
+% processes. Also, this could be used to handle videos of different resolutions
+% without having to predict the effect of resolution on frame decode time. If the
+% decode time of all frames scales proportionally to the resolution, then we can
+% use the first frame as a baseline and focus on the properties that affect
+% variation among frames in a single video.
+
+\end{document}
