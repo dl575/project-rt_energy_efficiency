@@ -18,4 +18,4 @@ plot_svm: svm_out.parse8
 	svm_plot_test.py svm_out.parse8
 
 clean:
-	rm -f *.svm test test.* train train.* svm_out.* parsed.function
+	rm -f *.svm test test.* train train.* svm_out.* parsed.function *.pyc
