@@ -5,3 +5,4 @@
 *.pod
 *.pc
 *.1
+.DS_STORE
