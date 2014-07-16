@@ -322,6 +322,10 @@ class CLexer(object):
     def t_NEWLINE(self, t):
         r'\n+'
         t.lexer.lineno += t.value.count("\n")
+    # // Comments
+    def t_CPPCOMMENT(self, t):
+        r'//.*\n'
+        t.lexer.lineno += 1
 
     # Operators
     t_PLUS              = r'\+'
