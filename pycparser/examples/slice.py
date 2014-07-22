@@ -12,7 +12,7 @@ from pycparser import c_generator
 from pycparser import c_ast
 
 """
-Initialize all nodes to not part of program slice.
+Initialize all nodes to not be part of program slice.
 """
 class InitializeSlicedVisitor(c_ast.NodeVisitor):
   def __init__(self):
@@ -23,14 +23,19 @@ class InitializeSlicedVisitor(c_ast.NodeVisitor):
       self.visit(c)
 
 """
-Identify all IDs in tree.
+Identify all IDs in tree. Struct accesses are saved as struct + member (i.e., a->b).
+Arrays should be identified by base name.
 """
 class IDVisitor(c_ast.NodeVisitor):
   def __init__(self):
     self.IDs = []
+    self.cgenerator = c_generator.CGenerator()
   def visit_ID(self, node):
     if node.name not in self.IDs:
       self.IDs.append(node.name)
+  def visit_StructRef(self, node):
+    struct_name = self.cgenerator.visit(node)
+    self.IDs.append(struct_name)
 
 """
 Identify all data dependencies of the passed variable var.
@@ -46,12 +51,19 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     node.sliced = True
     self.id_visitor.visit(node)
     self.rvalues = self.rvalues.union(set(self.id_visitor.IDs))
+  def get_ArrayRef_name(self, node):
+    assert(isinstance(node, c_ast.ArrayRef) or isinstance(node, c_ast.ID))
+    if isinstance(node, c_ast.ID):
+      return node.name
+    else:
+      return self.get_ArrayRef_name(node.name)
   def visit_Assignment(self, node):
     # Direct variable assignment
     if isinstance(node.lvalue, c_ast.ID) and node.lvalue.name == self.var:
       self.slice_data(node)
     # Array assignment
-    elif isinstance(node.lvalue, c_ast.ArrayRef) and (node.lvalue.name.name.name == self.var):
+    #elif isinstance(node.lvalue, c_ast.ArrayRef) and (node.lvalue.name.name.name == self.var):
+    elif isinstance(node.lvalue, c_ast.ArrayRef) and (self.get_ArrayRef_name(node.lvalue) == self.var):
       self.slice_data(node)
       # Struct assignment
       """
@@ -233,19 +245,6 @@ class LValueVisitor(c_ast.NodeVisitor):
     if isinstance(node.expr, c_ast.ID):
       self.IDs.append(node.expr.name)
 
-def identify_globals(ast):
-  # Get all IDs
-  v = LValueVisitor()
-  v.visit(ast)
-  all_ids = set(v.IDs)
-  v = DeclVisitor()
-  v.visit(ast)
-  declared_ids = set(v.IDs)
-  undeclared_ids = all_ids.difference(declared_ids)
-  print all_ids
-  print declared_ids
-  print undeclared_ids
-
 """
 Pretty print the passed AST/node.
 """
@@ -277,5 +276,3 @@ if __name__ == "__main__":
 
   print_slice(ast)
 
-  #identify_globals(ast)
- 
