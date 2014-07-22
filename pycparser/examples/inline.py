@@ -178,6 +178,11 @@ if __name__ == "__main__":
     v.visit(ast)
 
   #print_node(ast)
+  # Print out non-function top-levels
+  for c_name, c in ast.children():
+    if not isinstance(c, c_ast.FuncDef):
+      print_node(c) 
+      print_node(c_ast.EmptyStatement())
   # Print out top-level function
   for function in functions:
     if function.decl.name == top_func:
