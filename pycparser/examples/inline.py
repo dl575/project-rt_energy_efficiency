@@ -13,6 +13,27 @@ from pycparser import c_ast
 from pycparser import c_generator
 
 """
+Renames variable old_name to new_name.
+"""
+class RenameVisitor(c_ast.NodeVisitor):
+  def __init__(self, old_name=None, new_name=None):
+    self.old_name = old_name
+    self.new_name = new_name
+    self.cgenerator = c_generator.CGenerator()
+  """
+  Set the old_name and new_name for renaming.
+  """
+  def set_names(self, old_name, new_name):
+    self.old_name = old_name
+    self.new_name = new_name
+  def visit_ID(self, node):
+    if node.name == self.old_name:
+      node.name = self.new_name
+  def visit_TypeDecl(self, node):
+    if node.declname == self.old_name:
+      node.declname = self.new_name
+
+"""
 Replaces return statements with a goto.
 """
 class ReturnToGotoVisitor(c_ast.NodeVisitor):
@@ -20,17 +41,23 @@ class ReturnToGotoVisitor(c_ast.NodeVisitor):
     self.goto_ID = None
   def generic_visit(self, node):
     for ci, (c_name, c) in enumerate(node.children()):
+      # Return statement
       if isinstance(c, c_ast.Return):
+        # Create a new compound node
         insert_node = c_ast.Compound([])
+        # If there is a return value, add statement for return_value = value
         if c.expr:
           insert_node.block_items.append(c_ast.Assignment("=", c_ast.ID("return_value"), c.expr))
+        # Add goto to end of function block
         insert_node.block_items.append(c_ast.Goto(self.goto_name))
+        # Depending on parent, handle insertion differently
         if isinstance(node, c_ast.Compound):
           node.block_items[ci] = insert_node
         elif isinstance(node, c_ast.If):
           exec("node.%s = insert_node" % c_name)
         else:
           raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+      # Non-return statement, continue visiting
       else:
         self.visit(c)
 
@@ -45,32 +72,38 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
 
     self.rtg_visitor = ReturnToGotoVisitor()
     self.return_counter = 0
+
+    self.rename_visitor = RenameVisitor()
+    self.rename_counter = 0
+
   def visit_FuncDef(self, node):
     if (node.decl.name == self.funcname):
       # Find and replace function calls
       self.expand_visit(node)
   """ 
-  Replaced nodes with full function.
+  Replace node with full function.
   """
   def expand_visit(self, node):
     # For each child
     for ci, (c_name, c) in enumerate(node.children()):
 
-      #################################
-      # Assignment
-      #################################
-      if isinstance(c, c_ast.Assignment):
-        if isinstance(c.rvalue, c_ast.FuncCall):
-          for function in self.functions:
-            if c.rvalue.name.name == function.decl.name:
-              inline_function = self.create_inline_function(function, c.rvalue)
-              # Handle return value
-              inline_function.body.block_items.append(c_ast.Assignment("=", c.lvalue, c_ast.ID("return_value")))
-              if isinstance(node, c_ast.Compound):
-                node.block_items[ci] = inline_function.body
-              else:
-                raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
-              node.expanded = True
+      ##########################################
+      # Assignment with function call as rvalue
+      ##########################################
+      if isinstance(c, c_ast.Assignment) and isinstance(c.rvalue, c_ast.FuncCall):
+        # Find matching function body
+        for function in self.functions:
+          if c.rvalue.name.name == function.decl.name:
+            # Create the inline version of the function body
+            inline_function = self.create_inline_function(function, c.rvalue)
+            # Set assignment lvalue to return value
+            inline_function.body.block_items.append(c_ast.Assignment("=", c.lvalue, c_ast.ID("return_value")))
+            # Replace node in parent
+            if isinstance(node, c_ast.Compound):
+              node.block_items[ci] = inline_function.body
+            else:
+              raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+            node.expanded = True
 
       #################################
       # Function call
@@ -95,7 +128,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             self.expanded = True
 
       #################################
-      # Other
+      # Other - Continue visiting
       #################################
       else:
         self.expand_visit(c)
@@ -105,21 +138,52 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
   def create_inline_function(self, function, caller):
     # Create a copy of the function
     function_copy = copy.deepcopy(function)
+
     ###################################
     # Function Arguments
     ###################################
+    function_copy.body.block_items.insert(0, c_ast.ID("// End of arguments"))
+    args = []
+    ptr_args = []
     # If it has arguments
     if function_copy.decl.type.args:
-      # Add those argument declarations to the start of the function
+      # For each function argument and passed value
       for (arg, init) in zip(function_copy.decl.type.args.params, caller.args.exprs):
-        arg.init = init
-        function_copy.body.block_items.insert(0, arg)
+        # Pointers just get renamed, no re-declare
+        if isinstance(arg.type, c_ast.PtrDecl):
+          if isinstance(init, c_ast.UnaryOp):
+            ptr_args.append((self.get_Decl_name(arg), init.expr.name))
+          elif isinstance(init, c_ast.StructRef):
+            ptr_args.append((self.get_Decl_name(arg), "%s->%s" % (init.name.name, init.field.name)))
+          elif isinstance(init, c_ast.ID):
+            ptr_args.append((self.get_Decl_name(arg), init.name))
+          else: 
+            raise Exception("Unsupported init type %s" % (type(init)))
+        else:
+          # Assign passed value to argument declaration
+          arg.init = init
+          # Save list of argument name for renaming
+          args.append(self.get_Decl_name(arg))
+          # Insert into start of function
+          function_copy.body.block_items.insert(0, arg)
+
+    # Rename arguments to prevent aliasing with upper-level
+    for arg in args:
+      self.rename_visitor.set_names(arg, arg + "_rename%d" % self.rename_counter)
+      self.rename_visitor.visit(function_copy)
+    for arg in ptr_args:
+      self.rename_visitor.set_names(arg[0], arg[1])
+      self.rename_visitor.visit(function_copy)
+    # Increment rename counter to ensure unique names
+    self.rename_counter += 1
+
     # Add declaration for return value (if function is non-void)
     if function.decl.type.type.type.names[0] != "void":
       td = c_ast.TypeDecl("return_value", None, function.decl.type.type.type)
       d = c_ast.Decl(None, None, None, None, td, None, None)
       function_copy.body.block_items.insert(0, d)
     function_copy.body.block_items.insert(0, c_ast.ID("// Inline function: %s" % (function_copy.decl.name)))
+
     ###################################
     # Return statements
     ###################################
@@ -132,6 +196,15 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     function_copy.body.block_items.append(c_ast.Label(return_label, c_ast.EmptyStatement()))
 
     return function_copy
+
+  """
+  Return the string name of the variable being declared
+  """
+  def get_Decl_name(self, node):
+    if isinstance(node, c_ast.TypeDecl):
+      return node.declname
+    else:
+      return self.get_Decl_name(node.type)
 
 """
 Find all function declarations.
