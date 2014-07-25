@@ -91,7 +91,9 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     else:
       self.generic_visit(node)
   def visit_Decl(self, node):
-    if (node.name == self.var):
+    # For structs, only use base name
+    base_name = self.var.split("->")[0]
+    if (node.name == base_name):
       self.slice_data(node)
     # Not part of slice, check children
     else:
