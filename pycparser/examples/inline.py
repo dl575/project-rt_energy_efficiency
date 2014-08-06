@@ -25,7 +25,11 @@ class RenameVisitor(c_ast.NodeVisitor):
   """
   def set_names(self, old_name, new_name):
     self.old_name = old_name
-    self.new_name = new_name
+    # Ensure that new name is a string
+    if isinstance(new_name, str):
+      self.new_name = new_name
+    else:
+      self.new_name = self.cgenerator.visit(new_name)
   def visit_ID(self, node):
     if node.name == self.old_name:
       node.name = self.new_name
