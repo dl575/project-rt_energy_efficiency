@@ -105,6 +105,8 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             # Replace node in parent
             if isinstance(node, c_ast.Compound):
               node.block_items[ci] = inline_function.body
+            elif isinstance(node, c_ast.Case):
+              node.stmts[ci - 1] = inline_function.body
             else:
               raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
             node.expanded = True
@@ -127,6 +129,8 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
               exec("node.%s = function_copy.body" % c_name)
             elif isinstance(node, c_ast.Assignment):
               node.rvalue = function_copy.body
+            elif isinstance(node, c_ast.Case):
+              node.stmts[ci - 1] = function_copy.body
             else:
               raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
             self.expanded = True
