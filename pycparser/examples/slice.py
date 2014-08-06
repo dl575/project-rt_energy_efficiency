@@ -51,12 +51,18 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     node.sliced = True
     self.id_visitor.visit(node)
     self.rvalues = self.rvalues.union(set(self.id_visitor.IDs))
+  # Get base name of array without index
   def get_ArrayRef_name(self, node):
-    assert(isinstance(node, c_ast.ArrayRef) or isinstance(node, c_ast.ID))
     if isinstance(node, c_ast.ID):
       return node.name
-    else:
+    elif isinstance(node, c_ast.StructRef):
+      return node
+    # Multi-dimensional array
+    elif isinstance(node, c_ast.ArrayRef):
       return self.get_ArrayRef_name(node.name)
+    else:
+      node.show(nodenames=True, showcoord=True)
+      raise Exception("Unknown type for get_ArrayRef_name: %s" % (type(node)))
   def visit_Assignment(self, node):
     # Direct variable assignment
     if isinstance(node.lvalue, c_ast.ID) and node.lvalue.name == self.var:
@@ -87,6 +93,8 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
       self.generic_visit(node)
     """
     if self.cgenerator.visit(node.expr) == self.var:
+      self.slice_data(node)
+    elif isinstance(node.expr, c_ast.ArrayRef) and (self.get_ArrayRef_name(node.expr) == self.var):
       self.slice_data(node)
     else:
       self.generic_visit(node)
