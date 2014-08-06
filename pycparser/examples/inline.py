@@ -159,12 +159,15 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       for (arg, init) in zip(function_copy.decl.type.args.params, caller.args.exprs):
         # Pointers just get renamed, no re-declare
         if isinstance(arg.type, c_ast.PtrDecl):
+          # Add pointer name to list
           if isinstance(init, c_ast.UnaryOp):
             ptr_args.append((self.get_Decl_name(arg), init.expr.name))
           elif isinstance(init, c_ast.StructRef):
             ptr_args.append((self.get_Decl_name(arg), "%s->%s" % (init.name.name, init.field.name)))
           elif isinstance(init, c_ast.ID):
             ptr_args.append((self.get_Decl_name(arg), init.name))
+          elif isinstance(init, c_ast.ArrayRef):
+            ptr_args.append((self.get_Decl_name(arg), init))
           else: 
             raise Exception("Unsupported init type %s" % (type(init)))
         else:
@@ -179,8 +182,15 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     for arg in args:
       self.rename_visitor.set_names(arg, arg + "_rename%d" % self.rename_counter)
       self.rename_visitor.visit(function_copy)
+    # Rename pointers to the passed pointer variable
     for arg in ptr_args:
       self.rename_visitor.set_names(arg[0], arg[1])
+      self.rename_visitor.visit(function_copy)
+    # Find all declared variables and rename them
+    self.decl_visitor = GetDeclVisitor()
+    self.decl_visitor.visit(function_copy)
+    for decl in self.decl_visitor.decls:
+      self.rename_visitor.set_names(decl, decl + "_rename%d" % self.rename_counter)
       self.rename_visitor.visit(function_copy)
     # Increment rename counter to ensure unique names
     self.rename_counter += 1
