@@ -232,6 +232,14 @@ class GetFunctionsVisitor(c_ast.NodeVisitor):
     self.funcs = []
   def visit_FuncDef(self, node):
     self.funcs.append(node)
+"""
+Find all variable declarations.
+"""
+class GetDeclVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    self.decls = []
+  def visit_Decl(self, node):
+    self.decls.append(node.name)
 
 """
 Pretty print the passed AST/node.
