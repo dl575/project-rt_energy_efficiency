@@ -196,9 +196,14 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     self.rename_counter += 1
 
     # Add declaration for return value (if function is non-void)
-    if function.decl.type.type.type.names[0] != "void":
-      td = c_ast.TypeDecl("return_value", None, function.decl.type.type.type)
-      d = c_ast.Decl(None, None, None, None, td, None, None)
+    if self.get_Function_type(function_copy) != "void":
+      # Copy the function type declaration
+      typedecl = copy.deepcopy(function.decl.type.type)
+      # Create a variable declaration using the function type
+      decl = c_ast.Decl(None, None, None, None, typedecl, None, None)
+      # Replace the variable name as return_value
+      self.set_Decl_name(decl, "return_value")
+      # Insert the return_value declaration at the start of the function
       function_copy.body.block_items.insert(0, d)
     function_copy.body.block_items.insert(0, c_ast.ID("// Inline function: %s" % (function_copy.decl.name)))
 
@@ -214,6 +219,30 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     function_copy.body.block_items.append(c_ast.Label(return_label, c_ast.EmptyStatement()))
 
     return function_copy
+
+  """
+  Returns the return type of the passed function (or decl) node. This is done
+  by recursively descending into the node tree until the IdentifierType node is
+  found.
+  """
+  def get_Function_type(self, func):
+    if isinstance(func, c_ast.IdentifierType):
+      return func.names[0]
+    elif isinstance(func, c_ast.FuncDef):
+      return self.get_Function_type(func.decl)
+    else:
+      return self.get_Function_type(func.type)
+  """
+  Set the variable name for the passed decl node. This is done by recursively
+  descending into the node tree until the TypeDecl node is found and changing
+  its name.
+  """
+  def set_Decl_name(self, node, name):
+    if isinstance(node, c_ast.TypeDecl):
+      node.declname = name
+    else:
+      self.set_Decl_name(node.type, name)
+
 
   """
   Return the string name of the variable being declared
