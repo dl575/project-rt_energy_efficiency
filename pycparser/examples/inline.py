@@ -204,7 +204,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       # Replace the variable name as return_value
       self.set_Decl_name(decl, "return_value")
       # Insert the return_value declaration at the start of the function
-      function_copy.body.block_items.insert(0, d)
+      function_copy.body.block_items.insert(0, decl)
     function_copy.body.block_items.insert(0, c_ast.ID("// Inline function: %s" % (function_copy.decl.name)))
 
     ###################################
