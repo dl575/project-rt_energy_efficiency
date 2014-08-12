@@ -1,0 +1,3996 @@
+loop counter = (1, 0, 1, 1, )
+time 0 = 10533 us
+"Kur" is in "Kurt Vonneguts Commencement Address at" ["Kurt Vonneguts Commencement Address at"]
+loop counter = (1, 4, 1, 1, )
+time 1 = 6963 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 2 = 6309 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 3 = 6348 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 4 = 6645 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 5 = 6778 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 6 = 6364 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 7 = 6493 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 8 = 6486 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 9 = 6294 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 10 = 6602 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 11 = 6483 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 12 = 6664 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 13 = 6425 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 14 = 7071 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 15 = 6840 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 16 = 7268 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 17 = 6494 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 18 = 6204 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 19 = 6167 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 20 = 6111 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 21 = 6205 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 22 = 6360 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 23 = 6253 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 24 = 6473 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 25 = 6337 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 26 = 6183 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 27 = 6586 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 28 = 7072 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 29 = 7331 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 30 = 6141 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 31 = 6879 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 32 = 6222 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 33 = 6224 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 34 = 6161 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 35 = 6176 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 36 = 6208 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 37 = 6238 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 38 = 6276 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 39 = 6241 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 40 = 7124 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 41 = 7510 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 42 = 6177 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 43 = 6528 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 44 = 6368 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 45 = 6310 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 46 = 6322 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 47 = 6081 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 48 = 6238 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 49 = 6084 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 50 = 6315 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 51 = 6256 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 52 = 6219 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 53 = 6210 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 54 = 6322 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 55 = 6773 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 56 = 6439 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 57 = 6044 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 58 = 6178 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 59 = 6779 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 60 = 6255 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 61 = 6292 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 62 = 6192 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 63 = 6198 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 64 = 6213 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 65 = 6266 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 66 = 6552 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 67 = 6291 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 68 = 6328 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 69 = 6241 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 70 = 6305 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 71 = 6212 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 72 = 6146 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 73 = 6229 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 74 = 6192 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 75 = 6203 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 76 = 6648 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 77 = 6200 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 78 = 6864 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 79 = 6338 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 80 = 6246 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 81 = 6499 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 82 = 6218 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 83 = 7026 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 84 = 6940 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 85 = 6406 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 86 = 6880 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 87 = 6264 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 88 = 6777 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 89 = 6556 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 90 = 6877 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 91 = 6517 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 92 = 6888 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 93 = 6524 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 94 = 6765 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 95 = 6821 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 96 = 6303 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 97 = 6995 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 98 = 6464 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 99 = 6343 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 100 = 6386 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 101 = 6257 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 102 = 6470 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 103 = 6249 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 104 = 6469 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 105 = 6512 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 106 = 6235 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 107 = 6273 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 108 = 6278 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 109 = 6243 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 110 = 6270 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 111 = 6292 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 112 = 6250 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 113 = 6238 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 114 = 6413 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 115 = 6218 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 116 = 6672 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 117 = 6774 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 118 = 6172 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 119 = 6531 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 120 = 6648 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 121 = 6759 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 122 = 6466 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 123 = 6277 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 124 = 6359 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 125 = 6592 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 126 = 6738 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 127 = 6376 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 128 = 6464 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 129 = 6496 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 130 = 6333 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 131 = 6602 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 132 = 6610 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 133 = 6547 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 134 = 6430 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 135 = 6134 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 136 = 6265 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 137 = 6416 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 138 = 6209 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 139 = 6126 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 140 = 6200 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 141 = 6210 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 142 = 6200 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 143 = 6463 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 144 = 6187 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 145 = 6548 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 146 = 6379 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 147 = 6119 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 148 = 6184 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 149 = 7033 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 150 = 7138 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 151 = 6185 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 152 = 6884 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 153 = 6341 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 154 = 6217 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 155 = 6132 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 156 = 6371 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 157 = 6203 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 158 = 6384 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 159 = 6410 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 160 = 6232 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 161 = 7039 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 162 = 7563 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 163 = 6159 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 164 = 6522 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 165 = 6407 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 166 = 6447 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 167 = 6322 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 168 = 6153 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 169 = 6259 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 170 = 6219 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 171 = 6422 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 172 = 6355 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 173 = 6248 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 174 = 6219 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 175 = 6218 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 176 = 6847 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 177 = 6515 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 178 = 6227 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 179 = 6208 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 180 = 6795 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 181 = 6231 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 182 = 6280 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 183 = 6544 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 184 = 6320 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 185 = 6259 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 186 = 6235 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 187 = 6671 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 188 = 6290 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 189 = 6351 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 190 = 6262 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 191 = 6267 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 192 = 6330 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 193 = 6126 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 194 = 6271 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 195 = 6375 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 196 = 6346 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 197 = 6392 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 198 = 6229 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 199 = 6332 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 200 = 6302 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 201 = 6226 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 202 = 6328 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 203 = 6256 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 204 = 7093 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 205 = 7051 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 206 = 6334 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 207 = 6797 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 208 = 6347 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 209 = 6823 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 210 = 6708 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 211 = 6917 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 212 = 6550 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 213 = 6897 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 214 = 6384 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 215 = 6824 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 216 = 6789 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 217 = 6393 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 218 = 7005 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 219 = 6160 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 220 = 6499 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 221 = 6379 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 222 = 6339 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 223 = 6526 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 224 = 6248 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 225 = 6451 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 226 = 6680 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 227 = 6439 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 228 = 6600 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 229 = 6280 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 230 = 6342 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 231 = 6338 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 232 = 6218 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 233 = 6433 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 234 = 6329 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 235 = 6332 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 236 = 6296 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 237 = 6673 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 238 = 6789 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 239 = 6286 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 240 = 6437 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 241 = 6746 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 242 = 6868 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 243 = 6508 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 244 = 6376 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 245 = 6230 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 246 = 6676 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 247 = 6762 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 248 = 6316 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 249 = 6575 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 250 = 6447 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 251 = 6315 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 252 = 6626 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 253 = 6480 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 254 = 6737 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 255 = 6410 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 256 = 6158 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 257 = 6283 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 258 = 6316 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 259 = 6176 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 260 = 6222 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 261 = 6322 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 262 = 6405 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 263 = 6171 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 264 = 6390 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 265 = 6189 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 266 = 6542 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 267 = 6492 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 268 = 6143 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 269 = 6235 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 270 = 7020 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 271 = 7209 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 272 = 6372 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 273 = 6884 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 274 = 6223 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 275 = 6207 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 276 = 6167 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 277 = 6186 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 278 = 6212 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 279 = 6227 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 280 = 6292 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 281 = 6201 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 282 = 6951 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 283 = 7629 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 284 = 6166 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 285 = 6526 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 286 = 6415 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 287 = 6308 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 288 = 6465 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 289 = 6146 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 290 = 6233 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 291 = 6204 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 292 = 6334 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 293 = 6371 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 294 = 6209 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 295 = 6253 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 296 = 6212 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 297 = 6824 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 298 = 6418 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 299 = 6209 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 300 = 6213 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 301 = 6916 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 302 = 6210 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 303 = 6298 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 304 = 6223 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 305 = 6236 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 306 = 6325 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 307 = 6323 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 308 = 6578 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 309 = 6225 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 310 = 6365 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 311 = 6193 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 312 = 6418 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 313 = 6247 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 314 = 6150 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 315 = 6302 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 316 = 6175 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 317 = 6101 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 318 = 6351 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 319 = 6232 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 320 = 6366 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 321 = 6278 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 322 = 6355 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 323 = 6310 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 324 = 6325 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 325 = 7036 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 326 = 6875 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 327 = 6449 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 328 = 6808 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 329 = 6347 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 330 = 6927 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 331 = 6546 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 332 = 6901 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 333 = 6515 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 334 = 6872 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 335 = 6315 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 336 = 6708 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 337 = 6704 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 338 = 6567 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 339 = 7273 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 340 = 6536 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 341 = 6377 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 342 = 6367 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 343 = 6256 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 344 = 6500 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 345 = 6367 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 346 = 6328 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 347 = 6450 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 348 = 6230 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 349 = 6279 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 350 = 6416 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 351 = 6369 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 352 = 6301 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 353 = 6234 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 354 = 6224 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 355 = 6267 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 356 = 6306 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 357 = 6210 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 358 = 6896 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 359 = 6774 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 360 = 6142 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 361 = 6526 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 362 = 6668 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 363 = 6817 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 364 = 6506 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 365 = 6983 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 366 = 6329 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 367 = 6682 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 368 = 6986 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 369 = 6369 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 370 = 6457 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 371 = 6454 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 372 = 6295 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 373 = 6719 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 374 = 6523 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 375 = 6678 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 376 = 6365 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 377 = 6093 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 378 = 6278 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 379 = 6363 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 380 = 6176 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 381 = 6208 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 382 = 6206 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 383 = 6160 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 384 = 6385 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 385 = 6572 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 386 = 6326 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 387 = 6549 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 388 = 6327 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 389 = 6435 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 390 = 6190 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 391 = 7026 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 392 = 7197 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 393 = 6200 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 394 = 6836 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 395 = 6242 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 396 = 6204 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 397 = 6167 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 398 = 6191 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 399 = 6229 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 400 = 6365 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 401 = 6332 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 402 = 6298 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 403 = 6954 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 404 = 7566 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 405 = 6166 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 406 = 6556 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 407 = 6559 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 408 = 6309 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 409 = 6342 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 410 = 6197 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 411 = 6211 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 412 = 6123 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 413 = 6314 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 414 = 6248 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 415 = 6210 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 416 = 6211 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 417 = 6222 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 418 = 6962 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 419 = 6449 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 420 = 6262 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 421 = 6229 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 422 = 6813 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 423 = 6350 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 424 = 6275 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 425 = 6238 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 426 = 6236 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 427 = 6152 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 428 = 6419 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 429 = 6557 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 430 = 6240 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 431 = 6352 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 432 = 6185 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 433 = 6263 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 434 = 6190 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 435 = 6125 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 436 = 6400 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 437 = 6141 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 438 = 6136 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 439 = 6356 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 440 = 6271 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 441 = 6391 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 442 = 6359 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 443 = 6215 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 444 = 6333 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 445 = 6249 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 446 = 7046 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 447 = 7040 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 448 = 6377 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 449 = 6871 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 450 = 6332 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 451 = 6764 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 452 = 6582 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 453 = 6883 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 454 = 6508 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 455 = 6932 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 456 = 6343 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 457 = 6816 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 458 = 6748 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 459 = 6366 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 460 = 7011 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 461 = 6101 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 462 = 6539 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 463 = 6316 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 464 = 6258 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 465 = 6492 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 466 = 6205 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 467 = 6481 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 468 = 6466 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 469 = 6310 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 470 = 6273 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 471 = 6255 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 472 = 6246 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 473 = 6339 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 474 = 6233 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 475 = 6352 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 476 = 6254 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 477 = 6341 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 478 = 6227 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 479 = 6684 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 480 = 6921 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 481 = 6202 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 482 = 6488 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 483 = 6666 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 484 = 6768 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 485 = 6485 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 486 = 6342 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 487 = 6248 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 488 = 6585 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 489 = 6772 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 490 = 6318 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 491 = 6522 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 492 = 6494 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 493 = 6305 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 494 = 6929 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 495 = 6661 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 496 = 6783 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 497 = 6408 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 498 = 6179 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 499 = 6242 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 500 = 6177 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 501 = 6324 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 502 = 6211 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 503 = 6292 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 504 = 6132 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 505 = 6258 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 506 = 6426 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 507 = 6214 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 508 = 6550 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 509 = 6488 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 510 = 6195 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 511 = 6326 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 512 = 7017 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 513 = 7209 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 514 = 6334 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 515 = 6876 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 516 = 6255 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 517 = 6202 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 518 = 6194 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 519 = 6305 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 520 = 6246 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 521 = 6366 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 522 = 6303 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 523 = 6232 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 524 = 6968 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 525 = 7517 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 526 = 6194 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 527 = 6556 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 528 = 6377 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 529 = 6438 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 530 = 6336 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 531 = 6202 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 532 = 6293 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 533 = 6136 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 534 = 6312 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 535 = 6351 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 536 = 6203 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 537 = 6293 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 538 = 6179 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 539 = 6755 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 540 = 6541 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 541 = 6212 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 542 = 6235 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 543 = 6789 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 544 = 6268 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 545 = 6305 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 546 = 6236 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 547 = 6212 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 548 = 6318 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 549 = 6240 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 550 = 6561 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 551 = 6242 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 552 = 6407 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 553 = 6388 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 554 = 6272 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 555 = 6221 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 556 = 6244 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 557 = 6340 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 558 = 6286 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 559 = 6183 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 560 = 6417 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 561 = 6215 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 562 = 6350 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 563 = 6243 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 564 = 6207 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 565 = 6311 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 566 = 6236 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 567 = 7031 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 568 = 6871 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 569 = 6444 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 570 = 6762 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 571 = 6459 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 572 = 6765 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 573 = 6587 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 574 = 7003 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 575 = 6520 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 576 = 7121 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 577 = 6346 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 578 = 6861 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 579 = 6682 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 580 = 6235 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 581 = 7032 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 582 = 6307 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 583 = 6343 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 584 = 6356 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 585 = 6306 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 586 = 6511 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 587 = 6345 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 588 = 6401 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 589 = 6455 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 590 = 6280 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 591 = 6227 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 592 = 6406 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 593 = 6269 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 594 = 6347 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 595 = 6243 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 596 = 6202 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 597 = 6332 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 598 = 6305 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 599 = 6262 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 600 = 6680 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 601 = 6732 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 602 = 6296 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 603 = 6456 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 604 = 6610 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 605 = 6821 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 606 = 6520 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 607 = 6466 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 608 = 6293 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 609 = 6673 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 610 = 6890 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 611 = 6356 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 612 = 6452 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 613 = 6461 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 614 = 6262 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 615 = 6776 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 616 = 6434 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 617 = 6652 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 618 = 6361 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 619 = 6176 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 620 = 6254 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 621 = 6311 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 622 = 6168 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 623 = 6107 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 624 = 6283 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 625 = 6275 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 626 = 6302 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 627 = 6361 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 628 = 6237 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 629 = 6595 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 630 = 6325 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 631 = 6265 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 632 = 6225 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 633 = 7050 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 634 = 7202 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 635 = 6231 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 636 = 6976 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 637 = 6210 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 638 = 6228 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 639 = 6212 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 640 = 6305 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 641 = 6381 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 642 = 6346 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 643 = 6264 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 644 = 6327 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 645 = 6997 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 646 = 7534 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 647 = 6163 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 648 = 6579 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 649 = 6644 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 650 = 6681 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 651 = 6672 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 652 = 6197 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 653 = 6270 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 654 = 6319 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 655 = 6366 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 656 = 6263 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 657 = 6240 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 658 = 6233 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 659 = 6220 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 660 = 6797 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 661 = 6450 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 662 = 6364 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 663 = 6176 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 664 = 6859 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 665 = 6322 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 666 = 6309 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 667 = 6221 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 668 = 6228 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 669 = 6176 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 670 = 6375 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 671 = 6615 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 672 = 6250 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 673 = 6349 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 674 = 6199 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 675 = 6415 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 676 = 6239 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 677 = 6180 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 678 = 6262 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 679 = 6193 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 680 = 6101 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 681 = 6343 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 682 = 6208 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 683 = 6488 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 684 = 6387 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 685 = 6221 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 686 = 6311 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 687 = 6271 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 688 = 7099 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 689 = 6881 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 690 = 6385 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 691 = 6810 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 692 = 6415 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 693 = 6862 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 694 = 6546 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 695 = 6935 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 696 = 6522 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 697 = 6900 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 698 = 6321 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 699 = 6724 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 700 = 6706 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 701 = 6397 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 702 = 6968 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 703 = 6343 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 704 = 6410 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 705 = 6402 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 706 = 6312 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 707 = 6425 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 708 = 6202 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 709 = 6504 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 710 = 6481 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 711 = 6254 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 712 = 6244 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 713 = 6306 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 714 = 6357 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 715 = 6300 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 716 = 6270 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 717 = 6172 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 718 = 6219 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 719 = 6383 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 720 = 6228 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 721 = 6712 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 722 = 6857 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 723 = 6183 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 724 = 6560 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 725 = 6611 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 726 = 6772 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 727 = 6637 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 728 = 6234 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 729 = 6270 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 730 = 6702 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 731 = 6704 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 732 = 6446 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 733 = 6416 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 734 = 6538 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 735 = 6318 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 736 = 7753 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 737 = 7553 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 738 = 6883 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 739 = 6394 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 740 = 6226 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 741 = 6251 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 742 = 6420 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 743 = 6149 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 744 = 6185 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 745 = 6255 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 746 = 6123 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 747 = 6337 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 748 = 6359 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 749 = 6229 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 750 = 6715 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 751 = 6363 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 752 = 6154 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 753 = 6172 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 754 = 7782 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 755 = 8173 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 756 = 7043 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 757 = 7846 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 758 = 7135 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 759 = 9002 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 760 = 7297 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 761 = 6214 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 762 = 6185 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 763 = 6352 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 764 = 6429 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 765 = 6230 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 766 = 7006 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 767 = 7559 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 768 = 6171 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 769 = 6656 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 770 = 6368 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 771 = 6344 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 772 = 6340 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 773 = 6154 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 774 = 6456 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 775 = 7033 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 776 = 7208 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 777 = 7212 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 778 = 7229 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 779 = 7166 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 780 = 10424 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 781 = 8180 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 782 = 6460 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 783 = 6245 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 784 = 6141 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 785 = 6782 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 786 = 6436 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 787 = 6366 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 788 = 6417 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 789 = 6186 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 790 = 6234 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 791 = 6272 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 792 = 6584 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 793 = 6274 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 794 = 6328 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 795 = 6834 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 796 = 7072 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 797 = 6214 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 798 = 6181 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 799 = 6250 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 800 = 6205 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 801 = 6166 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 802 = 7011 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 803 = 6931 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 804 = 6314 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 805 = 6262 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 806 = 6208 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 807 = 6310 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 808 = 6242 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 809 = 7029 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 810 = 6921 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 811 = 6384 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 812 = 7399 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 813 = 7260 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 814 = 7782 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 815 = 7601 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 816 = 7943 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 817 = 7468 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 818 = 7954 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 819 = 8740 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 820 = 7263 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 821 = 6682 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 822 = 6304 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 823 = 7010 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 824 = 6307 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 825 = 6375 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 826 = 6364 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 827 = 6364 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 828 = 6637 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 829 = 6207 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 830 = 6387 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 831 = 6497 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 832 = 6576 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 833 = 7139 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 834 = 7198 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 835 = 6710 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 836 = 7000 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 837 = 6725 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 838 = 6730 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 839 = 6900 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 840 = 6390 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 841 = 6239 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 842 = 6668 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 843 = 7028 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 844 = 7077 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 845 = 7365 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 846 = 6966 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 847 = 6754 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 848 = 6608 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 849 = 6338 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 850 = 6422 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 851 = 6805 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 852 = 6785 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 853 = 6388 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 854 = 6438 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 855 = 6543 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 856 = 6451 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 857 = 6567 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 858 = 6461 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 859 = 6649 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 860 = 6435 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 861 = 6173 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 862 = 6290 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 863 = 6261 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 864 = 6152 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 865 = 6234 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 866 = 6314 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 867 = 6243 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 868 = 6214 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 869 = 6432 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 870 = 6225 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 871 = 6630 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 872 = 6331 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 873 = 6163 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 874 = 6206 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 875 = 7056 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 876 = 7154 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 877 = 6237 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 878 = 6874 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 879 = 6235 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 880 = 6204 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 881 = 6125 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 882 = 6178 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 883 = 6204 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 884 = 6394 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 885 = 6297 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 886 = 6258 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 887 = 7009 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 888 = 7530 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 889 = 6389 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 890 = 6514 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 891 = 6394 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 892 = 6352 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 893 = 6300 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 894 = 6264 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 895 = 6304 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 896 = 6229 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 897 = 6379 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 898 = 6257 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 899 = 6276 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 900 = 6240 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 901 = 6169 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 902 = 6793 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 903 = 6485 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 904 = 6200 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 905 = 6289 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 906 = 6761 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 907 = 6273 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 908 = 6327 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 909 = 6236 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 910 = 6281 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 911 = 6288 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 912 = 6311 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 913 = 6595 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 914 = 6281 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 915 = 6298 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 916 = 6390 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 917 = 6320 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 918 = 6273 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 919 = 6219 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 920 = 6268 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 921 = 6193 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 922 = 6125 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 923 = 6414 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 924 = 6381 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 925 = 6336 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 926 = 6277 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 927 = 6217 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 928 = 6347 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 929 = 6345 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 930 = 7013 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 931 = 6905 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 932 = 6308 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 933 = 6814 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 934 = 6511 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 935 = 6742 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 936 = 6588 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 937 = 6896 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 938 = 6517 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 939 = 6894 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 940 = 6294 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 941 = 6725 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 942 = 6759 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 943 = 6337 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 944 = 7084 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 945 = 6181 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 946 = 6366 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 947 = 6386 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 948 = 6283 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 949 = 6577 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 950 = 6205 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 951 = 6422 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 952 = 6548 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 953 = 6291 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 954 = 6334 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 955 = 6360 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 956 = 6842 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 957 = 7160 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 958 = 6430 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 959 = 6184 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 960 = 6269 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 961 = 6396 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 962 = 6348 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 963 = 6711 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 964 = 6803 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 965 = 6182 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 966 = 6632 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 967 = 6781 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 968 = 6753 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 969 = 6453 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 970 = 6342 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 971 = 6278 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 972 = 6792 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 973 = 6733 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 974 = 6378 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 975 = 6410 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 976 = 6481 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 977 = 6294 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 978 = 6583 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 979 = 6390 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 980 = 6620 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 981 = 6411 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 982 = 6200 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 983 = 6439 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 984 = 6249 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 985 = 6198 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 986 = 6158 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 987 = 6174 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 988 = 6343 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 989 = 6145 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 990 = 6431 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 991 = 6348 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 992 = 6520 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 993 = 6396 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 994 = 6187 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 995 = 6244 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 996 = 7020 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 997 = 7474 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 998 = 6569 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 999 = 6892 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 1000 = 6465 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 1001 = 6927 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 1002 = 6083 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 1003 = 6200 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 1004 = 6096 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 1005 = 6294 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 1006 = 6443 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 1007 = 6190 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 1008 = 6994 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 1009 = 7569 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 1010 = 6190 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 1011 = 6676 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 1012 = 6362 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 1013 = 6345 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 1014 = 6379 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 1015 = 6234 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 1016 = 6219 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 1017 = 6185 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 1018 = 6305 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 1019 = 6292 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 1020 = 6281 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 1021 = 6233 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 1022 = 6277 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 1023 = 6792 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 1024 = 6659 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 1025 = 6237 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 1026 = 6155 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 1027 = 6783 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 1028 = 6225 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 1029 = 6317 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 1030 = 6322 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 1031 = 6197 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 1032 = 6408 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 1033 = 6615 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 1034 = 6848 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 1035 = 6248 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 1036 = 6353 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 1037 = 6204 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 1038 = 6298 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 1039 = 6243 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 1040 = 6288 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 1041 = 6244 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 1042 = 6197 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 1043 = 6141 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 1044 = 6389 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 1045 = 6364 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 1046 = 6334 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 1047 = 6639 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 1048 = 6246 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 1049 = 6309 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 1050 = 6255 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 1051 = 7102 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 1052 = 6895 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 1053 = 6309 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 1054 = 6783 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 1055 = 6418 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 1056 = 6737 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 1057 = 6562 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 1058 = 7010 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 1059 = 6514 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 1060 = 6908 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 1061 = 6331 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 1062 = 6772 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 1063 = 6863 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 1064 = 6309 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 1065 = 6987 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 1066 = 6214 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 1067 = 6548 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 1068 = 6481 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 1069 = 6300 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 1070 = 6545 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 1071 = 6213 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 1072 = 6365 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 1073 = 6473 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 1074 = 6291 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 1075 = 6318 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 1076 = 6272 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 1077 = 6278 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 1078 = 6440 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 1079 = 6416 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 1080 = 6194 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 1081 = 6284 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 1082 = 6355 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 1083 = 6233 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 1084 = 6902 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 1085 = 6728 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 1086 = 6193 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 1087 = 6527 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 1088 = 6695 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 1089 = 6865 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 1090 = 6476 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 1091 = 6323 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 1092 = 6264 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 1093 = 6566 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 1094 = 6707 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 1095 = 7007 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 1096 = 7018 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 1097 = 6633 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 1098 = 6285 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 1099 = 6613 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 1100 = 6413 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 1101 = 6636 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 1102 = 6525 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 1103 = 6201 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 1104 = 6292 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 1105 = 6244 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 1106 = 6163 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 1107 = 6300 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 1108 = 6235 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 1109 = 6146 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 1110 = 6205 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 1111 = 7255 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 1112 = 6232 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 1113 = 6539 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 1114 = 6318 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 1115 = 6211 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 1116 = 6244 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 1117 = 7136 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 1118 = 7168 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 1119 = 6216 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 1120 = 6899 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 1121 = 6271 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 1122 = 6308 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 1123 = 6117 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 1124 = 6245 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 1125 = 6350 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 1126 = 6240 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 1127 = 6306 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 1128 = 6346 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 1129 = 6963 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 1130 = 7540 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 1131 = 6178 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 1132 = 6529 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 1133 = 6363 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 1134 = 6356 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 1135 = 6465 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 1136 = 6149 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 1137 = 6233 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 1138 = 6177 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 1139 = 6355 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 1140 = 6248 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 1141 = 6386 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 1142 = 6267 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 1143 = 6329 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 1144 = 6813 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 1145 = 6436 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 1146 = 6250 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 1147 = 6189 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 1148 = 6803 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 1149 = 6244 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 1150 = 6255 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 1151 = 6220 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 1152 = 6202 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 1153 = 6213 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 1154 = 6415 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 1155 = 6565 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 1156 = 6427 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 1157 = 6333 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 1158 = 6243 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 1159 = 6334 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 1160 = 6212 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 1161 = 6224 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 1162 = 6337 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 1163 = 6165 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 1164 = 6198 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 1165 = 6377 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 1166 = 6259 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 1167 = 6334 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 1168 = 6232 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 1169 = 6223 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 1170 = 6413 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 1171 = 6262 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 1172 = 6984 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 1173 = 6878 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 1174 = 6702 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 1175 = 6957 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 1176 = 6366 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 1177 = 6784 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 1178 = 6581 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 1179 = 6907 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 1180 = 6643 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 1181 = 6915 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 1182 = 6353 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 1183 = 6725 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 1184 = 6716 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 1185 = 6381 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 1186 = 6995 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 1187 = 6202 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 1188 = 6381 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 1189 = 6392 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 1190 = 6378 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 1191 = 6463 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 1192 = 6256 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 1193 = 6393 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 1194 = 6448 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 1195 = 6326 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 1196 = 6293 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 1197 = 6321 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 1198 = 6373 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 1199 = 6308 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 1200 = 6241 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 1201 = 6250 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 1202 = 6286 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 1203 = 6305 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 1204 = 6212 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 1205 = 6736 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 1206 = 6683 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 1207 = 6231 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 1208 = 6553 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 1209 = 6686 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 1210 = 6832 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
+loop counter = (1, 4, 1, 1, )
+time 1211 = 6476 us
+"gent" is in "MIT Ladies and gentlemen of" ["gentlemen of"]
+loop counter = (2, 1, 2, 1, )
+time 1212 = 6350 us
+"lass" is in "the class of 97 Wear" ["lass of 97 Wear"]
+loop counter = (1, 0, 1, 1, )
+time 1213 = 6359 us
+"suns" is in "sunscreen If I could offer" ["sunscreen If I could offer"]
+loop counter = (1, 6, 1, 1, )
+time 1214 = 6606 us
+"for" is in "you only one tip for" ["for"]
+loop counter = (1, 9, 0, 0, )
+time 1215 = 6758 us
+"xxx" is not in "the future sunscreen would be"
+loop counter = (1, 2, 1, 1, )
+time 1216 = 6349 us
+"long" is in "it The longterm benefits of" ["longterm benefits of"]
+loop counter = (2, 3, 2, 1, )
+time 1217 = 6452 us
+"have" is in "sunscreen have been proved by" ["have been proved by"]
+loop counter = (1, 3, 1, 1, )
+time 1218 = 6577 us
+"where" is in "scientists whereas the rest of" ["whereas the rest of"]
+loop counter = (1, 3, 0, 0, )
+time 1219 = 6293 us
+"xxxxxx" is not in "my advice has no basis"
+loop counter = (1, 7, 0, 0, )
+time 1220 = 6651 us
+"xxxxxx" is not in "more reliable than my own meandering experience"
+loop counter = (1, 3, 1, 1, )
+time 1221 = 6488 us
+"pense" is in "I will dispense this advice" ["pense this advice"]
+loop counter = (2, 5, 2, 1, )
+time 1222 = 6675 us
+"pow" is in "now Enjoy the power and beauty" ["power and beauty"]
+loop counter = (1, 5, 0, 0, )
+time 1223 = 6399 us
+"xxxxx" is not in "of your youth Oh never mind"
+loop counter = (1, 0, 1, 1, )
+time 1224 = 6306 us
+"Yo" is in "You will not understand the power" ["You will not understand the power"]
+loop counter = (1, 0, 1, 1, )
+time 1225 = 6190 us
+"and" is in "and beauty of your youth until theyve" ["and beauty of your youth until theyve"]
+loop counter = (1, 0, 1, 1, )
+time 1226 = 6284 us
+"faded" is in "faded But trust me in" ["faded But trust me in"]
+loop counter = (1, 0, 1, 1, )
+time 1227 = 6190 us
+"20" is in "20 years" ["20 years"]
+loop counter = (1, 0, 1, 1, )
+time 1228 = 6187 us
+"you" is in "youll look" ["youll look"]
+loop counter = (1, 0, 1, 1, )
+time 1229 = 6323 us
+"bac" is in "back at photos of yourself" ["back at photos of yourself"]
+loop counter = (1, 0, 1, 1, )
+time 1230 = 6191 us
+"an" is in "and recall in a" ["and recall in a"]
+loop counter = (1, 0, 1, 1, )
+time 1231 = 6395 us
+"way" is in "way you cant grasp now how much" ["way you cant grasp now how much"]
+loop counter = (1, 0, 1, 1, )
+time 1232 = 6368 us
+"possibili" is in "possibility lay before you" ["possibility lay before you"]
+loop counter = (1, 0, 1, 1, )
+time 1233 = 6281 us
+"an" is in "and how fabulous you really looked You" ["and how fabulous you really looked You"]
+loop counter = (1, 5, 1, 1, )
+time 1234 = 6609 us
+"fat" is in "are not as fat" ["fat"]
+loop counter = (1, 2, 1, 1, )
+time 1235 = 6367 us
+"imag" is in "as you imagine Dont worry about" ["imagine Dont worry about"]
+loop counter = (1, 0, 1, 1, )
+time 1236 = 6187 us
+"th" is in "the future Or" ["the future Or"]
+loop counter = (1, 0, 1, 1, )
+time 1237 = 6403 us
+"wor" is in "worry but know that worrying is as effective" ["worry but know that worrying is as effective"]
+loop counter = (1, 12, 0, 0, )
+time 1238 = 6953 us
+"xxx" is not in "as trying to solve an algebra equation"
+loop counter = (1, 14, 0, 0, )
+time 1239 = 7197 us
+"xxx" is not in "by chewing bubble gum The real troubles in"
+loop counter = (1, 0, 1, 1, )
+time 1240 = 6200 us
+"yo" is in "your life are apt to" ["your life are apt to"]
+loop counter = (1, 11, 0, 0, )
+time 1241 = 6883 us
+"bxx" is not in "be things that never crossed your"
+loop counter = (1, 0, 1, 1, )
+time 1242 = 6184 us
+"wo" is in "worried mind the" ["worried mind the"]
+loop counter = (1, 0, 1, 1, )
+time 1243 = 6235 us
+"kind" is in "kind that blindside you at" ["kind that blindside you at"]
+loop counter = (1, 0, 1, 1, )
+time 1244 = 6136 us
+"4" is in "4 pm on some" ["4 pm on some"]
+loop counter = (1, 0, 1, 1, )
+time 1245 = 6238 us
+"idle" is in "idle Tuesday" ["idle Tuesday"]
+loop counter = (1, 0, 1, 1, )
+time 1246 = 6252 us
+"Do" is in "Do one thing every day that" ["Do one thing every day that"]
+loop counter = (1, 0, 1, 1, )
+time 1247 = 6379 us
+"scare" is in "scares you Sing Dont be reckless with other" ["scares you Sing Dont be reckless with other"]
+loop counter = (1, 0, 1, 1, )
+time 1248 = 6271 us
+"people" is in "peoples hearts Dont put up" ["peoples hearts Dont put up"]
+loop counter = (1, 0, 1, 1, )
+time 1249 = 6237 us
+"wit" is in "with people who are reckless" ["with people who are reckless"]
+loop counter = (1, 12, 0, 0, )
+time 1250 = 7010 us
+"xxx" is not in "with yours Floss Dont waste your time"
+loop counter = (1, 18, 0, 0, )
+time 1251 = 7564 us
+"xxx" is not in "on jealousy Sometimes youre ahead sometimes youre behind"
+loop counter = (1, 0, 1, 1, )
+time 1252 = 6329 us
+"Th" is in "The race is long and in" ["The race is long and in"]
+loop counter = (1, 7, 0, 0, )
+time 1253 = 6534 us
+"xxx" is not in "the end its only with"
+loop counter = (1, 0, 1, 1, )
+time 1254 = 6397 us
+"yourself" is in "yourself Remember compliments you receive" ["yourself Remember compliments you receive"]
+loop counter = (1, 0, 1, 1, )
+time 1255 = 6361 us
+"Forget" is in "Forget the insults If you" ["Forget the insults If you"]
+loop counter = (1, 0, 1, 1, )
+time 1256 = 6322 us
+"succeed" is in "succeed in doing this tell me how" ["succeed in doing this tell me how"]
+loop counter = (1, 0, 1, 1, )
+time 1257 = 6261 us
+"Kee" is in "Keep your old" ["Keep your old"]
+loop counter = (1, 0, 1, 1, )
+time 1258 = 6293 us
+"lov" is in "love letters Throw away" ["love letters Throw away"]
+loop counter = (1, 0, 1, 1, )
+time 1259 = 6163 us
+"yo" is in "your old bank statements" ["your old bank statements"]
+loop counter = (1, 0, 1, 1, )
+time 1260 = 6317 us
+"Stretc" is in "Stretch Dont feel guilty if you dont know" ["Stretch Dont feel guilty if you dont know"]
+loop counter = (1, 0, 1, 1, )
+time 1261 = 6266 us
+"what" is in "what you want to do with your" ["what you want to do with your"]
+loop counter = (1, 0, 1, 1, )
+time 1262 = 6202 us
+"life" is in "life The most interesting people I" ["life The most interesting people I"]
+loop counter = (1, 0, 1, 1, )
+time 1263 = 6247 us
+"kno" is in "know didnt know at 22" ["know didnt know at 22"]
+loop counter = (1, 0, 1, 1, )
+time 1264 = 6236 us
+"wha" is in "what they wanted" ["what they wanted"]
+loop counter = (1, 10, 0, 0, )
+time 1265 = 6943 us
+"xxx" is not in "to do with their lives Some of"
+loop counter = (1, 6, 0, 0, )
+time 1266 = 6572 us
+"xxx" is not in "the most interesting"
+loop counter = (1, 0, 1, 1, )
+time 1267 = 6669 us
+"40" is in "40yearolds I know still dont" ["40yearolds I know still dont"]
+loop counter = (1, 0, 1, 1, )
+time 1268 = 6363 us
+"Get" is in "Get plenty of calcium" ["Get plenty of calcium"]
+loop counter = (1, 10, 0, 0, )
+time 1269 = 6816 us
+"xxx" is not in "Be kind to your knees Youll miss"
+loop counter = (1, 0, 1, 1, )
+time 1270 = 6438 us
+"them" is in "them when theyre gone" ["them when theyre gone"]
+loop counter = (1, 0, 1, 1, )
+time 1271 = 6262 us
+"Maybe" is in "Maybe youll marry" ["Maybe youll marry"]
+loop counter = (1, 0, 1, 1, )
+time 1272 = 6230 us
+"may" is in "maybe you wont Maybe youll have children maybe" ["maybe you wont Maybe youll have children maybe"]
+loop counter = (1, 0, 1, 1, )
+time 1273 = 6175 us
+"you" is in "you wont Maybe youll divorce at 40 maybe youll dance" ["you wont Maybe youll divorce at 40 maybe youll dance"]
+loop counter = (1, 0, 1, 1, )
+time 1274 = 6207 us
+"the" is in "the funky chicken on" ["the funky chicken on"]
+loop counter = (1, 0, 1, 1, )
+time 1275 = 6456 us
+"your" is in "your 75th wedding anniversary Whatever" ["your 75th wedding anniversary Whatever"]
+loop counter = (1, 1, 1, 1, )
+time 1276 = 6676 us
+"congratulate" is in "you do dont congratulate yourself too" ["congratulate yourself too"]
+loop counter = (1, 0, 1, 1, )
+time 1277 = 6317 us
+"much" is in "much or berate yourself" ["much or berate yourself"]
+loop counter = (1, 0, 1, 1, )
+time 1278 = 6334 us
+"either" is in "either Your choices are half chance So" ["either Your choices are half chance So"]
+loop counter = (1, 0, 1, 1, )
+time 1279 = 6205 us
+"are" is in "are everybody elses" ["are everybody elses"]
+loop counter = (1, 0, 1, 1, )
+time 1280 = 6312 us
+"Enjoy" is in "Enjoy your body Use" ["Enjoy your body Use"]
+loop counter = (1, 0, 1, 1, )
+time 1281 = 6266 us
+"it" is in "it every way you can Dont" ["it every way you can Dont"]
+loop counter = (1, 0, 1, 1, )
+time 1282 = 6234 us
+"be" is in "be afraid of it or of what" ["be afraid of it or of what"]
+loop counter = (1, 0, 1, 1, )
+time 1283 = 6488 us
+"other" is in "other people think of" ["other people think of"]
+loop counter = (1, 0, 1, 1, )
+time 1284 = 6359 us
+"it" is in "it Its" ["it Its"]
+loop counter = (1, 1, 0, 0, )
+time 1285 = 6209 us
+"xxx" is not in "the"
+loop counter = (1, 0, 1, 1, )
+time 1286 = 6528 us
+"greatest" is in "greatest instrument youll ever" ["greatest instrument youll ever"]
+loop counter = (1, 0, 1, 1, )
+time 1287 = 6194 us
+"own" is in "own Dance even if you have" ["own Dance even if you have"]
+loop counter = (1, 0, 1, 1, )
+time 1288 = 6379 us
+"nowhere" is in "nowhere to do it but your living" ["nowhere to do it but your living"]
+loop counter = (1, 0, 1, 1, )
+time 1289 = 6251 us
+"room" is in "room Read the directions even if" ["room Read the directions even if"]
+loop counter = (1, 0, 1, 1, )
+time 1290 = 6243 us
+"you" is in "you dont follow them Do not read" ["you dont follow them Do not read"]
+loop counter = (1, 0, 1, 1, )
+time 1291 = 6342 us
+"beauty" is in "beauty magazines They will only make you" ["beauty magazines They will only make you"]
+loop counter = (1, 0, 1, 1, )
+time 1292 = 6413 us
+"feel" is in "feel ugly Get to know your parents You never" ["feel ugly Get to know your parents You never"]
+loop counter = (1, 12, 0, 0, )
+time 1293 = 6985 us
+"xxx" is not in "know when theyll be gone for good Be"
+loop counter = (1, 11, 0, 0, )
+time 1294 = 6915 us
+"xxx" is not in "nice to your siblings Theyre your"
+loop counter = (1, 5, 0, 0, )
+time 1295 = 6299 us
+"xxx" is not in "best link to your"
+loop counter = (1, 10, 0, 0, )
+time 1296 = 6772 us
+"xxx" is not in "past and the people most likely"
+loop counter = (1, 5, 0, 0, )
+time 1297 = 6419 us
+"xxx" is not in "to stick with you"
+loop counter = (1, 9, 0, 0, )
+time 1298 = 6790 us
+"xxx" is not in "in the future Understand that"
+loop counter = (1, 7, 0, 0, )
+time 1299 = 6603 us
+"xxx" is not in "friends come and go but"
+loop counter = (1, 11, 0, 0, )
+time 1300 = 6878 us
+"xxx" is not in "with a precious few you should hold"
+loop counter = (1, 7, 0, 0, )
+time 1301 = 6549 us
+"xxx" is not in "on Work hard to bridge"
+loop counter = (1, 11, 0, 0, )
+time 1302 = 6997 us
+"xxx" is not in "the gaps in geography and lifestyle"
+loop counter = (1, 5, 0, 0, )
+time 1303 = 6373 us
+"xxx" is not in "because the older"
+loop counter = (1, 9, 0, 0, )
+time 1304 = 6885 us
+"xxx" is not in "you get the more you need the"
+loop counter = (1, 9, 0, 0, )
+time 1305 = 6715 us
+"xxx" is not in "people who knew you when you"
+loop counter = (1, 5, 0, 0, )
+time 1306 = 6398 us
+"xxx" is not in "were young Live"
+loop counter = (1, 12, 0, 0, )
+time 1307 = 6995 us
+"xxx" is not in "in New York City once but leave before"
+loop counter = (1, 0, 1, 1, )
+time 1308 = 6268 us
+"it" is in "it makes you hard Live in" ["it makes you hard Live in"]
+loop counter = (1, 0, 1, 1, )
+time 1309 = 6540 us
+"Northern" is in "Northern California once but leave" ["Northern California once but leave"]
+loop counter = (1, 0, 1, 1, )
+time 1310 = 6335 us
+"before" is in "before it makes you soft Travel" ["before it makes you soft Travel"]
+loop counter = (1, 0, 1, 1, )
+time 1311 = 6304 us
+"Accept" is in "Accept certain inalienable truths Prices will rise" ["Accept certain inalienable truths Prices will rise"]
+loop counter = (1, 0, 1, 1, )
+time 1312 = 6514 us
+"Politicians" is in "Politicians will philander You too will" ["Politicians will philander You too will"]
+loop counter = (1, 0, 1, 1, )
+time 1313 = 6249 us
+"get" is in "get old And when you do youll" ["get old And when you do youll"]
+loop counter = (1, 2, 1, 1, )
+time 1314 = 6468 us
+"size" is in "fantasize that when you were young prices were" ["size that when you were young prices were"]
+loop counter = (1, 0, 1, 1, )
+time 1315 = 6632 us
+"reasonable" is in "reasonable politicians were noble and children respected" ["reasonable politicians were noble and children respected"]
+loop counter = (1, 0, 1, 1, )
+time 1316 = 6248 us
+"their" is in "their elders Respect your elders" ["their elders Respect your elders"]
+loop counter = (1, 0, 1, 1, )
+time 1317 = 6341 us
+"Dont" is in "Dont expect anyone else to" ["Dont expect anyone else to"]
+loop counter = (1, 0, 1, 1, )
+time 1318 = 6302 us
+"support" is in "support you Maybe you have a" ["support you Maybe you have a"]
+loop counter = (1, 0, 1, 1, )
+time 1319 = 6255 us
+"trust" is in "trust fund Maybe youll have a wealthy" ["trust fund Maybe youll have a wealthy"]
+loop counter = (1, 0, 1, 1, )
+time 1320 = 6295 us
+"spouse" is in "spouse But you never know when either" ["spouse But you never know when either"]
+loop counter = (1, 0, 1, 1, )
+time 1321 = 6215 us
+"one" is in "one might run out Dont mess" ["one might run out Dont mess"]
+loop counter = (1, 0, 1, 1, )
+time 1322 = 6210 us
+"too" is in "too much with your hair or by the" ["too much with your hair or by the"]
+loop counter = (1, 0, 1, 1, )
+time 1323 = 6228 us
+"time" is in "time youre 40 it will look 85 Be" ["time youre 40 it will look 85 Be"]
+loop counter = (1, 0, 1, 1, )
+time 1324 = 6327 us
+"careful" is in "careful whose advice you buy but be patient" ["careful whose advice you buy but be patient"]
+loop counter = (1, 0, 1, 1, )
+time 1325 = 6342 us
+"with" is in "with those who supply it Advice is a" ["with those who supply it Advice is a"]
+loop counter = (1, 3, 1, 1, )
+time 1326 = 6629 us
+"Dispensing" is in "form of nostalgia Dispensing it is" ["Dispensing it is"]
+loop counter = (2, 6, 2, 1, )
+time 1327 = 6757 us
+"past" is in "a way of fishing the past from" ["past from"]
+loop counter = (1, 0, 1, 1, )
+time 1328 = 6255 us
+"the" is in "the disposal wiping it off painting" ["the disposal wiping it off painting"]
+loop counter = (1, 3, 1, 1, )
+time 1329 = 6393 us
+"parts" is in "over the ugly parts" ["parts"]
+loop counter = (1, 6, 1, 1, )
+time 1330 = 6795 us
+"more" is in "and recycling it for more than its" ["more than its"]
+loop counter = (1, 8, 1, 1, )
+time 1331 = 6731 us
+"me" is in "worth But trust me on the sunscreen" ["me on the sunscreen"]
