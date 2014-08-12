@@ -60,6 +60,9 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     # Multi-dimensional array
     elif isinstance(node, c_ast.ArrayRef):
       return self.get_ArrayRef_name(node.name)
+    # Cast
+    elif isinstance(node, c_ast.Cast):
+      return self.get_ArrayRef_name(node.expr)
     else:
       node.show(nodenames=True, showcoord=True)
       raise Exception("Unknown type for get_ArrayRef_name: %s" % (type(node)))
