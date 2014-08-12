@@ -44,6 +44,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   def __init__(self, var):
     self.var = var
     self.rvalues = set()
+    self.declvalues = set() # Variables included in slice, ensure declared
     self.id_visitor = IDVisitor()
     self.cgenerator = c_generator.CGenerator()
   # Mark node as sliced and add rvalues to saved set
@@ -51,6 +52,12 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     node.sliced = True
     self.id_visitor.visit(node)
     self.rvalues = self.rvalues.union(set(self.id_visitor.IDs))
+    """
+    print "Adding to slice:"
+    print_node(node)
+    print "because of data dependence %s" % self.var
+    print
+    """
   # Get base name of array without index
   def get_ArrayRef_name(self, node):
     if isinstance(node, c_ast.ID):
@@ -71,14 +78,9 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     if isinstance(node.lvalue, c_ast.ID) and node.lvalue.name == self.var:
       self.slice_data(node)
     # Array assignment
-    #elif isinstance(node.lvalue, c_ast.ArrayRef) and (node.lvalue.name.name.name == self.var):
     elif isinstance(node.lvalue, c_ast.ArrayRef) and (self.get_ArrayRef_name(node.lvalue) == self.var):
       self.slice_data(node)
-      # Struct assignment
-      """
-      elif isinstance(node.lvalue, c_ast.StructRef) and (node.lvalue.name.name == self.var):
-        self.slice_data(node)
-      """
+    # Struct assignment
     elif isinstance(node.lvalue, c_ast.StructRef):
       if self.cgenerator.visit(node.lvalue) == self.var:
         self.slice_data(node)
@@ -88,13 +90,6 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     else:
       self.generic_visit(node)
   def visit_UnaryOp(self, node):
-    """
-    if isinstance(node.expr, c_ast.ID) and node.expr.name == self.var:
-      self.slice_data(node)
-    # Not part of slice, check children
-    else:
-      self.generic_visit(node)
-    """
     if self.cgenerator.visit(node.expr) == self.var:
       self.slice_data(node)
     elif isinstance(node.expr, c_ast.ArrayRef) and (self.get_ArrayRef_name(node.expr) == self.var):
@@ -118,6 +113,18 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
       # If child is sliced, then mark this as well
       if c.sliced:
         node.sliced = True
+        # If adding an assignment, ensure that it is declared by adding lvalue
+        # to dependency list
+        if isinstance(node, c_ast.Assignment):
+          self.id_visitor.visit(node.lvalue)
+          self.rvalues.union(set(self.id_visitor.IDs))
+        """
+        print "Adding to slice:"
+        print_node(node)
+        print "because child is in slice:"
+        print_node(c)
+        print
+        """
 
   """
   Include values used in conditions as rvalues to find future dependencies.
@@ -162,8 +169,6 @@ class PrintSliceVisitor(c_generator.CGenerator):
   def __init__(self):
     self.output = ''
     self.indent_level = 0
-
-    self.sliced = False
 
   def visit(self, node):
     method = "visit_" + node.__class__.__name__
@@ -237,26 +242,6 @@ def slice_ast(ast, var):
   print 
   print
   """
-
-"""
-Identify all IDs that are declared in function.
-"""
-class DeclVisitor(c_ast.NodeVisitor):
-  def __init__(self):
-    self.IDs = []
-    self.id_visitor = IDVisitor()
-  def visit_Decl(self, node):
-    self.IDs.append(node.name)
-
-class LValueVisitor(c_ast.NodeVisitor):
-  def __init__(self):
-    self.IDs = []
-  def visit_Assignment(self, node):
-    if isinstance(node.lvalue, c_ast.ID):
-      self.IDs.append(node.lvalue.name)
-  def visit_UnaryOp(self, node):
-    if isinstance(node.expr, c_ast.ID):
-      self.IDs.append(node.expr.name)
 
 """
 Pretty print the passed AST/node.
