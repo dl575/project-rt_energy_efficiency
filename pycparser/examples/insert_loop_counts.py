@@ -108,7 +108,7 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     # End of printing
     stmt_end = c_ast.ID("printf(\")\\n\")")
     
-    compound = c_ast.Compound([stmt_start, for_decl, stmt_for, stmt_end])
+    compound = c_ast.Label("print_loop_counter", c_ast.Compound([stmt_start, for_decl, stmt_for, stmt_end]))
     node.body.block_items.append(compound)
 
 

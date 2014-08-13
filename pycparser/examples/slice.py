@@ -47,6 +47,8 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     self.declvalues = set() # Variables included in slice, ensure declared
     self.id_visitor = IDVisitor()
     self.cgenerator = c_generator.CGenerator()
+    # Label to jump to on return statements
+    self.end_label = "print_loop_counter"
   # Mark node as sliced and add rvalues to saved set
   def slice_data(self, node):
     node.sliced = True
@@ -108,7 +110,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   Modify generic_visit to propagate slice information up tree.
   """
   def generic_visit(self, node):
-    for c_name, c in node.children():
+    for ci, (c_name, c) in enumerate(node.children()):
       self.visit(c)
       # If child is sliced, then mark this as well
       if c.sliced:
@@ -125,6 +127,17 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
         print_node(c)
         print
         """
+      # Always include Returns, change them to Goto end of function
+      if isinstance(c, c_ast.Return):
+        insert_node = c_ast.Goto(self.end_label)
+        insert_node.sliced = True
+        if isinstance(node, c_ast.Compound):
+          node.block_items[ci] = insert_node
+        elif isinstance(node, c_ast.If):
+          exec("node.%s = insert_node" % c_name)
+        else:
+          raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+
 
   """
   Include values used in conditions as rvalues to find future dependencies.
