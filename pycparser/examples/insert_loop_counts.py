@@ -45,7 +45,10 @@ class LoopCountVisitor(c_ast.NodeVisitor):
   def insert_in_Loop(self, node, stmt):
     # Insert at start of compound block
     if isinstance(node.stmt, c_ast.Compound):
-      node.stmt.block_items.insert(0, stmt)
+      if node.stmt.block_items:
+        node.stmt.block_items.insert(0, stmt)
+      else:
+        node.stmt.block_items = [stmt]
     # Replace empty statement
     elif isinstance(node.stmt, c_ast.EmptyStatement):
       node.stmt = stmt
@@ -59,7 +62,10 @@ class LoopCountVisitor(c_ast.NodeVisitor):
   def insert_in_If(self, node, stmt):
     # Insert at start of compound block
     if isinstance(node.iftrue, c_ast.Compound):
-      node.iftrue.block_items.insert(0, stmt)
+      if node.iftrue.block_items:
+        node.iftrue.block_items.insert(0, stmt)
+      else:
+        node.iftrue.block_items = [stmt]
     # Replace empty statement
     elif isinstance(node.iftrue, c_ast.EmptyStatement):
       node.iftrue = stmt
