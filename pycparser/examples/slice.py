@@ -179,28 +179,26 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
       self.id_visitor.new_visit(node.cond)
       self.rvalues += self.id_visitor.IDs
   def visit_If(self, node):
+    # Slice inside if block first
     self.generic_visit(node)
     # Include if condition
     if node.sliced:
       self.id_visitor.new_visit(node.cond)
       self.rvalues += self.id_visitor.IDs
-      # Continue slicing in if block
-      self.generic_visit(node)
   def visit_While(self, node):
-    self.generic_visit(node)
-    if node.sliced:
-      # Include loop condition
-      self.id_visitor.new_visit(node.cond)
-      self.rvalues += self.id_visitor.IDs
-      self.generic_visit(node)
-  def visit_DoWhile(self, node):
+    # Slice inside loop body first
     self.generic_visit(node)
     # Include loop condition
     if node.sliced:
       self.id_visitor.new_visit(node.cond)
       self.rvalues += self.id_visitor.IDs
-
-      self.generic_visit(node)
+  def visit_DoWhile(self, node):
+    # Slice inside loop body first
+    self.generic_visit(node)
+    # Include loop condition
+    if node.sliced:
+      self.id_visitor.new_visit(node.cond)
+      self.rvalues += self.id_visitor.IDs
 
 """
 Only print out nodes that are considered part of slice
