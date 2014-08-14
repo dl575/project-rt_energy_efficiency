@@ -167,38 +167,25 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
         else:
           raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
 
-
   """
   Include values used in conditions as rvalues to find future dependencies.
   """
+  def slice_loop(self, node):
+    # First visit inside loop/condition body
+    self.generic_visit(node)
+    # If this node gets marked as sliced,
+    if node.sliced:
+      # Include variables used in the condition as part of slice
+      self.id_visitor.new_visit(node.cond)
+      self.rvalues += self.id_visitor.IDs
   def visit_For(self, node):
-    self.generic_visit(node)
-    # Include condition part of for loop (init and next should be captured as
-    # data assignment/unaryops)
-    if node.sliced:
-      self.id_visitor.new_visit(node.cond)
-      self.rvalues += self.id_visitor.IDs
+    self.slice_loop(node)
   def visit_If(self, node):
-    # Slice inside if block first
-    self.generic_visit(node)
-    # Include if condition
-    if node.sliced:
-      self.id_visitor.new_visit(node.cond)
-      self.rvalues += self.id_visitor.IDs
+    self.slice_loop(node)
   def visit_While(self, node):
-    # Slice inside loop body first
-    self.generic_visit(node)
-    # Include loop condition
-    if node.sliced:
-      self.id_visitor.new_visit(node.cond)
-      self.rvalues += self.id_visitor.IDs
+    self.slice_loop(node)
   def visit_DoWhile(self, node):
-    # Slice inside loop body first
-    self.generic_visit(node)
-    # Include loop condition
-    if node.sliced:
-      self.id_visitor.new_visit(node.cond)
-      self.rvalues += self.id_visitor.IDs
+    self.slice_loop(node)
 
 """
 Only print out nodes that are considered part of slice
