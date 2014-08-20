@@ -111,6 +111,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     self.expanded = False
 
     self.rtg_visitor = ReturnToGotoVisitor()
+    self.cgenerator = c_generator.CGenerator()
     self.return_counter = 0
 
     self.rename_visitor = RenameVisitor()
@@ -131,6 +132,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       # Assignment with function call as rvalue
       ##########################################
       if isinstance(c, c_ast.Assignment) and isinstance(c.rvalue, c_ast.FuncCall):
+        
         # Find matching function body
         for function in self.functions:
           if c.rvalue.name.name == function.decl.name:
@@ -155,6 +157,9 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       elif isinstance(c, c_ast.FuncCall):
         # Look for function in function list
         for function in self.functions:
+          # FIXME: Skip pointer referenced function call (i.e., jump table)
+          if isinstance(c.name, c_ast.UnaryOp):
+            break
           if c.name.name == function.decl.name:
 
             # Create in-lined version of function
@@ -207,12 +212,14 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
           if isinstance(init, c_ast.UnaryOp):
             ptr_args.append((self.get_Decl_name(arg), init.expr.name))
           elif isinstance(init, c_ast.StructRef):
-            ptr_args.append((self.get_Decl_name(arg), "%s->%s" % (init.name.name, init.field.name)))
+            ptr_args.append((self.get_Decl_name(arg), self.cgenerator.visit(init)))
           elif isinstance(init, c_ast.ID):
             ptr_args.append((self.get_Decl_name(arg), init.name))
           elif isinstance(init, c_ast.ArrayRef):
             ptr_args.append((self.get_Decl_name(arg), init))
           else: 
+            arg.show(nodenames=True, showcoord=True)
+            init.show(nodenames=True, showcoord=True)
             raise Exception("Unsupported init type %s" % (type(init)))
         else:
           # Assign passed value to argument declaration
