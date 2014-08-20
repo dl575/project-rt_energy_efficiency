@@ -93,7 +93,7 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
 
     # Add printf to the end of function
     # Start of printing
-    stmt_start = c_ast.ID("printf(\"loop_counter = (\")")
+    stmt_start = c_ast.ID("printf(\"loop counter = (\")")
 
     # For loop
     # int i;
