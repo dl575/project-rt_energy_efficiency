@@ -144,8 +144,10 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             elif isinstance(node, c_ast.Case):
               node.stmts[ci - 1] = inline_function.body
             else:
+              print_node(node)
+              node.show(nodenames=True, showcoord=True)
               raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
-            node.expanded = True
+            self.expanded = True
 
       #################################
       # Function call
