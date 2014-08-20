@@ -91,7 +91,11 @@ class ReturnToGotoVisitor(c_ast.NodeVisitor):
           node.block_items[ci] = insert_node
         elif isinstance(node, c_ast.If):
           exec("node.%s = insert_node" % c_name)
+        elif isinstance(node, c_ast.Case):
+          node.stmts[ci - 1] = insert_node
         else:
+          print_node(node)
+          node.show(nodenames=True, showcoord=True)
           raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
       # Non-return statement, continue visiting
       else:
