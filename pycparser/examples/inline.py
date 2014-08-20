@@ -19,7 +19,10 @@ class RenameVisitor(c_ast.NodeVisitor):
   def __init__(self, old_name=None, new_name=None):
     self.old_name = old_name
     self.new_name = new_name
+
     self.cgenerator = c_generator.CGenerator()
+
+    self.in_struct = False
   """
   Set the old_name and new_name for renaming.
   """
@@ -36,6 +39,35 @@ class RenameVisitor(c_ast.NodeVisitor):
   def visit_TypeDecl(self, node):
     if node.declname == self.old_name:
       node.declname = self.new_name
+  def visit_StructRef(self, node):
+    if not self.in_struct:
+      struct_base_name = self.get_base_StructRef(node)
+      if struct_base_name == self.old_name:
+        self.set_base_StructRef(node, self.new_name)
+
+      self.in_struct = True
+      # Only visit fields that are not just members of the struct
+      if not isinstance(node.name, c_ast.ID):
+        self.generic_visit(node.name)
+      if not isinstance(node.field, c_ast.ID):
+        self.generic_visit(node.name)
+      self.in_struct = False
+    else:
+      # Only visit fields that are not just members of the struct
+      if not isinstance(node.name, c_ast.ID):
+        self.generic_visit(node.name)
+      if not isinstance(node.field, c_ast.ID):
+        self.generic_visit(node.name)
+  def get_base_StructRef(self, node):
+    if isinstance(node, c_ast.ID):
+      return node.name
+    else:
+      return self.get_base_StructRef(node.name)
+  def set_base_StructRef(self, node, new_name):
+    if isinstance(node, c_ast.ID):
+      node.name = new_name
+    else:
+      self.set_base_StructRef(node.name, new_name)
 
 """
 Replaces return statements with a goto.
