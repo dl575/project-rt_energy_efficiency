@@ -169,7 +169,13 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
               node.rvalue = function_copy.body
             elif isinstance(node, c_ast.Case):
               node.stmts[ci - 1] = function_copy.body
+            elif isinstance(node, c_ast.While) or isinstance(node, c_ast.DoWhile) or isinstance(node, c_ast.For):
+              node.stmt = function_copy.body
             else:
+              print_node(node)
+              node.show(nodenames=True, showcoord=True)
+              print_node(c)
+              c.show(nodenames=True, showcoord=True)
               raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
             self.expanded = True
 
