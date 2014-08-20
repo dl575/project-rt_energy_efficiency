@@ -221,7 +221,7 @@ class PrintSliceVisitor(c_generator.CGenerator):
         if n.sliced:
           return indent + self.visit(n) + ';\n'
         else:
-          return ''
+          return '{}\n'
     elif typ in (c_ast.Compound,):
       # No extra indentation required before the opening brace of a
         # compound - because it consists of multiple lines it has to
