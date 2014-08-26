@@ -162,7 +162,9 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
         insert_node = c_ast.Compound([])
         # If there is a return value, add statement for return_value = value
         if c.expr:
-          assignment = c_ast.Assignment("=", c_ast.ID("return_value"), c.expr)
+          ret_id = c_ast.ID("return_value")
+          ret_id.sliced = True
+          assignment = c_ast.Assignment("=", ret_id, c.expr)
           assignment.sliced = True
           insert_node.block_items.append(assignment)
         # Goto end of function
