@@ -319,7 +319,8 @@ class GetDeclVisitor(c_ast.NodeVisitor):
   def __init__(self):
     self.decls = []
   def visit_Decl(self, node):
-    self.decls.append(node.name)
+    if node.name:
+      self.decls.append(node.name)
 
 """
 Pretty print the passed AST/node.
