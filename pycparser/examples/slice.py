@@ -189,7 +189,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     # First visit inside loop/condition body
     self.generic_visit(node)
     # If this node gets marked as sliced,
-    if node.sliced:
+    if node.sliced and node.cond:
       # Include variables used in the condition as part of slice
       self.id_visitor.new_visit(node.cond)
       self.rvalues += self.id_visitor.IDs
