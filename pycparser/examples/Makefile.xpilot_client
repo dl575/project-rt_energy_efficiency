@@ -1,0 +1,34 @@
+slice: xpilot/join3.c Makefile
+	./inline.py xpilot/join3.c Input_loop > xpilot/join_inline.c
+	./insert_loop_counts.py xpilot/join_inline.c > xpilot/join_loop_counts.c
+	./slice.py xpilot/join_loop_counts.c loop_counter > xpilot/join_slice.c
+
+td = echo "typedef int $1;" | cat - xpilot/join3.c > temp && mv temp xpilot/join3.c
+xpilot/join3.c: xpilot/join.c Makefile
+	gcc -E xpilot/join.c > xpilot/join2.c
+	./cleanup_gccE.py xpilot/join2.c > xpilot/join3.c
+
+	$(call td,"fd_set")
+	
+	# client.c
+	$(call td,"ipos")
+	$(call td,"u_byte")
+	$(call td,"DFLOAT")
+	$(call td,"bool")
+	$(call td,"other_t")
+	$(call td,"fuelstation_t")
+	$(call td,"homebase_t")
+	$(call td,"cannon_t")
+	$(call td,"cannontime_t")
+	$(call td,"target_t")
+	$(call td,"checkpoint_t")
+	$(call td,"score_object_t")
+	$(call td,"selection_t")
+	$(call td,"shipobj")
+
+clean:
+	rm xpilot/join2.c
+	rm xpilot/join3.c
+	rm xpilot/join_inline.c
+	rm xpilot/join_loop_counts.c
+	rm xpilot/join_loop_slice.c

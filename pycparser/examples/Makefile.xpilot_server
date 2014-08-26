@@ -1,0 +1,33 @@
+slice: xpilot_server/server3.c Makefile
+	./inline.py xpilot_server/server3.c Main_loop > xpilot_server/server_inline.c
+	./insert_loop_counts.py xpilot_server/server_inline.c > xpilot_server/server_loop_counts.c
+	time ./slice.py xpilot_server/server_loop_counts.c loop_counter > xpilot_server/server_slice.c
+
+td = echo "typedef int $1;" | cat - xpilot_server/server3.c > temp && mv temp xpilot_server/server3.c
+xpilot_server/server3.c: xpilot_server/server.c Makefile
+	gcc -E xpilot_server/server.c > xpilot_server/server2.c
+	./cleanup_gccE.py xpilot_server/server2.c > xpilot_server/server3.c
+
+	$(call td,"player")
+	$(call td,"server_t")
+	$(call td,"bool")
+	$(call td,"time_t")
+	$(call td,"DFLOAT")
+
+	# frame.c
+	$(call td,"position")
+	$(call td,"ipos")
+	$(call td,"size_t")
+	$(call td,"wireobject")
+	$(call td,"u_byte")
+	$(call td,"mineobject")
+	$(call td,"ecm_t")
+	$(call td,"trans_t")
+	$(call td,"cannon_t")
+
+clean:
+	rm xpilot_server/server2.c
+	rm xpilot_server/server3.c
+	rm xpilot_server/server_inline.c
+	rm xpilot_server/server_loop_counts.c
+	rm xpilot_server/server_loop_slice.c
