@@ -13,6 +13,97 @@ from pycparser import c_ast
 from pycparser import c_generator
 
 """
+Determines if there is a function call in the visited node.
+"""
+class GetFuncCallVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    self.function_call = None
+  def new_visit(self, node):
+    self.function_call = None
+    self.visit(node)
+  def visit_FuncCall(self, node):
+    self.function_call = node
+
+"""
+Replace FuncCall with variable value.
+"""
+class ReplaceFuncCallVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    self.func_call_name = None
+    self.replace_name = None
+  def new_visit(self, func_call_name, replace_name, node):
+    self.func_call_name = func_call_name
+    self.replace_name = replace_name
+    self.visit(node)
+  def generic_visit(self, node):
+    for ci, (c_name, c) in enumerate(node.children()):
+      # If function call
+      if isinstance(c, c_ast.FuncCall):
+        # And call to the function to be replaced
+        if c.name.name == self.func_call_name:
+          # Handle replacement
+          replace_node(node, c_ast.ID(self.replace_name), ci, c_name)
+      self.visit(c)
+
+"""
+Converts:
+  if (func() == 1)
+to:
+  int func_result;
+  func_result = func()
+  if (func_result == 1)
+"""
+class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    self.visitor = GetFuncCallVisitor()
+    self.replace_visitor = ReplaceFuncCallVisitor()
+  def generic_visit(self, node):
+    for ci, (c_name, c) in enumerate(node.children()):
+      # For conditional statement, 
+      if isinstance(c, c_ast.If):
+        # Determine if there is a function call in the condition
+        self.visitor.new_visit(c.cond)
+        if self.visitor.function_call:
+          # Extract information about function call
+          func_call = self.visitor.function_call
+          func_name = func_call.name.name
+          result_name = func_name + "_result"
+          # Declare result variable
+          it = c_ast.IdentifierType(["int"])
+          td = c_ast.TypeDecl(result_name, [], it)
+          d = c_ast.Decl(result_name, [], [], [], td, None, None)
+          # Call function
+          a = c_ast.Assignment("=", c_ast.ID(result_name), func_call)
+          # Modify conditional
+          if isinstance(c.cond, c_ast.FuncCall) and (c.cond.name.name == func_name):
+            c.cond = c_ast.ID(result_name)
+          else:
+            self.replace_visitor.new_visit(func_name, result_name, c.cond)
+          # Create new compound block
+          compound = c_ast.Compound([d, a, c])
+          # Replace original block with new block
+          replace_node(node, compound, ci, c_name)
+      self.visit(c)
+
+"""
+Replace node at ci/c_name in parent with the new_child.
+"""
+def replace_node(parent, new_child, ci, c_name):
+  typ = type(parent)
+  # Depending on parent, handle insertion differently
+  if typ in (c_ast.BinaryOp, c_ast.Assignment, c_ast.StructRef,
+      c_ast.UnaryOp, c_ast.Cast, c_ast.TernaryOp, c_ast.If):
+    exec("parent.%s = new_child" % c_name)
+  elif typ == c_ast.Compound:
+    parent.block_items[ci] = new_child
+  elif typ == c_ast.Case:
+    parent.stmts[ci - 1] = new_child
+  else:
+    print_node(parent)
+    parent.show(nodenames=True, showcoord=True)
+    raise Exception("Unsupported parent node type %s. Please implement." % (type(parent)))
+
+"""
 Renames variable old_name to new_name.
 """
 class RenameVisitor(c_ast.NodeVisitor):
@@ -339,7 +430,6 @@ if __name__ == "__main__":
     filename = "c_files/test.c"
     top_func = "main"
 
-
   # Generate AST
   ast = parse_file(filename, use_cpp=True)
   #ast.show(nodenames=True)
@@ -349,6 +439,9 @@ if __name__ == "__main__":
   v.visit(ast)
   functions = v.funcs
 
+  # Remove function calls from being embedded in conditionals
+  v = RemoveIfFunctionVisitor()
+  v.visit(ast)
   # Inline functions
   v = ExpandFunctionVisitor(top_func, functions)
   v.visit(ast)
