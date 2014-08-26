@@ -1,0 +1,27 @@
+slice: freeciv/gui_main3.c Makefile
+	./inline.py freeciv/gui_main3.c gui_event_loop > freeciv/gui_main_inline.c
+	./insert_loop_counts.py freeciv/gui_main_inline.c > freeciv/gui_main_loop_counts.c
+	./slice.py freeciv/gui_main_loop_counts.c loop_counter > freeciv/gui_main_slice.c
+
+td = echo "typedef int $1;" | cat - freeciv/gui_main3.c > temp && mv temp freeciv/gui_main3.c
+freeciv/gui_main3.c: freeciv/gui_main.c Makefile
+	gcc -E freeciv/gui_main.c > freeciv/gui_main2.c
+	./cleanup_gccE.py freeciv/gui_main2.c > freeciv/gui_main3.c
+	
+	$(call td,"bool")
+	$(call td,"Uint32")
+	$(call td,"Uint16")
+	$(call td,"SDL_Event")
+	$(call td,"SDL_keysym")
+	$(call td,"SDL_MouseButtonEvent")
+	$(call td,"SDL_MouseMotionEvent")
+	$(call td,"SDL_Rect")
+	$(call td,"fd_set")
+	$(call td,"SDL_Color")
+
+clean:
+	rm freeciv/gui_main2.c
+	rm freeciv/gui_main3.c
+	rm freeciv/gui_main_inline.c
+	rm freeciv/gui_main_loop_counts.c
+	rm freeciv/gui_main_loop_slice.c
