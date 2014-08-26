@@ -158,13 +158,28 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
         """
       # Always include Returns, change them to Goto end of function
       if isinstance(c, c_ast.Return):
-        insert_node = c_ast.Goto(self.end_label)
+        # Create a new compound node
+        insert_node = c_ast.Compound([])
+        # If there is a return value, add statement for return_value = value
+        if c.expr:
+          assignment = c_ast.Assignment("=", c_ast.ID("return_value"), c.expr)
+          assignment.sliced = True
+          insert_node.block_items.append(assignment)
+        # Goto end of function
+        goto = c_ast.Goto(self.end_label)
+        goto.sliced = True
+        insert_node.block_items.append(goto)
         insert_node.sliced = True
+        # Add compound node back to function
         if isinstance(node, c_ast.Compound):
           node.block_items[ci] = insert_node
         elif isinstance(node, c_ast.If):
           exec("node.%s = insert_node" % c_name)
+        elif isinstance(node, c_ast.Case):
+          node.stmts[ci - 1] = insert_node
         else:
+          print_node(node)
+          node.show(nodenames=True, showcoord=True)
           raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
 
   """
