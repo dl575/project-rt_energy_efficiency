@@ -12,87 +12,15 @@ from pycparser import parse_file
 from pycparser import c_ast
 from pycparser import c_generator
 
-"""
-Determines if there is a function call in the visited node.
-"""
-class GetFuncCallVisitor(c_ast.NodeVisitor):
-  def __init__(self):
-    self.function_call = None
-  def new_visit(self, node):
-    self.function_call = None
-    self.visit(node)
-  def visit_FuncCall(self, node):
-    self.function_call = node
-
-"""
-Replace FuncCall with variable value.
-"""
-class ReplaceFuncCallVisitor(c_ast.NodeVisitor):
-  def __init__(self):
-    self.func_call_name = None
-    self.replace_name = None
-  def new_visit(self, func_call_name, replace_name, node):
-    self.func_call_name = func_call_name
-    self.replace_name = replace_name
-    self.visit(node)
-  def generic_visit(self, node):
-    for ci, (c_name, c) in enumerate(node.children()):
-      # If function call
-      if isinstance(c, c_ast.FuncCall):
-        # And call to the function to be replaced
-        if c.name.name == self.func_call_name:
-          # Handle replacement
-          replace_node(node, c_ast.ID(self.replace_name), ci, c_name)
-      self.visit(c)
-
-"""
-Converts:
-  if (func() == 1)
-to:
-  int func_result;
-  func_result = func()
-  if (func_result == 1)
-"""
-class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
-  def __init__(self):
-    self.visitor = GetFuncCallVisitor()
-    self.replace_visitor = ReplaceFuncCallVisitor()
-  def generic_visit(self, node):
-    for ci, (c_name, c) in enumerate(node.children()):
-      # For conditional statement, 
-      if isinstance(c, c_ast.If):
-        # Determine if there is a function call in the condition
-        self.visitor.new_visit(c.cond)
-        if self.visitor.function_call:
-          # Extract information about function call
-          func_call = self.visitor.function_call
-          func_name = func_call.name.name
-          result_name = func_name + "_result"
-          # Declare result variable
-          it = c_ast.IdentifierType(["int"])
-          td = c_ast.TypeDecl(result_name, [], it)
-          d = c_ast.Decl(result_name, [], [], [], td, None, None)
-          # Call function
-          a = c_ast.Assignment("=", c_ast.ID(result_name), func_call)
-          # Modify conditional
-          if isinstance(c.cond, c_ast.FuncCall) and (c.cond.name.name == func_name):
-            c.cond = c_ast.ID(result_name)
-          else:
-            self.replace_visitor.new_visit(func_name, result_name, c.cond)
-          # Create new compound block
-          compound = c_ast.Compound([d, a, c])
-          # Replace original block with new block
-          replace_node(node, compound, ci, c_name)
-      self.visit(c)
-
-"""
-Replace node at ci/c_name in parent with the new_child.
-"""
 def replace_node(parent, new_child, ci, c_name):
+  """
+  Replace node at ci/c_name in parent with the new_child.
+  """
   typ = type(parent)
   # Depending on parent, handle insertion differently
   if typ in (c_ast.BinaryOp, c_ast.Assignment, c_ast.StructRef,
-      c_ast.UnaryOp, c_ast.Cast, c_ast.TernaryOp, c_ast.If):
+      c_ast.UnaryOp, c_ast.Cast, c_ast.TernaryOp, c_ast.If, c_ast.While,
+      c_ast.DoWhile):
     exec("parent.%s = new_child" % c_name)
   elif typ == c_ast.Compound:
     parent.block_items[ci] = new_child
@@ -103,10 +31,107 @@ def replace_node(parent, new_child, ci, c_name):
     parent.show(nodenames=True, showcoord=True)
     raise Exception("Unsupported parent node type %s. Please implement." % (type(parent)))
 
-"""
-Renames variable old_name to new_name.
-"""
+def print_node(node):
+  """
+  Pretty print the passed AST/node.
+  """
+  generator = c_generator.CGenerator()
+  print generator.visit(node)
+
+class GetFuncCallVisitor(c_ast.NodeVisitor):
+  """
+  Determines if there is a function call in the visited node. If there is, then
+  save the FuncCall node to self.function_call.
+  """
+  def __init__(self):
+    self.function_call = []
+  def new_visit(self, node):
+    self.function_call = []
+    self.visit(node)
+  def visit_FuncCall(self, node):
+    self.function_call.append(node)
+
+class ReplaceFuncCallVisitor(c_ast.NodeVisitor):
+  """
+  Replace FuncCall with variable value.
+  """
+  def __init__(self):
+    self.func_call = None
+    self.replace_name = None
+  def new_visit(self, func_call, replace_name, node):
+    """
+    Start a new visit to perform replacement. func_call_name is a string
+    representing the function call name. replace_name is a string representing
+    the variable to insert.
+    """
+    self.func_call = func_call
+    self.replace_name = replace_name
+    self.visit(node)
+  def generic_visit(self, node):
+    for ci, (c_name, c) in enumerate(node.children()):
+      # If function call
+      if isinstance(c, c_ast.FuncCall):
+        # And call to the function to be replaced
+        if c == self.func_call:
+          # Handle replacement
+          replace_node(node, c_ast.ID(self.replace_name), ci, c_name)
+      self.visit(c)
+
+class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
+  """
+  Converts:
+    if (func() == 1)
+  to:
+    int func_result;
+    func_result = func();
+    if (func_result == 1)
+  """
+
+  def __init__(self):
+    self.visitor = GetFuncCallVisitor()
+    self.replace_visitor = ReplaceFuncCallVisitor()
+  def generic_visit(self, node):
+    """
+    Rewrite generic_visit to check for FuncCall nodes in the condition of If
+    nodes.
+    """
+    for ci, (c_name, c) in enumerate(node.children()):
+
+      # For conditional statement, 
+      if isinstance(c, c_ast.If):
+        # Determine if there is a function call in the condition
+        self.visitor.new_visit(c.cond)
+        if self.visitor.function_call:
+          # For each function call found
+          stmts = []
+          for (fi, func_call) in enumerate(self.visitor.function_call):
+            # Extract information about function call
+            func_name = func_call.name.name
+            result_name = func_name + "_result%d" % fi
+            # Declare result variable
+            it = c_ast.IdentifierType(["int"])
+            td = c_ast.TypeDecl(result_name, [], it)
+            d = c_ast.Decl(result_name, [], [], [], td, None, None)
+            stmts.append(d)
+            # Call function, assign into result variable
+            a = c_ast.Assignment("=", c_ast.ID(result_name), func_call)
+            stmts.append(a)
+            # Modify conditional to use result variable instead of function call
+            if isinstance(c.cond, c_ast.FuncCall) and (c.cond.name.name == func_name):
+              c.cond = c_ast.ID(result_name)
+            else:
+              self.replace_visitor.new_visit(func_call, result_name, c.cond)
+          # Put it all together in a new Compound block
+          compound = c_ast.Compound(stmts + [c])
+          # Replace original block with new block
+          replace_node(node, compound, ci, c_name)
+
+      self.visit(c)
+
 class RenameVisitor(c_ast.NodeVisitor):
+  """
+  Renames variable old_name to new_name.
+  """
   def __init__(self, old_name=None, new_name=None):
     self.old_name = old_name
     self.new_name = new_name
@@ -114,16 +139,20 @@ class RenameVisitor(c_ast.NodeVisitor):
     self.cgenerator = c_generator.CGenerator()
 
     self.in_struct = False
-  """
-  Set the old_name and new_name for renaming.
-  """
   def set_names(self, old_name, new_name):
+    """
+    Set the old_name and new_name for renaming.
+    """
     self.old_name = old_name
     # Ensure that new name is a string
     if isinstance(new_name, str):
       self.new_name = new_name
     else:
       self.new_name = self.cgenerator.visit(new_name)
+  def new_visit(self, old_name, new_name, node):
+    self.set_names(old_name, new_name)
+    self.visit(node)
+
   def visit_ID(self, node):
     if node.name == self.old_name:
       node.name = self.new_name
@@ -131,6 +160,10 @@ class RenameVisitor(c_ast.NodeVisitor):
     if node.declname == self.old_name:
       node.declname = self.new_name
   def visit_StructRef(self, node):
+    """
+    Only the base of a StructRef should be renameable (i.e., for a->b->c->d,
+    only a should be renamable).
+    """
     if not self.in_struct:
       struct_base_name = self.get_base_StructRef(node)
       if struct_base_name == self.old_name:
@@ -150,22 +183,31 @@ class RenameVisitor(c_ast.NodeVisitor):
       if not isinstance(node.field, c_ast.ID):
         self.generic_visit(node.name)
   def get_base_StructRef(self, node):
+    """
+    Get the base of a (nested) StructRef
+    """
     if isinstance(node, c_ast.ID):
       return node.name
     else:
       return self.get_base_StructRef(node.name)
   def set_base_StructRef(self, node, new_name):
+    """
+    Replace the base of a (nested) StructRef
+    """
     if isinstance(node, c_ast.ID):
       node.name = new_name
     else:
       self.set_base_StructRef(node.name, new_name)
 
-"""
-Replaces return statements with a goto.
-"""
 class ReturnToGotoVisitor(c_ast.NodeVisitor):
+  """
+  Replaces return statements with a goto.
+  """
   def __init__(self):
-    self.goto_ID = None
+    self.goto_name = None
+  def new_visit(self, goto_name, node):
+    self.goto_name = goto_name
+    self.visit(node)
   def generic_visit(self, node):
     for ci, (c_name, c) in enumerate(node.children()):
       # Return statement
@@ -177,45 +219,35 @@ class ReturnToGotoVisitor(c_ast.NodeVisitor):
           insert_node.block_items.append(c_ast.Assignment("=", c_ast.ID("return_value"), c.expr))
         # Add goto to end of function block
         insert_node.block_items.append(c_ast.Goto(self.goto_name))
-        # Depending on parent, handle insertion differently
-        if isinstance(node, c_ast.Compound):
-          node.block_items[ci] = insert_node
-        elif isinstance(node, c_ast.If):
-          exec("node.%s = insert_node" % c_name)
-        elif isinstance(node, c_ast.Case):
-          node.stmts[ci - 1] = insert_node
-        else:
-          print_node(node)
-          node.show(nodenames=True, showcoord=True)
-          raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+        # Replace original node with new node
+        replace_node(node, insert_node, ci, c_name)
       # Non-return statement, continue visiting
       else:
         self.visit(c)
 
-"""
-Used to take a function and inline all functions it calls.
-"""
 class ExpandFunctionVisitor(c_ast.NodeVisitor):
+  """
+  Used to take a function and inline all functions it calls.
+  """
   def __init__(self, funcname, functions):
     self.funcname = funcname
     self.functions = functions
     self.expanded = False
 
     self.rtg_visitor = ReturnToGotoVisitor()
-    self.cgenerator = c_generator.CGenerator()
     self.return_counter = 0
-
     self.rename_visitor = RenameVisitor()
     self.rename_counter = 0
+    self.cgenerator = c_generator.CGenerator()
 
   def visit_FuncDef(self, node):
     if (node.decl.name == self.funcname):
       # Find and replace function calls
       self.expand_visit(node)
-  """ 
-  Replace node with full function.
-  """
   def expand_visit(self, node):
+    """ 
+    Replace node with full function.
+    """
     # For each child
     for ci, (c_name, c) in enumerate(node.children()):
 
@@ -232,14 +264,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             # Set assignment lvalue to return value
             inline_function.body.block_items.append(c_ast.Assignment("=", c.lvalue, c_ast.ID("return_value")))
             # Replace node in parent
-            if isinstance(node, c_ast.Compound):
-              node.block_items[ci] = inline_function.body
-            elif isinstance(node, c_ast.Case):
-              node.stmts[ci - 1] = inline_function.body
-            else:
-              print_node(node)
-              node.show(nodenames=True, showcoord=True)
-              raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+            replace_node(node, inline_function.body, ci, c_name)
             self.expanded = True
 
       #################################
@@ -257,22 +282,7 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             function_copy = self.create_inline_function(function, c)
 
             # Replace with full function
-            if isinstance(node, c_ast.Compound):
-              node.block_items[ci] = function_copy.body
-            elif isinstance(node, c_ast.If):
-              exec("node.%s = function_copy.body" % c_name)
-            elif isinstance(node, c_ast.Assignment):
-              node.rvalue = function_copy.body
-            elif isinstance(node, c_ast.Case):
-              node.stmts[ci - 1] = function_copy.body
-            elif isinstance(node, c_ast.While) or isinstance(node, c_ast.DoWhile) or isinstance(node, c_ast.For):
-              node.stmt = function_copy.body
-            else:
-              print_node(node)
-              node.show(nodenames=True, showcoord=True)
-              print_node(c)
-              c.show(nodenames=True, showcoord=True)
-              raise Exception("Unsupported parent node type %s. Please implement." % (type(node)))
+            replace_node(node, function_copy.body, ci, c_name)
             self.expanded = True
 
       #################################
@@ -280,10 +290,10 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       #################################
       else:
         self.expand_visit(c)
-  """
-  Create a modified version of the passed function that can be inlined.
-  """
   def create_inline_function(self, function, caller):
+    """
+    Create a modified version of the passed function that can be inlined.
+    """
     # Create a copy of the function
     function_copy = copy.deepcopy(function)
 
@@ -322,18 +332,15 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
 
     # Rename arguments to prevent aliasing with upper-level
     for arg in args:
-      self.rename_visitor.set_names(arg, arg + "_rename%d" % self.rename_counter)
-      self.rename_visitor.visit(function_copy)
+      self.rename_visitor.new_visit(arg, arg + "_rename%d" % self.rename_counter, function_copy)
     # Rename pointers to the passed pointer variable
     for arg in ptr_args:
-      self.rename_visitor.set_names(arg[0], arg[1])
-      self.rename_visitor.visit(function_copy)
+      self.rename_visitor.new_visit(arg[0], arg[1], function_copy)
     # Find all declared variables and rename them
     self.decl_visitor = GetDeclVisitor()
     self.decl_visitor.visit(function_copy)
     for decl in self.decl_visitor.decls:
-      self.rename_visitor.set_names(decl, decl + "_rename%d" % self.rename_counter)
-      self.rename_visitor.visit(function_copy)
+      self.rename_visitor.new_visit(decl, decl + "_rename%d" % self.rename_counter, function_copy)
     # Increment rename counter to ensure unique names
     self.rename_counter += 1
 
@@ -355,84 +362,73 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     # Replace returns with goto statement
     return_label = "return%d" % (self.return_counter)
     self.return_counter += 1
-    self.rtg_visitor.goto_name = return_label
-    self.rtg_visitor.visit(function_copy)
+    self.rtg_visitor.new_visit(return_label, function_copy)
     # Create label for goto
     function_copy.body.block_items.append(c_ast.Label(return_label, c_ast.EmptyStatement()))
 
     return function_copy
 
-  """
-  Returns the return type of the passed function (or decl) node. This is done
-  by recursively descending into the node tree until the IdentifierType node is
-  found.
-  """
   def get_Function_type(self, func):
+    """
+    Returns the return type of the passed function (or decl) node. This is done
+    by recursively descending into the node tree until the IdentifierType node is
+    found.
+    """
     if isinstance(func, c_ast.IdentifierType):
       return func.names[0]
     elif isinstance(func, c_ast.FuncDef):
       return self.get_Function_type(func.decl)
     else:
       return self.get_Function_type(func.type)
-  """
-  Set the variable name for the passed decl node. This is done by recursively
-  descending into the node tree until the TypeDecl node is found and changing
-  its name.
-  """
   def set_Decl_name(self, node, name):
+    """
+    Set the variable name for the passed decl node. This is done by recursively
+    descending into the node tree until the TypeDecl node is found and changing
+    its name.
+    """
     if isinstance(node, c_ast.TypeDecl):
       node.declname = name
     else:
       self.set_Decl_name(node.type, name)
 
-
-  """
-  Return the string name of the variable being declared
-  """
   def get_Decl_name(self, node):
+    """
+    Return the string name of the variable being declared
+    """
     if isinstance(node, c_ast.TypeDecl):
       return node.declname
     else:
       return self.get_Decl_name(node.type)
 
-"""
-Find all function declarations.
-"""
 class GetFunctionsVisitor(c_ast.NodeVisitor):
+  """
+  Find all function declarations.
+  """
   def __init__(self):
     self.funcs = []
   def visit_FuncDef(self, node):
     self.funcs.append(node)
-"""
-Find all variable declarations.
-"""
+
 class GetDeclVisitor(c_ast.NodeVisitor):
+  """
+  Find all variable declarations.
+  """
   def __init__(self):
     self.decls = []
   def visit_Decl(self, node):
     if node.name:
       self.decls.append(node.name)
 
-"""
-Pretty print the passed AST/node.
-"""
-def print_node(node):
-  generator = c_generator.CGenerator()
-  print generator.visit(node)
-
 if __name__ == "__main__":
   if len(sys.argv) > 2:
     filename = sys.argv[1]
     top_func = sys.argv[2]
   else:
-    # filename = "c_files/h264ref.c"
-    # top_func = "getLuma4x4Neighbour"
-    filename = "c_files/test.c"
-    top_func = "main"
+    print "usage: ./inline.py file.c top_level_function"
+    sys.exit()
 
   # Generate AST
   ast = parse_file(filename, use_cpp=True)
-  #ast.show(nodenames=True)
 
   # Find all defined functions
   v = GetFunctionsVisitor()
@@ -450,7 +446,6 @@ if __name__ == "__main__":
     v.expanded = False
     v.visit(ast)
 
-  #print_node(ast)
   # Print out non-function top-levels
   for c_name, c in ast.children():
     if not isinstance(c, c_ast.FuncDef):
