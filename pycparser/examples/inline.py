@@ -151,6 +151,7 @@ class RenameVisitor(c_ast.NodeVisitor):
       self.new_name = self.cgenerator.visit(new_name)
   def new_visit(self, old_name, new_name, node):
     self.set_names(old_name, new_name)
+    self.in_struct = False
     self.visit(node)
 
   def visit_ID(self, node):
@@ -159,6 +160,11 @@ class RenameVisitor(c_ast.NodeVisitor):
   def visit_TypeDecl(self, node):
     if node.declname == self.old_name:
       node.declname = self.new_name
+  def visit_ArrayRef(self, node):
+    self.visit(node.name)
+    # Looking at subscript of ArrayRef should reset looking for struct bases
+    self.in_struct = False
+    self.visit(node.subscript)
   def visit_StructRef(self, node):
     """
     Only the base of a StructRef should be renameable (i.e., for a->b->c->d,
@@ -172,16 +178,16 @@ class RenameVisitor(c_ast.NodeVisitor):
       self.in_struct = True
       # Only visit fields that are not just members of the struct
       if not isinstance(node.name, c_ast.ID):
-        self.generic_visit(node.name)
+        self.visit(node.name)
       if not isinstance(node.field, c_ast.ID):
-        self.generic_visit(node.name)
+        self.visit(node.field)
       self.in_struct = False
     else:
       # Only visit fields that are not just members of the struct
       if not isinstance(node.name, c_ast.ID):
-        self.generic_visit(node.name)
+        self.visit(node.name)
       if not isinstance(node.field, c_ast.ID):
-        self.generic_visit(node.name)
+        self.visit(node.field)
   def get_base_StructRef(self, node):
     """
     Get the base of a (nested) StructRef
