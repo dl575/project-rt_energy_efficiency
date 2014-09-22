@@ -6,12 +6,16 @@ plotting data.
 Functions:
   average(l)
   geomean(l)
+  normalize(l)
+  median(l)
+  list_to_int(l)
 
   data_remove_constant_cols(array)
 
   parse_execution_times(filename)
   parse_frame_times(filename)
   parse_metrics(filename)
+  parse(filename, regex)
 
   plot_histogram(data, nbins, figsize, xlabel, ylabel)
   plot_sequence(data, figsize, xlabel, ylabel)
@@ -45,7 +49,7 @@ def average(l):
   if not l2:
     return '-'
   else:
-    return sum(l2)/len(l2)
+    return float(sum(l2))/len(l2)
 
 """
 Return the geometric mean of the passed list.
@@ -59,6 +63,16 @@ def geomean(l):
   return prod**(1.0/n)
 
 """
+Divide the entries from the first passed list by the values in the second
+list.
+"""
+def normalize(data, baseline):
+  assert len(data) == len(baseline), "Length of lists (%d != %d) do not match" % (len(data), len(baseline))
+  return [float(data[i])/float(baseline[i]) for i in range(len(data))]
+
+
+
+"""
 Return the median of the pass list.
 """
 def median(l):
@@ -70,12 +84,19 @@ def median(l):
     return l[n/2]
 
 """
+Return passed list with all elements converted to integers.
+"""
+def list_to_int(l):
+  return [int(ll) for ll in l]
+
+"""
 Remove columns from the passed numpy array which are always constant. The
 passed array is assumed to be 2-dimensional.
 """
 def data_remove_constant_cols(array):
   (nrows, ncols) = array.shape
   delete_cols = []
+  non_delete_cols = []
   for c in range(ncols):
     same = True
     for r in range(1, nrows):
@@ -86,34 +107,36 @@ def data_remove_constant_cols(array):
     # If constant, save column number to be deleted
     if same:
       delete_cols.append(c)
+    else:
+      non_delete_cols.append(c)
   # Delete columns
   ndeleted_cols = 0
-  print delete_cols
   for c in delete_cols:
     array = pylab.delete(array, c-ndeleted_cols, axis = 1)
     # Reduce future column numbers now that array shape has changed
     ndeleted_cols += 1
   return array
 
-
-
 """
-Parses the included files for execution times (of jobs). Returns a list of
-these times.
-Times are assumed to be recorded in the following format:
-  time [0-9]+ = [0-9]+ us
-  $1 is the job instance.
-  $2 is the execution time in microseconds.
+Parse based on the passed regular expression.
 """
-def parse_execution_times(filename):
+def parse(filename, regex):
   f = open(filename, 'r')
-  times = []
+  data = []
   for line in f:
-    res = re.search("time ([0-9]+) = ([0-9]+) us", line)
+    res = re.search(regex, line)
     if res:
-      times.append(int(res.group(2)))
+      data.append(res.group(1))
   f.close()
-  return times
+  return data
+"""
+Parse based on the passed regular expression. Return list of ints.
+"""
+def parse_int(filename, regex):
+  data = parse(filename, regex)
+  return list_to_int(data)
+
+
 
 """
 Parses the included files for execution times of frames. Returns a list of
@@ -160,13 +183,11 @@ def parse_execution_times(filename):
   f = open(filename, 'r')
   times = []
   for line in f:
-    res = re.search("time ([0-9]+) = ([0-9]+) us", line)
+    res = re.match("time ([0-9]+) = ([0-9]+) us", line)
     if res:
       times.append(int(res.group(2)))
   f.close()
   return times
-
-
 
 """
 Plots the passed data into a histogram. data is a list of numbers.
