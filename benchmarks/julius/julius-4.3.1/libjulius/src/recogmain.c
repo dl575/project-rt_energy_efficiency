@@ -188,7 +188,8 @@ print_mem()
   fflush(stderr);
 }
 #endif
-	  
+
+#include "timing.h"
 
 /** 
  * <EN>
@@ -951,6 +952,8 @@ j_recognize_stream_core(Recog *recog)
 	  /* get feature vector and process it */
 	  ret = mfcc_go(recog, callback_check_in_adin);
 	}
+
+  start_timing();
 	
 	if (ret < 0) {		/* error end in adin_go */
 	  if (ret == -2 || recog->process_want_terminate) {	
@@ -1359,6 +1362,10 @@ j_recognize_stream_core(Recog *recog)
 
     /* output result */
     callback_exec(CALLBACK_RESULT, recog);
+
+    end_timing();
+    print_timing();
+
 #ifdef ENABLE_PLUGIN
     plugin_exec_process_result(recog);
 #endif
