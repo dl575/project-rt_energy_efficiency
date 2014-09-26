@@ -109,7 +109,7 @@
  * 
  */
 int
-decode_proceed(Recog *recog)
+decode_proceed_orig(Recog *recog)
 {
   MFCCCalc *mfcc;
   boolean break_flag;
@@ -314,6 +314,178 @@ decode_proceed(Recog *recog)
   if (ok_p) callback_exec(CALLBACK_RESULT_PASS1_INTERIM, recog);
   
   return 0;
+}
+
+int decode_proceed(Recog *recog)
+{
+  int decode_proceed_return_value = 0;
+  static int loop_counter[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  MFCCCalc *mfcc;
+  boolean break_flag;
+  boolean break_decode;
+  RecogProcess *p;
+  boolean ok_p;
+  break_decode = FALSE;
+  for (p = recog->process_list; p; p = p->next)
+  {
+    loop_counter[0]++;
+    p->have_interim = FALSE;
+  }
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+  {
+    loop_counter[1]++;
+    mfcc->segmented = FALSE;
+  }
+
+  if ((recog->gmm != NULL) && recog->gmmmfcc->valid)
+  {
+    loop_counter[2]++;
+    if (recog->gmmmfcc->f == 0)
+    {
+      loop_counter[3]++;
+      gmm_prepare(recog);
+    }
+
+    gmm_proceed(recog);
+  }
+
+  for (p = recog->process_list; p; p = p->next)
+  {
+    loop_counter[4]++;
+    if (!p->live)
+    {
+      loop_counter[5]++;
+      continue;
+    }
+
+    mfcc = p->am->mfcc;
+    if (!mfcc->valid)
+    {
+      loop_counter[6]++;
+      continue;
+    }
+
+    if (mfcc->f == 0)
+    {
+      loop_counter[7]++;
+      {
+        int get_back_trellis_init_result0;
+        get_back_trellis_init_result0 = get_back_trellis_init(mfcc->param, p);
+        if (get_back_trellis_init_result0 == FALSE)
+        {
+          loop_counter[8]++;
+          jlog("ERROR: %02d %s: failed to initialize the 1st pass\n", p->config->id, p->config->name);
+          //return -1;
+          decode_proceed_return_value = -1;
+          goto print_loop_counter;
+        }
+
+      }
+    }
+
+    if ((mfcc->f > 0) || p->am->hmminfo->multipath)
+    {
+      loop_counter[9]++;
+      {
+        int get_back_trellis_proceed_result0;
+        get_back_trellis_proceed_result0 = get_back_trellis_proceed(mfcc->f, mfcc->param, p, FALSE);
+        if (get_back_trellis_proceed_result0 == FALSE)
+        {
+          loop_counter[10]++;
+          mfcc->segmented = TRUE;
+          break_decode = TRUE;
+        }
+
+      }
+      if (p->config->successive.enabled)
+      {
+        loop_counter[11]++;
+        {
+          int detect_end_of_segment_result0;
+          detect_end_of_segment_result0 = detect_end_of_segment(p, mfcc->f - 1);
+          if (detect_end_of_segment_result0)
+          {
+            loop_counter[12]++;
+            mfcc->segmented = TRUE;
+            break_decode = TRUE;
+          }
+
+        }
+      }
+
+    }
+
+  }
+
+  break_flag = FALSE;
+  if (break_decode)
+  {
+    loop_counter[13]++;
+    break_flag = TRUE;
+  }
+
+  if (break_flag)
+  {
+    loop_counter[14]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[15]++;
+      mfcc->last_time = mfcc->f - 1;
+    }
+
+    if (!recog->jconf->decodeopt.segment)
+    {
+      loop_counter[16]++;
+      for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+      {
+        loop_counter[17]++;
+        mfcc->param->header.samplenum = mfcc->f;
+        mfcc->param->samplenum = mfcc->f;
+      }
+
+    }
+
+    //return 1;
+    decode_proceed_return_value = 1;
+    goto print_loop_counter;
+  }
+
+  ok_p = FALSE;
+  for (p = recog->process_list; p; p = p->next)
+  {
+    loop_counter[18]++;
+    if (!p->live)
+    {
+      loop_counter[19]++;
+      continue;
+    }
+
+    if (p->have_interim)
+    {
+      loop_counter[20]++;
+      ok_p = TRUE;
+    }
+
+  }
+
+  if (ok_p)
+  {
+    loop_counter[21]++;
+    callback_exec(CALLBACK_RESULT_PASS1_INTERIM, recog);
+  }
+
+  print_loop_counter:
+  {
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 22; i++)
+      printf("%d, ", loop_counter[i]++);
+
+    printf(")\n");
+  }
+  return decode_proceed_return_value;
+
 }
 
 #ifdef POWER_REJECT
