@@ -259,4 +259,7 @@
 #-setting		# output engine configuration and exit
 #-C jconffile		# expand other jconf file in its place
 
+# Force real-time decoding mode
+-realtime
+
 ################################################################# end of file
