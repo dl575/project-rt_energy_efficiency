@@ -73,6 +73,8 @@
 #include "server.h"
 #include "commonproto.h"
 
+#include "timing.h"
+
 char server_version[] = VERSION;
 
 #ifndef	lint
@@ -234,6 +236,9 @@ int main(int argc, char **argv)
 
 void Main_loop(void)
 {
+  // Start timing task
+  start_timing();
+
     main_loops++;
 
     if ((main_loops & 0x3F) == 0) {
@@ -291,6 +296,10 @@ void Main_loop(void)
     }
 
     Queue_loop();
+
+  // End timing of loop and print out time
+  end_timing();
+  print_timing();
 }
 
 

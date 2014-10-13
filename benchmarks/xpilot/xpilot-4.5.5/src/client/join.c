@@ -58,6 +58,8 @@
 #include "protoclient.h"
 #include "portability.h"
 
+#include "timing.h"
+
 char join_version[] = VERSION;
 
 #ifndef SCORE_UPDATE_DELAY
@@ -105,6 +107,9 @@ static void Input_loop(void)
     FD_SET(netfd, &rfds);
     max = (clientfd > netfd) ? clientfd : netfd;
     for (tfds = rfds; ; rfds = tfds) {
+      // Start timing for task
+      start_timing();
+
 	if ((scoresChanged != 0 && ++scoresChanged > SCORE_UPDATE_DELAY)
 	    || result > 1) {
 	    if (scoresChanged > 2 * SCORE_UPDATE_DELAY) {
@@ -183,6 +188,11 @@ static void Input_loop(void)
 		}
 	    }
 	}
+
+      // Stop timing for task
+      end_timing();
+      // Print out time for task
+      print_timing();
     }
 }
 #endif	/* _WINDOWS */
