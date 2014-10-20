@@ -4,8 +4,9 @@ import sys
 from pylab import *
 from parse_lib import *
 
-policies = ["policy_average", "policy_pid", "policy_data_dependent", "policy_data_dependent_oracle"]
-colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c"]
+#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle"]
+policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent_oracle"]
+colors = ["#fb9a99", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#ffffff"]
 
 def graph_deadline_misses(filename):
   f = open(filename, 'r')

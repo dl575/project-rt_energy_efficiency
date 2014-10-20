@@ -18,6 +18,8 @@ Functions:
 
   policy_average(times, window_size, metrics)
   policy_pid(times, P, I, D, metrics)
+  policy_pid_timeliness(times, metrics)
+  policy_pid_energy(times, metrics)
   policy_data_dependent(times, metrics)
   policy_data_dependent_oracle(times, metrics)
 
@@ -31,7 +33,8 @@ import math
 import random
 import numpy
 
-default_dvfs_levels = [x*.1 for x in range(1, 11)]
+#default_dvfs_levels = [x*.1 for x in range(1, 11)]
+default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 
 def average(l):
   return float(sum(l))/len(l)
@@ -104,7 +107,9 @@ def scale_frequency_perfect(predicted_time, deadline):
   """
   desired_frequency = float(predicted_time)/deadline
   if predicted_time <= 0:
-    return -1
+    return 0.01
+  if desired_frequency > 1:
+    return 1
   return desired_frequency
 
 def policy_average(times, window_size=10, metrics=None):
@@ -130,8 +135,12 @@ def policy_pid(times, P=1, I=0.5, D=0.01, metrics=None):
     i_error += error
   return predicted_times
 
+def policy_pid_timeliness(times, metrics=None):
+  return policy_pid(times, P=0.40, I=0, D=0.03)
+def policy_pid_energy(times, metrics=None):
+  return policy_pid(times, P=0.20, I=0, D=0)
+
 def policy_data_dependent(times, metrics):
-  window_size = 5
   # Initialize predicted times
   predicted_times = [0]*len(times)
 
@@ -150,6 +159,18 @@ def policy_data_dependent(times, metrics):
       predicted_times[i] = -1 
 
   return predicted_times
+
+def policy_data_dependent2(times, metrics):
+  """
+  policy_data_dependent with the last [window_size] execution times added as metrics.
+  """
+  window_size = 10
+  for i in range(len(metrics)):
+    if i >= window_size:
+      metrics[i] += times[i-window_size:i]
+    else:
+      metrics[i] += [0]*window_size
+  return policy_data_dependent(times, metrics)
 
 def policy_data_dependent_oracle(times, metrics):
   """

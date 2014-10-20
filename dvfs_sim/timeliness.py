@@ -20,12 +20,13 @@ def run(filename, policy):
   # Determine frequency to set DVFS to
   margin = 1.1
   frequencies = [scale_frequency_perfect(margin * t, deadline) for t in predict_times]
+  #frequencies = [scale_frequency(margin * t, deadline) for t in predict_times]
   # Time with DVFS
   result_times = [dvfs_time(t, f) for (t, f) in zip(times, frequencies)]
 
   # Print out timeliness metrics
   #print deadline_misses(result_times, deadline), ",",
-  #print normalized_tardiness(result_times, deadline)[1], ",",
+  #print normalized_tardiness(result_times, deadline)[0], ",",
   # Print out energy usage
   print energy(frequencies), ",",
 
@@ -33,7 +34,7 @@ for root, dirnames, filenames in os.walk("data/"):
   print list_to_csv([""] + filenames)
 
 # For each DVFS policy
-for policy in [policy_average, policy_pid, policy_data_dependent, policy_data_dependent_oracle]:
+for policy in [policy_average, policy_pid_timeliness, policy_pid_energy, policy_data_dependent, policy_data_dependent2, policy_data_dependent_oracle]:
   print policy.__name__, ",",
   # For each data file
   for root, dirnames, filenames in os.walk("data/"):
