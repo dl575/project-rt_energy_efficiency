@@ -22,19 +22,23 @@ Functions:
   policy_pid_energy(times, metrics)
   policy_data_dependent(times, metrics)
   policy_data_dependent_oracle(times, metrics)
+  policy_oracle(times, metrics)
 
-  deadline_misses(times, deadline)
-  tardiness(times, deadline)
-  normalized_tardiness(times, deadline)
-  energy(frequencies)
+  deadline_misses(times, frequencies, deadline)
+  tardiness(times, frequencies, deadline)
+  normalized_tardiness(times, frequencies, deadline)
+  avg_normalized_tardiness(times, frequencies, deadline)
+  max_normalized_tardiness(times, frequencies, deadline)
+  energy(times, frequencies, deadline)
 """
 
 import math
 import random
 import numpy
 
-#default_dvfs_levels = [x*.1 for x in range(1, 11)]
-default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
+#default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
+#default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
+default_dvfs_levels = [.1*x for x in range(1, 11)]
 
 def average(l):
   return float(sum(l))/len(l)
@@ -106,10 +110,14 @@ def scale_frequency_perfect(predicted_time, deadline):
   Return the exact frequency needed to meet deadline.
   """
   desired_frequency = float(predicted_time)/deadline
+  min_frequency = 0.1
+  max_frequency = 1.0
   if predicted_time <= 0:
-    return 0.01
-  if desired_frequency > 1:
-    return 1
+    return min_frequency
+  if desired_frequency > max_frequency:
+    return max_frequency
+  if desired_frequency < min_frequency:
+    return min_frequency
   return desired_frequency
 
 def policy_average(times, window_size=10, metrics=None):
@@ -136,9 +144,31 @@ def policy_pid(times, P=1, I=0.5, D=0.01, metrics=None):
   return predicted_times
 
 def policy_pid_timeliness(times, metrics=None):
-  return policy_pid(times, P=0.40, I=0, D=0.03)
+  # Found for continuous DVFS
+  #return policy_pid(times, P=0.40, I=0, D=0.03)
+
+  # With discrete levels of [0.25, 0.50, 0.75, 1.00]
+  #return policy_pid(times, P=1.80, I=1.80, D=0.83)
+
+  #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
+  #return policy_pid(times, P=0.40, I=0.00, D=0.21)
+
+  #default_dvfs_levels = [.1*x for x in range(1, 11)]
+  return policy_pid(times, P=0.60, I=0.20, D=0.02)
 def policy_pid_energy(times, metrics=None):
-  return policy_pid(times, P=0.20, I=0, D=0)
+  # continuous DVFS and discrete levels of [0.25, 0.50, 0.75, 1.00]
+  #return policy_pid(times, P=0.20, I=0, D=0)
+
+  #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
+  #return policy_pid(times, P=0.20, I=0.00, D=0.14)
+
+  #default_dvfs_levels = [.1*x for x in range(1, 11)]
+  return policy_pid(times, P=0.20, I=0.00, D=0.35)
+def policy_pid_energy_plus3s(times, metrics=None):
+  predict_times = policy_pid(times, P=0.20, I=0.00, D=0.35)
+  std = numpy.std(times)
+  predict_times = [x + std for x in predict_times]
+  return predict_times
 
 def policy_data_dependent(times, metrics):
   # Initialize predicted times
@@ -160,6 +190,28 @@ def policy_data_dependent(times, metrics):
 
   return predicted_times
 
+def policy_data_dependent_plus3s(times, metrics):
+  # Initialize predicted times
+  predicted_times = [0]*len(times)
+
+  std = numpy.std(times)
+
+  # For each task,
+  for i in range(1, len(times)):
+    # Perform regression using passed metrics
+    y = numpy.array([times[:i]])
+    x = numpy.array(metrics[:i])
+    coeffs = regression(y, x)
+    coeffs[0] += std
+    # Use regression coefficients to predict next frame
+    x = [1] + metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+    if predicted_times[i] > 2*max(times):
+      predicted_times[i] = 2*max(times)
+    elif predicted_times[i] < 0:
+      predicted_times[i] = -1 
+
+  return predicted_times
 def policy_data_dependent2(times, metrics):
   """
   policy_data_dependent with the last [window_size] execution times added as metrics.
@@ -187,18 +239,44 @@ def policy_data_dependent_oracle(times, metrics):
     predicted_times[i] = numpy.dot(x, coeffs)[0]
   return predicted_times
 
-def deadline_misses(times, deadline):
+def policy_data_dependent_plus3s_oracle(times, metrics):
+  y = numpy.array([times])
+  x = numpy.array(metrics)
+  coeffs = regression(y, x)
+
+  # Find standard deviation of times
+  std = numpy.std(times)
+  # Add 3 sigma to constant factor
+  coeffs[0] += std
+
+  predicted_times = [0]*len(times)
+  for i in range(len(times)):
+    x = [1] + metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_oracle(times, metrics):
+  """
+  Perfect prediction. Returns times as predicted times.
+  """
+  return times
+
+def deadline_misses(times, frequencies, deadline):
   misses = [(1 if x > deadline else 0) for x in times]
   return float(sum(misses))/len(times)
 
-def tardiness(times, deadline):
+def tardiness(times, frequencies, deadline):
   tardiness = [max(x - deadline, 0) for x in times]
   return (float(sum(tardiness))/len(times), max(tardiness))
 
-def normalized_tardiness(times, deadline):
+def normalized_tardiness(times, frequencies, deadline):
   tardiness = [float(max(x - deadline, 0))/deadline for x in times]
   return (sum(tardiness)/len(times), max(tardiness))
+def avg_normalized_tardiness(times, frequencies, deadline):
+  return normalized_tardiness(times, frequencies, deadline)[0]
+def max_normalized_tardiness(times, frequencies, deadline):
+  return normalized_tardiness(times, frequencies, deadline)[1]
 
-def energy(frequencies):
+def energy(times, frequencies, deadline):
   energies = [x*x for x in frequencies]
   return average(energies)
