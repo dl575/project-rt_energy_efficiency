@@ -80,6 +80,8 @@
 
 #include "gui_main.h"
 
+#include "../../../../timing.h"
+
 #define UNITS_TIMER_INTERVAL 128	/* milliseconds */
 #define MAP_SCROLL_TIMER_INTERVAL 500
 
@@ -518,6 +520,9 @@ Uint16 gui_event_loop(void *pData,
   ID = ID_ERROR;
   t_last_map_scrolling = t_last_unit_anim = real_timer_next_call = SDL_GetTicks();
   while (ID == ID_ERROR) {
+
+    start_timing();
+
     /* ========================================= */
     /* net check with 10ms delay event loop */
     if ((net_socket >= 0) || (ggz_socket >= 0)) {
@@ -734,6 +739,9 @@ Uint16 gui_event_loop(void *pData,
         free(cb);
       }
     }
+
+    end_timing();
+    print_timing();
   }
   
   return ID;
