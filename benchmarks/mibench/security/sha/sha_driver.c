@@ -5,11 +5,14 @@
 #include <string.h>
 #include <time.h>
 #include "sha.h"
+#include "timing.h"
 
 int main(int argc, char **argv)
 {
     FILE *fin;
     SHA_INFO sha_info;
+
+    start_timing();
 
     if (argc < 2) {
 	fin = stdin;
@@ -27,5 +30,9 @@ int main(int argc, char **argv)
 	    }
 	}
     }
+
+    end_timing();
+    print_timing();
+
     return(0);
 }

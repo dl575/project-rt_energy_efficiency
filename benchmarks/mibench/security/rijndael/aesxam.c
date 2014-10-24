@@ -43,6 +43,8 @@
 
 #include "aes.h"
 
+#include "timing.h"
+
 /* A Pseudo Random Number Generator (PRNG) used for the     */
 /* Initialisation Vector. The PRNG is George Marsaglia's    */
 /* Multiply-With-Carry (MWC) PRNG that concatenates two     */
@@ -232,7 +234,10 @@ int decfile(FILE *fin, FILE *fout, aes *ctx, char* ifn, char* ofn)
 }
 
 int main(int argc, char *argv[])
-{   FILE    *fin = 0, *fout = 0;
+{   
+    start_timing();
+  
+    FILE    *fin = 0, *fout = 0;
     char    *cp, ch, key[32];
     int     i=0, by=0, key_len=0, err = 0;
     aes     ctx[1];
@@ -306,6 +311,10 @@ exit:
         fclose(fout);
     if(fin)
         fclose(fin);
+
+
+    end_timing();
+    print_timing();
 
     return err;
 }
