@@ -501,7 +501,7 @@ int FilterMouseMotionEvents(const SDL_Event *event)
 /**************************************************************************
 ...
 **************************************************************************/
-Uint16 gui_event_loop(void *pData,
+Uint16 gui_event_loop_orig(void *pData,
 	void (*loop_action)(void *pData),
 	Uint16 (*key_down_handler)(SDL_keysym Key, void *pData),
         Uint16 (*key_up_handler)(SDL_keysym Key, void *pData),
@@ -745,6 +745,415 @@ Uint16 gui_event_loop(void *pData,
   }
   
   return ID;
+}
+
+/*
+ * gui_event_loop with loop counters.
+ */
+Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*key_down_handler)(SDL_keysym Key, void *pData), Uint16 (*key_up_handler)(SDL_keysym Key, void *pData), Uint16 (*mouse_button_down_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_button_up_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_motion_handler)(SDL_MouseMotionEvent *pMotionEvent, void *pData))
+{
+  int return_value;
+  int loop_counter[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Uint16 ID;
+  static struct timeval tv;
+  static fd_set civfdset;
+  Uint32 t_current;
+  Uint32 t_last_unit_anim;
+  Uint32 t_last_map_scrolling;
+  Uint32 real_timer_next_call;
+  static int result;
+  static int schot_nr = 0;
+  static char schot[32];
+  ID = ID_ERROR;
+  t_last_map_scrolling = (t_last_unit_anim = (real_timer_next_call = SDL_GetTicks()));
+  while (ID == ID_ERROR)
+  {
+    loop_counter[0]++;
+    start_timing();
+    if ((net_socket >= 0) || (ggz_socket >= 0))
+    {
+      loop_counter[1]++;
+      FD_ZERO(&civfdset);
+      if (net_socket >= 0)
+      {
+        loop_counter[2]++;
+        FD_SET(net_socket, &civfdset);
+      }
+
+      if (ggz_socket >= 0)
+      {
+        loop_counter[3]++;
+        FD_SET(ggz_socket, &civfdset);
+      }
+
+      tv.tv_sec = 0;
+      tv.tv_usec = 10000;
+      result = fc_select(MAX(net_socket, ggz_socket) + 1, &civfdset, NULL, NULL, &tv);
+      if (result < 0)
+      {
+        loop_counter[4]++;
+        if (errno != EINTR)
+        {
+          loop_counter[5]++;
+          break;
+        }
+        else
+        {
+          continue;
+        }
+
+      }
+      else
+      {
+        if (result > 0)
+        {
+          loop_counter[6]++;
+          {
+            //int FD_ISSET_result0;
+            //FD_ISSET_result0 = FD_ISSET(net_socket, &civfdset);
+            if ((net_socket >= 0) && FD_ISSET(net_socket, &civfdset))
+            {
+              loop_counter[7]++;
+              SDL_PushEvent(pNet_User_Event);
+            }
+
+          }
+          {
+            //int FD_ISSET_result0;
+            //FD_ISSET_result0 = FD_ISSET(ggz_socket, &civfdset);
+            if ((ggz_socket >= 0) && FD_ISSET(ggz_socket, &civfdset))
+            {
+              loop_counter[8]++;
+              SDL_PushEvent(pGGZ_User_Event);
+            }
+
+          }
+        }
+
+      }
+
+    }
+    else
+    {
+      SDL_Delay(10);
+    }
+
+    t_current = SDL_GetTicks();
+    if (t_current > real_timer_next_call)
+    {
+      loop_counter[9]++;
+      real_timer_next_call = t_current + (real_timer_callback() * 1000);
+    }
+
+    if ((t_current - t_last_unit_anim) > 128)
+    {
+      loop_counter[10]++;
+      if (autoconnect)
+      {
+        loop_counter[11]++;
+        widget_info_counter++;
+        SDL_PushEvent(pAnim_User_Event);
+      }
+      else
+      {
+        SDL_PushEvent(pAnim_User_Event);
+      }
+
+      t_last_unit_anim = SDL_GetTicks();
+    }
+
+    if (is_map_scrolling)
+    {
+      loop_counter[12]++;
+      if ((t_current - t_last_map_scrolling) > 500)
+      {
+        loop_counter[13]++;
+        SDL_PushEvent(pMap_Scroll_User_Event);
+        t_last_map_scrolling = SDL_GetTicks();
+      }
+
+    }
+    else
+    {
+      t_last_map_scrolling = SDL_GetTicks();
+    }
+
+    if (widget_info_counter > 0)
+    {
+      loop_counter[14]++;
+      SDL_PushEvent(pInfo_User_Event);
+      widget_info_counter = 0;
+    }
+
+    if (loop_action)
+    {
+      loop_counter[15]++;
+      loop_action(pData);
+    }
+
+    while (SDL_PollEvent(&Main.event) == 1)
+    {
+      loop_counter[16]++;
+      switch (Main.event.type)
+      {
+        case SDL_QUIT:
+          return_value = MAX_ID;
+          goto print_loop_counter;
+          //return MAX_ID;
+          break;
+
+        case SDL_KEYUP:
+          switch (Main.event.key.keysym.sym)
+        {
+          case SDLK_RSHIFT:
+            RSHIFT = FALSE;
+            break;
+
+          case SDLK_LSHIFT:
+            LSHIFT = FALSE;
+            break;
+
+          case SDLK_LCTRL:
+            LCTRL = FALSE;
+            break;
+
+          case SDLK_RCTRL:
+            RCTRL = FALSE;
+            break;
+
+          case SDLK_LALT:
+            LALT = FALSE;
+            break;
+
+          default:
+            if (key_up_handler)
+          {
+            loop_counter[17]++;
+            ID = key_up_handler(Main.event.key.keysym, pData);
+          }
+
+            break;
+
+        }
+
+          break;
+
+        case SDL_KEYDOWN:
+          switch (Main.event.key.keysym.sym)
+        {
+          case SDLK_PRINT:
+            fc_snprintf(schot, sizeof(schot), "fc_%05d.bmp", schot_nr++);
+            log_normal(_("Making screenshot %s"), schot);
+            SDL_SaveBMP(Main.screen, schot);
+            break;
+
+          case SDLK_RSHIFT:
+            RSHIFT = TRUE;
+            break;
+
+          case SDLK_LSHIFT:
+            LSHIFT = TRUE;
+            break;
+
+          case SDLK_LCTRL:
+            LCTRL = TRUE;
+            break;
+
+          case SDLK_RCTRL:
+            RCTRL = TRUE;
+            break;
+
+          case SDLK_LALT:
+            LALT = TRUE;
+            break;
+
+          default:
+            if (key_down_handler)
+          {
+            loop_counter[18]++;
+            ID = key_down_handler(Main.event.key.keysym, pData);
+          }
+
+            break;
+
+        }
+
+          break;
+
+        case SDL_MOUSEBUTTONDOWN:
+          if (mouse_button_down_handler)
+        {
+          loop_counter[19]++;
+          ID = mouse_button_down_handler(&Main.event.button, pData);
+        }
+
+          break;
+
+        case SDL_MOUSEBUTTONUP:
+          if (mouse_button_up_handler)
+        {
+          loop_counter[20]++;
+          ID = mouse_button_up_handler(&Main.event.button, pData);
+        }
+
+          break;
+
+        case SDL_MOUSEMOTION:
+          if (mouse_motion_handler)
+        {
+          loop_counter[21]++;
+          ID = mouse_motion_handler(&Main.event.motion, pData);
+        }
+
+          break;
+
+        case SDL_USEREVENT:
+          switch (Main.event.user.code)
+        {
+          case NET:
+            input_from_server(net_socket);
+            break;
+
+          case GGZ:
+            input_from_ggz(ggz_socket);
+            break;
+
+          case ANIM:
+          {
+            if (button_behavior.counting)
+            {
+              loop_counter[22]++;
+              {
+                int SDL_GetTicks_result0_rename0;
+                SDL_GetTicks_result0_rename0 = SDL_GetTicks();
+                int SDL_GetTicks_result1_rename0;
+                SDL_GetTicks_result1_rename0 = SDL_GetTicks();
+                if (((SDL_GetTicks_result0_rename0 - button_behavior.button_down_ticks) >= MB_MEDIUM_HOLD_DELAY) && ((SDL_GetTicks_result1_rename0 - button_behavior.button_down_ticks) < MB_LONG_HOLD_DELAY))
+                {
+                  loop_counter[23]++;
+                  if (button_behavior.hold_state != MB_HOLD_MEDIUM)
+                  {
+                    loop_counter[24]++;
+                    button_behavior.hold_state = MB_HOLD_MEDIUM;
+                    button_down_on_map(&button_behavior);
+                  }
+
+                }
+                else
+                {
+                  int SDL_GetTicks_result0_rename0;
+                  SDL_GetTicks_result0_rename0 = SDL_GetTicks();
+                  if ((SDL_GetTicks_result0_rename0 - button_behavior.button_down_ticks) >= MB_LONG_HOLD_DELAY)
+                  {
+                    loop_counter[25]++;
+                    if (button_behavior.hold_state != MB_HOLD_LONG)
+                    {
+                      loop_counter[26]++;
+                      button_behavior.hold_state = MB_HOLD_LONG;
+                      button_down_on_map(&button_behavior);
+                    }
+
+                  }
+
+                }
+
+              }
+            }
+
+            {
+              goto return0;
+            }
+            return0:
+            ;
+
+          }
+            animate_mouse_cursor();
+            draw_mouse_cursor();
+            break;
+
+          case SHOW_WIDGET_INFO_LABBEL:
+            draw_widget_info_label();
+            break;
+
+          case TRY_AUTO_CONNECT:
+          {
+            int try_to_autoconnect_result0;
+            try_to_autoconnect_result0 = try_to_autoconnect();
+            if (try_to_autoconnect_result0)
+            {
+              loop_counter[27]++;
+              pInfo_User_Event->user.code = SHOW_WIDGET_INFO_LABBEL;
+              autoconnect = FALSE;
+            }
+
+          }
+            break;
+
+          case FLUSH:
+            unqueue_flush();
+            break;
+
+          case MAP_SCROLL:
+            scroll_mapview(scroll_dir);
+            break;
+
+          case EXIT_FROM_EVENT_LOOP:
+            return_value = MAX_ID;
+            goto print_loop_counter;
+            //return MAX_ID;
+            break;
+
+          default:
+            break;
+
+        }
+
+          break;
+
+      }
+
+    }
+
+    if (ID == ID_ERROR)
+    {
+      loop_counter[28]++;
+      {
+        int callback_list_size_result0;
+        callback_list_size_result0 = callback_list_size(callbacks);
+        if (callbacks && (callback_list_size_result0 > 0))
+        {
+          loop_counter[29]++;
+          struct callback *cb = callback_list_get(callbacks, 0);
+          callback_list_remove(callbacks, cb);
+          cb->callback(cb->data);
+          free(cb);
+        }
+
+      }
+    }
+
+    end_timing();
+
+    print_loop_counter:
+    {
+      printf("loop counter = (");
+      int i;
+      for (i = 0; i < 30; i++) {
+        printf("%d, ", loop_counter[i]++);
+        loop_counter[i] = 0;
+      }
+
+      printf(")\n");
+    }
+    print_timing();
+  }
+
+  if (return_value == MAX_ID) {
+    return MAX_ID;
+  } else {
+    return ID;
+  }
+
 }
 
 /* ============ Freeciv native game function =========== */
