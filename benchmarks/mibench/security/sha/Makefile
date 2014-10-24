@@ -11,4 +11,4 @@ sha:	sha_driver.o sha.o
 	strip $@
 
 clean:
-	rm -rf *.o sha output*
+	rm -rf *.o sha output* input_random.asc

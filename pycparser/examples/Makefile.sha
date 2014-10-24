@@ -1,0 +1,19 @@
+PYTHON=/usr/bin/python
+
+slice: preprocess
+	$(PYTHON) inline.py sha/sha3.c main > sha/sha_inline.c
+	$(PYTHON) insert_loop_counts.py sha/sha_inline.c > sha/sha_loop_counts.c
+	time $(PYTHON) slice.py sha/sha_loop_counts.c loop_counter > sha/sha_slice.c
+
+td = echo "typedef int $1;" | cat - sha/sha3.c > temp && mv temp sha/sha3.c
+preprocess:
+	gcc -E sha/sha.c > sha/sha2.c
+	./cleanup_gccE.py sha/sha2.c > sha/sha3.c
+
+	$(call td,"SHA_INFO")
+	$(call td,"LONG")
+	$(call td,"BYTE")
+	$(call td,"FILE")
+
+clean:
+	rm -f she/sha2.c sha/sha3.c sha/sha_inline.c sha/sha_loop_counts.c sha/sha_slice.c
