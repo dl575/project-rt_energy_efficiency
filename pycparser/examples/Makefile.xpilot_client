@@ -27,8 +27,8 @@ xpilot/join3.c: xpilot/join.c Makefile
 	$(call td,"shipobj")
 
 clean:
-	rm xpilot/join2.c
-	rm xpilot/join3.c
-	rm xpilot/join_inline.c
-	rm xpilot/join_loop_counts.c
-	rm xpilot/join_loop_slice.c
+	rm -f xpilot/join2.c
+	rm -f xpilot/join3.c
+	rm -f xpilot/join_inline.c
+	rm -f xpilot/join_loop_counts.c
+	rm -f xpilot/join_slice.c

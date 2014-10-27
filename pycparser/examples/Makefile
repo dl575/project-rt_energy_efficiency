@@ -1,55 +1,27 @@
-PYTHON=/usr/bin/python
+slice: freeciv/gui_main3.c Makefile
+	./inline.py freeciv/gui_main3.c gui_event_loop > freeciv/gui_main_inline.c
+	./insert_loop_counts.py freeciv/gui_main_inline.c > freeciv/gui_main_loop_counts.c
+	./slice.py freeciv/gui_main_loop_counts.c loop_counter > freeciv/gui_main_slice.c
 
-slice: preprocess
-	#$(PYTHON) inline.py julius/recogmain3.c j_recognize_stream_core > julius/recogmain_inline.c
-	$(PYTHON) inline.py julius/recogmain3.c decode_proceed > julius/recogmain_inline.c
-	$(PYTHON) insert_loop_counts.py julius/recogmain_inline.c > julius/recogmain_loop_counts.c
-	/usr/bin/time -l $(PYTHON) slice.py julius/recogmain_loop_counts.c loop_counter > julius/recogmain_slice.c
+td = echo "typedef int $1;" | cat - freeciv/gui_main3.c > temp && mv temp freeciv/gui_main3.c
+freeciv/gui_main3.c: freeciv/gui_main.c Makefile
+	gcc -E freeciv/gui_main.c > freeciv/gui_main2.c
+	./cleanup_gccE.py freeciv/gui_main2.c > freeciv/gui_main3.c
+	
+	$(call td,"bool")
+	$(call td,"Uint32")
+	$(call td,"Uint16")
+	$(call td,"SDL_Event")
+	$(call td,"SDL_keysym")
+	$(call td,"SDL_MouseButtonEvent")
+	$(call td,"SDL_MouseMotionEvent")
+	$(call td,"SDL_Rect")
+	$(call td,"fd_set")
+	$(call td,"SDL_Color")
 
-td = echo "typedef int $1;" | cat - julius/recogmain3.c > temp && mv temp julius/recogmain3.c
-preprocess:
-	gcc -E julius/recogmain.c > julius/recogmain2.c
-	./cleanup_gccE.py julius/recogmain2.c > julius/recogmain3.c
-	$(call td,"SentenceAlign")
-	$(call td,"RecogProcess")
-	$(call td,"Sentence")
-	$(call td,"SP16")
-	$(call td,"Recog")
-	$(call td,"boolean")
-
-	$(call td,"Jconf")
-	$(call td,"MFCCCalc")
-	$(call td,"PROCESS_AM")
-	$(call td,"PROCESS_LM")
-	$(call td,"FILE")
-	$(call td,"MULTIGRAM")
-
-	# pass1.c, beam.c, outprob.c	
-	$(call td,"TRELLIS_ATOM")
-	$(call td,"WORD_INFO")
-	$(call td,"WORD_ID")
-	$(call td,"LOGPROB")
-	$(call td,"FSBeam")
-	$(call td,"TOKENID")
-	$(call td,"TOKEN2")
-	$(call td,"HTK_Param")
-	$(call td,"WCHMM_INFO")
-	$(call td,"BACKTRELLIS")
-	$(call td,"HMM_Logical")
-	$(call td,"DFA_INFO")
-	$(call td,"A_CELL2")
-
-
-	# # for multi-gram.c
-	# $(call td,"DFA_INFO")
-	# $(call td,"WORD_INFO")
-	# $(call td,"WORD_ID")
-
-	# # For wchmm.c
-	# $(call td,"WCHMM_INFO")
-	# $(call td,"WCHMM_STATE")
-	# $(call td,"LOGPROB")
-	# $(call td,"A_CELL2")
-	# $(call td,"HTK_HMM_Trans")
-	# $(call td,"HTK_HMM_State")
-	# $(call td,"JCONF_LM")
+clean:
+	rm -f freeciv/gui_main2.c
+	rm -f freeciv/gui_main3.c
+	rm -f freeciv/gui_main_inline.c
+	rm -f freeciv/gui_main_loop_counts.c
+	rm -f freeciv/gui_main_slice.c

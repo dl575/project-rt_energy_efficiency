@@ -26,8 +26,8 @@ xpilot_server/server3.c: xpilot_server/server.c Makefile
 	$(call td,"cannon_t")
 
 clean:
-	rm xpilot_server/server2.c
-	rm xpilot_server/server3.c
-	rm xpilot_server/server_inline.c
-	rm xpilot_server/server_loop_counts.c
-	rm xpilot_server/server_loop_slice.c
+	rm -f xpilot_server/server2.c
+	rm -f xpilot_server/server3.c
+	rm -f xpilot_server/server_inline.c
+	rm -f xpilot_server/server_loop_counts.c
+	rm -f xpilot_server/server_slice.c

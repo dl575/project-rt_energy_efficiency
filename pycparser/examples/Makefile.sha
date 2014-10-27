@@ -16,4 +16,4 @@ preprocess:
 	$(call td,"FILE")
 
 clean:
-	rm -f she/sha2.c sha/sha3.c sha/sha_inline.c sha/sha_loop_counts.c sha/sha_slice.c
+	rm -f sha/sha2.c sha/sha3.c sha/sha_inline.c sha/sha_loop_counts.c sha/sha_slice.c
