@@ -764,11 +764,29 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
   static int result;
   static int schot_nr = 0;
   static char schot[32];
+  FILE *fp_a7; //File pointer of A7 (LITTLE) core power sensor file
+  FILE *fp_a15; //File pointer of A15 (big) core power sensor file
+  float a7_s, a7_e, a15_s, a15_e; //a7_s: Value (Watt) of A7 core at start point.
   ID = ID_ERROR;
   t_last_map_scrolling = (t_last_unit_anim = (real_timer_next_call = SDL_GetTicks()));
   while (ID == ID_ERROR)
   {
     loop_counter[0]++;
+    
+    //Read value from sensor file
+    if(NULL == (fp_a7 = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    if(NULL == (fp_a15 = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    fscanf(fp_a7, "%f", &a7_s);
+    fscanf(fp_a15, "%f", &a15_s);
+    fclose(fp_a7);
+    fclose(fp_a15);
+
     start_timing();
     if ((net_socket >= 0) || (ggz_socket >= 0))
     {
@@ -1134,6 +1152,25 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
 
     end_timing();
 
+    //Read value from sensor file
+    if(NULL == (fp_a7 = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    if(NULL == (fp_a15 = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    fscanf(fp_a7, "%f", &a7_e);
+    fscanf(fp_a15, "%f", &a15_e);
+    fclose(fp_a7);
+    fclose(fp_a15);
+   
+    print_power:
+    {
+      printf("\nA7_start : %fW, A7_end : %fW, A15_start : %fW, A15_end : %fW\n",
+          a7_s, a7_e, a15_s, a15_e);
+    } 
     print_loop_counter:
     {
       printf("loop counter = (");
