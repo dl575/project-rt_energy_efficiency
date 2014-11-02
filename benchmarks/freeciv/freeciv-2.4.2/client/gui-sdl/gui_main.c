@@ -1198,8 +1198,8 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
     {
       printf("\nA7_start : %fW, A7_end : %fW, A15_start : %fW, A15_end : %fW\n",
           a7_s, a7_e, a15_s, a15_e);
-      printf("cpu0_start : %dHz, cpu0_end : %dHz, cpu4_start : %dHz, cpu4_end : %dHz\n",
-          freq0_s, freq0_e, freq4_s, freq4_e);
+      printf("cpu0_start : %dMHz, cpu0_end : %dMHz, cpu4_start : %dMHz, cpu4_end : %dMHz\n",
+          freq0_s/1000, freq0_e/1000, freq4_s/1000, freq4_e/1000);
     } 
     print_loop_counter:
     {
