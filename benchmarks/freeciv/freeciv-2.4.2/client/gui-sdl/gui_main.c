@@ -766,7 +766,11 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
   static char schot[32];
   FILE *fp_a7; //File pointer of A7 (LITTLE) core power sensor file
   FILE *fp_a15; //File pointer of A15 (big) core power sensor file
+  FILE *fp_cpu0; //For frequency of cpu0
+  FILE *fp_cpu4; //For frequency of cpu4
   float a7_s, a7_e, a15_s, a15_e; //a7_s: Value (Watt) of A7 core at start point.
+  int freq0_s, freq0_e, freq4_s, freq4_e; //freq0_s: Freqeuncy of CPU0 at start point.
+
   ID = ID_ERROR;
   t_last_map_scrolling = (t_last_unit_anim = (real_timer_next_call = SDL_GetTicks()));
   while (ID == ID_ERROR)
@@ -782,10 +786,22 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
       printf("ERROR : FILE READ FAILED\n");
       return -1;
     }
+    if(NULL == (fp_cpu0 = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    if(NULL == (fp_cpu4 = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
     fscanf(fp_a7, "%f", &a7_s);
     fscanf(fp_a15, "%f", &a15_s);
+    fscanf(fp_cpu0, "%d", &freq0_s);
+    fscanf(fp_cpu4, "%d", &freq4_s);
     fclose(fp_a7);
     fclose(fp_a15);
+    fclose(fp_cpu0);
+    fclose(fp_cpu4);
 
     start_timing();
     if ((net_socket >= 0) || (ggz_socket >= 0))
@@ -1161,15 +1177,29 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
       printf("ERROR : FILE READ FAILED\n");
       return -1;
     }
+    if(NULL == (fp_cpu0 = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
+    if(NULL == (fp_cpu4 = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return -1;
+    }
     fscanf(fp_a7, "%f", &a7_e);
     fscanf(fp_a15, "%f", &a15_e);
+    fscanf(fp_cpu0, "%d", &freq0_e);
+    fscanf(fp_cpu4, "%d", &freq4_e);
     fclose(fp_a7);
     fclose(fp_a15);
+    fclose(fp_cpu0);
+    fclose(fp_cpu4);
    
-    print_power:
+    print_power_frequency:
     {
       printf("\nA7_start : %fW, A7_end : %fW, A15_start : %fW, A15_end : %fW\n",
           a7_s, a7_e, a15_s, a15_e);
+      printf("cpu0_start : %dHz, cpu0_end : %dHz, cpu4_start : %dHz, cpu4_end : %dHz\n",
+          freq0_s, freq0_e, freq4_s, freq4_e);
     } 
     print_loop_counter:
     {
