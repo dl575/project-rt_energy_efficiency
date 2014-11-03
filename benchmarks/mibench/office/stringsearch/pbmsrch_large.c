@@ -16,9 +16,61 @@
 #include <string.h>
 #include <limits.h>
 
+#include "timing.h"
+
 static size_t table[UCHAR_MAX + 1];
 static size_t len;
 static char *findme;
+
+void slice(const char *string)
+{
+  int loop_counter[4] = {0, 0, 0, 0};
+  register size_t shift;
+  register size_t pos = len - 1;
+  char *here;
+  size_t limit = strlen(string);
+  while (pos < limit)
+  {
+    loop_counter[0]++;
+    while ((pos < limit) && ((shift = table[(unsigned char) string[pos]]) > 0))
+    {
+      loop_counter[1]++;
+      pos += shift;
+    }
+
+    if (0 == shift)
+    {
+      loop_counter[2]++;
+      if (0 == strncmp(findme, here = (char *) (&string[(pos - len) + 1]), len))
+      {
+        loop_counter[3]++;
+        {
+          goto print_loop_counter;
+        }
+      }
+      else
+        pos++;
+
+    }
+
+  }
+
+  {
+    goto print_loop_counter;
+  }
+  print_loop_counter:
+  {
+{}
+    int i;
+    printf("loop counter = (");
+    for (i = 0; i < 4; i++)
+      printf("%d, ", loop_counter[i]++);
+    printf(")\n");
+
+{}
+  }
+
+}
 
 /*
 **  Call this with the string to locate to initialize the table
@@ -2743,7 +2795,18 @@ NULL};
       for (i = 0; find_strings[i]; i++)
       {
             init_search(find_strings[i]);
-            here = strsearch(search_strings[i]);
+            slice(search_strings[i]);
+            start_timing();
+
+            int k;
+            for (k = 0; k < 10000; k++) {
+              init_search(find_strings[i]);
+              here = strsearch(search_strings[i]);
+            }
+
+            end_timing();
+            print_timing();
+
             printf("\"%s\" is%s in \"%s\"", find_strings[i],
                   here ? "" : " not", search_strings[i]);
             if (here)
