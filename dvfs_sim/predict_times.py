@@ -34,7 +34,7 @@ for root, dirnames, filenames in os.walk(input_data_dir):
 
 # For each DVFS policy
 #for policy in [policy_average, policy_pid_timeliness, policy_pid_energy, policy_data_dependent, policy_data_dependent2, policy_data_dependent_oracle, policy_oracle]:
-for policy in [policy_pid_energy_plus3s, policy_data_dependent_plus3s, policy_data_dependent_plus3s_oracle]:
+for policy in [policy_pid_timeliness, policy_data_dependent2, policy_data_dependent_oracle, policy_data_dependent_lp, policy_oracle]:
   print policy.__name__
   # For each data file
   for root, dirnames, filenames in os.walk(input_data_dir):

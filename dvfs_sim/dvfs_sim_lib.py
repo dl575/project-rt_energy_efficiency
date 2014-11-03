@@ -35,6 +35,7 @@ Functions:
 import math
 import random
 import numpy
+import os
 
 #default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
@@ -223,6 +224,57 @@ def policy_data_dependent2(times, metrics):
     else:
       metrics[i] += [0]*window_size
   return policy_data_dependent(times, metrics)
+
+def policy_data_dependent_lp(times, metrics):
+  # Define residuals (errors)
+  residuals = [""] * len(times)
+  for i in range(len(times)):
+    residuals[i] = "r%d = " % (i)
+    for b in range(len(metrics[i])):
+      residuals[i] += "%d b%d + " % (metrics[i][b], b)
+    residuals[i] += "b - %d;" % (times[i])
+  # Allow coeffs to be negative
+  free_vars = [""] * len(metrics[0])
+  for b in range(len(metrics[i])):
+    free_vars[b] = "free b%d;" % (b)
+  free_vars.append("free b;")
+
+  # Force underprediction
+  underprediction = [""] * len(residuals)
+  for r in range(len(residuals)):
+    underprediction[r] = "r%d >= 0;" % (r)
+
+  # Optimization objective
+  optimize = "min: "
+  for r in range(len(residuals)):
+    optimize += "r%d + " % (r)
+  optimize += "0;"
+
+  # Full LP formulation
+  lp = optimize + "\n"
+  lp += '\n'.join(residuals) + '\n'
+  lp += '\n'.join(underprediction) + '\n'
+  lp += '\n'.join(free_vars)
+
+  # Write to file and solve
+  out_file = open("temp.lp", 'w')
+  out_file.write(lp)
+  out_file.close()
+  os.system("lp_solve temp.lp > temp.lps")
+  # Get coefficients
+  solve_file = open("temp.lps", 'r')
+  coeffs = []
+  for line in solve_file:
+    if line[0] == 'b':
+      coeffs.append(float(line.split()[1]))
+
+  # Predict times
+  predicted_times = [0]*len(times)
+  for i in range(len(times)):
+    x = metrics[i] + [1]
+    predicted_times[i] = numpy.dot(x, coeffs)
+  return predicted_times
+
 
 def policy_data_dependent_oracle(times, metrics):
   """

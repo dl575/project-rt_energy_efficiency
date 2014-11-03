@@ -27,7 +27,8 @@ plot(times, 'k', linewidth=2)
 
 # Predicted times
 predict_dir = "predict_times/"
-policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle"]
+#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle"]
+policies = ["policy_pid_timeliness", "policy_data_dependent_oracle", "policy_data_dependent_lp"]
 for (i, policy) in enumerate(policies):
   filename = "predict_times/%s-%s.txt" % (policy, benchmark)
   predict_times = read_predict_file(filename)
