@@ -16,13 +16,15 @@ Functions:
   scale_frequency(predicted_time, deadline, dvfs_levels)
   scale_frequency_perfect(predicted_time, deadline)
 
-  policy_average(times, window_size, metrics)
+  policy_average(train_times, train_metrics, test_times, test_metrics, window_size)
   policy_pid(times, P, I, D, metrics)
-  policy_pid_timeliness(times, metrics)
-  policy_pid_energy(times, metrics)
-  policy_data_dependent(times, metrics)
-  policy_data_dependent_oracle(times, metrics)
-  policy_oracle(times, metrics)
+  policy_pid_timeliness(train_times, train_metrics, test_times, test_metrics)
+  policy_pid_energy(train_times, train_metrics, test_times, test_metrics)
+  policy_data_dependent(train_times, train_metrics, test_times, test_metrics)
+  policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
+  policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times, test_metrics)
+  policy_data_dependent_oracle(train_times, train_metrics, test_times, test_metrics)
+  policy_oracle(train_times, train_metrics, test_times, test_metrics)
 
   deadline_misses(times, frequencies, deadline)
   tardiness(times, frequencies, deadline)
@@ -32,6 +34,7 @@ Functions:
   energy(times, frequencies, deadline)
 """
 
+import itertools
 import math
 import random
 import numpy
@@ -121,14 +124,66 @@ def scale_frequency_perfect(predicted_time, deadline):
     return min_frequency
   return desired_frequency
 
-def policy_average(times, window_size=10, metrics=None):
+def policy_average(train_times, train_metrics=None, test_times=None, test_metrics=None, window_size=10):
+  """
+  Use the average of the last [window_size] frames as the predicted time for the next frame.
+  """
+  # Training is done online with test set
+  if test_times:
+    times = test_times
+  else:
+    times = train_times
+
   predicted_times = list(times)
   for i in range(window_size, len(times)):
     window = times[i-window_size:i]
     predicted_times[i] = average(window)
   return predicted_times
 
+def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metrics=None):
+  """
+  Tune PID weights using train set, then run PID controller to predict times on
+  test set. Tuning attempts to minimize deadline misses. If another controller
+  is found with the same deadline misses, then energy is minimized.
+  """
+  # If no test set, then train and test on same set
+  if not test_times:
+    test_times = train_times
+
+  PIDs = [[0.05*i for i in range(1, 40)], [0.1*i for i in range(25)], [0.05*i for i in range(10)]]
+  margin = 1.1
+  deadline = max(train_times)
+  best_misses = 1
+  best_energy = 1
+  best_PID = None
+  for (P, I, D) in itertools.product(*PIDs):
+    predict_times = policy_pid(train_times, P=P, I=I, D=D)
+    # Skip non-stable controllers
+    if max(predict_times) > 10*deadline:
+      continue
+    frequencies = [scale_frequency_perfect(margin*t, deadline) for t in predict_times]
+    result_times = [dvfs_time(t, f) for (t, f) in zip(train_times, frequencies)]
+    misses = deadline_misses(result_times, frequencies, deadline) 
+    # If better on deadline misses
+    if misses < best_misses:
+      best_misses = misses
+      best_energy = energy(result_times, frequencies, deadline)
+      best_PID = (P, I, D)
+    # If equal on misses, check if better on energy
+    elif misses == best_misses:
+      e = energy(result_times, frequencies, deadline)
+      if e < best_energy:
+        best_misses = misses
+        best_energy = energy(result_times, frequencies, deadline)
+        best_PID = (P, I, D)
+
+  # Use parameters to run PID on test set
+  return policy_pid(test_times, P=best_PID[0], I=best_PID[1], D=best_PID[2])
+
 def policy_pid(times, P=1, I=0.5, D=0.01, metrics=None):
+  """
+  PID controller for predicting execution times.
+  """
   # Initialize predicted_times
   predicted_times = [0]*len(times)
   # Initialize errors
@@ -144,9 +199,15 @@ def policy_pid(times, P=1, I=0.5, D=0.01, metrics=None):
     i_error += error
   return predicted_times
 
-def policy_pid_timeliness(times, metrics=None):
+def policy_pid_timeliness(train_times, train_metrics=None, test_times=None, test_metrics=None):
+  # Training is done online with test set
+  if test_times:
+    times = test_times
+  else:
+    times = train_times
+
   # Found for continuous DVFS
-  #return policy_pid(times, P=0.40, I=0, D=0.03)
+  return policy_pid(times, P=0.40, I=0, D=0.03)
 
   # With discrete levels of [0.25, 0.50, 0.75, 1.00]
   #return policy_pid(times, P=1.80, I=1.80, D=0.83)
@@ -155,23 +216,37 @@ def policy_pid_timeliness(times, metrics=None):
   #return policy_pid(times, P=0.40, I=0.00, D=0.21)
 
   #default_dvfs_levels = [.1*x for x in range(1, 11)]
-  return policy_pid(times, P=0.60, I=0.20, D=0.02)
-def policy_pid_energy(times, metrics=None):
+  #return policy_pid(times, P=0.60, I=0.20, D=0.02)
+
+def policy_pid_energy(train_times, train_metrics=None, test_times=None, test_metrics=None):
+  # Training is done online with test set
+  if test_times:
+    times = test_times
+  else:
+    times = train_times
+
   # continuous DVFS and discrete levels of [0.25, 0.50, 0.75, 1.00]
-  #return policy_pid(times, P=0.20, I=0, D=0)
+  return policy_pid(times, P=0.20, I=0, D=0)
 
   #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
   #return policy_pid(times, P=0.20, I=0.00, D=0.14)
 
   #default_dvfs_levels = [.1*x for x in range(1, 11)]
-  return policy_pid(times, P=0.20, I=0.00, D=0.35)
-def policy_pid_energy_plus3s(times, metrics=None):
-  predict_times = policy_pid(times, P=0.20, I=0.00, D=0.35)
-  std = numpy.std(times)
-  predict_times = [x + std for x in predict_times]
-  return predict_times
+  #return policy_pid(times, P=0.20, I=0.00, D=0.35)
 
-def policy_data_dependent(times, metrics):
+def policy_data_dependent(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  Data dependent execution time predictor. For frame n, it uses frames 1 to n-1
+  to construct a linear regression model for prediction.
+  """
+  # Training is done online with test set
+  if test_times:
+    times = test_times
+    metrics = test_metrics
+  else:
+    times = train_times
+    metrics = train_metrics
+
   # Initialize predicted times
   predicted_times = [0]*len(times)
 
@@ -191,51 +266,27 @@ def policy_data_dependent(times, metrics):
 
   return predicted_times
 
-def policy_data_dependent_plus3s(times, metrics):
-  # Initialize predicted times
-  predicted_times = [0]*len(times)
-
-  std = numpy.std(times)
-
-  # For each task,
-  for i in range(1, len(times)):
-    # Perform regression using passed metrics
-    y = numpy.array([times[:i]])
-    x = numpy.array(metrics[:i])
-    coeffs = regression(y, x)
-    coeffs[0] += std
-    # Use regression coefficients to predict next frame
-    x = [1] + metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-    if predicted_times[i] > 2*max(times):
-      predicted_times[i] = 2*max(times)
-    elif predicted_times[i] < 0:
-      predicted_times[i] = -1 
-
-  return predicted_times
-def policy_data_dependent2(times, metrics):
+def policy_data_dependent_lp(train_times, train_metrics, test_times=None, test_metrics=None):
   """
-  policy_data_dependent with the last [window_size] execution times added as metrics.
+  This predictor constructs a LP problem to solve for a linear model mapping
+  metrics to execution times. The LP problem includes constraints so that the
+  solution is always conservative (i.e., predicted times >= observed times).
   """
-  window_size = 10
-  for i in range(len(metrics)):
-    if i >= window_size:
-      metrics[i] += times[i-window_size:i]
-    else:
-      metrics[i] += [0]*window_size
-  return policy_data_dependent(times, metrics)
-
-def policy_data_dependent_lp(times, metrics):
+  # If no test times, test and train on same set
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+    
   # Define residuals (errors)
-  residuals = [""] * len(times)
-  for i in range(len(times)):
+  residuals = [""] * len(train_times)
+  for i in range(len(train_times)):
     residuals[i] = "r%d = " % (i)
-    for b in range(len(metrics[i])):
-      residuals[i] += "%d b%d + " % (metrics[i][b], b)
-    residuals[i] += "b - %d;" % (times[i])
+    for b in range(len(train_metrics[i])):
+      residuals[i] += "%d b%d + " % (train_metrics[i][b], b)
+    residuals[i] += "b - %d;" % (train_times[i])
   # Allow coeffs to be negative
-  free_vars = [""] * len(metrics[0])
-  for b in range(len(metrics[i])):
+  free_vars = [""] * len(train_metrics[0])
+  for b in range(len(train_metrics[i])):
     free_vars[b] = "free b%d;" % (b)
   free_vars.append("free b;")
 
@@ -269,49 +320,71 @@ def policy_data_dependent_lp(times, metrics):
       coeffs.append(float(line.split()[1]))
 
   # Predict times
-  predicted_times = [0]*len(times)
-  for i in range(len(times)):
-    x = metrics[i] + [1]
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = test_metrics[i] + [1]
     predicted_times[i] = numpy.dot(x, coeffs)
   return predicted_times
 
+def policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  Constructs a LP problem to come up with a predictor that is conservative
+  (i.e., predicted times >= observed times). The constructed model includes
+  both linear and squared terms of metrics (i.e., y = b_0x_0 + b_1x_1 + ... +
+  c_0x_0^2 + c_1x_1^2 + ...). It does not include cross terms (e.g., x_0*x_0).
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+    
+  # Add squared version of metrics
+  for metric in train_metrics:
+    metric += [m*m for m in metric]
+  for metric in test_metrics:
+    metric += [m*m for m in metric]
+  return policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
 
-def policy_data_dependent_oracle(times, metrics):
+"""
+def policy_data_dependent_lp_quadratic_crossterms(times, metrics):
+  n = len(metrics)
+  for i in range(n):
+    squared_terms = [m*m for m in metrics[i]]
+    cross_terms = []
+    for j in range(len(metrics[i])):
+      for k in range(j+1, len(metrics[i])):
+        cross_terms.append(metrics[i][j]*metrics[i][k])
+    metrics[i] += squared_terms
+    metrics[i] += cross_terms
+  return policy_data_dependent_lp(times, metrics)
+"""
+
+def policy_data_dependent_oracle(train_times, train_metrics, test_times=None, test_metrics=None):
   """
   Use all times and metrics to perform regression first. Then, use complete model
   to predict times.
   """
-  y = numpy.array([times])
-  x = numpy.array(metrics)
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  y = numpy.array([train_times])
+  x = numpy.array(train_metrics)
   coeffs = regression(y, x)
 
-  predicted_times = [0]*len(times)
-  for i in range(len(times)):
-    x = [1] + metrics[i]
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
     predicted_times[i] = numpy.dot(x, coeffs)[0]
   return predicted_times
 
-def policy_data_dependent_plus3s_oracle(times, metrics):
-  y = numpy.array([times])
-  x = numpy.array(metrics)
-  coeffs = regression(y, x)
-
-  # Find standard deviation of times
-  std = numpy.std(times)
-  # Add 3 sigma to constant factor
-  coeffs[0] += std
-
-  predicted_times = [0]*len(times)
-  for i in range(len(times)):
-    x = [1] + metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_oracle(times, metrics):
+def policy_oracle(train_times, train_metrics=None, test_times=None, test_metrics=None):
   """
   Perfect prediction. Returns times as predicted times.
   """
-  return times
+  if test_times:
+    return test_times
+  else:
+    return train_times
 
 def deadline_misses(times, frequencies, deadline):
   misses = [(1 if x > deadline else 0) for x in times]
