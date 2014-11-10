@@ -5,9 +5,9 @@ from pylab import *
 from parse_lib import *
 from dvfs_sim_lib import *
 
-colors = ["#fdbf6f", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928"]
+colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fdbf6f"]
 
-def plot_data(data):
+def plot_data(data, display_legend=False):
   # Reformat data into a dict
   metric = data[0]
   benchmarks = data[1].strip(',').split(',')
@@ -40,7 +40,8 @@ def plot_data(data):
     ylabel("Normalized Energy [%]")
     ylim([0, 100])
   # Legend
-  legend(policies, loc="upper center", ncol=2)
+  if display_legend:
+    legend(policies, loc="upper center", ncol=2)
 
   tight_layout()
 
@@ -59,8 +60,8 @@ for line in f:
   else:
     #figure()
     subplot(2, 2, subplot_index)
+    plot_data(data, display_legend=(subplot_index==1))
     subplot_index += 1
-    plot_data(data)
     data = []
 f.close()
 

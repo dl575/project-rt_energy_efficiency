@@ -20,8 +20,8 @@ freeciv/gui_main3.c: freeciv/gui_main.c Makefile
 	$(call td,"SDL_Color")
 
 clean:
-	rm freeciv/gui_main2.c
-	rm freeciv/gui_main3.c
-	rm freeciv/gui_main_inline.c
-	rm freeciv/gui_main_loop_counts.c
-	rm freeciv/gui_main_loop_slice.c
+	rm -f freeciv/gui_main2.c
+	rm -f freeciv/gui_main3.c
+	rm -f freeciv/gui_main_inline.c
+	rm -f freeciv/gui_main_loop_counts.c
+	rm -f freeciv/gui_main_slice.c

@@ -53,3 +53,10 @@ preprocess:
 	# $(call td,"HTK_HMM_Trans")
 	# $(call td,"HTK_HMM_State")
 	# $(call td,"JCONF_LM")
+
+clean:
+	rm -f julius/recogmain2.c
+	rm -f julius/recogmain3.c
+	rm -f julius/recogmain_inline.c
+	rm -f julius/recogmain_loop_counts.c
+	rm -f julius/recogmain_slice.c

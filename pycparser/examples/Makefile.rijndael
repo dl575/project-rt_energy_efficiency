@@ -1,0 +1,18 @@
+PYTHON=/usr/bin/python
+
+slice: preprocess
+	$(PYTHON) inline.py rijndael/aes3.c main > rijndael/aes_inline.c
+	$(PYTHON) insert_loop_counts.py rijndael/aes_inline.c > rijndael/aes_loop_counts.c
+	time $(PYTHON) slice.py rijndael/aes_loop_counts.c loop_counter > rijndael/aes_slice.c
+
+td = echo "typedef int $1;" | cat - rijndael/aes3.c > temp && mv temp rijndael/aes3.c
+preprocess:
+	gcc -E rijndael/aes.c > rijndael/aes2.c
+	./cleanup_gccE.py rijndael/aes2.c > rijndael/aes3.c
+
+	$(call td,"FILE")
+	$(call td,"aes")
+	$(call td,"fpos_t")
+
+clean:
+	rm -f rijndael/aes2.c rijndael/aes3.c rijndael/aes_inline.c rijndael/aes_loop_counts.c rijndael/aes_slice.c

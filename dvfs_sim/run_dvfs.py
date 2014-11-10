@@ -34,7 +34,10 @@ def read_predict_file(filename):
   return data
 
 
-policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle", "policy_pid_energy_plus3s", "policy_data_dependent_plus3s", "policy_data_dependent_plus3s_oracle", "policy_oracle"]
+#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle", "policy_pid_energy_plus3s", "policy_data_dependent_plus3s", "policy_data_dependent_plus3s_oracle", "policy_oracle"]
+# Only non-data-dependent policies
+#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_oracle"]
+policies = ["policy_pid_timeliness", "policy_data_dependent2", "policy_data_dependent_oracle", "policy_data_dependent_lp", "policy_oracle"]
 benchmarks = ["sha", "rijndael", "stringsearch", "xpilot", "julius", "freeciv"]
 
 for metric in [deadline_misses, avg_normalized_tardiness, energy]:
@@ -47,9 +50,11 @@ for metric in [deadline_misses, avg_normalized_tardiness, energy]:
       # Read in execution times and predicted times
       times = parse_execution_times("data/%s.txt" % (benchmark))
       predict_times = read_predict_file("predict_times/%s-%s.txt" % (policy, benchmark))
+
       # Perform DVFS
-      (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None)
-      #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=None)
+      #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
+      (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=None) # Continuous
+
       # Calculate metric of interest
       metric_result = metric(result_times, frequencies, deadline)
       sum_metric += metric_result
