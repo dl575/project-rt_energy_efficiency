@@ -343,9 +343,2009 @@ static int block_inview(block_visibility_t *bv, int x, int y)
 #include "saudio.h"
 
 /*
+ * Slice of Main_loop.
+ */
+void Main_loop_slice()
+{
+  int loop_counter[238] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+{}
+{}
+{}
+  main_loops++;
+  if ((main_loops & 0x3F) == 0)
+  {
+    loop_counter[0]++;
+{}
+  }
+
+  if (ShutdownServer >= 0)
+  {
+    loop_counter[1]++;
+    if (ShutdownServer == 0)
+    {
+      loop_counter[2]++;
+      {
+        int return_value;
+        player *pl_rename0;
+{}
+        if (ShutdownServer == 0)
+        {
+          loop_counter[3]++;
+{}
+{}
+{}
+        }
+        else
+        {
+{}
+        }
+
+        while (NumPlayers > 0)
+        {
+          loop_counter[4]++;
+{}
+          if (pl_rename0->conn == NOT_CONNECTED)
+          {
+            loop_counter[5]++;
+{}
+          }
+          else
+          {
+{}
+          }
+
+        }
+
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+        {
+          return_value = FALSE;
+        }
+      }
+    }
+    else
+    {
+      ShutdownServer--;
+    }
+
+  }
+
+{}
+  if ((NumPlayers > (NumRobots + NumPseudoPlayers)) || RawMode)
+  {
+    loop_counter[6]++;
+    if (NoPlayersEnteredYet)
+    {
+      loop_counter[7]++;
+      if (NumPlayers > (NumRobots + NumPseudoPlayers))
+      {
+        loop_counter[8]++;
+        NoPlayersEnteredYet = false;
+        if (gameDuration > 0.0)
+        {
+          loop_counter[9]++;
+{}
+          gameOverTime = ((time_t) (gameDuration * 60)) + time((time_t *) NULL);
+        }
+
+      }
+
+    }
+
+{}
+    if ((main_loops % UPDATES_PR_FRAME) == 0)
+    {
+      loop_counter[10]++;
+      {
+        int i_rename1;
+        int conn_rename1;
+        int ind_rename1;
+        player *pl_rename1;
+        time_t newTimeLeft_rename1 = 0;
+        static time_t oldTimeLeft_rename1;
+        static bool game_over_called_rename1 = false;
+        if ((++frame_loops) >= LONG_MAX)
+        {
+          loop_counter[11]++;
+          frame_loops = 1;
+        }
+
+        {
+          if (last_frame_shuffle != frame_loops)
+          {
+            loop_counter[12]++;
+            last_frame_shuffle = frame_loops;
+            {
+              int i_rename15;
+              size_t memsize_rename15;
+              num_object_shuffle = MIN(NumObjs, maxVisibleObject);
+              if (max_object_shuffle < num_object_shuffle)
+              {
+                loop_counter[13]++;
+                if (object_shuffle_ptr != NULL)
+                {
+                  loop_counter[14]++;
+{}
+                }
+
+                max_object_shuffle = num_object_shuffle;
+                memsize_rename15 = max_object_shuffle * (sizeof(shuffle_t));
+                object_shuffle_ptr = (shuffle_t *) malloc(memsize_rename15);
+                if (object_shuffle_ptr == NULL)
+                {
+                  loop_counter[15]++;
+                  max_object_shuffle = 0;
+                }
+
+              }
+
+              if (max_object_shuffle < num_object_shuffle)
+              {
+                loop_counter[16]++;
+                num_object_shuffle = max_object_shuffle;
+              }
+
+              for (i_rename15 = 0; i_rename15 < num_object_shuffle; i_rename15++)
+              {
+                loop_counter[17]++;
+                object_shuffle_ptr[i_rename15] = i_rename15;
+              }
+
+              for (i_rename15 = num_object_shuffle - 1; i_rename15 >= 0; --i_rename15)
+              {
+                loop_counter[18]++;
+                if (object_shuffle_ptr[i_rename15] == i_rename15)
+                {
+                  loop_counter[19]++;
+                  int j_rename15 = (int) (rfrac() * i_rename15);
+                  shuffle_t tmp_rename15 = object_shuffle_ptr[j_rename15];
+                  object_shuffle_ptr[j_rename15] = object_shuffle_ptr[i_rename15];
+                  object_shuffle_ptr[i_rename15] = tmp_rename15;
+                }
+
+              }
+
+            }
+            {
+              int i_rename16;
+              size_t memsize_rename16;
+              num_player_shuffle = MIN(NumPlayers, 65535);
+              if (max_player_shuffle < num_player_shuffle)
+              {
+                loop_counter[20]++;
+                if (player_shuffle_ptr != NULL)
+                {
+                  loop_counter[21]++;
+{}
+                }
+
+                max_player_shuffle = num_player_shuffle;
+                memsize_rename16 = max_player_shuffle * (sizeof(shuffle_t));
+                player_shuffle_ptr = (shuffle_t *) malloc(memsize_rename16);
+                if (player_shuffle_ptr == NULL)
+                {
+                  loop_counter[22]++;
+                  max_player_shuffle = 0;
+                }
+
+              }
+
+              if (max_player_shuffle < num_player_shuffle)
+              {
+                loop_counter[23]++;
+                num_player_shuffle = max_player_shuffle;
+              }
+
+              for (i_rename16 = 0; i_rename16 < num_player_shuffle; i_rename16++)
+              {
+                loop_counter[24]++;
+                player_shuffle_ptr[i_rename16] = i_rename16;
+              }
+
+              for (i_rename16 = 0; i_rename16 < num_player_shuffle; i_rename16++)
+              {
+                loop_counter[25]++;
+                int j_rename16 = (int) (rfrac() * num_player_shuffle);
+                shuffle_t tmp_rename16 = player_shuffle_ptr[j_rename16];
+                player_shuffle_ptr[j_rename16] = player_shuffle_ptr[i_rename16];
+                player_shuffle_ptr[i_rename16] = tmp_rename16;
+              }
+
+            }
+          }
+
+        }
+        if (((gameDuration > 0.0) && (game_over_called_rename1 == false)) && (oldTimeLeft_rename1 != (newTimeLeft_rename1 = gameOverTime - time(NULL))))
+        {
+          loop_counter[26]++;
+          if (newTimeLeft_rename1 <= 0)
+          {
+            loop_counter[27]++;
+{}
+            ShutdownServer = 30 * FPS;
+            game_over_called_rename1 = true;
+          }
+
+        }
+
+        for (i_rename1 = 0; i_rename1 < num_player_shuffle; i_rename1++)
+        {
+          loop_counter[28]++;
+{}
+/*
+          conn_rename1 = pl_rename1->conn;
+          if (conn_rename1 == NOT_CONNECTED)
+          {
+            loop_counter[29]++;
+          }
+
+          if ((BIT(pl_rename1->status, PAUSE | GAME_OVER) && (!allowViewing)) && (!pl_rename1->isowner))
+          {
+            loop_counter[30]++;
+            if (BIT(pl_rename1->status, PAUSE))
+            {
+              loop_counter[31]++;
+              if (frame_loops & 0x03)
+              {
+                loop_counter[32]++;
+              }
+
+            }
+            else
+            {
+              if (frame_loops & 0x01)
+              {
+                loop_counter[33]++;
+              }
+
+            }
+
+          }
+
+          if (pl_rename1->player_count > 0)
+          {
+            loop_counter[34]++;
+            pl_rename1->player_round++;
+            if (pl_rename1->player_round >= pl_rename1->player_count)
+            {
+              loop_counter[35]++;
+              pl_rename1->player_round = 0;
+            }
+
+          }
+
+          if (Send_start_of_frame(conn_rename1) == (-1))
+          {
+            loop_counter[36]++;
+          }
+          */
+
+          if (newTimeLeft_rename1 != oldTimeLeft_rename1)
+          {
+            loop_counter[37]++;
+{}
+          }
+          else
+            if ((maxRoundTime > 0) && (roundtime >= 0))
+          {
+            loop_counter[38]++;
+{}
+          }
+/*
+
+          if (BIT(pl_rename1->lock.tagged, LOCK_PLAYER))
+          {
+            loop_counter[39]++;
+            if ((BIT(pl_rename1->status, GAME_OVER | PLAYING) == (GAME_OVER | PLAYING)) || (BIT(pl_rename1->status, PAUSE) && ((((BIT(World.rules->mode, TEAM_PLAY) && (pl_rename1->team != TEAM_NOT_SET)) && (pl_rename1->team == Players[GetInd[pl_rename1->lock.pl_id]]->team)) || pl_rename1->isowner) || allowViewing)))
+            {
+              loop_counter[40]++;
+              ind_rename1 = GetInd[pl_rename1->lock.pl_id];
+            }
+            else
+            {
+              ind_rename1 = i_rename1;
+            }
+
+          }
+          else
+          {
+            ind_rename1 = i_rename1;
+          }
+
+          */
+          if (Players[ind_rename1]->damaged > 0)
+          {
+            loop_counter[41]++;
+{}
+          }
+          else
+          {
+            {
+              int ind_rename5 = ind_rename1;
+              int conn_rename5 = conn_rename1;
+{}
+              player *pl_rename5 = Players[ind_rename5];
+              Get_display_parameters(conn_rename5, &view_width, &view_height, &debris_colors, &spark_rand);
+              debris_x_areas = (view_width + 255) >> 8;
+              debris_y_areas = (view_height + 255) >> 8;
+              debris_areas = debris_x_areas * debris_y_areas;
+              horizontal_blocks = (view_width + (BLOCK_SZ - 1)) / BLOCK_SZ;
+              vertical_blocks = (view_height + (BLOCK_SZ - 1)) / BLOCK_SZ;
+              pv.world.x = pl_rename5->pos.x - (view_width / 2);
+              pv.world.y = pl_rename5->pos.y - (view_height / 2);
+{}
+              if (BIT(World.rules->mode, WRAP_PLAY))
+              {
+                loop_counter[42]++;
+                if ((pv.world.x < 0) && ((pv.world.x + view_width) < World.width))
+                {
+                  loop_counter[43]++;
+                  pv.world.x += World.width;
+                }
+                else
+                  if ((pv.world.x > 0) && ((pv.world.x + view_width) >= World.width))
+                {
+                  loop_counter[44]++;
+                  pv.realWorld.x -= World.width;
+                }
+
+
+                if ((pv.world.y < 0) && ((pv.world.y + view_height) < World.height))
+                {
+                  loop_counter[45]++;
+                  pv.world.y += World.height;
+                }
+                else
+                  if ((pv.world.y > 0) && ((pv.world.y + view_height) >= World.height))
+                {
+                  loop_counter[46]++;
+                  pv.realWorld.y -= World.height;
+                }
+
+
+              }
+
+            }
+            /*
+            int Frame_status_result_rename1;
+            {
+              int return_value;
+              int ind_rename6 = ind_rename1;
+              int conn_rename6 = conn_rename1;
+              static char mods_rename6[MAX_CHARS];
+              player *pl_rename6 = Players[ind_rename6];
+              int n_rename6;
+              int lock_ind_rename6;
+              int lock_id_rename6 = NO_ID;
+              int lock_dist_rename6 = 0;
+              int lock_dir_rename6 = 0;
+              int i_rename6;
+              int showautopilot_rename6;
+{}
+              if (BIT(pl_rename6->lock.tagged, LOCK_PLAYER) && BIT(pl_rename6->used, HAS_COMPASS))
+              {
+                loop_counter[47]++;
+                lock_id_rename6 = pl_rename6->lock.pl_id;
+                lock_ind_rename6 = GetInd[lock_id_rename6];
+                if ((((((!BIT(World.rules->mode, LIMITED_VISIBILITY)) || (pl_rename6->lock.distance <= pl_rename6->sensor_range)) && (((pl_rename6->visibility[lock_ind_rename6].canSee || OWNS_TANK(ind_rename6, lock_ind_rename6)) || TEAM(ind_rename6, lock_ind_rename6)) || ALLIANCE(ind_rename6, lock_ind_rename6))) && (BIT(Players[lock_ind_rename6]->status, PLAYING | GAME_OVER) == PLAYING)) && (playersOnRadar || ((((Players[lock_ind_rename6]->pos.x > pv.world.x) && (Players[lock_ind_rename6]->pos.x < (pv.world.x + view_width))) || ((Players[lock_ind_rename6]->pos.x > pv.realWorld.x) && (Players[lock_ind_rename6]->pos.x < (pv.realWorld.x + view_width)))) && (((Players[lock_ind_rename6]->pos.y > pv.world.y) && (Players[lock_ind_rename6]->pos.y < (pv.world.y + view_height))) || ((Players[lock_ind_rename6]->pos.y > pv.realWorld.y) && (Players[lock_ind_rename6]->pos.y < (pv.realWorld.y + view_height))))))) && (pl_rename6->lock.distance != 0))
+                {
+                  loop_counter[48]++;
+{}
+                  lock_dir_rename6 = (int) Wrap_findDir((int) (Players[lock_ind_rename6]->pos.x - pl_rename6->pos.x), (int) (Players[lock_ind_rename6]->pos.y - pl_rename6->pos.y));
+                  lock_dist_rename6 = (int) pl_rename6->lock.distance;
+                }
+
+              }
+
+              if (BIT(pl_rename6->status, HOVERPAUSE))
+              {
+                loop_counter[49]++;
+                showautopilot_rename6 = (pl_rename6->count <= 0) || ((frame_loops % 8) < 4);
+              }
+              else
+                if (BIT(pl_rename6->used, HAS_AUTOPILOT))
+              {
+                loop_counter[50]++;
+                showautopilot_rename6 = (frame_loops % 8) < 4;
+              }
+              else
+                showautopilot_rename6 = 0;
+
+
+              i_rename6 = 0;
+              if (BIT(pl_rename6->mods.nuclear, FULLNUCLEAR))
+              {
+                loop_counter[51]++;
+                mods_rename6[i_rename6++] = 'F';
+              }
+
+              if (BIT(pl_rename6->mods.nuclear, NUCLEAR))
+              {
+                loop_counter[52]++;
+                mods_rename6[i_rename6++] = 'N';
+              }
+
+              if (BIT(pl_rename6->mods.warhead, CLUSTER))
+              {
+                loop_counter[53]++;
+                mods_rename6[i_rename6++] = 'C';
+              }
+
+              if (BIT(pl_rename6->mods.warhead, IMPLOSION))
+              {
+                loop_counter[54]++;
+                mods_rename6[i_rename6++] = 'I';
+              }
+
+              if (pl_rename6->mods.velocity)
+              {
+                loop_counter[55]++;
+                if (i_rename6)
+                {
+                  loop_counter[56]++;
+                  mods_rename6[i_rename6++] = ' ';
+                }
+
+                mods_rename6[i_rename6++] = 'V';
+                {
+                  int return_value;
+                  int i_rename17 = i_rename6;
+                  int num_rename17 = pl_rename6->mods.velocity;
+                  int digits_rename17;
+                  int t_rename17;
+                  if (num_rename17 < 0)
+                  {
+                    loop_counter[57]++;
+                    mods_rename6[i_rename17++] = '-';
+                    num_rename17 = -num_rename17;
+                  }
+
+                  if (num_rename17 < 10)
+                  {
+                    loop_counter[58]++;
+                    mods_rename6[i_rename17++] = '0' + num_rename17;
+                    {
+                      return_value = i_rename17;
+                    }
+                  }
+
+                  for (t_rename17 = num_rename17, digits_rename17 = 0; t_rename17; t_rename17 /= 10, digits_rename17++)
+                    loop_counter[59]++;
+
+                  for (t_rename17 = (i_rename17 + digits_rename17) - 1; t_rename17 >= 0; t_rename17--)
+                  {
+                    loop_counter[60]++;
+                    mods_rename6[t_rename17] = num_rename17 % 10;
+                    num_rename17 /= 10;
+                  }
+
+                  {
+                    return_value = i_rename17 + digits_rename17;
+                  }
+                  i_rename6 = return_value;
+                }
+              }
+
+              if (pl_rename6->mods.mini)
+              {
+                loop_counter[61]++;
+                if (i_rename6)
+                {
+                  loop_counter[62]++;
+                  mods_rename6[i_rename6++] = ' ';
+                }
+
+                mods_rename6[i_rename6++] = 'X';
+                {
+                  int return_value;
+                  int i_rename18 = i_rename6;
+                  int num_rename18 = pl_rename6->mods.mini + 1;
+                  int digits_rename18;
+                  int t_rename18;
+                  if (num_rename18 < 0)
+                  {
+                    loop_counter[63]++;
+                    mods_rename6[i_rename18++] = '-';
+                    num_rename18 = -num_rename18;
+                  }
+
+                  if (num_rename18 < 10)
+                  {
+                    loop_counter[64]++;
+                    mods_rename6[i_rename18++] = '0' + num_rename18;
+                    {
+                      return_value = i_rename18;
+                    }
+                  }
+
+                  for (t_rename18 = num_rename18, digits_rename18 = 0; t_rename18; t_rename18 /= 10, digits_rename18++)
+                    loop_counter[65]++;
+
+                  for (t_rename18 = (i_rename18 + digits_rename18) - 1; t_rename18 >= 0; t_rename18--)
+                  {
+                    loop_counter[66]++;
+                    mods_rename6[t_rename18] = num_rename18 % 10;
+                    num_rename18 /= 10;
+                  }
+
+                  {
+                    return_value = i_rename18 + digits_rename18;
+                  }
+                  i_rename6 = return_value;
+                }
+              }
+
+              if (pl_rename6->mods.spread)
+              {
+                loop_counter[67]++;
+                if (i_rename6)
+                {
+                  loop_counter[68]++;
+                  mods_rename6[i_rename6++] = ' ';
+                }
+
+                mods_rename6[i_rename6++] = 'Z';
+                {
+                  int return_value;
+                  int i_rename19 = i_rename6;
+                  int num_rename19 = pl_rename6->mods.spread;
+                  int digits_rename19;
+                  int t_rename19;
+                  if (num_rename19 < 0)
+                  {
+                    loop_counter[69]++;
+                    mods_rename6[i_rename19++] = '-';
+                    num_rename19 = -num_rename19;
+                  }
+
+                  if (num_rename19 < 10)
+                  {
+                    loop_counter[70]++;
+                    mods_rename6[i_rename19++] = '0' + num_rename19;
+                    {
+                      return_value = i_rename19;
+                    }
+                  }
+
+                  for (t_rename19 = num_rename19, digits_rename19 = 0; t_rename19; t_rename19 /= 10, digits_rename19++)
+                    loop_counter[71]++;
+
+                  for (t_rename19 = (i_rename19 + digits_rename19) - 1; t_rename19 >= 0; t_rename19--)
+                  {
+                    loop_counter[72]++;
+                    mods_rename6[t_rename19] = num_rename19 % 10;
+                    num_rename19 /= 10;
+                  }
+
+                  {
+                    return_value = i_rename19 + digits_rename19;
+                  }
+                  i_rename6 = return_value;
+                }
+              }
+
+              if (pl_rename6->mods.power)
+              {
+                loop_counter[73]++;
+                if (i_rename6)
+                {
+                  loop_counter[74]++;
+                  mods_rename6[i_rename6++] = ' ';
+                }
+
+                mods_rename6[i_rename6++] = 'B';
+                {
+                  int return_value;
+                  int i_rename20 = i_rename6;
+                  int num_rename20 = pl_rename6->mods.power;
+                  int digits_rename20;
+                  int t_rename20;
+                  if (num_rename20 < 0)
+                  {
+                    loop_counter[75]++;
+                    mods_rename6[i_rename20++] = '-';
+                    num_rename20 = -num_rename20;
+                  }
+
+                  if (num_rename20 < 10)
+                  {
+                    loop_counter[76]++;
+                    mods_rename6[i_rename20++] = '0' + num_rename20;
+                    {
+                      return_value = i_rename20;
+                    }
+                  }
+
+                  for (t_rename20 = num_rename20, digits_rename20 = 0; t_rename20; t_rename20 /= 10, digits_rename20++)
+                    loop_counter[77]++;
+
+                  for (t_rename20 = (i_rename20 + digits_rename20) - 1; t_rename20 >= 0; t_rename20--)
+                  {
+                    loop_counter[78]++;
+                    mods_rename6[t_rename20] = num_rename20 % 10;
+                    num_rename20 /= 10;
+                  }
+
+                  {
+                    return_value = i_rename20 + digits_rename20;
+                  }
+                  i_rename6 = return_value;
+                }
+              }
+
+              if (pl_rename6->mods.laser)
+              {
+                loop_counter[79]++;
+                if (i_rename6)
+                {
+                  loop_counter[80]++;
+                  mods_rename6[i_rename6++] = ' ';
+                }
+
+                mods_rename6[i_rename6++] = 'L';
+                mods_rename6[i_rename6++] = BIT(pl_rename6->mods.laser, STUN) ? 'S' : 'B';
+              }
+
+              mods_rename6[i_rename6] = '\0';
+              n_rename6 = Send_self(conn_rename6, pl_rename6, lock_id_rename6, lock_dist_rename6, lock_dir_rename6, showautopilot_rename6, Players[GetInd[Get_player_id(conn_rename6)]]->status, mods_rename6);
+              if (n_rename6 <= 0)
+              {
+                loop_counter[81]++;
+                {
+                  return_value = 0;
+                }
+              }
+
+              if (BIT(pl_rename6->used, HAS_EMERGENCY_THRUST))
+              {
+                loop_counter[82]++;
+{}
+              }
+
+              if (BIT(pl_rename6->used, HAS_EMERGENCY_SHIELD))
+              {
+                loop_counter[83]++;
+{}
+              }
+
+              if (BIT(pl_rename6->status, SELF_DESTRUCT) && (pl_rename6->count > 0))
+              {
+                loop_counter[84]++;
+{}
+              }
+
+              if (BIT(pl_rename6->used, HAS_PHASING_DEVICE))
+              {
+                loop_counter[85]++;
+{}
+              }
+
+              if (ShutdownServer != (-1))
+              {
+                loop_counter[86]++;
+{}
+              }
+
+              if (round_delay_send > 0)
+              {
+                loop_counter[87]++;
+{}
+              }
+
+              {
+                return_value = 1;
+              }
+              Frame_status_result_rename1 = return_value;
+            }
+            if (Frame_status_result_rename1 <= 0)
+            {
+              loop_counter[88]++;
+            }
+*/
+
+            {
+              int ind_rename7 = ind_rename1;
+              int conn_rename7 = conn_rename1;
+              player *pl_rename7 = Players[ind_rename7];
+              int i_rename7;
+              int k_rename7;
+              int x_rename7;
+              int y_rename7;
+              int conn_bit_rename7 = 1 << conn_rename7;
+              block_visibility_t bv_rename7;
+              const int fuel_packet_size_rename7 = 5;
+              const int cannon_packet_size_rename7 = 5;
+              const int target_packet_size_rename7 = 7;
+              const int wormhole_packet_size_rename7 = 5;
+              int bytes_left_rename7 = 2000;
+              int max_packet_rename7;
+              int packet_count_rename7;
+              x_rename7 = pl_rename7->pos.bx;
+              y_rename7 = pl_rename7->pos.by;
+              bv_rename7.world.x = x_rename7 - (horizontal_blocks >> 1);
+              bv_rename7.world.y = y_rename7 - (vertical_blocks >> 1);
+{}
+              if (BIT(World.rules->mode, WRAP_PLAY))
+              {
+                loop_counter[89]++;
+                if ((bv_rename7.world.x < 0) && ((bv_rename7.world.x + horizontal_blocks) < World.x))
+                {
+                  loop_counter[90]++;
+                  bv_rename7.world.x += World.x;
+                }
+                else
+                  if ((bv_rename7.world.x > 0) && ((bv_rename7.world.x + horizontal_blocks) > World.x))
+                {
+                  loop_counter[91]++;
+{}
+                }
+
+
+                if ((bv_rename7.world.y < 0) && ((bv_rename7.world.y + vertical_blocks) < World.y))
+                {
+                  loop_counter[92]++;
+                  bv_rename7.world.y += World.y;
+                }
+                else
+                  if ((bv_rename7.world.y > 0) && ((bv_rename7.world.y + vertical_blocks) > World.y))
+                {
+                  loop_counter[93]++;
+{}
+                }
+
+
+              }
+
+              packet_count_rename7 = 0;
+              max_packet_rename7 = MAX(5, bytes_left_rename7 / target_packet_size_rename7);
+              i_rename7 = MAX(0, pl_rename7->last_target_update);
+              for (k_rename7 = 0; k_rename7 < World.NumTargets; k_rename7++)
+              {
+                loop_counter[94]++;
+{}
+                if ((++i_rename7) >= World.NumTargets)
+                {
+                  loop_counter[95]++;
+                  i_rename7 = 0;
+                }
+
+{}
+                target_t *targ;
+                targ = &World.targets[i_rename7];
+                if (BIT(targ->update_mask, conn_bit_rename7) || ((BIT(targ->conn_mask, conn_bit_rename7) == 0) && block_inview(&bv_rename7, targ->pos.x, targ->pos.y)))
+                {
+                  loop_counter[96]++;
+{}
+                  pl_rename7->last_target_update = i_rename7;
+                  bytes_left_rename7 -= target_packet_size_rename7;
+                  if ((++packet_count_rename7) >= max_packet_rename7)
+                  {
+                    loop_counter[97]++;
+                  }
+
+                }
+
+              }
+
+              packet_count_rename7 = 0;
+              max_packet_rename7 = MAX(5, bytes_left_rename7 / cannon_packet_size_rename7);
+              i_rename7 = MAX(0, pl_rename7->last_cannon_update);
+              for (k_rename7 = 0; k_rename7 < World.NumCannons; k_rename7++)
+              {
+                loop_counter[98]++;
+                if ((++i_rename7) >= World.NumCannons)
+                {
+                  loop_counter[99]++;
+                  i_rename7 = 0;
+                }
+
+                if (block_inview(&bv_rename7, World.cannon[i_rename7].blk_pos.x, World.cannon[i_rename7].blk_pos.y))
+                {
+                  loop_counter[100]++;
+                  if (BIT(World.cannon[i_rename7].conn_mask, conn_bit_rename7) == 0)
+                  {
+                    loop_counter[101]++;
+{}
+                    pl_rename7->last_cannon_update = i_rename7;
+                    bytes_left_rename7 -= max_packet_rename7 * cannon_packet_size_rename7;
+                    if ((++packet_count_rename7) >= max_packet_rename7)
+                    {
+                      loop_counter[102]++;
+                    }
+
+                  }
+
+                }
+
+              }
+
+              packet_count_rename7 = 0;
+              max_packet_rename7 = MAX(5, bytes_left_rename7 / fuel_packet_size_rename7);
+              i_rename7 = MAX(0, pl_rename7->last_fuel_update);
+              for (k_rename7 = 0; k_rename7 < World.NumFuels; k_rename7++)
+              {
+                loop_counter[103]++;
+                if ((++i_rename7) >= World.NumFuels)
+                {
+                  loop_counter[104]++;
+                  i_rename7 = 0;
+                }
+
+                if (BIT(World.fuel[i_rename7].conn_mask, conn_bit_rename7) == 0)
+                {
+                  loop_counter[105]++;
+                  if (World.block[World.fuel[i_rename7].blk_pos.x][World.fuel[i_rename7].blk_pos.y] == FUEL)
+                  {
+                    loop_counter[106]++;
+                    if (block_inview(&bv_rename7, World.fuel[i_rename7].blk_pos.x, World.fuel[i_rename7].blk_pos.y))
+                    {
+                      loop_counter[107]++;
+{}
+                      pl_rename7->last_fuel_update = i_rename7;
+                      bytes_left_rename7 -= max_packet_rename7 * fuel_packet_size_rename7;
+                      if ((++packet_count_rename7) >= max_packet_rename7)
+                      {
+                        loop_counter[108]++;
+                      }
+
+                    }
+
+                  }
+
+                }
+
+              }
+
+              packet_count_rename7 = 0;
+              max_packet_rename7 = MAX(5, bytes_left_rename7 / wormhole_packet_size_rename7);
+              i_rename7 = MAX(0, pl_rename7->last_wormhole_update);
+              for (k_rename7 = 0; k_rename7 < World.NumWormholes; k_rename7++)
+              {
+                loop_counter[109]++;
+{}
+                if ((++i_rename7) >= World.NumWormholes)
+                {
+                  loop_counter[110]++;
+                  i_rename7 = 0;
+                }
+
+{}
+                wormhole_t * worm;
+                worm = &World.wormHoles[i_rename7];
+                if (((wormholeVisible && worm->temporary) && ((worm->type == WORM_IN) || (worm->type == WORM_NORMAL))) && block_inview(&bv_rename7, worm->pos.x, worm->pos.y))
+                {
+                  loop_counter[111]++;
+                  int x_rename7 = (worm->pos.x * BLOCK_SZ) + (BLOCK_SZ / 2);
+                  int y_rename7 = (worm->pos.y * BLOCK_SZ) + (BLOCK_SZ / 2);
+{}
+                  pl_rename7->last_wormhole_update = i_rename7;
+                  bytes_left_rename7 -= max_packet_rename7 * wormhole_packet_size_rename7;
+                  if ((++packet_count_rename7) >= max_packet_rename7)
+                  {
+                    loop_counter[112]++;
+                  }
+
+                }
+
+              }
+
+            }
+/*
+            {
+              int ind_rename8 = ind_rename1;
+{}
+              player *pl_rename8 = Players[ind_rename8];
+              player *pl_i_rename8;
+{}
+              pulse_t * pulse;
+              int i_rename8;
+              int j_rename8;
+              int k_rename8;
+{}
+{}
+              DFLOAT x_rename8;
+              DFLOAT y_rename8;
+              for (j_rename8 = 0; j_rename8 < NumPulses; j_rename8++)
+              {
+                loop_counter[113]++;
+{}
+                pulse = Pulses[j_rename8];
+                if (pulse->len <= 0)
+                {
+                  loop_counter[114]++;
+                }
+
+                x_rename8 = pulse->pos.x;
+                y_rename8 = pulse->pos.y;
+                if (BIT(World.rules->mode, WRAP_PLAY))
+                {
+                  loop_counter[115]++;
+                  if (x_rename8 < 0)
+                  {
+                    loop_counter[116]++;
+                    x_rename8 += World.width;
+                  }
+                  else
+                    if (x_rename8 >= World.width)
+                  {
+                    loop_counter[117]++;
+                    x_rename8 -= World.width;
+                  }
+
+
+                  if (y_rename8 < 0)
+                  {
+                    loop_counter[118]++;
+                    y_rename8 += World.height;
+                  }
+                  else
+                    if (y_rename8 >= World.height)
+                  {
+                    loop_counter[119]++;
+                    y_rename8 -= World.height;
+                  }
+
+
+                }
+
+                if ((((x_rename8 > pv.world.x) && (x_rename8 < (pv.world.x + view_width))) || ((x_rename8 > pv.realWorld.x) && (x_rename8 < (pv.realWorld.x + view_width)))) && (((y_rename8 > pv.world.y) && (y_rename8 < (pv.world.y + view_height))) || ((y_rename8 > pv.realWorld.y) && (y_rename8 < (pv.realWorld.y + view_height)))))
+                {
+                  loop_counter[120]++;
+{}
+                }
+                else
+                {
+                  x_rename8 += tcos(pulse->dir) * pulse->len;
+                  y_rename8 += tsin(pulse->dir) * pulse->len;
+                  if (BIT(World.rules->mode, WRAP_PLAY))
+                  {
+                    loop_counter[121]++;
+                    if (x_rename8 < 0)
+                    {
+                      loop_counter[122]++;
+                      x_rename8 += World.width;
+                    }
+                    else
+                      if (x_rename8 >= World.width)
+                    {
+                      loop_counter[123]++;
+                      x_rename8 -= World.width;
+                    }
+
+
+                    if (y_rename8 < 0)
+                    {
+                      loop_counter[124]++;
+                      y_rename8 += World.height;
+                    }
+                    else
+                      if (y_rename8 >= World.height)
+                    {
+                      loop_counter[125]++;
+                      y_rename8 -= World.height;
+                    }
+
+
+                  }
+
+                  if ((((x_rename8 > pv.world.x) && (x_rename8 < (pv.world.x + view_width))) || ((x_rename8 > pv.realWorld.x) && (x_rename8 < (pv.realWorld.x + view_width)))) && (((y_rename8 > pv.world.y) && (y_rename8 < (pv.world.y + view_height))) || ((y_rename8 > pv.realWorld.y) && (y_rename8 < (pv.realWorld.y + view_height)))))
+                  {
+                    loop_counter[126]++;
+{}
+                  }
+                  else
+                  {
+                  }
+
+                }
+
+                if (Team_immune(pulse->id, pl_rename8->id))
+                {
+                  loop_counter[127]++;
+{}
+                }
+                else
+                  if ((pulse->id == pl_rename8->id) && selfImmunity)
+                {
+                  loop_counter[128]++;
+{}
+                }
+                else
+                {
+{}
+                }
+
+
+{}
+              }
+
+              for (i_rename8 = 0; i_rename8 < NumEcms; i_rename8++)
+              {
+                loop_counter[129]++;
+{}
+{}
+              }
+
+              for (i_rename8 = 0; i_rename8 < NumTransporters; i_rename8++)
+              {
+                loop_counter[130]++;
+                trans_t *trans_rename8 = Transporters[i_rename8];
+{}
+                player *pl_rename8 = trans_rename8->id == NO_ID ? NULL : Players[GetInd[trans_rename8->id]];
+                DFLOAT x_rename8 = pl_rename8 ? pl_rename8->pos.x : trans_rename8->pos.x;
+                DFLOAT y_rename8 = pl_rename8 ? pl_rename8->pos.y : trans_rename8->pos.y;
+{}
+              }
+
+              for (i_rename8 = 0; i_rename8 < World.NumCannons; i_rename8++)
+              {
+                loop_counter[131]++;
+                cannon_t *cannon_rename8 = World.cannon + i_rename8;
+                if (cannon_rename8->tractor_count > 0)
+                {
+                  loop_counter[132]++;
+                  player *t_rename8 = Players[GetInd[cannon_rename8->tractor_target]];
+                  if ((((t_rename8->pos.x > pv.world.x) && (t_rename8->pos.x < (pv.world.x + view_width))) || ((t_rename8->pos.x > pv.realWorld.x) && (t_rename8->pos.x < (pv.realWorld.x + view_width)))) && (((t_rename8->pos.y > pv.world.y) && (t_rename8->pos.y < (pv.world.y + view_height))) || ((t_rename8->pos.y > pv.realWorld.y) && (t_rename8->pos.y < (pv.realWorld.y + view_height)))))
+                  {
+                    loop_counter[133]++;
+                    int j_rename8;
+                    for (j_rename8 = 0; j_rename8 < 3; j_rename8++)
+                    {
+                      loop_counter[134]++;
+{}
+                    }
+
+                  }
+
+                }
+
+              }
+
+              for (k_rename8 = 0; k_rename8 < num_player_shuffle; k_rename8++)
+              {
+                loop_counter[135]++;
+                i_rename8 = player_shuffle_ptr[k_rename8];
+{}
+                if (!BIT(pl_i_rename8->status, PLAYING | PAUSE))
+                {
+                  loop_counter[136]++;
+                }
+
+                if (BIT(pl_i_rename8->status, GAME_OVER))
+                {
+                  loop_counter[137]++;
+                }
+
+                if (!((((pl_i_rename8->pos.x > pv.world.x) && (pl_i_rename8->pos.x < (pv.world.x + view_width))) || ((pl_i_rename8->pos.x > pv.realWorld.x) && (pl_i_rename8->pos.x < (pv.realWorld.x + view_width)))) && (((pl_i_rename8->pos.y > pv.world.y) && (pl_i_rename8->pos.y < (pv.world.y + view_height))) || ((pl_i_rename8->pos.y > pv.realWorld.y) && (pl_i_rename8->pos.y < (pv.realWorld.y + view_height))))))
+                {
+                  loop_counter[138]++;
+                }
+
+                if (BIT(pl_i_rename8->status, PAUSE))
+                {
+                  loop_counter[139]++;
+{}
+                }
+
+                if (((pl_rename8->visibility[i_rename8].canSee || (i_rename8 == ind_rename8)) || TEAM(i_rename8, ind_rename8)) || ALLIANCE(i_rename8, ind_rename8))
+                {
+                  loop_counter[140]++;
+{}
+                }
+
+                if (BIT(pl_i_rename8->used, HAS_REFUEL))
+                {
+                  loop_counter[141]++;
+                  if ((((World.fuel[pl_i_rename8->fs].pix_pos.x > pv.world.x) && (World.fuel[pl_i_rename8->fs].pix_pos.x < (pv.world.x + view_width))) || ((World.fuel[pl_i_rename8->fs].pix_pos.x > pv.realWorld.x) && (World.fuel[pl_i_rename8->fs].pix_pos.x < (pv.realWorld.x + view_width)))) && (((World.fuel[pl_i_rename8->fs].pix_pos.y > pv.world.y) && (World.fuel[pl_i_rename8->fs].pix_pos.y < (pv.world.y + view_height))) || ((World.fuel[pl_i_rename8->fs].pix_pos.y > pv.realWorld.y) && (World.fuel[pl_i_rename8->fs].pix_pos.y < (pv.realWorld.y + view_height)))))
+                  {
+                    loop_counter[142]++;
+{}
+                  }
+
+                }
+
+                if (BIT(pl_i_rename8->used, HAS_REPAIR))
+                {
+                  loop_counter[143]++;
+                  DFLOAT x_rename8 = ((DFLOAT) (World.targets[pl_i_rename8->repair_target].pos.x + 0.5)) * BLOCK_SZ;
+                  DFLOAT y_rename8 = ((DFLOAT) (World.targets[pl_i_rename8->repair_target].pos.y + 0.5)) * BLOCK_SZ;
+                  if ((((x_rename8 > pv.world.x) && (x_rename8 < (pv.world.x + view_width))) || ((x_rename8 > pv.realWorld.x) && (x_rename8 < (pv.realWorld.x + view_width)))) && (((y_rename8 > pv.world.y) && (y_rename8 < (pv.world.y + view_height))) || ((y_rename8 > pv.realWorld.y) && (y_rename8 < (pv.realWorld.y + view_height)))))
+                  {
+                    loop_counter[144]++;
+{}
+                  }
+
+                }
+
+                if (BIT(pl_i_rename8->used, HAS_TRACTOR_BEAM))
+                {
+                  loop_counter[145]++;
+                  player *t_rename8 = Players[GetInd[pl_i_rename8->lock.pl_id]];
+                  if ((((t_rename8->pos.x > pv.world.x) && (t_rename8->pos.x < (pv.world.x + view_width))) || ((t_rename8->pos.x > pv.realWorld.x) && (t_rename8->pos.x < (pv.realWorld.x + view_width)))) && (((t_rename8->pos.y > pv.world.y) && (t_rename8->pos.y < (pv.world.y + view_height))) || ((t_rename8->pos.y > pv.realWorld.y) && (t_rename8->pos.y < (pv.realWorld.y + view_height)))))
+                  {
+                    loop_counter[146]++;
+                    int j_rename8;
+                    for (j_rename8 = 0; j_rename8 < 3; j_rename8++)
+                    {
+                      loop_counter[147]++;
+{}
+                    }
+
+                  }
+
+                }
+
+                if ((pl_i_rename8->ball != NULL) && ((((pl_i_rename8->ball->pos.x > pv.world.x) && (pl_i_rename8->ball->pos.x < (pv.world.x + view_width))) || ((pl_i_rename8->ball->pos.x > pv.realWorld.x) && (pl_i_rename8->ball->pos.x < (pv.realWorld.x + view_width)))) && (((pl_i_rename8->ball->pos.y > pv.world.y) && (pl_i_rename8->ball->pos.y < (pv.world.y + view_height))) || ((pl_i_rename8->ball->pos.y > pv.realWorld.y) && (pl_i_rename8->ball->pos.y < (pv.realWorld.y + view_height))))))
+                {
+                  loop_counter[148]++;
+{}
+                }
+
+              }
+
+            }
+            {
+              int ind_rename9 = ind_rename1;
+{}
+              player *pl_rename9 = Players[ind_rename9];
+              register int x_rename9;
+              register int y_rename9;
+              int i_rename9;
+              int k_rename9;
+              int color_rename9;
+              int fuzz_rename9 = 0;
+              int teamshot_rename9;
+{}
+              int obj_count_rename9;
+{}
+              object * shot;
+              object * (*obj_list);
+              int hori_blocks_rename9;
+              int vert_blocks_rename9;
+              hori_blocks_rename9 = (view_width + (BLOCK_SZ - 1)) / (2 * BLOCK_SZ);
+              vert_blocks_rename9 = (view_height + (BLOCK_SZ - 1)) / (2 * BLOCK_SZ);
+{}
+{}
+{}
+{}
+              Cell_get_objects(OBJ_X_IN_BLOCKS(pl_rename9), OBJ_Y_IN_BLOCKS(pl_rename9), MAX(hori_blocks_rename9, vert_blocks_rename9), num_object_shuffle, &obj_list, &obj_count_rename9);
+              for (k_rename9 = 0; k_rename9 < num_object_shuffle; k_rename9++)
+              {
+                loop_counter[149]++;
+                i_rename9 = object_shuffle_ptr[k_rename9];
+                if (i_rename9 >= obj_count_rename9)
+                {
+                  loop_counter[150]++;
+                }
+
+                shot = obj_list[i_rename9];
+                x_rename9 = shot->pos.x;
+                y_rename9 = shot->pos.y;
+                if (!((((x_rename9 > pv.world.x) && (x_rename9 < (pv.world.x + view_width))) || ((x_rename9 > pv.realWorld.x) && (x_rename9 < (pv.realWorld.x + view_width)))) && (((y_rename9 > pv.world.y) && (y_rename9 < (pv.world.y + view_height))) || ((y_rename9 > pv.realWorld.y) && (y_rename9 < (pv.realWorld.y + view_height))))))
+                {
+                  loop_counter[151]++;
+                }
+
+                if ((color_rename9 = shot->color) == BLACK)
+                {
+                  loop_counter[152]++;
+{}
+                  color_rename9 = WHITE;
+                }
+
+                switch (shot->type)
+                {
+                  case OBJ_DEBRIS:
+                    if ((fuzz_rename9 >>= 7) < 0x40)
+                  {
+                    loop_counter[153]++;
+                    fuzz_rename9 = randomMT();
+                  }
+
+                    if ((fuzz_rename9 & 0x7F) >= spark_rand)
+                  {
+                    loop_counter[154]++;
+                  }
+
+                    if (debris_colors >= 3)
+                  {
+                    loop_counter[155]++;
+                    if (debris_colors > 4)
+                    {
+                      loop_counter[156]++;
+                      if (color_rename9 == BLUE)
+                      {
+                        loop_counter[157]++;
+                        color_rename9 = shot->life >> 1;
+                      }
+                      else
+                      {
+                        color_rename9 = shot->life >> 2;
+                      }
+
+                    }
+                    else
+                    {
+                      if (color_rename9 == BLUE)
+                      {
+                        loop_counter[158]++;
+                        color_rename9 = shot->life >> 2;
+                      }
+                      else
+                      {
+                        color_rename9 = shot->life >> 3;
+                      }
+
+                    }
+
+                    if (color_rename9 >= debris_colors)
+                    {
+                      loop_counter[159]++;
+                      color_rename9 = debris_colors - 1;
+                    }
+
+                  }
+
+                  {
+                    int color_rename21 = color_rename9;
+                    int yf_rename21 = (int) (shot->pos.y - pv.world.y);
+                    int xf_rename21 = (int) (shot->pos.x - pv.world.x);
+                    int i_rename21;
+                    if (xf_rename21 < 0)
+                    {
+                      loop_counter[160]++;
+                      xf_rename21 += World.width;
+                    }
+
+                    if (yf_rename21 < 0)
+                    {
+                      loop_counter[161]++;
+                      yf_rename21 += World.height;
+                    }
+
+                    if ((((unsigned) xf_rename21) >= ((unsigned) view_width)) || (((unsigned) yf_rename21) >= ((unsigned) view_height)))
+                    {
+                      loop_counter[162]++;
+                      {
+                      }
+                    }
+
+                    i_rename21 = ((0 + (color_rename21 * debris_areas)) + (((yf_rename21 >> 8) % debris_y_areas) * debris_x_areas)) + ((xf_rename21 >> 8) % debris_x_areas);
+                    if (debris_num[i_rename21] >= 255)
+                    {
+                      loop_counter[163]++;
+                      {
+                      }
+                    }
+
+                    if (debris_num[i_rename21] >= debris_max[i_rename21])
+                    {
+                      loop_counter[164]++;
+                      if (debris_num[i_rename21] == 0)
+                      {
+                        loop_counter[165]++;
+                        debris_ptr[i_rename21] = (debris_t *) malloc((debris_max[i_rename21] = 16) * (sizeof(*debris_ptr[i_rename21])));
+                      }
+                      else
+                      {
+                        debris_ptr[i_rename21] = (debris_t *) realloc(debris_ptr[i_rename21], (debris_max[i_rename21] += debris_max[i_rename21]) * (sizeof(*debris_ptr[i_rename21])));
+                      }
+
+                      if (debris_ptr[i_rename21] == 0)
+                      {
+                        loop_counter[166]++;
+{}
+                        debris_num[i_rename21] = 0;
+                        {
+                        }
+                      }
+
+                    }
+
+{}
+{}
+                    debris_num[i_rename21]++;
+                  }
+
+                  case OBJ_WRECKAGE:
+                    if ((spark_rand != 0) || wreckageCollisionMayKill)
+                  {
+                    loop_counter[167]++;
+{}
+{}
+                  }
+
+
+                  case OBJ_CANNON_SHOT:
+                    if ((Team_immune(shot->id, pl_rename9->id) || ((shot->id != NO_ID) && BIT(Players[GetInd[shot->id]]->status, PAUSE))) || (((shot->id == NO_ID) && BIT(World.rules->mode, TEAM_PLAY)) && (shot->team == pl_rename9->team)))
+                  {
+                    loop_counter[168]++;
+                    color_rename9 = BLUE;
+                    teamshot_rename9 = DEBRIS_TYPES;
+                  }
+                  else
+                    if ((shot->id == pl_rename9->id) && selfImmunity)
+                  {
+                    loop_counter[169]++;
+                    color_rename9 = BLUE;
+                    teamshot_rename9 = DEBRIS_TYPES;
+                  }
+                  else
+                    if (shot->mods.nuclear && (frame_loops & 2))
+                  {
+                    loop_counter[170]++;
+                    color_rename9 = RED;
+                    teamshot_rename9 = DEBRIS_TYPES;
+                  }
+                  else
+                  {
+                    teamshot_rename9 = 0;
+                  }
+
+
+
+                  {
+                    int offset_rename22 = teamshot_rename9;
+                    int color_rename22 = color_rename9;
+                    int yf_rename22 = (int) (shot->pos.y - pv.world.y);
+                    int xf_rename22 = (int) (shot->pos.x - pv.world.x);
+                    int i_rename22;
+                    if (xf_rename22 < 0)
+                    {
+                      loop_counter[171]++;
+                      xf_rename22 += World.width;
+                    }
+
+                    if (yf_rename22 < 0)
+                    {
+                      loop_counter[172]++;
+                      yf_rename22 += World.height;
+                    }
+
+                    if ((((unsigned) xf_rename22) >= ((unsigned) view_width)) || (((unsigned) yf_rename22) >= ((unsigned) view_height)))
+                    {
+                      loop_counter[173]++;
+                      {
+                      }
+                    }
+
+                    i_rename22 = ((offset_rename22 + (color_rename22 * debris_areas)) + (((yf_rename22 >> 8) % debris_y_areas) * debris_x_areas)) + ((xf_rename22 >> 8) % debris_x_areas);
+                    if (fastshot_num[i_rename22] >= 255)
+                    {
+                      loop_counter[174]++;
+                      {
+                      }
+                    }
+
+                    if (fastshot_num[i_rename22] >= fastshot_max[i_rename22])
+                    {
+                      loop_counter[175]++;
+                      if (fastshot_num[i_rename22] == 0)
+                      {
+                        loop_counter[176]++;
+                        fastshot_ptr[i_rename22] = (debris_t *) malloc((fastshot_max[i_rename22] = 16) * (sizeof(*fastshot_ptr[i_rename22])));
+                      }
+                      else
+                      {
+                        fastshot_ptr[i_rename22] = (debris_t *) realloc(fastshot_ptr[i_rename22], (fastshot_max[i_rename22] += fastshot_max[i_rename22]) * (sizeof(*fastshot_ptr[i_rename22])));
+                      }
+
+                      if (fastshot_ptr[i_rename22] == 0)
+                      {
+                        loop_counter[177]++;
+{}
+                        fastshot_num[i_rename22] = 0;
+                        {
+                        }
+                      }
+
+                    }
+
+{}
+{}
+                    fastshot_num[i_rename22]++;
+                  }
+
+                  case OBJ_MINE:
+                  {
+                    int id_rename9 = 0;
+{}
+                    int confused_rename9 = 0;
+                    mineobject *mine_rename9 = MINE_PTR(shot);
+                    if (identifyMines && (Wrap_length(pl_rename9->pos.x - mine_rename9->pos.x, pl_rename9->pos.y - mine_rename9->pos.y) < ((SHIP_SZ + MINE_SENSE_BASE_RANGE) + (pl_rename9->item[ITEM_SENSOR] * MINE_SENSE_RANGE_FACTOR))))
+                    {
+                      loop_counter[178]++;
+                      id_rename9 = mine_rename9->id;
+                      if (id_rename9 == NO_ID)
+                      {
+                        loop_counter[179]++;
+                        id_rename9 = EXPIRED_MINE_ID;
+                      }
+
+                      if (BIT(mine_rename9->status, CONFUSED))
+                      {
+                        loop_counter[180]++;
+                        confused_rename9 = 1;
+                      }
+
+                    }
+
+                    if ((mine_rename9->id != NO_ID) && BIT(Players[GetInd[mine_rename9->id]]->status, PAUSE))
+                    {
+                      loop_counter[181]++;
+{}
+                    }
+                    else
+                    {
+{}
+                      if (confused_rename9)
+                      {
+                        loop_counter[182]++;
+                        id_rename9 = 0;
+{}
+                      }
+
+                    }
+
+{}
+                  }
+
+                  case OBJ_ITEM:
+                  {
+{}
+                    if (BIT(shot->status, RANDOM_ITEM))
+                    {
+                      loop_counter[183]++;
+{}
+                    }
+
+{}
+                  }
+
+                }
+
+              }
+
+            }
+*/
+            {
+              int ind_rename10 = ind_rename1;
+              int conn_rename10 = conn_rename1;
+              int i_rename10;
+              int k_rename10;
+              int mask_rename10;
+              int shownuke_rename10;
+{}
+              player *pl_rename10 = Players[ind_rename10];
+              object * shot;
+{}
+              DFLOAT x_rename10;
+              DFLOAT y_rename10;
+              {
+                num_radar = 0;
+              }
+              if (nukesOnRadar)
+              {
+                loop_counter[184]++;
+                mask_rename10 = ((OBJ_SMART_SHOT | OBJ_TORPEDO) | OBJ_HEAT_SHOT) | OBJ_MINE;
+              }
+              else
+              {
+                mask_rename10 = missilesOnRadar ? (OBJ_SMART_SHOT | OBJ_TORPEDO) | OBJ_HEAT_SHOT : 0;
+                mask_rename10 |= minesOnRadar ? OBJ_MINE : 0;
+              }
+
+              if (treasuresOnRadar)
+              {
+                loop_counter[185]++;
+                mask_rename10 |= OBJ_BALL;
+              }
+
+              if (asteroidsOnRadar)
+              {
+                loop_counter[186]++;
+                mask_rename10 |= OBJ_ASTEROID;
+              }
+
+              if (mask_rename10)
+              {
+                loop_counter[187]++;
+                for (i_rename10 = 0; i_rename10 < NumObjs; i_rename10++)
+                {
+                  loop_counter[188]++;
+                  shot = Obj[i_rename10];
+                  if (!BIT(shot->type, mask_rename10))
+                  {
+                    loop_counter[189]++;
+                  }
+
+                  shownuke_rename10 = nukesOnRadar && shot->mods.nuclear;
+                  if (shownuke_rename10 && (frame_loops & 2))
+                  {
+                    loop_counter[190]++;
+{}
+                  }
+                  else
+                  {
+{}
+                  }
+
+                  if (BIT(shot->type, OBJ_MINE))
+                  {
+                    loop_counter[191]++;
+                    if ((!minesOnRadar) && (!shownuke_rename10))
+                    {
+                      loop_counter[192]++;
+                    }
+
+                    if ((frame_loops % 8) >= 6)
+                    {
+                      loop_counter[193]++;
+                    }
+
+                  }
+                  else
+                    if (BIT(shot->type, OBJ_BALL))
+                  {
+                    loop_counter[194]++;
+{}
+                  }
+                  else
+                    if (BIT(shot->type, OBJ_ASTEROID))
+                  {
+                    loop_counter[195]++;
+{}
+{}
+                  }
+                  else
+                  {
+                    if ((!missilesOnRadar) && (!shownuke_rename10))
+                    {
+                      loop_counter[196]++;
+                    }
+
+                    if (frame_loops & 1)
+                    {
+                      loop_counter[197]++;
+                    }
+
+                  }
+
+
+
+                  x_rename10 = shot->pos.x;
+                  y_rename10 = shot->pos.y;
+                  if (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) <= pl_rename10->sensor_range)
+                  {
+                    loop_counter[198]++;
+                    {
+{}
+{}
+{}
+                      radar_t *p_rename24;
+                      if ((num_radar + 1) > max_radar)
+                      {
+                        loop_counter[199]++;
+                        if (max_radar <= 0)
+                        {
+                          loop_counter[200]++;
+                          max_radar = 1 + 2;
+                          radar_ptr = (radar_t *) malloc(max_radar * (sizeof(radar_t)));
+                          num_radar = 0;
+                        }
+                        else
+                        {
+                          max_radar = (max_radar << 1) + 1;
+                          radar_ptr = (radar_t *) realloc(radar_ptr, max_radar * (sizeof(radar_t)));
+                        }
+
+                        if (radar_ptr == NULL)
+                        {
+                          loop_counter[201]++;
+{}
+                          num_radar = (max_radar = 0);
+                          {
+                          }
+                        }
+
+                      }
+
+                      p_rename24 = &radar_ptr[num_radar++];
+{}
+{}
+{}
+                    }
+                  }
+
+                }
+
+              }
+
+              if (((playersOnRadar || BIT(World.rules->mode, TEAM_PLAY)) || (NumPseudoPlayers > 0)) || (NumAlliances > 0))
+              {
+                loop_counter[202]++;
+                for (k_rename10 = 0; k_rename10 < num_player_shuffle; k_rename10++)
+                {
+                  loop_counter[203]++;
+                  i_rename10 = player_shuffle_ptr[k_rename10];
+                  if (((Players[i_rename10]->conn == conn_rename10) || (BIT(Players[i_rename10]->status, (PLAYING | PAUSE) | GAME_OVER) != PLAYING)) || ((((!TEAM(i_rename10, ind_rename10)) && (!ALLIANCE(ind_rename10, i_rename10))) && (!OWNS_TANK(ind_rename10, i_rename10))) && ((!playersOnRadar) || (!pl_rename10->visibility[i_rename10].canSee))))
+                  {
+                    loop_counter[204]++;
+                  }
+
+                  x_rename10 = Players[i_rename10]->pos.x;
+                  y_rename10 = Players[i_rename10]->pos.y;
+                  if (BIT(World.rules->mode, LIMITED_VISIBILITY) && (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) > pl_rename10->sensor_range))
+                  {
+                    loop_counter[205]++;
+                  }
+
+                  if (((BIT(pl_rename10->used, HAS_COMPASS) && BIT(pl_rename10->lock.tagged, LOCK_PLAYER)) && (GetInd[pl_rename10->lock.pl_id] == i_rename10)) && ((frame_loops % 5) >= 3))
+                  {
+                    loop_counter[206]++;
+                  }
+
+{}
+                  if ((TEAM(i_rename10, ind_rename10) || ALLIANCE(ind_rename10, i_rename10)) || OWNS_TANK(ind_rename10, i_rename10))
+                  {
+                    loop_counter[207]++;
+{}
+                  }
+
+                  {
+{}
+{}
+{}
+                    radar_t *p_rename25;
+                    if ((num_radar + 1) > max_radar)
+                    {
+                      loop_counter[208]++;
+                      if (max_radar <= 0)
+                      {
+                        loop_counter[209]++;
+                        max_radar = 1 + 2;
+                        radar_ptr = (radar_t *) malloc(max_radar * (sizeof(radar_t)));
+                        num_radar = 0;
+                      }
+                      else
+                      {
+                        max_radar = (max_radar << 1) + 1;
+                        radar_ptr = (radar_t *) realloc(radar_ptr, max_radar * (sizeof(radar_t)));
+                      }
+
+                      if (radar_ptr == NULL)
+                      {
+                        loop_counter[210]++;
+{}
+                        num_radar = (max_radar = 0);
+                        {
+                        }
+                      }
+
+                    }
+
+                    p_rename25 = &radar_ptr[num_radar++];
+{}
+{}
+{}
+                  }
+                }
+
+              }
+
+              {
+                int conn_rename26 = conn_rename10;
+                int i_rename26;
+                int dest_rename26;
+                int tmp_rename26;
+                radar_t *p_rename26;
+                const int radar_width_rename26 = 256;
+                int radar_height_rename26 = (radar_width_rename26 * World.y) / World.x;
+{}
+                int radar_y_rename26;
+{}
+{}
+                shuffle_t *radar_shuffle_rename26;
+                size_t shuffle_bufsize_rename26;
+                if (num_radar > MIN(256, 65535))
+                {
+                  loop_counter[211]++;
+                  num_radar = MIN(256, 65535);
+                }
+
+                shuffle_bufsize_rename26 = num_radar * (sizeof(shuffle_t));
+                radar_shuffle_rename26 = (shuffle_t *) malloc(shuffle_bufsize_rename26);
+                if (radar_shuffle_rename26 == ((shuffle_t *) NULL))
+                {
+                  loop_counter[212]++;
+                  {
+                  }
+                }
+
+                for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
+                {
+                  loop_counter[213]++;
+                  radar_shuffle_rename26[i_rename26] = i_rename26;
+                }
+
+                for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
+                {
+                  loop_counter[214]++;
+                  dest_rename26 = (int) (rfrac() * num_radar);
+                  tmp_rename26 = radar_shuffle_rename26[i_rename26];
+                  radar_shuffle_rename26[i_rename26] = radar_shuffle_rename26[dest_rename26];
+                  radar_shuffle_rename26[dest_rename26] = tmp_rename26;
+                }
+
+                if (Get_conn_version(conn_rename26) <= 0x4400)
+                {
+                  loop_counter[215]++;
+                  for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
+                  {
+                    loop_counter[216]++;
+                    p_rename26 = &radar_ptr[radar_shuffle_rename26[i_rename26]];
+{}
+                    radar_y_rename26 = (radar_height_rename26 * p_rename26->y) / World.height;
+{}
+{}
+{}
+                  }
+
+                }
+                else
+                {
+{}
+{}
+                  int fast_count_rename26 = 0;
+                  if (num_radar > 256)
+                  {
+                    loop_counter[217]++;
+                    num_radar = 256;
+                  }
+
+                  for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
+                  {
+                    loop_counter[218]++;
+                    p_rename26 = &radar_ptr[radar_shuffle_rename26[i_rename26]];
+{}
+                    radar_y_rename26 = (radar_height_rename26 * p_rename26->y) / World.height;
+                    if (radar_y_rename26 >= 1024)
+                    {
+                      loop_counter[219]++;
+                    }
+
+{}
+{}
+{}
+                    if (p_rename26->size & 0x80)
+                    {
+                      loop_counter[220]++;
+{}
+                    }
+
+{}
+{}
+                    fast_count_rename26++;
+                  }
+
+                  if (fast_count_rename26 > 0)
+                  {
+                    loop_counter[221]++;
+{}
+                  }
+
+                }
+
+{}
+              }
+            }
+            {
+              int ind_rename11 = i_rename1;
+              player *pl_rename11 = Players[ind_rename11];
+              if (pl_rename11->lose_item_state != 0)
+              {
+                loop_counter[222]++;
+{}
+                if (pl_rename11->lose_item_state == 1)
+                {
+                  loop_counter[223]++;
+                  pl_rename11->lose_item_state = -5;
+                }
+
+                if (pl_rename11->lose_item_state < 0)
+                {
+                  loop_counter[224]++;
+                  pl_rename11->lose_item_state++;
+                }
+
+              }
+
+            }
+            {
+{}
+              int i_rename12;
+              for (i_rename12 = 0; i_rename12 < DEBRIS_TYPES; i_rename12++)
+              {
+                loop_counter[225]++;
+                if (debris_num[i_rename12] != 0)
+                {
+                  loop_counter[226]++;
+{}
+                  debris_num[i_rename12] = 0;
+                }
+
+              }
+
+            }
+            {
+{}
+              int i_rename13;
+              for (i_rename13 = 0; i_rename13 < (DEBRIS_TYPES * 2); i_rename13++)
+              {
+                loop_counter[227]++;
+                if (fastshot_num[i_rename13] != 0)
+                {
+                  loop_counter[228]++;
+{}
+                  fastshot_num[i_rename13] = 0;
+                }
+
+              }
+
+            }
+          }
+
+{}
+{}
+        }
+
+        oldTimeLeft_rename1 = newTimeLeft_rename1;
+        {
+{}
+          radar_ptr = NULL;
+          num_radar = 0;
+          max_radar = 0;
+        }
+      }
+    }
+
+  }
+
+  if ((((!NoQuit) && (NumPlayers == (NumRobots + NumPseudoPlayers))) && (!login_in_progress)) && (!NumQueuedPlayers))
+  {
+    loop_counter[229]++;
+    if (!NoPlayersEnteredYet)
+    {
+      loop_counter[230]++;
+      {
+        int return_value;
+        player *pl_rename2;
+{}
+        if (ShutdownServer == 0)
+        {
+          loop_counter[231]++;
+{}
+{}
+{}
+        }
+        else
+        {
+{}
+        }
+
+        while (NumPlayers > 0)
+        {
+          loop_counter[232]++;
+{}
+          if (pl_rename2->conn == NOT_CONNECTED)
+          {
+            loop_counter[233]++;
+{}
+          }
+          else
+          {
+{}
+          }
+
+        }
+
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+        {
+          return_value = FALSE;
+        }
+      }
+    }
+
+    if ((serverTime + (5 * 60)) < time(NULL))
+    {
+      loop_counter[234]++;
+{}
+{}
+      {
+        int return_value;
+        player *pl_rename3;
+{}
+        if (ShutdownServer == 0)
+        {
+          loop_counter[235]++;
+{}
+{}
+{}
+        }
+        else
+        {
+{}
+        }
+
+        while (NumPlayers > 0)
+        {
+          loop_counter[236]++;
+{}
+          if (pl_rename3->conn == NOT_CONNECTED)
+          {
+            loop_counter[237]++;
+{}
+          }
+          else
+          {
+{}
+          }
+
+        }
+
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+{}
+        {
+          return_value = FALSE;
+        }
+      }
+    }
+
+  }
+
+{}
+{}
+{}
+  print_loop_counter:
+  {
+{}
+    int i;
+    printf("loop counters = (");
+    for (i = 0; i < 238; i++)
+      printf("%d, ", loop_counter[i]++);
+    printf(")\n");
+
+{}
+  }
+
+}
+
+/*
  * Main_loop with loop counts
  */
-void Main_loop(void)
+void Main_loop_loop_counters(void)
 {
   int loop_counter[238] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   start_timing();
@@ -2747,8 +4747,9 @@ void Main_loop(void)
 
 }
 
-void Main_loop_orig(void)
+void Main_loop(void)
 {
+  Main_loop_slice();
   // Start timing task
   start_timing();
 
