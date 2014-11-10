@@ -1,0 +1,16 @@
+PYTHON=/usr/bin/python
+
+slice: preprocess
+	$(PYTHON) inline.py stringsearch/pbmsrch_large3.c strsearch > stringsearch/pbmsrch_large_inline.c
+	$(PYTHON) insert_loop_counts.py stringsearch/pbmsrch_large_inline.c > stringsearch/pbmsrch_large_loop_counts.c
+	time $(PYTHON) slice.py stringsearch/pbmsrch_large_loop_counts.c loop_counter > stringsearch/pbmsrch_large_slice.c
+
+td = echo "typedef int $1;" | cat - stringsearch/pbmsrch_large3.c > temp && mv temp stringsearch/pbmsrch_large3.c
+preprocess:
+	gcc -E stringsearch/pbmsrch_large.c > stringsearch/pbmsrch_large2.c
+	./cleanup_gccE.py stringsearch/pbmsrch_large2.c > stringsearch/pbmsrch_large3.c
+
+	$(call td,"size_t")
+
+clean:
+	rm -f stringsearch/pbmsrch_large2.c stringsearch/pbmsrch_large3.c stringsearch/pbmsrch_large_inline.c stringsearch/pbmsrch_large_loop_counts.c stringsearch/pbmsrch_large_slice.c
