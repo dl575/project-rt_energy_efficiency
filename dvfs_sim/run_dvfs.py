@@ -34,11 +34,16 @@ def read_predict_file(filename):
   return data
 
 
-#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_data_dependent", "policy_data_dependent2", "policy_data_dependent_oracle", "policy_pid_energy_plus3s", "policy_data_dependent_plus3s", "policy_data_dependent_plus3s_oracle", "policy_oracle"]
-# Only non-data-dependent policies
-#policies = ["policy_average", "policy_pid_timeliness", "policy_pid_energy", "policy_oracle"]
-policies = ["policy_pid_timeliness", "policy_data_dependent2", "policy_data_dependent_oracle", "policy_data_dependent_lp", "policy_oracle"]
-benchmarks = ["sha", "rijndael", "stringsearch", "xpilot", "julius", "freeciv"]
+policies = ["policy_pid_timeliness",
+  "policy_tuned_pid",
+  "policy_data_dependent_oracle", 
+  "policy_data_dependent_lp", 
+  #"policy_data_dependent_lp_quadratic", 
+  "policy_oracle"]
+benchmarks = ["rijndael", "stringsearch", "freeciv", "sha", "julius", "xpilot", 
+  "xpilot_slice", "freeciv_slice", "julius_slice"]
+input_dir = "data"
+output_dir = "predict_times"
 
 for metric in [deadline_misses, avg_normalized_tardiness, energy]:
   print metric.__name__
@@ -48,8 +53,8 @@ for metric in [deadline_misses, avg_normalized_tardiness, energy]:
     sum_metric = 0
     for benchmark in benchmarks:
       # Read in execution times and predicted times
-      times = parse_execution_times("data/%s.txt" % (benchmark))
-      predict_times = read_predict_file("predict_times/%s-%s.txt" % (policy, benchmark))
+      times = parse_execution_times("%s/%s/%s1.txt" % (input_dir, benchmark, benchmark))
+      predict_times = read_predict_file("%s/%s-%s.txt" % (output_dir, policy, benchmark))
 
       # Perform DVFS
       #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
