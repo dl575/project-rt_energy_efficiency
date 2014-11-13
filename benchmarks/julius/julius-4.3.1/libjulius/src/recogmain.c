@@ -953,6 +953,7 @@ j_recognize_stream_core(Recog *recog)
 	  ret = mfcc_go(recog, callback_check_in_adin);
 	}
 
+  RealTimeParam_slice(recog);
   start_timing();
 	
 	if (ret < 0) {		/* error end in adin_go */

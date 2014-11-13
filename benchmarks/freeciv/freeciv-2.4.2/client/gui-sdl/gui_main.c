@@ -498,10 +498,308 @@ int FilterMouseMotionEvents(const SDL_Event *event)
   return(1);
 }
 
+/*
+ * Slice for calculating features of gui_event_loop.
+ */
+void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 (*key_down_handler)(SDL_keysym Key, void *pData), Uint16 (*key_up_handler)(SDL_keysym Key, void *pData), Uint16 (*mouse_button_down_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_button_up_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_motion_handler)(SDL_MouseMotionEvent *pMotionEvent, void *pData))
+{
+  int loop_counter[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Uint16 ID;
+  static struct timeval tv;
+  static fd_set civfdset;
+  Uint32 t_current;
+  Uint32 t_last_unit_anim;
+  Uint32 t_last_map_scrolling;
+  Uint32 real_timer_next_call;
+  static int result;
+{}
+{}
+  ID = ID_ERROR;
+  t_last_map_scrolling = (t_last_unit_anim = (real_timer_next_call = SDL_GetTicks()));
+  //while (ID == ID_ERROR)
+  //{
+    loop_counter[0]++;
+{}
+    if ((net_socket >= 0) || (ggz_socket >= 0))
+    {
+      loop_counter[1]++;
+      FD_ZERO(&civfdset);
+      if (net_socket >= 0)
+      {
+        loop_counter[2]++;
+        FD_SET(net_socket, &civfdset);
+      }
+
+      if (ggz_socket >= 0)
+      {
+        loop_counter[3]++;
+        FD_SET(ggz_socket, &civfdset);
+      }
+
+{}
+{}
+      result = fc_select(MAX(net_socket, ggz_socket) + 1, &civfdset, NULL, NULL, &tv);
+      if (result < 0)
+      {
+        loop_counter[4]++;
+        if (errno != EINTR)
+        {
+          loop_counter[5]++;
+        }
+        else
+        {
+        }
+
+      }
+      else
+      {
+        if (result > 0)
+        {
+          loop_counter[6]++;
+          if ((net_socket >= 0) && FD_ISSET(net_socket, &civfdset))
+          {
+            loop_counter[7]++;
+{}
+          }
+
+          if ((ggz_socket >= 0) && FD_ISSET(ggz_socket, &civfdset))
+          {
+            loop_counter[8]++;
+{}
+          }
+
+        }
+
+      }
+
+    }
+    else
+    {
+{}
+    }
+
+    t_current = SDL_GetTicks();
+    if (t_current > real_timer_next_call)
+    {
+      loop_counter[9]++;
+      real_timer_next_call = t_current + (real_timer_callback() * 1000);
+    }
+
+    if ((t_current - t_last_unit_anim) > 128)
+    {
+      loop_counter[10]++;
+      if (autoconnect)
+      {
+        loop_counter[11]++;
+        widget_info_counter++;
+{}
+      }
+      else
+      {
+{}
+      }
+
+      t_last_unit_anim = SDL_GetTicks();
+    }
+
+    if (is_map_scrolling)
+    {
+      loop_counter[12]++;
+      if ((t_current - t_last_map_scrolling) > 500)
+      {
+        loop_counter[13]++;
+{}
+        t_last_map_scrolling = SDL_GetTicks();
+      }
+
+    }
+    else
+    {
+      t_last_map_scrolling = SDL_GetTicks();
+    }
+
+    if (widget_info_counter > 0)
+    {
+      loop_counter[14]++;
+{}
+      widget_info_counter = 0;
+    }
+
+    if (loop_action)
+    {
+      loop_counter[15]++;
+{}
+    }
+
+    while (SDL_PollEvent(&Main.event) == 1)
+    {
+      loop_counter[16]++;
+      switch (Main.event.type)
+      {
+        case SDL_QUIT:
+        {
+          //return_value = MAX_ID;
+          goto print_loop_counter;
+        }
+
+        case SDL_KEYUP:
+          switch (Main.event.key.keysym.sym)
+        {
+          default:
+            if (key_up_handler)
+          {
+            loop_counter[17]++;
+            ID = key_up_handler(Main.event.key.keysym, pData);
+          }
+
+
+        }
+
+
+        case SDL_KEYDOWN:
+          switch (Main.event.key.keysym.sym)
+        {
+          default:
+            if (key_down_handler)
+          {
+            loop_counter[18]++;
+            ID = key_down_handler(Main.event.key.keysym, pData);
+          }
+
+
+        }
+
+
+        case SDL_MOUSEBUTTONDOWN:
+          if (mouse_button_down_handler)
+        {
+          loop_counter[19]++;
+          ID = mouse_button_down_handler(&Main.event.button, pData);
+        }
+
+
+        case SDL_MOUSEBUTTONUP:
+          if (mouse_button_up_handler)
+        {
+          loop_counter[20]++;
+          ID = mouse_button_up_handler(&Main.event.button, pData);
+        }
+
+
+        case SDL_MOUSEMOTION:
+          if (mouse_motion_handler)
+        {
+          loop_counter[21]++;
+          ID = mouse_motion_handler(&Main.event.motion, pData);
+        }
+
+
+        case SDL_USEREVENT:
+          switch (Main.event.user.code)
+        {
+          case ANIM:
+          {
+            if (button_behavior.counting)
+            {
+              loop_counter[22]++;
+              if (((SDL_GetTicks() - button_behavior.button_down_ticks) >= MB_MEDIUM_HOLD_DELAY) && ((SDL_GetTicks() - button_behavior.button_down_ticks) < MB_LONG_HOLD_DELAY))
+              {
+                loop_counter[23]++;
+                if (button_behavior.hold_state != MB_HOLD_MEDIUM)
+                {
+                  loop_counter[24]++;
+                  button_behavior.hold_state = MB_HOLD_MEDIUM;
+{}
+                }
+
+              }
+              else
+                if ((SDL_GetTicks() - button_behavior.button_down_ticks) >= MB_LONG_HOLD_DELAY)
+              {
+                loop_counter[25]++;
+                if (button_behavior.hold_state != MB_HOLD_LONG)
+                {
+                  loop_counter[26]++;
+                  button_behavior.hold_state = MB_HOLD_LONG;
+{}
+                }
+
+              }
+
+
+            }
+
+            {
+            }
+          }
+{}
+{}
+
+          case TRY_AUTO_CONNECT:
+            if (try_to_autoconnect())
+          {
+            loop_counter[27]++;
+{}
+            autoconnect = FALSE;
+          }
+
+
+          case EXIT_FROM_EVENT_LOOP:
+          {
+            //return_value = MAX_ID;
+            goto print_loop_counter;
+          }
+
+        }
+
+
+      }
+
+    }
+
+    if (ID == ID_ERROR)
+    {
+      loop_counter[28]++;
+      if (callbacks && (callback_list_size(callbacks) > 0))
+      {
+        loop_counter[29]++;
+{}
+{}
+{}
+{}
+      }
+
+    }
+
+{}
+{}
+  //}
+
+  {
+    //return_value = ID;
+    goto print_loop_counter;
+  }
+  print_loop_counter:
+  {
+{}
+/*
+    int i;
+    printf("loop counter = (");
+    for (i = 0; i < 30; i++)
+      printf("%d, ", loop_counter[i]++);
+    printf(")\n");
+    */
+  write_array(loop_counter, 30);
+
+{}
+  }
+
+}
+
 /**************************************************************************
 ...
 **************************************************************************/
-Uint16 gui_event_loop_orig(void *pData,
+Uint16 gui_event_loop(void *pData,
 	void (*loop_action)(void *pData),
 	Uint16 (*key_down_handler)(SDL_keysym Key, void *pData),
         Uint16 (*key_up_handler)(SDL_keysym Key, void *pData),
@@ -521,6 +819,9 @@ Uint16 gui_event_loop_orig(void *pData,
   t_last_map_scrolling = t_last_unit_anim = real_timer_next_call = SDL_GetTicks();
   while (ID == ID_ERROR) {
 
+    gui_event_loop_slice(NULL, NULL, main_key_down_handler, main_key_up_handler,
+      main_mouse_button_down_handler, main_mouse_button_up_handler,
+      main_mouse_motion_handler);
     start_timing();
 
     /* ========================================= */
@@ -741,7 +1042,8 @@ Uint16 gui_event_loop_orig(void *pData,
     }
 
     end_timing();
-    print_timing();
+    //print_timing();
+    write_timing();
   }
   
   return ID;
@@ -750,7 +1052,7 @@ Uint16 gui_event_loop_orig(void *pData,
 /*
  * gui_event_loop with loop counters.
  */
-Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*key_down_handler)(SDL_keysym Key, void *pData), Uint16 (*key_up_handler)(SDL_keysym Key, void *pData), Uint16 (*mouse_button_down_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_button_up_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_motion_handler)(SDL_MouseMotionEvent *pMotionEvent, void *pData))
+Uint16 gui_event_loop_loop_counters(void *pData, void (*loop_action)(void *pData), Uint16 (*key_down_handler)(SDL_keysym Key, void *pData), Uint16 (*key_up_handler)(SDL_keysym Key, void *pData), Uint16 (*mouse_button_down_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_button_up_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_motion_handler)(SDL_MouseMotionEvent *pMotionEvent, void *pData))
 {
   int return_value;
   int loop_counter[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -778,6 +1080,7 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
     loop_counter[0]++;
     
     //Read value from sensor file
+#ifdef ENABLE_POWER_MEASUREMENT
     if(NULL == (fp_a7 = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
       printf("ERROR : FILE READ FAILED\n");
       return -1;
@@ -802,6 +1105,7 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
     fclose(fp_a15);
     fclose(fp_cpu0);
     fclose(fp_cpu4);
+#endif
 
     start_timing();
     if ((net_socket >= 0) || (ggz_socket >= 0))
@@ -1168,6 +1472,7 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
 
     end_timing();
 
+#ifdef ENABLE_POWER_MEASUREMENT
     //Read value from sensor file
     if(NULL == (fp_a7 = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
       printf("ERROR : FILE READ FAILED\n");
@@ -1201,6 +1506,8 @@ Uint16 gui_event_loop(void *pData, void (*loop_action)(void *pData), Uint16 (*ke
       printf("cpu0_start : %dMHz, cpu0_end : %dMHz, cpu4_start : %dMHz, cpu4_end : %dMHz\n",
           freq0_s/1000, freq0_e/1000, freq4_s/1000, freq4_e/1000);
     } 
+#endif
+
     print_loop_counter:
     {
       printf("loop counter = (");

@@ -1106,9 +1106,606 @@ RealTimeResume(Recog *recog)
  * @return TRUE on success, or FALSE on error.
  * </EN>
  */
+
+/*
+ * Slice of RealTimeParam to calculate features.
+ */
+void RealTimeParam_slice(Recog *recog)
+{
+  int loop_counter[35] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  boolean ret1;
+  boolean ret2;
+{}
+  int ret;
+  int maxf;
+  boolean ok_p;
+  MFCCCalc *mfcc;
+  RealBeam * r;
+  Value * para;
+  r = &recog->real;
+{}
+{}
+  if (r->last_is_segmented)
+  {
+    loop_counter[0]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[1]++;
+{}
+{}
+    }
+
+{}
+    {
+      //return_value = TRUE;
+      goto print_loop_counter;
+    }
+  }
+
+  if (recog->jconf->input.type == INPUT_VECTOR)
+  {
+    loop_counter[2]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[3]++;
+{}
+{}
+    }
+
+{}
+    {
+      //return_value = TRUE;
+      goto print_loop_counter;
+    }
+  }
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+  {
+    loop_counter[4]++;
+    if (mfcc->para->delta || mfcc->para->acc)
+    {
+      loop_counter[5]++;
+      mfcc->valid = TRUE;
+    }
+    else
+    {
+      mfcc->valid = FALSE;
+    }
+
+  }
+
+  while (1)
+  {
+    loop_counter[6]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[7]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[8]++;
+      }
+
+      if (mfcc->f >= r->maxframelen)
+      {
+        loop_counter[9]++;
+        mfcc->valid = FALSE;
+      }
+
+    }
+
+    ok_p = FALSE;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[10]++;
+      if (mfcc->valid)
+      {
+        loop_counter[11]++;
+        ok_p = TRUE;
+        break;
+      }
+
+    }
+
+    if (!ok_p)
+    {
+      loop_counter[12]++;
+      break;
+    }
+
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[13]++;
+      para = mfcc->para;
+{}
+      if (!mfcc->valid)
+      {
+        loop_counter[14]++;
+        continue;
+      }
+
+      ret1 = WMP_deltabuf_flush(mfcc->db);
+      if (ret1)
+      {
+        loop_counter[15]++;
+        if (para->energy && para->absesup)
+        {
+          loop_counter[16]++;
+{}
+{}
+        }
+        else
+        {
+{}
+        }
+
+        if (para->acc)
+        {
+          loop_counter[17]++;
+          ret2 = WMP_deltabuf_proceed(mfcc->ab, mfcc->tmpmfcc);
+          if (ret2)
+          {
+            loop_counter[18]++;
+{}
+{}
+          }
+          else
+          {
+            continue;
+          }
+
+        }
+
+      }
+      else
+      {
+        if (para->acc)
+        {
+          loop_counter[19]++;
+          ret2 = WMP_deltabuf_flush(mfcc->ab);
+          if (ret2)
+          {
+            loop_counter[20]++;
+{}
+{}
+          }
+          else
+          {
+            mfcc->valid = FALSE;
+            continue;
+          }
+
+        }
+        else
+        {
+          mfcc->valid = FALSE;
+          continue;
+        }
+
+      }
+
+      if (para->cmn || para->cvn)
+      {
+        loop_counter[21]++;
+{}
+      }
+
+      if (param_alloc(mfcc->param, mfcc->f + 1, mfcc->param->veclen) == FALSE)
+      {
+        loop_counter[22]++;
+{}
+        {
+          //return_value = FALSE;
+          goto print_loop_counter;
+        }
+      }
+
+{}
+    }
+
+    ok_p = FALSE;
+    maxf = 0;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[23]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[24]++;
+        continue;
+      }
+
+      if (maxf < mfcc->f)
+      {
+        loop_counter[25]++;
+        maxf = mfcc->f;
+      }
+
+      if (mfcc->f == 0)
+      {
+        loop_counter[26]++;
+        ok_p = TRUE;
+      }
+
+    }
+
+    if (ok_p && (maxf == 0))
+    {
+      loop_counter[27]++;
+      if (recog->jconf->decodeopt.segment)
+      {
+        loop_counter[28]++;
+        if (!recog->process_segment)
+        {
+          loop_counter[29]++;
+{}
+        }
+
+{}
+{}
+{}
+      }
+      else
+      {
+{}
+{}
+{}
+      }
+
+    }
+
+    ret = decode_proceed(recog);
+    if (ret == (-1))
+    {
+      loop_counter[30]++;
+      {
+        //return_value = -1;
+        goto print_loop_counter;
+      }
+    }
+    else
+      if (ret == 1)
+    {
+      loop_counter[31]++;
+    }
+
+
+{}
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[32]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[33]++;
+        continue;
+      }
+
+      mfcc->f++;
+    }
+
+  }
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+  {
+    loop_counter[34]++;
+{}
+{}
+  }
+
+{}
+  {
+    //return_value = TRUE;
+    goto print_loop_counter;
+  }
+  print_loop_counter:
+  {
+{}
+    int i;
+    printf("loop counter = (");
+    for (i = 0; i < 35; i++)
+      printf("%d, ", loop_counter[i]++);
+    printf(")\n");
+
+{}
+  }
+
+}
+
+/*
+ * RealTimeParam with loop count instrumentation.
+ */
+boolean RealTimeParam_loop_counter(Recog *recog)
+{
+  boolean return_value = TRUE;
+  int loop_counter[35] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  boolean ret1;
+  boolean ret2;
+  RealBeam * r;
+  int ret;
+  int maxf;
+  boolean ok_p;
+  MFCCCalc *mfcc;
+  Value * para;
+  r = &recog->real;
+  if (r->last_is_segmented)
+  {
+    loop_counter[0]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[1]++;
+      mfcc->param->header.samplenum = mfcc->f + 1;
+      mfcc->param->samplenum = mfcc->f + 1;
+    }
+
+    decode_end_segmented(recog);
+    return_value = TRUE;
+    goto print_loop_counter;
+    //return TRUE;
+  }
+
+  if (recog->jconf->input.type == INPUT_VECTOR)
+  {
+    loop_counter[2]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[3]++;
+      mfcc->param->header.samplenum = mfcc->f;
+      mfcc->param->samplenum = mfcc->f;
+    }
+
+    decode_end(recog);
+    return_value = TRUE;
+    goto print_loop_counter;
+    //return TRUE;
+  }
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+  {
+    loop_counter[4]++;
+    if (mfcc->para->delta || mfcc->para->acc)
+    {
+      loop_counter[5]++;
+      mfcc->valid = TRUE;
+    }
+    else
+    {
+      mfcc->valid = FALSE;
+    }
+
+  }
+
+  while (1)
+  {
+    loop_counter[6]++;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[7]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[8]++;
+        continue;
+      }
+
+      if (mfcc->f >= r->maxframelen)
+      {
+        loop_counter[9]++;
+        mfcc->valid = FALSE;
+      }
+
+    }
+
+    ok_p = FALSE;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[10]++;
+      if (mfcc->valid)
+      {
+        loop_counter[11]++;
+        ok_p = TRUE;
+        break;
+      }
+
+    }
+
+    if (!ok_p)
+    {
+      loop_counter[12]++;
+      break;
+    }
+
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[13]++;
+      para = mfcc->para;
+      if (!mfcc->valid)
+      {
+        loop_counter[14]++;
+        continue;
+      }
+
+      ret1 = WMP_deltabuf_flush(mfcc->db);
+      if (ret1)
+      {
+        loop_counter[15]++;
+        if (para->energy && para->absesup)
+        {
+          loop_counter[16]++;
+          memcpy(mfcc->tmpmfcc, mfcc->db->vec, (sizeof(VECT)) * (para->baselen - 1));
+          memcpy(&mfcc->tmpmfcc[para->baselen - 1], &mfcc->db->vec[para->baselen], (sizeof(VECT)) * para->baselen);
+        }
+        else
+        {
+          memcpy(mfcc->tmpmfcc, mfcc->db->vec, ((sizeof(VECT)) * para->baselen) * 2);
+        }
+
+        if (para->acc)
+        {
+          loop_counter[17]++;
+          ret2 = WMP_deltabuf_proceed(mfcc->ab, mfcc->tmpmfcc);
+          if (ret2)
+          {
+            loop_counter[18]++;
+            memcpy(mfcc->tmpmfcc, mfcc->ab->vec, (sizeof(VECT)) * (para->veclen - para->baselen));
+            memcpy(&mfcc->tmpmfcc[para->veclen - para->baselen], &mfcc->ab->vec[para->veclen - para->baselen], (sizeof(VECT)) * para->baselen);
+          }
+          else
+          {
+            continue;
+          }
+
+        }
+
+      }
+      else
+      {
+        if (para->acc)
+        {
+          loop_counter[19]++;
+          ret2 = WMP_deltabuf_flush(mfcc->ab);
+          if (ret2)
+          {
+            loop_counter[20]++;
+            memcpy(mfcc->tmpmfcc, mfcc->ab->vec, (sizeof(VECT)) * (para->veclen - para->baselen));
+            memcpy(&mfcc->tmpmfcc[para->veclen - para->baselen], &mfcc->ab->vec[para->veclen - para->baselen], (sizeof(VECT)) * para->baselen);
+          }
+          else
+          {
+            mfcc->valid = FALSE;
+            continue;
+          }
+
+        }
+        else
+        {
+          mfcc->valid = FALSE;
+          continue;
+        }
+
+      }
+
+      if (para->cmn || para->cvn)
+      {
+        loop_counter[21]++;
+        CMN_realtime(mfcc->cmn.wrk, mfcc->tmpmfcc);
+      }
+
+      if (param_alloc(mfcc->param, mfcc->f + 1, mfcc->param->veclen) == FALSE)
+      {
+        loop_counter[22]++;
+        jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+        return_value = FALSE;
+        goto print_loop_counter;
+        //return FALSE;
+      }
+
+      memcpy(mfcc->param->parvec[mfcc->f], mfcc->tmpmfcc, (sizeof(VECT)) * mfcc->param->veclen);
+    }
+
+    ok_p = FALSE;
+    maxf = 0;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[23]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[24]++;
+        continue;
+      }
+
+      if (maxf < mfcc->f)
+      {
+        loop_counter[25]++;
+        maxf = mfcc->f;
+      }
+
+      if (mfcc->f == 0)
+      {
+        loop_counter[26]++;
+        ok_p = TRUE;
+      }
+
+    }
+
+    if (ok_p && (maxf == 0))
+    {
+      loop_counter[27]++;
+      if (recog->jconf->decodeopt.segment)
+      {
+        loop_counter[28]++;
+        if (!recog->process_segment)
+        {
+          loop_counter[29]++;
+          callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+        }
+
+        callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+        callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+        recog->triggered = TRUE;
+      }
+      else
+      {
+        callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+        callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+        recog->triggered = TRUE;
+      }
+
+    }
+
+    ret = decode_proceed(recog);
+    if (ret == (-1))
+    {
+      loop_counter[30]++;
+      return_value = -1;
+      goto print_loop_counter;
+      //return -1;
+    }
+    else
+      if (ret == 1)
+    {
+      loop_counter[31]++;
+      break;
+    }
+
+
+    callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+    {
+      loop_counter[32]++;
+      if (!mfcc->valid)
+      {
+        loop_counter[33]++;
+        continue;
+      }
+
+      mfcc->f++;
+    }
+
+  }
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next)
+  {
+    loop_counter[34]++;
+    mfcc->param->header.samplenum = mfcc->f;
+    mfcc->param->samplenum = mfcc->f;
+  }
+
+  decode_end(recog);
+  print_loop_counter:
+  {
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 35; i++)
+      printf("%d, ", loop_counter[i]++);
+
+    printf(")\n");
+  }
+  return return_value;
+  //return TRUE;
+
+}
+
 boolean
 RealTimeParam(Recog *recog)
 {
+
   boolean ret1, ret2;
   RealBeam *r;
   int ret;
