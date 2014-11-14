@@ -1,1611 +1,117 @@
 /**
- * @file   recogmain.c
+ * @file   realtime-1stpass.c
  * 
  * <JA>
- * @brief  認識メイン関数
+ * @brief  第1パス：フレーム同期ビーム探索（実時間処理版）
+ *
+ * 第1パスを入力開始と同時にスタートし，入力と平行して認識処理を行うための
+ * 関数が定義されている. 
+ * 
+ * バッチ処理の場合，Julius の音声認識処理は以下の手順で
+ * main_recognition_loop() 内で実行される. 
+ *
+ *  -# 音声入力 adin_go()  → 入力音声が speech[] に格納される
+ *  -# 特徴量抽出 new_wav2mfcc() →speechから特徴パラメータを param に格納
+ *  -# 第1パス実行 get_back_trellis() →param とモデルから単語トレリスの生成
+ *  -# 第2パス実行 wchmm_fbs()
+ *  -# 認識結果出力
+ *
+ * 第1パスを平行処理する場合，上記の 1 〜 3 が平行して行われる. 
+ * Julius では，この並行処理を，音声入力の断片が得られるたびに
+ * 認識処理をその分だけ漸次的に進めることで実装している. 
+ * 
+ *  - 特徴量抽出と第1パス実行を，一つにまとめてコールバック関数として定義. 
+ *  - 音声入力関数 adin_go() のコールバックとして上記の関数を与える
+ *
+ * 具体的には，ここで定義されている RealTimePipeLine() がコールバックとして
+ * adin_go() に与えられる. adin_go() は音声入力がトリガするとその得られた入力
+ * 断片ごとに RealTimePipeLine() を呼び出す. RealTimePipeLine() は得られた
+ * 断片分について特徴量抽出と第1パスの計算を進める. 
+ *
+ * CMN について注意が必要である. CMN は通常発話単位で行われるが，
+ * マイク入力やネットワーク入力のように，第1パスと平行に認識を行う
+ * 処理時は発話全体のケプストラム平均を得ることができない. バージョン 3.5
+ * 以前では直前の発話5秒分(棄却された入力を除く)の CMN がそのまま次発話に
+ * 流用されていたが，3.5.1 からは，上記の直前発話 CMN を初期値として
+ * 発話内 CMN を MAP-CMN を持ちいて計算するようになった. なお，
+ * 最初の発話用の初期CMNを "-cmnload" で与えることもでき，また
+ * "-cmnnoupdate" で入力ごとの CMN 更新を行わないようにできる. 
+ * "-cmnnoupdate" と "-cmnload" と組み合わせることで, 最初にグローバルな
+ * ケプストラム平均を与え，それを常に初期値として MAP-CMN することができる. 
+ *
+ * 主要な関数は以下の通りである. 
+ *
+ *  - RealTimeInit() - 起動時の初期化
+ *  - RealTimePipeLinePrepare() - 入力ごとの初期化
+ *  - RealTimePipeLine() - 第1パス平行処理用コールバック（上述）
+ *  - RealTimeResume() - ショートポーズセグメンテーション時の認識復帰
+ *  - RealTimeParam() - 入力ごとの第1パス終了処理
+ *  - RealTimeCMNUpdate() - CMN の更新
+ *  
  * </JA>
  * 
  * <EN>
- * @brief  Main function of recognition process.
+ * @brief  The first pass: frame-synchronous beam search (on-the-fly version)
+ *
+ * These are functions to perform on-the-fly decoding of the 1st pass
+ * (frame-synchronous beam search).  These function can be used
+ * instead of new_wav2mfcc() and get_back_trellis().  These functions enable
+ * recognition as soon as an input triggers.  The 1st pass processing
+ * will be done concurrently with the input.
+ *
+ * The basic recognition procedure of Julius in main_recognition_loop()
+ * is as follows:
+ *
+ *  -# speech input: (adin_go())  ... buffer `speech' holds the input
+ *  -# feature extraction: (new_wav2mfcc()) ... compute feature vector
+ *     from `speech' and store the vector sequence to `param'.
+ *  -# recognition 1st pass: (get_back_trellis()) ... frame-wise beam decoding
+ *     to generate word trellis index from `param' and models.
+ *  -# recognition 2nd pass: (wchmm_fbs())
+ *  -# Output result.
+ *
+ * At on-the-fly decoding, procedures from 1 to 3 above will be performed
+ * in parallel.  It is implemented by a simple scheme, processing the captured
+ * small speech fragments one by one progressively:
+ *
+ *  - Define a callback function that can do feature extraction and 1st pass
+ *    processing progressively.
+ *  - The callback will be given to A/D-in function adin_go().
+ *
+ * Actual procedure is as follows. The function RealTimePipeLine()
+ * will be given to adin_go() as callback.  Then adin_go() will watch
+ * the input, and if speech input starts, it calls RealTimePipeLine()
+ * for every captured input fragments.  RealTimePipeLine() will
+ * compute the feature vector of the given fragment and proceed the
+ * 1st pass processing for them, and return to the capture function.
+ * The current status will be hold to the next call, to perform
+ * inter-frame processing (computing delta coef. etc.).
+ *
+ * Note about CMN: With acoustic models trained with CMN, Julius performs
+ * CMN to the input.  On file input, the whole sentence mean will be computed
+ * and subtracted.  At the on-the-fly decoding, the ceptral mean will be
+ * performed using the cepstral mean of last 5 second input (excluding
+ * rejected ones).  This was a behavier earlier than 3.5, and 3.5.1 now
+ * applies MAP-CMN at on-the-fly decoding, using the last 5 second cepstrum
+ * as initial mean.  Initial cepstral mean at start can be given by option
+ * "-cmnload", and you can also prohibit the updates of initial cepstral
+ * mean at each input by "-cmnnoupdate".  The last option is useful to always
+ * use static global cepstral mean as initial mean for each input.
+ *
+ * The primary functions in this file are:
+ *  - RealTimeInit() - initialization at application startup
+ *  - RealTimePipeLinePrepare() - initialization before each input
+ *  - RealTimePipeLine() - callback for on-the-fly 1st pass decoding
+ *  - RealTimeResume() - recognition resume procedure for short-pause segmentation.
+ *  - RealTimeParam() - finalize the on-the-fly 1st pass when input ends.
+ *  - RealTimeCMNUpdate() - update CMN data for next input
+ * 
  * </EN>
  * 
  * @author Akinobu Lee
- * @date   Wed Aug  8 14:53:53 2007
+ * @date   Tue Aug 23 11:44:14 2005
  *
- * $Revision: 1.23 $
- * 
- */
-
-/*
- * Copyright (c) 1991-2013 Kawahara Lab., Kyoto University
- * Copyright (c) 1997-2000 Information-technology Promotion Agency, Japan
- * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
- * Copyright (c) 2005-2013 Julius project team, Nagoya Institute of Technology
- * All rights reserved
- */
-/**
- * @mainpage
- *
- * <EN>
- * This is a source code browser of Julius.
- *
- * - Sample code to use JuliusLib: julius-simple.c
- * - JuliusLib API reference: @ref jfunc
- * - List of callbacks: libjulius/include/julius/callback.h
- *
- * You can access documentation for files, functions and structures
- * from the tabs at the top of this page.
- * 
- * </EN>
- * <JA>
- * これは Julius のソースコードのブラウザです．
- *
- * - JuliusLibを使用するサンプルコード: julius-simple/julius-simple.c
- * - JuliusLib API リファレンス： @ref jfunc
- * - コールバック 一覧: libjulius/include/julius/callback.h
- *
- * ページ上部のタブからファイル・関数・構造体等の説明を見ることが出来ます．
- * 
- * </JA>
- * 
- */
-/**
- * @defgroup jfunc JuliusLib API
- *
- * <EN>
- * Here is a reference of all Julius library API functions.
- * </EN>
- * <JA>
- * Julius ライブラリ API 関数のリファレンスです. 
- * </JA>
- * 
- */
-/**
- * @defgroup engine Basic API
- * @ingroup jfunc
- *
- * <EN>
- * Basic functions to start-up and initialize engines.
- * </EN>
- * <JA>
- * 認識エンジンの設定等
- * </JA>
- * 
- */
-/**
- * @defgroup callback Callback API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to add callback to get results and status.
- * </EN>
- * <JA>
- * 認識結果やエンジン状態を知るためのコールバック
- * </JA>
- * 
- */
-/**
- * @defgroup pauseresume Pause and Resume API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to pause / resume engine inputs.
- * </EN>
- * <JA>
- * エンジンの一時停止・再開
- * </JA>
- * 
- */
-/**
- * @defgroup userfunc User function API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to register user function to be applied inside Julius.
- * </EN>
- * <JA>
- * ユーザ関数の登録
- * </JA>
- * 
- */
-/**
- * @defgroup jfunc_process Process API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to create / remove / (de)activate recognition process and models
- * on live.
- * </EN>
- * <JA>
- * モデルおよび認識プロセスの動的追加・削除・有効化・無効化
- * </JA>
- * 
- */
-/**
- * @defgroup grammar Grammar / Dictionary API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to manage grammars or word dictionaries at run time.
- * </EN>
- * <JA>
- * 文法・単語辞書の操作
- * </JA>
- * 
- */
-/**
- * @defgroup jconf Jconf configuration API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to load / create configuration parameters.
- * </EN>
- * <JA>
- * Jconf 構造体によるパラメータ情報の管理
- * </JA>
- * 
- */
-/**
- * @defgroup instance LM/AM/SR instance API
- * @ingroup jfunc
- *
- * <EN>
- * Functions to handle modules and processes directly.
- * </EN>
- * <JA>
- * モデルモジュールやプロセスを直接扱う関数．
- * </JA>
- * 
- */
-
-//#define GLOBAL_VARIABLE_DEFINE	///< Actually make global vars in global.h
-//#include <julius/julius.h>
-//#include <signal.h>
-//#if defined(_WIN32) && !defined(__CYGWIN32__)
-//#include <mbctype.h>
-//#include <mbstring.h>
-//#endif
-
-/* ---------- utility functions -----------------------------------------*/
-#ifdef REPORT_MEMORY_USAGE
-/** 
- * <JA>
- * 通常終了時に使用メモリ量を調べて出力する (Linux, sol2)
- * 
- * </JA>
- * <EN>
- * Get process size and output on normal exit. (Linux, sol2)
- * 
- * </EN>
- */
-static void
-print_mem()
-{
-  char buf[200];
-  sprintf(buf,"ps -o vsz,rss -p %d",getpid());
-  system(buf);
-  fflush(stdout);
-  fflush(stderr);
-}
-#endif
-
-//#include "timing.h"
-
-/** 
- * <EN>
- * allocate storage of recognition alignment results.
- *
- * @return the new pointer
- * </EN>
- * <JA>
- * アラインメント結果の格納場所を確保
- *
- * @return 確保された領域へのポインタ
- * </JA>
- *
- * @callgraph
- * @callergraph
- * 
- */
-SentenceAlign *
-result_align_new()
-{
-  SentenceAlign *new;
-  new = (SentenceAlign *)mymalloc(sizeof(SentenceAlign));
-  new->w = NULL;
-  new->ph = NULL;
-  new->loc = NULL;
-  new->begin_frame = NULL;
-  new->end_frame = NULL;
-  new->avgscore = NULL;
-  new->is_iwsp = NULL;
-  new->next = NULL;
-  return new;
-}
-
-/** 
- * <EN>
- * free storage of recognition alignment results.
- *
- * @param a [i/o] alignment data to be released
- * </EN>
- * <JA>
- * アラインメント結果の格納場所を確保
- *
- * @param a [i/o] 解放されるアラインメントデータ
- * </JA>
- *
- * @callgraph
- * @callergraph
- * 
- */
-void
-result_align_free(SentenceAlign *a)
-{
-  if (a->w) free(a->w);
-  if (a->ph) free(a->ph);
-  if (a->loc) free(a->loc);
-  if (a->begin_frame) free(a->begin_frame);
-  if (a->end_frame) free(a->end_frame);
-  if (a->avgscore) free(a->avgscore);
-  if (a->is_iwsp) free(a->is_iwsp);
-  free(a);
-}
-
-/** 
- * <EN>
- * Allocate storage of recognition results.
- * </EN>
- * <JA>
- * 認識結果の格納場所を確保する. 
- * </JA>
- * 
- * @param r [out] recognition process instance
- * @param num [in] number of sentences to be output
- *
- * @callgraph
- * @callergraph
- * 
- */
-void
-result_sentence_malloc(RecogProcess *r, int num)
-{
-  int i;
-  r->result.sent = (Sentence *)mymalloc(sizeof(Sentence) * num);
-  for(i=0;i<num;i++) r->result.sent[i].align = NULL;
-  r->result.sentnum = 0;
-}
-
-/** 
- * <EN>
- * Free storage of recognition results.
- * </EN>
- * <JA>
- * 認識結果の格納場所を解放する. 
- * </JA>
- * 
- * @param r [i/o] recognition process instance
- * 
- * @callgraph
- * @callergraph
- */
-void
-result_sentence_free(RecogProcess *r)
-{  
-  int i;
-  SentenceAlign *a, *atmp;
-  if (r->result.sent) {
-    for(i=0;i<r->result.sentnum;i++) {
-      a = r->result.sent[i].align;
-      while(a) {
-	atmp = a->next;
-	result_align_free(a);
-	a = atmp;
-      }
-    }
-    free(r->result.sent);
-    r->result.sent = NULL;
-  }
-}
-
-/** 
- * <EN>
- * Clear all result storages for next input.
- * </EN>
- * <JA>
- * 認識結果の格納場所を全てクリアする. 
- * </JA>
- * 
- * @param r [in] recognition process instance.
- * 
- * @callgraph
- * @callergraph
- */
-void
-clear_result(RecogProcess *r)
-{
-#ifdef WORD_GRAPH
-  /* clear 1st pass word graph output */
-  wordgraph_clean(&(r->result.wg1));
-#endif
-
-  if (r->lmvar == LM_DFA_WORD) {
-    if (r->result.status == J_RESULT_STATUS_SUCCESS) {
-      /* clear word recog result of first pass as in final result */
-      free(r->result.sent);
-    }
-  } else {
-    if (r->graphout) {
-      if (r->config->graph.confnet) {
-	/* free confusion network clusters */
-	cn_free_all(&(r->result.confnet));
-      } else if (r->config->graph.lattice) {
-      }
-      /* clear all wordgraph */
-      wordgraph_clean(&(r->result.wg));
-    }
-    result_sentence_free(r);
-  }
-}
-
-/* --------------------- speech buffering ------------------ */
-
-/** 
- * <JA>
- * @brief  検出された音をバッファに保存する adin_go() コールバック
- *
- * この関数は，検出された音声入力を順次 recog->speech に記録して
- * いく. バッファ処理モード（＝非リアルタイムモード）で認識を行なう
- * ときに用いられる. 
- * 
- * @param now [in] 検出された音声波形データの断片
- * @param len [in] @a now の長さ(サンプル数)
- * @param recog [i/o] エンジンインスタンス
- * 
- * @return エラー時 -1 (adin_go は即時中断する)，通常時 0 (adin_go は
- * 続行する)，区間終了要求時 1 (adin_go は現在の音声区間を閉じる). 
- * 
- * </JA>
- * <EN>
- * @brief  adin_go() callback to score triggered inputs to buffer.
- *
- * This function records the incomping speech segments detected in adin_go()
- * to recog->speech.  This function will be used when recognition runs
- * in buffered mode (= non-realtime mode).
- * 
- * @param now [in] input speech samples.
- * @param len [in] length of @a now in samples
- * @param recog [i/o] engine instance
- * 
- * @return -1 on error (tell adin_go() to terminate), 0 on success (tell
- * adin_go() to continue recording), or 1 when this function requires
- * input segmentation.
- * </EN>
- */
-int
-adin_cut_callback_store_buffer(SP16 *now, int len, Recog *recog)
-{
-  if (recog->speechlen == 0) {		/* first part of a segment */
-    if (!recog->process_active) {
-      return(1);
-    }
-  }
-
-  if (recog->speechlen + len > recog->speechalloclen) {
-    while (recog->speechlen + len > recog->speechalloclen) {
-      recog->speechalloclen += MAX_SPEECH_ALLOC_STEP;
-    }
-    if (recog->speech == NULL) {
-      recog->speech = (SP16 *)mymalloc(sizeof(SP16) * recog->speechalloclen);
-    } else {
-      if (debug2_flag) {
-	jlog("STAT: expanding recog->speech to %d samples\n", recog->speechalloclen);
-      }
-      recog->speech = (SP16 *)myrealloc(recog->speech, sizeof(SP16) * recog->speechalloclen);
-    }
-  }
-
-  /* store now[0..len] to recog->speech[recog->speechlen] */
-  memcpy(&(recog->speech[recog->speechlen]), now, len * sizeof(SP16));
-  recog->speechlen += len;
-  return(0);			/* tell adin_go to continue reading */
-}
-
-
-/* --------------------- adin check callback --------------- */
-/** 
- * <JA>
- * @brief  音声入力中に定期的に実行されるコールバック. 
- *
- * この関数は，adin_go() にて音声入力待ち，あるいは音声認識中に
- * 定期的に繰り返し呼び出される関数である. ユーザ定義のコールバック
- * (CALLBACK_POLL) の呼び出し，および中断判定を行う. 
- *
- * @param recog [in] エンジンインスタンス
- * 
- * @return 通常時 0, 即時中断を要求時 -2, 認識中止の要求時は -1 を返す. 
- * </JA>
- * <EN>
- * @brief  callback function periodically called while input.
- *
- * This function will be called periodically from adin_go() while
- * waiting input or processing recognition.  It will call user-defined
- * callback registered in CALLBACK_POLL,  check for the process
- * status and issue recognition termination request.
- *
- * @param recog [in] engine instance
- * 
- * @return 0 normally, -2 for immediate termination, and -1 if requesting
- * recognition stop.
- * 
- * </EN>
- */
-static int
-callback_check_in_adin(Recog *recog)
-{
-  /* module: check command and terminate recording when requested */
-  callback_exec(CALLBACK_POLL, recog);
-  /* With audio input via adinnet, TERMINATE command will issue terminate
-     command to the adinnet client.  The client then stops recording
-     immediately and return end-of-segment ack.  Then it will cause this
-     process to stop recognition as normal.  So we need not to
-     perform immediate termination at this callback, but just ignore the
-     results in the main.c.  */
-#if 1
-  if (recog->process_want_terminate) { /* TERMINATE ... force termination */
-    return(-2);
-  }
-  if (recog->process_want_reload) {
-    return(-1);
-  }
-#else
-  if (recog->process_want_terminate /* TERMINATE ... force termination */
-      && recog->jconf->input.speech_input != SP_ADINNET) {
-    return(-2);
-  }
-  if (recog->process_want_reload) {
-    return(-1);
-  }
-#endif
-  return(0);
-}
-
-/*********************/
-/* open input stream */
-/*********************/
-/** 
- * <EN>
- * Open input stream.
- * </EN>
- * <JA>
- * 音声入力ストリームを開く
- * </JA>
- * 
- * @param recog [i/o] engine instance
- * @param file_or_dev_name [in] file or device name of the device
- * 
- * @return 0 on success, -1 on error, -2 on device initialization error.
- * 
- * @callgraph
- * @callergraph
- * @ingroup engine
- */
-int
-j_open_stream(Recog *recog, char *file_or_dev_name)
-{
-  Jconf *jconf;
-  RecogProcess *r;
-  char *p;
-
-  jconf = recog->jconf;
-
-  if (jconf->input.type == INPUT_WAVEFORM) {
-    /* begin A/D input */
-    if (adin_begin(recog->adin, file_or_dev_name) == FALSE) {
-      return -2;
-    }
-    /* create A/D-in thread here */
-#ifdef HAVE_PTHREAD
-    if (recog->adin->enable_thread && ! recog->adin->input_side_segment) {
-      if (adin_thread_create(recog) == FALSE) {
-	return -2;
-      }
-    }
-#endif
-    /* when using adin func, input name should be obtained when called */
-  } else {
-    switch(jconf->input.speech_input) {
-    case SP_MFCMODULE:
-      param_init_content(recog->mfcclist->param);
-      if (mfc_module_begin(recog->mfcclist) == FALSE) return -2;
-      /* when using mfc module func, input name should be obtained when called */
-      break;
-    case SP_MFCFILE:
-    case SP_OUTPROBFILE:
-      /* read parameter file */
-      param_init_content(recog->mfcclist->param);
-      if (rdparam(file_or_dev_name, recog->mfcclist->param) == FALSE) {
-	jlog("ERROR: error in reading parameter file: %s\n", file_or_dev_name);
-	return -1;
-      }
-      switch(jconf->input.speech_input) {
-      case SP_MFCFILE:
-	/* check and strip invalid frames */
-	if (jconf->preprocess.strip_zero_sample) {
-	  param_strip_zero(recog->mfcclist->param);
-	}
-	recog->mfcclist->param->is_outprob = FALSE;
-	break;
-      case SP_OUTPROBFILE:
-	/* mark that this is outprob file */
-	recog->mfcclist->param->is_outprob = TRUE;
-	/* check the size */
-	for(r=recog->process_list;r;r=r->next) {
-	  if (r->am->hmminfo->totalstatenum != recog->mfcclist->param->veclen) {
-	    jlog("ERROR: j_open_stream: outprob vector size != number of states in hmmdefs\n");
-	    jlog("ERROR: j_open_stream: outprob size = %d, #state = %d\n", recog->mfcclist->param->veclen, r->am->hmminfo->totalstatenum);
-	    return -1;
-	  }
-	}
-	jlog("STAT: outprob vector size = %d, samplenum = %d\n", recog->mfcclist->param->veclen, recog->mfcclist->param->samplenum);
-	break;
-      }
-      /* output frame length */
-      callback_exec(CALLBACK_STATUS_PARAM, recog);
-      /* store the input filename here */
-      strncpy(recog->adin->current_input_name, file_or_dev_name, MAXPATHLEN);
-      break;
-    default:
-      jlog("ERROR: j_open_stream: none of SP_MFC_*??\n");
-      return -1;
-    }
-  }
-
-  if (jconf->input.speech_input != SP_MFCFILE && jconf->input.speech_input != SP_OUTPROBFILE) {
-    /* store current input name using input source specific function */
-    p = j_get_current_filename(recog);
-    if (p) {
-      strncpy(recog->adin->current_input_name, p, MAXPATHLEN);
-    } else {
-      recog->adin->current_input_name[0] = '\0';
-    }
-  }
-      
-  return 0;
-
-}
-
-/** 
- * <EN>
- * Close input stream.  The main recognition loop will be stopped after
- * stream has been closed.
- * </EN>
- * <JA>
- * 音声入力ストリームを閉じる．認識のメインループは閉じられた後終了する．
- * </JA>
- * 
- * @param recog [i/o] engine instance
- * 
- * @return 0 on success, -1 on general error, -2 on device error.
- * 
- * @callgraph
- * @callergraph
- * @ingroup engine
- */
-int
-j_close_stream(Recog *recog)
-{
-  Jconf *jconf;
-
-  jconf = recog->jconf;
-
-  if (jconf->input.type == INPUT_WAVEFORM) {
-#ifdef HAVE_PTHREAD
-    /* close A/D-in thread here */
-    if (! recog->adin->input_side_segment) {
-      if (recog->adin->enable_thread) {
-	if (adin_thread_cancel(recog) == FALSE) {
-	  return -2;
-	}
-      } else {
-	recog->adin->end_of_stream = TRUE;
-      }
-    }
-#else
-    if (! recog->adin->input_side_segment) {
-      recog->adin->end_of_stream = TRUE;
-    }
-#endif
-  } else {
-    switch(jconf->input.speech_input) {
-    case SP_MFCMODULE:
-      if (mfc_module_end(recog->mfcclist) == FALSE) return -2;
-      break;
-    case SP_MFCFILE:
-    case SP_OUTPROBFILE:
-      /* nothing to do */
-      break;
-    default:
-      jlog("ERROR: j_close_stream: none of SP_MFC_*??\n");
-      return -1;
-    }
-  }
-      
-  return 0;
-
-}
-
-/**********************************************************************/
-/**********************************************************************/
-/**********************************************************************/
-
-/** 
- * <EN>
- * Recognition error handling.
- * </EN>
- * <JA>
- * エラーによる認識終了時の処理. 
- * </JA>
- * 
- * @param recog [in] engine instance
- * @param status [in] error status to be set
- * 
- */
-static void
-result_error(Recog *recog, int status)
-{
-  MFCCCalc *mfcc;
-  RecogProcess *r;
-  boolean ok_p;
-
-  for(r=recog->process_list;r;r=r->next) r->result.status = status;
-
-  ok_p = FALSE;
-  for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-    if (mfcc->f > 0) {
-      ok_p = TRUE;
-      break;
-    }
-  }
-  if (ok_p) {			/* had some input */
-    /* output as rejected */
-    callback_exec(CALLBACK_RESULT, recog);
-#ifdef ENABLE_PLUGIN
-    plugin_exec_process_result(recog);
-#endif
-  }
-}
-
-/** 
- * <EN>
- * @brief  Execute recognition.
- *
- * This function repeats recognition sequences until the input stream
- * reached its end.  It detects speech segment (if needed), recognize
- * the detected segment, output result, and go back to the first.
- *
- * This function will be stopped and exited if reached end of stream
- * (mostly in case of file input), some error has been occured, or
- * termination requested from application by calling
- * j_request_pause() and j_request_terminate().
- * 
- * </EN>
- * <JA>
- * @brief  音声認識の実行. 
- *
- * この関数は入力ストリームが終わるまで音声認識を繰り返す. 
- * 必要であれば入力待ちを行って区間を検出し，音声認識を行い，結果を
- * 出力してふたたび入力待ちに戻る. 
- *
- * 入力ストリームを終わりまで認識するか，エラーが生じたときに終了する. 
- *
- * あるいは，認識処理中に，j_request_pause() や j_request_terminate() が
- * アプリから呼ばれた場合，認識処理の切れ目で終了する. 
- * 
- * </JA>
- * 
- * @param recog [i/o] engine instance
- * 
- * @return 1 when stopped by application request, 0 when reached end of stream,
- * or -1 when an error occured.  Note that the input stream can still continues
- * when 1 is returned.
- * 
- */
-static int
-j_recognize_stream_core(Recog *recog)
-{
-  Jconf *jconf;
-  int ret;
-  float seclen, mseclen;
-  RecogProcess *r;
-  MFCCCalc *mfcc;
-  PROCESS_AM *am;
-  PROCESS_LM *lm;
-  boolean ok_p;
-  boolean process_segment_last;
-  boolean on_the_fly;
-  boolean pass2_p;
-
-  jconf = recog->jconf;
-
-  /* determine whether on-the-fly decoding should be done */
-  on_the_fly = FALSE;
-  switch(jconf->input.type) {
-  case INPUT_VECTOR:
-    switch(jconf->input.speech_input) {
-    case SP_MFCFILE: 
-    case SP_OUTPROBFILE:
-      on_the_fly = FALSE;
-      break;
-    case SP_MFCMODULE:
-      on_the_fly = TRUE;
-      break;
-    }
-    break;
-  case INPUT_WAVEFORM:
-    if (jconf->decodeopt.realtime_flag) {
-      on_the_fly = TRUE;
-    } else {
-      on_the_fly = FALSE;
-    }
-    break;
-  }
-
-  if (jconf->input.type == INPUT_WAVEFORM || jconf->input.speech_input == SP_MFCMODULE) {
-    for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-      param_init_content(mfcc->param);
-    }
-  }
-
-  /* if no process instance exist, start with terminated */
-  if (recog->process_list == NULL) {
-    jlog("STAT: no recog process, engine inactive\n");
-    j_request_pause(recog);
-  }
-
-  /* update initial recognition process status */
-  for(r=recog->process_list;r;r=r->next) {
-    if (r->active > 0) {
-      r->live = TRUE;
-    } else if (r->active < 0) {
-      r->live = FALSE;
-    }
-    r->active = 0;
-  }
-
-  /******************************************************************/
-  /* do recognition for each incoming segment from the input stream */
-  /******************************************************************/
-  while (1) {
-    
-  start_recog:
-
-    /*************************************/
-    /* Update recognition process status */
-    /*************************************/
-    for(r=recog->process_list;r;r=r->next) {
-      if (r->active > 0) {
-	r->live = TRUE;
-	jlog("STAT: SR%02d %s now active\n", r->config->id, r->config->name);
-      } else if (r->active < 0) {
-	r->live = FALSE;
-	jlog("STAT: SR%02d %s now inactive\n", r->config->id, r->config->name);
-      }
-      r->active = 0;
-    }
-    if (debug2_flag) {
-      for(r=recog->process_list;r;r=r->next) {
-	jlog("DEBUG: %s: SR%02d %s\n", r->live ? "live" : "dead", r->config->id, r->config->name);
-      }
-    }
-    /* check if any process is live */
-    if (recog->process_active) {
-      ok_p = FALSE;
-      for(r=recog->process_list;r;r=r->next) {
-	if (r->live) ok_p = TRUE;
-      }
-      if (!ok_p) {		/* no process is alive */
-	/* make whole process as inactive */
-	jlog("STAT: all recog process inactive, pause engine now\n");
-	j_request_pause(recog);
-      }
-    }
-
-    /* Check whether process status was changed while in the last run */
-    if (recog->process_online != recog->process_active) {
-      recog->process_online = recog->process_active;
-      if (recog->process_online) callback_exec(CALLBACK_EVENT_PROCESS_ONLINE, recog);
-      else callback_exec(CALLBACK_EVENT_PROCESS_OFFLINE, recog);
-    }
-    /* execute poll callback */
-    if (recog->process_active) {
-      callback_exec(CALLBACK_POLL, recog);
-    }
-    /* reset reload flag here */
-    j_reset_reload(recog);
-
-    if (!recog->process_active) {
-      /* now sleeping, return */
-      /* in the next call, we will resume from here */
-      return 1;
-    }
-    /* update process status */
-    if (recog->process_online != recog->process_active) {
-      recog->process_online = recog->process_active;
-      if (recog->process_online) callback_exec(CALLBACK_EVENT_PROCESS_ONLINE, recog);
-      else callback_exec(CALLBACK_EVENT_PROCESS_OFFLINE, recog);
-    }
-
-    /*********************************************************/
-    /* check for grammar to change, and rebuild if necessary */
-    /*********************************************************/
-    for(lm=recog->lmlist;lm;lm=lm->next) {
-      if (lm->lmtype == LM_DFA) {
-	multigram_update(lm); /* some modification occured if return TRUE*/
-      }
-    }
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      if (r->lmtype == LM_DFA && r->lm->global_modified) {
-	multigram_build(r);
-      }
-    }
-    for(lm=recog->lmlist;lm;lm=lm->next) {
-      if (lm->lmtype == LM_DFA) lm->global_modified = FALSE;
-    }
-
-    ok_p = FALSE;
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      if (r->lmtype == LM_DFA) {
-	if (r->lm->winfo == NULL ||
-	    (r->lmvar == LM_DFA_GRAMMAR && r->lm->dfa == NULL)) {
-	  /* make this instance inactive */
-	  r->active = -1;
-	  ok_p = TRUE;
-	}
-      }
-    }
-    if (ok_p) {			/* at least one instance has no grammar */
-      goto start_recog;
-    }
-
-
-    /******************/
-    /* start 1st pass */
-    /******************/
-    if (on_the_fly) {
-
-      /********************************************/
-      /* REALTIME ON-THE-FLY DECODING OF 1ST-PASS */
-      /********************************************/
-      /* store, analysis and search in a pipeline  */
-      /* main function is RealTimePipeLine() at realtime-1stpass.c, and
-	 it will be periodically called for each incoming input segment
-	 from the AD-in function adin_go().  RealTimePipeLine() will be
-	 called as a callback function from adin_go() */
-      /* after this part, directly jump to the beginning of the 2nd pass */
-      
-      if (recog->process_segment) {
-	/*****************************************************************/
-	/* short-pause segmentation: process last remaining frames first */
-	/*****************************************************************/
-	/* last was segmented by short pause */
-	/* the margin segment in the last input will be re-processed first,
-	   and then the speech input will be processed */
-	/* process the last remaining parameters */
-	ret = RealTimeResume(recog);
-	if (ret < 0) {		/* error end in the margin */
-	  jlog("ERROR: failed to process last remaining samples on RealTimeResume\n"); /* exit now! */
-	  return -1;
-	}
-	if (ret != 1) {	/* if segmented again in the margin, not process the rest */
-	  /* last parameters has been processed, so continue with the
-	     current input as normal */
-	  /* process the incoming input */
-	  if (jconf->input.type == INPUT_WAVEFORM) {
-	    /* get speech and process it on real-time */
-	    ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
-	  } else {
-	    /* get feature vector and process it */
-	    ret = mfcc_go(recog, callback_check_in_adin);
-	  }
-	  if (ret < 0) {		/* error end in adin_go */
-	    if (ret == -2 || recog->process_want_terminate) {
-	      /* terminated by callback */
-	      RealTimeTerminate(recog);
-	      /* reset param */
-	      for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-		param_init_content(mfcc->param);
-	      }
-	      /* execute callback at end of pass1 */
-	      if (recog->triggered) {
-		callback_exec(CALLBACK_EVENT_PASS1_END, recog);
-		/* output result terminate */
-		result_error(recog, J_RESULT_STATUS_TERMINATE);
-	      }
-	      goto end_recog; /* cancel this recognition */
-	    }
-	    jlog("ERROR: an error occured at on-the-fly 1st pass decoding\n");          /* exit now! */
-	    return(-1);
-	  }
-	}
-	
-      } else {
-
-	/***********************************************************/
-	/* last was not segmented, process the new incoming input  */
-	/***********************************************************/
-	/* end of this input will be determined by either end of stream
-	   (in case of file input), or silence detection by adin_go(), or
-	   'TERMINATE' command from module (if module mode) */
-	/* prepare work area for on-the-fly processing */
-	if (RealTimePipeLinePrepare(recog) == FALSE) {
-	  jlog("ERROR: failed to prepare for on-the-fly 1st pass decoding\n");
-	  return (-1);
-	}
-	/* process the incoming input */
-	if (jconf->input.type == INPUT_WAVEFORM) {
-	  /* get speech and process it on real-time */
-	  ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
-	} else {
-	  /* get feature vector and process it */
-	  ret = mfcc_go(recog, callback_check_in_adin);
-	}
-
-  start_timing();
-	
-	if (ret < 0) {		/* error end in adin_go */
-	  if (ret == -2 || recog->process_want_terminate) {	
-	    /* terminated by callback */
-	    RealTimeTerminate(recog);
-	    /* reset param */
-	    for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-	      param_init_content(mfcc->param);
-	    }
-	    /* execute callback at end of pass1 */
-	    if (recog->triggered) {
-	      callback_exec(CALLBACK_EVENT_PASS1_END, recog);
-	      /* output result terminate */
-	      result_error(recog, J_RESULT_STATUS_TERMINATE);
-	    }
-	    goto end_recog;
-	  }
-	  jlog("ERROR: an error occured at on-the-fly 1st pass decoding\n");          /* exit now! */
-	  return(-1);
-	}
-      }
-      /******************************************************************/
-      /* speech stream has been processed on-the-fly, and 1st pass ends */
-      /******************************************************************/
-      if (ret == 1 || ret == 2) {		/* segmented */
-#ifdef HAVE_PTHREAD
-	/* check for audio overflow */
-	if (recog->adin->enable_thread && recog->adin->adinthread_buffer_overflowed) {
-	  jlog("Warning: input buffer overflow: some input may be dropped, so disgard the input\n");
-	  result_error(recog, J_RESULT_STATUS_BUFFER_OVERFLOW);
-	  /* skip 2nd pass */
-	  goto end_recog;
-	}
-#endif
-      }
-      /* last procedure of 1st-pass */
-      if (RealTimeParam(recog) == FALSE) {
-	jlog("ERROR: fatal error occured, program terminates now\n");
-	return -1;
-      }
-      
-#ifdef BACKEND_VAD
-      /* if not triggered, skip this segment */
-      if (recog->jconf->decodeopt.segment && ! recog->triggered) {
-	goto end_recog;
-      }
-#endif
-
-      /* output segment status */
-      if (recog->adin->adin_cut_on && (jconf->input.speech_input == SP_RAWFILE || jconf->input.speech_input == SP_STDIN)) {
-	seclen = (float)recog->adin->last_trigger_sample / (float)jconf->input.sfreq;
-	jlog("STAT: triggered: [%d..%d] %.2fs from %02d:%02d:%02.2f\n", recog->adin->last_trigger_sample, recog->adin->last_trigger_sample + recog->adin->last_trigger_len, (float)(recog->adin->last_trigger_len) / (float)jconf->input.sfreq, (int)(seclen / 3600), (int)(seclen / 60), seclen - (int)(seclen / 60) * 60);
-      }
-
-      /* execute callback for 1st pass result */
-      /* result.status <0 must be skipped inside callback */
-      callback_exec(CALLBACK_RESULT_PASS1, recog);
-#ifdef WORD_GRAPH
-      /* result.wg1 == NULL should be skipped inside callback */
-      callback_exec(CALLBACK_RESULT_PASS1_GRAPH, recog);
-#endif
-      /* execute callback at end of pass1 */
-      callback_exec(CALLBACK_EVENT_PASS1_END, recog);
-      /* output frame length */
-      callback_exec(CALLBACK_STATUS_PARAM, recog);
-      /* if terminate signal has been received, discard this input */
-      if (recog->process_want_terminate) {
-	result_error(recog, J_RESULT_STATUS_TERMINATE);
-	goto end_recog;
-      }
-
-      /* END OF ON-THE-FLY INPUT AND DECODING OF 1ST PASS */
-
-    } else {
-
-      /******************/
-      /* buffered input */
-      /******************/
-
-      if (jconf->input.type == INPUT_VECTOR) {
-	/***********************/
-	/* vector input */
-	/************************/
-	if (jconf->input.speech_input == SP_OUTPROBFILE) {
-	  /**********************************/
-	  /* state output probability input */
-	  /**********************************/
-	  /* AM is dummy, so skip parameter type check */
-	  ret = 0;
-	} else if (jconf->input.speech_input == SP_MFCFILE) {
-	  /************************/
-	  /* parameter file input */
-	  /************************/
-	  /* parameter type check --- compare the type to that of HMM,
-	     and adjust them if necessary */
-	  if (jconf->input.paramtype_check_flag) {
-	    for(am=recog->amlist;am;am=am->next) {
-	      /* return param itself or new malloced param */
-	      if (param_check_and_adjust(am->hmminfo, am->mfcc->param, verbose_flag) == -1) {	/* failed */
-		
-		for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-		  param_init_content(mfcc->param);
-		}
-		/* tell failure */
-		result_error(recog, J_RESULT_STATUS_FAIL);
-		goto end_recog;
-	      }
-	    }
-	  }
-	  /* whole input is already read, so set input status to end of stream */
-	  /* and jump to the start point of 1st pass */
-	  ret = 0;
-	}
-      } else {
-	/*************************/
-	/* buffered speech input */
-	/*************************/
-	if (!recog->process_segment) { /* no segment left */
-
-	  /****************************************/
-	  /* store raw speech samples to speech[] */
-	  /****************************************/
-	  recog->speechlen = 0;
-	  for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-	    param_init_content(mfcc->param);
-	  }
-	  /* tell module to start recording */
-	  /* the "adin_cut_callback_store_buffer" simply stores
-	     the input speech to a buffer "speech[]" */
-	  /* end of this input will be determined by either end of stream
-	     (in case of file input), or silence detection by adin_go(), or
-	     'TERMINATE' command from module (if module mode) */
-	  ret = adin_go(adin_cut_callback_store_buffer, callback_check_in_adin, recog);
-	  if (ret < 0) {		/* error end in adin_go */
-	    if (ret == -2 || recog->process_want_terminate) {
-	      /* terminated by module */
-	      /* output fail */
-	      result_error(recog, J_RESULT_STATUS_TERMINATE);
-	      goto end_recog;
-	    }
-	    jlog("ERROR: an error occured while recording input\n");
-	    return -1;
-	  }
-	  
-	  /* output recorded length */
-	  seclen = (float)recog->speechlen / (float)jconf->input.sfreq;
-	  jlog("STAT: %d samples (%.2f sec.)\n", recog->speechlen, seclen);
-	  
-	  /* -rejectshort 指定時, 入力が指定時間以下であれば
-	     ここで入力を棄却する */
-	  /* when using "-rejectshort", and input was shorter than
-	     specified, reject the input here */
-	  if (jconf->reject.rejectshortlen > 0) {
-	    if (seclen * 1000.0 < jconf->reject.rejectshortlen) {
-	      result_error(recog, J_RESULT_STATUS_REJECT_SHORT);
-	      goto end_recog;
-	    }
-	  }
-	  /* when using "-rejectlong", and input was longer than specified,
-	     terminate the input here */
-	  if (recog->jconf->reject.rejectlonglen >= 0) {
-	    if (seclen * 1000.0 >= recog->jconf->reject.rejectlonglen) {
-	      result_error(recog, J_RESULT_STATUS_REJECT_LONG);
-	      goto end_recog;
-	    }
-	  }
-	
-	  /**********************************************/
-	  /* acoustic analysis and encoding of speech[] */
-	  /**********************************************/
-	  jlog("STAT: ### speech analysis (waveform -> MFCC)\n");
-	  /* CMN will be computed for the whole buffered input */
-	  if (wav2mfcc(recog->speech, recog->speechlen, recog) == FALSE) {
-	    /* error end, end stream */
-	    ret = -1;
-	    /* tell failure */
-	    result_error(recog, J_RESULT_STATUS_FAIL);
-	    goto end_recog;
-	  }
-	  /* if terminate signal has been received, cancel this input */
-	  if (recog->process_want_terminate) {
-	    result_error(recog, J_RESULT_STATUS_TERMINATE);
-	    goto end_recog;
-	  }
-	  
-	  /* output frame length */
-	  callback_exec(CALLBACK_STATUS_PARAM, recog);
-	}
-      }
-
-#ifdef ENABLE_PLUGIN
-      /* call post-process plugin if exist */
-      plugin_exec_vector_postprocess_all(recog->mfcclist->param);
-#endif
-
-      /******************************************************/
-      /* 1st-pass --- backward search to compute heuristics */
-      /******************************************************/
-      if (!jconf->decodeopt.realtime_flag) {
-	/* prepare for outprob cache for each HMM state and time frame */
-	/* assume all MFCCCalc has params of the same sample num */
-	for(am=recog->amlist;am;am=am->next) {
-	  outprob_prepare(&(am->hmmwrk), am->mfcc->param->samplenum);
-	}
-      }
-      
-      /* if terminate signal has been received, cancel this input */
-      if (recog->process_want_terminate) {
-	result_error(recog, J_RESULT_STATUS_TERMINATE);
-	goto end_recog;
-      }
-    
-      /* execute computation of left-to-right backtrellis */
-      if (get_back_trellis(recog) == FALSE) {
-	jlog("ERROR: fatal error occured, program terminates now\n");
-	return -1;
-      }
-#ifdef BACKEND_VAD
-      /* if not triggered, skip this segment */
-      if (recog->jconf->decodeopt.segment && ! recog->triggered) {
-	goto end_recog;
-      }
-#endif
-      
-      /* execute callback for 1st pass result */
-      /* result.status <0 must be skipped inside callback */
-      callback_exec(CALLBACK_RESULT_PASS1, recog);
-#ifdef WORD_GRAPH
-      /* result.wg1 == NULL should be skipped inside callback */
-      callback_exec(CALLBACK_RESULT_PASS1_GRAPH, recog);
-#endif
-      
-      /* execute callback at end of pass1 */
-      if (recog->triggered) {
-	callback_exec(CALLBACK_EVENT_PASS1_END, recog);
-      }
-
-      /* END OF BUFFERED 1ST PASS */
-
-    }
-
-    /**********************************/
-    /* end processing of the 1st-pass */
-    /**********************************/
-    /* on-the-fly 1st pass processing will join here */
-    
-    /* -rejectshort 指定時, 入力が指定時間以下であれば探索失敗として */
-    /* 第２パスを実行せずにここで終了する */
-    /* when using "-rejectshort", and input was shorter than the specified
-       length, terminate search here and output recognition failure */
-    if (jconf->reject.rejectshortlen > 0) {
-      mseclen = (float)recog->mfcclist->param->samplenum * (float)jconf->input.period * (float)jconf->input.frameshift / 10000.0;
-      if (mseclen < jconf->reject.rejectshortlen) {
-	result_error(recog, J_RESULT_STATUS_REJECT_SHORT);
-	goto end_recog;
-      }
-    }
-    if (jconf->reject.rejectlonglen >= 0) {
-      mseclen = (float)recog->mfcclist->param->samplenum * (float)jconf->input.period * (float)jconf->input.frameshift / 10000.0;
-      if (mseclen >= jconf->reject.rejectlonglen) {
-	result_error(recog, J_RESULT_STATUS_REJECT_LONG);
-	goto end_recog;
-      }
-    }
-#ifdef POWER_REJECT
-    if (power_reject(recog)) {
-      result_error(recog, J_RESULT_STATUS_REJECT_POWER);
-      goto end_recog;
-    }
-#endif
-
-    if (jconf->outprob_outfile) {
-      FILE *fp;
-      char *buf;
-      /* store the whole state outprob cache as a state outprob vector file */
-      if ((fp = fopen(jconf->outprob_outfile, "wb")) != NULL) {
-	for(r=recog->process_list;r;r=r->next) {
-	  if (!r->live) continue;
-	  if (outprob_cache_output(fp, r->wchmm->hmmwrk, recog->mfcclist->param->samplenum) == FALSE) {
-	    jlog("ERROR: error in writing state probabilities to %s\n", jconf->outprob_outfile);
-	    fclose(fp);
-	    goto end_recog;
-	  }
-	}
-	fclose(fp);
-	jlog("STAT: state probabilities written to %s\n", jconf->outprob_outfile);
-      } else{
-	jlog("ERROR: failed to write state probabilities to %s\n", jconf->outprob_outfile);
-      }
-    }
-    
-    /* if terminate signal has been received, cancel this input */
-    if (recog->process_want_terminate) {
-      result_error(recog, J_RESULT_STATUS_TERMINATE);
-      goto end_recog;
-    }
-    
-    /* if GMM is specified and result are to be rejected, terminate search here */
-    if (jconf->reject.gmm_reject_cmn_string != NULL) {
-      if (! gmm_valid_input(recog)) {
-	result_error(recog, J_RESULT_STATUS_REJECT_GMM);
-	goto end_recog;
-      }
-    }
-
-    /* for instances with "-1pass", copy 1st pass result as final */
-    /* execute stack-decoding search */
-    /* they will be skipepd in the next pass */
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      /* skip if 1st pass was failed */
-      if (r->result.status < 0) continue;
-      /* already stored on word recognition, so skip this */
-      if (r->lmvar == LM_DFA_WORD) continue;
-      if (r->config->compute_only_1pass) {
-	if (verbose_flag) {
-	  jlog("%02d %s: \"-1pass\" specified, output 1st pass result as a final result\n", r->config->id, r->config->name);
-	}
-	/* prepare result storage */
-	result_sentence_malloc(r, 1);
-	/* finalize result when no hypothesis was obtained */
-	pass2_finalize_on_no_result(r, TRUE);
-      }
-    }
-
-    /***********************************************/
-    /* 2nd-pass --- forward search with heuristics */
-    /***********************************************/
-    pass2_p = FALSE;
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      /* if [-1pass] is specified, skip 2nd pass */
-      if (r->config->compute_only_1pass) continue;
-      /* if search already failed on 1st pass, skip 2nd pass */
-      if (r->result.status < 0) continue;
-      pass2_p = TRUE;
-    }
-    if (pass2_p) callback_exec(CALLBACK_EVENT_PASS2_BEGIN, recog);
-
-#if !defined(PASS2_STRICT_IWCD) || defined(FIX_35_PASS2_STRICT_SCORE)    
-    /* adjust trellis score not to contain outprob of the last frames */
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      /* if [-1pass] is specified, skip 2nd pass */
-      if (r->config->compute_only_1pass) continue;
-      /* if search already failed on 1st pass, skip 2nd pass */
-      if (r->result.status < 0) continue;
-      if (! r->am->hmminfo->multipath) {
-	bt_discount_pescore(r->wchmm, r->backtrellis, r->am->mfcc->param);
-      }
-#ifdef LM_FIX_DOUBLE_SCORING
-      if (r->lmtype == LM_PROB) {
-	bt_discount_lm(r->backtrellis);
-      }
-#endif
-    }
-#endif
-    
-    /* execute stack-decoding search */
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      /* if [-1pass] is specified, just copy from 1st pass result */
-      if (r->config->compute_only_1pass) continue;
-      /* if search already failed on 1st pass, skip 2nd pass */
-      if (r->result.status < 0) continue;
-      /* prepare result storage */
-      if (r->lmtype == LM_DFA && r->config->output.multigramout_flag) {
-	result_sentence_malloc(r, r->config->output.output_hypo_maxnum * multigram_get_all_num(r->lm));
-      } else {
-	result_sentence_malloc(r, r->config->output.output_hypo_maxnum);
-      }
-      /* do 2nd pass */
-      if (r->lmtype == LM_PROB) {
-	wchmm_fbs(r->am->mfcc->param, r, 0, 0);
-      } else if (r->lmtype == LM_DFA) {
-	if (r->config->output.multigramout_flag) {
-	  /* execute 2nd pass multiple times for each grammar sequencially */
-	  /* to output result for each grammar */
-	  MULTIGRAM *m;
-	  boolean has_success = FALSE;
-	  for(m = r->lm->grammars; m; m = m->next) {
-	    if (m->active) {
-	      jlog("STAT: execute 2nd pass limiting words for gram #%d\n", m->id);
-	      wchmm_fbs(r->am->mfcc->param, r, m->cate_begin, m->dfa->term_num);
-	      if (r->result.status == J_RESULT_STATUS_SUCCESS) {
-		has_success = TRUE;
-	      }
-	    }
-	  }
-	  r->result.status = (has_success == TRUE) ? J_RESULT_STATUS_SUCCESS : J_RESULT_STATUS_FAIL;
-	} else {
-	  /* only the best among all grammar will be output */
-	  wchmm_fbs(r->am->mfcc->param, r, 0, r->lm->dfa->term_num);
-	}
-      }
-    }
-
-    /* do forced alignment if needed */
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      /* if search failed on 2nd pass, skip this */
-      if (r->result.status < 0) continue;
-      /* do needed alignment */
-      do_alignment_all(r, r->am->mfcc->param);
-    }
-
-    /* output result */
-    callback_exec(CALLBACK_RESULT, recog);
-
-    end_timing();
-    print_timing();
-
-#ifdef ENABLE_PLUGIN
-    plugin_exec_process_result(recog);
-#endif
-    /* output graph */
-    /* r->result.wg == NULL should be skipped inside the callback */
-    ok_p = FALSE;
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      if (r->config->compute_only_1pass) continue;
-      if (r->result.status < 0) continue;
-      if (r->config->graph.lattice) ok_p = TRUE;
-    }
-    if (ok_p) callback_exec(CALLBACK_RESULT_GRAPH, recog);
-    /* output confnet */
-    /* r->result.confnet == NULL should be skipped inside the callback */
-    ok_p = FALSE;
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      if (r->config->compute_only_1pass) continue;
-      if (r->result.status < 0) continue;
-      if (r->config->graph.confnet) ok_p = TRUE;
-    }
-    if (ok_p) callback_exec(CALLBACK_RESULT_CONFNET, recog);
-
-    /* clear work area for output */
-    for(r=recog->process_list;r;r=r->next) {
-      if (!r->live) continue;
-      clear_result(r);
-    }
-    
-    /* output end of 2nd pass */
-    if (pass2_p) callback_exec(CALLBACK_EVENT_PASS2_END, recog);
-
-#ifdef DEBUG_VTLN_ALPHA_TEST
-    if (r->am->mfcc->para->vtln_alpha == 1.0) {
-      /* if vtln parameter remains default, search for VTLN parameter */
-      vtln_alpha(recog, r);
-    }
-#endif
-
-  end_recog:
-    /**********************/
-    /* end of recognition */
-    /**********************/
-
-    /* update CMN info for next input (in case of realtime wave input) */
-    if (jconf->input.type == INPUT_WAVEFORM && jconf->decodeopt.realtime_flag) {
-      for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-	if (mfcc->param->samplenum > 0) {
-	  RealTimeCMNUpdate(mfcc, recog);
-	}
-      }
-    }
-    
-    process_segment_last = recog->process_segment;
-    if (jconf->decodeopt.segment) { /* sp-segment mode */
-      /* param is now shrinked to hold only the processed input, and */
-      /* the rests are holded in (newly allocated) "rest_param" */
-      /* if this is the last segment, rest_param is NULL */
-      /* assume all segmentation are synchronized */
-      recog->process_segment = FALSE;
-      for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-	if (mfcc->rest_param != NULL) {
-	  /* process the rest parameters in the next loop */
-	  recog->process_segment = TRUE;
-	  free_param(mfcc->param);
-	  mfcc->param = mfcc->rest_param;
-	  mfcc->rest_param = NULL;
-	}
-      }
-    }
-
-    /* callback of recognition end */
-    if (jconf->decodeopt.segment) {
-#ifdef BACKEND_VAD
-      if (recog->triggered) callback_exec(CALLBACK_EVENT_SEGMENT_END, recog);
-      if (process_segment_last && !recog->process_segment) callback_exec(CALLBACK_EVENT_RECOGNITION_END, recog);
-#else
-      callback_exec(CALLBACK_EVENT_SEGMENT_END, recog);
-      if (!recog->process_segment) callback_exec(CALLBACK_EVENT_RECOGNITION_END, recog);
-#endif
-    } else {
-      callback_exec(CALLBACK_EVENT_RECOGNITION_END, recog);
-    }
-
-
-    if (verbose_flag) jlog("\n");
-    jlog_flush();
-
-    if (jconf->decodeopt.segment) { /* sp-segment mode */
-      if (recog->process_segment == TRUE) {
-	if (verbose_flag) jlog("STAT: <<<restart the rest>>>\n\n");
-      } else {
-	/* input has reached end of stream, terminate program */
-	if (ret <= 0 && ret != -2) break;
-      }
-    } else {			/* not sp-segment mode */
-      /* input has reached end of stream, terminate program */
-      if (ret <= 0 && ret != -2) break;
-    }
-
-    /* recognition continues for next (silence-aparted) segment */
-      
-  } /* END OF STREAM LOOP */
-    
-  /* close the stream */
-  if (jconf->input.type == INPUT_WAVEFORM) {
-    if (adin_end(recog->adin) == FALSE) return -1;
-  }
-  if (jconf->input.speech_input == SP_MFCMODULE) {
-    if (mfc_module_end(recog->mfcclist) == FALSE) return -1;
-  }
-
-  /* return to the opening of input stream */
-
-  return(0);
-
-}
-
-/** 
- * <EN>
- * @brief  Recognize an input stream.
- *
- * This function repeat recognition process for the whole input stream,
- * using segmentation and detection if required.  It ends when the
- * whole input has been processed.
- *
- * When a recognition stop is requested from application, the following
- * callbacks will be called in turn: CALLBACK_EVENT_PAUSE,
- * CALLBACK_PAUSE_FUNCTION, CALLBACK_EVENT_RESUME.  After finishing executing
- * all functions in these callbacks, recognition will restart.
- * If you have something to be processed while recognition stops,
- * you should write the function as callback to CALLBACK_PAUSE_FUNCTION.
- * Note that recognition will restart immediately after all functions
- * registered in CALLBACK_PAUSE_FUNCTION has been finished.
- * 
- * </EN>
- * <JA>
- * @brief  入力ストリームの認識を行う
- *
- * 入力ストリームに対して
- * （必要であれば）区間検出やVADを行いながら認識を繰り返し行っていく. 
- * 入力が終端に達するかあるいはエラーで終了する. 
- *
- * アプリケーションから認識の中断をリクエストされたときは，
- * CALLBACK_EVENT_PAUSE，CALLBACK_PAUSE_FUNCTION,
- * CALLBACK_EVENT_RESUME の順に呼んだあと認識に戻る. このため，
- * 認識を中断させている間に行う処理は，CALLBACK_PAUSE_FUNCTION
- * に登録しておく必要がある. CALLBACK_PAUSE_FUNCTION に
- * 登録されている全ての処理が終了したら認識を自動的に再開するので
- * 注意すること. 
- * 
- * </JA>
- * 
- * @param recog [i/o] engine instance
- * 
- * @return 0 when finished recognizing all the input stream to the end,
- * or -1 on error.
- * 
- * @callgraph
- * @callergraph
- * @ingroup engine
- */
-int
-j_recognize_stream(Recog *recog)
-{
-  int ret;
-
-  do {
-    
-    ret = j_recognize_stream_core(recog);
-
-    switch(ret) {
-    case 1:	      /* paused by a callback (stream will continue) */
-      /* call pause event callbacks */
-      callback_exec(CALLBACK_EVENT_PAUSE, recog);
-      /* call pause functions */
-      /* block until all pause functions exits */
-      if (! callback_exist(recog, CALLBACK_PAUSE_FUNCTION)) {
-	jlog("WARNING: pause requested but no pause function specified\n");
-	jlog("WARNING: engine will resume now immediately\n");
-      }
-      callback_exec(CALLBACK_PAUSE_FUNCTION, recog);
-      /* after here, recognition will restart for the rest input */
-      /* call resume event callbacks */
-      callback_exec(CALLBACK_EVENT_RESUME, recog);
-      break;
-    case 0:			/* end of stream */
-      /* go on to the next input */
-      break;
-    case -1: 		/* error */
-      jlog("ERROR: an error occured while recognition, terminate stream\n");
-      return -1;
-    }
-  } while (ret == 1);		/* loop when paused by callback */
-
-  return 0;
-}
-
-/* end of file */
-
-/**
- * @file   pass1.c
- * 
- * <JA>
- * @brief  第1パス：フレーム同期ビーム探索
- *
- * 静的木構造辞書を用いて，入力特徴量ベクトル列に対して，Juliusの第１パス
- * であるフレーム同期ビーム探索を行います. 
- *
- * 入力データ全体があらかじめ得られている場合は，一括で計算を
- * 行う関数 get_back_trellis() がメインから呼ばれます. オンライン認識
- * の場合は realtime_1stpass.c から，初期化，フレームごとの計算，
- * 終了処理のそれぞれが入力の進行にあわせて個別に呼ばれます. 
- *
- * 実際の個々の認識処理インスタンスごとの処理は beam.c に記述されています. 
- *
- * </JA>
- * 
- * <EN>
- * @brief  The first pass: frame-synchronous beam search
- *
- * These functions perform a frame-synchronous beam search using a static
- * lexicon tree, as the first pass of Julius/Julian.
- *
- * When the whole input is already obtained, get_back_trellis() simply
- * does all the processing of the 1st pass.  When performing online
- * real-time recognition with concurrent speech input, each function
- * will be called separately from realtime_1stpass.c according on the
- * basis of input processing.
- *
- * The core recognition processing functions for each recognition
- * process instances are written in beam.c.
- *
- * </EN>
- * 
- * @author Akinobu Lee
- * @date   Fri Oct 12 23:14:13 2007
- *
- * $Revision: 1.11 $
+ * $Revision: 1.14 $
  * 
  */
 /*
@@ -1617,612 +123,880 @@ j_recognize_stream(Recog *recog)
 
 //#include <julius/julius.h>
 
-/********************************************************************/
-/* 第１パスを実行するメイン関数                                     */
-/* 入力をパイプライン処理する場合は realtime_1stpass.c を参照のこと */
-/* main function to execute 1st pass                                */
-/* the pipeline processing is not here: see realtime_1stpass.c      */
-/********************************************************************/
+#undef RDEBUG			///< Define if you want local debug message
 
 /** 
+ * <JA>
+ * MFCC計算インスタンス内に特徴パラメータベクトル格納エリアを準備する.
+ * 
+ * mfcc->para の情報に基づいてヘッダ情報を格納し，初期格納領域を確保する. 
+ * 格納領域は，入力時に必要に応じて自動的に伸長されるので，ここでは
+ * その準備だけ行う. すでに格納領域が確保されているときはそれをキープする. 
+ * 
+ * これは入力/認識1回ごとに繰り返し呼ばれる.
+ * 
+ * </JA>
  * <EN>
- * @brief  Process one input frame for all recognition process instance.
+ * 
+ * Prepare parameter holder in MFCC calculation instance to store MFCC
+ * vectors.
  *
- * This function proceeds the recognition for one frame.  All
- * recognition process instance will be processed synchronously.
- * The input frame for each instance is stored in mfcc->f, where mfcc
- * is the MFCC calculation instance assigned to each process instance.
- *
- * If an instance's mfcc->invalid is set to TRUE, its processing will
- * be skipped.
- *
- * When using GMM, GMM computation will also be executed here.
- * If GMM_VAD is defined, GMM-based voice detection will be performed
- * inside this function, by using a scheme of short-pause segmentation.
- *
- * This function also handles segmentation of recognition process.  A
- * segmentation will occur when end of speech is detected by level-based
- * sound detection or GMM-based / decoder-based VAD, or by request from
- * application.  When segmented, it stores current frame and return with
- * that status.
- *
- * The frame-wise callbacks will be executed inside this function,
- * when at least one valid recognition process instances exists.
+ * This function will store header information based on the parameters
+ * in mfcc->para, and allocate initial buffer for the incoming
+ * vectors.  The vector buffer will be expanded as needed while
+ * recognition, so at this time only the minimal amount is allocated.
+ * If the instance already has a certain length of vector buffer, it
+ * will be kept.
+ * 
+ * This function will be called each time a new input begins.
  * 
  * </EN>
+ *
+ * @param mfcc [i/o] MFCC calculation instance
+ * 
+ */
+static void
+init_param(MFCCCalc *mfcc)
+{
+  Value *para;
+
+  para = mfcc->para;
+
+  /* これから計算されるパラメータの型をヘッダに設定 */
+  /* set header types */
+  mfcc->param->header.samptype = para->basetype;
+  if (para->delta) mfcc->param->header.samptype |= F_DELTA;
+  if (para->acc) mfcc->param->header.samptype |= F_ACCL;
+  if (para->energy) mfcc->param->header.samptype |= F_ENERGY;
+  if (para->c0) mfcc->param->header.samptype |= F_ZEROTH;
+  if (para->absesup) mfcc->param->header.samptype |= F_ENERGY_SUP;
+  if (para->cmn) mfcc->param->header.samptype |= F_CEPNORM;
+  
+  mfcc->param->header.wshift = para->smp_period * para->frameshift;
+  mfcc->param->header.sampsize = para->veclen * sizeof(VECT); /* not compressed */
+  mfcc->param->veclen = para->veclen;
+  
+  /* 認識処理中/終了後にセットされる変数:
+     param->parvec (パラメータベクトル系列)
+     param->header.samplenum, param->samplenum (全フレーム数)
+  */
+  /* variables that will be set while/after computation has been done:
+     param->parvec (parameter vector sequence)
+     param->header.samplenum, param->samplenum (total number of frames)
+  */
+  /* MAP-CMN の初期化 */
+  /* Prepare for MAP-CMN */
+  if (mfcc->para->cmn || mfcc->para->cvn) CMN_realtime_prepare(mfcc->cmn.wrk);
+}
+
+/** 
  * <JA>
- * @brief  全ての認識処理インスタンス処理を1フレーム分進める.
+ * @brief  第1パス平行認識処理の初期化.
  *
- * 全ての認識処理インスタンスについて，割り付けられているMFCC計算インスタンス
- * の mfcc->f をカレントフレームとして処理を1フレーム進める. 
+ * MFCC計算のワークエリア確保を行う. また必要な場合は，スペクトル減算用の
+ * ワークエリア準備，ノイズスペクトルのロード，CMN用の初期ケプストラム
+ * 平均データのロードなども行われる. 
  *
- * なお，mfcc->invalid が TRUE となっている処理インスタンスの処理はスキップ
- * される. 
- *
- * GMMの計算もここで呼び出される. GMM_VAD 定義時は，GMM による
- * 発話区間開始・終了の検出がここで行われる. また，GMMの計算結果，
- * あるいは認識処理内のショートポーズセグメンテーション判定やデバイス・外部
- * からの要求によりセグメンテーションが要求されたかどうかの判定も行う. 
- *
- * フレーム単位で呼び出されるコールバックが登録されている場合は，それらの
- * 呼出しも行う. 
+ * この関数は，システム起動後1回だけ呼ばれる.
  * </JA>
- * 
- * @param recog [in] engine instance
- * 
- * @return 0 on success, -1 on error, or 1 when an input segmentation
- * occured/requested inside this function.
+ * <EN>
+ * @brief  Initializations for the on-the-fly 1st pass decoding.
+ *
+ * Work areas for all MFCC caculation instances are allocated.
+ * Additionaly,
+ * some initialization will be done such as allocating work area
+ * for spectral subtraction, loading noise spectrum from file,
+ * loading initial ceptral mean data for CMN from file, etc.
+ *
+ * This will be called only once, on system startup.
+ * </EN>
+ *
+ * @param recog [i/o] engine instance
  *
  * @callgraph
  * @callergraph
- * 
  */
-int
-decode_proceed(Recog *recog)
-{
-  MFCCCalc *mfcc;
-  boolean break_flag;
-  boolean break_decode;
-  RecogProcess *p;
-  boolean ok_p;
-#ifdef GMM_VAD
-  GMMCalc *gmm;
-  boolean break_gmm;
-#endif
-  
-  break_decode = FALSE;
-
-  for(p = recog->process_list; p; p = p->next) {
-#ifdef DETERMINE
-    p->have_determine = FALSE;
-#endif
-    p->have_interim = FALSE;
-  }
-  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-    mfcc->segmented = FALSE;
-  }
-
-#ifdef POWER_REJECT
-  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-    if (!mfcc->valid) continue;
-    if (mfcc->f == 0) {
-      mfcc->avg_power = 0.0;
-      if (debug2_flag) jlog("STAT: power_reject: reset\n");
-    }
-  }
-#endif
-
-
-#ifdef GMM_VAD
-  if (recog->gmm != NULL) {
-    /* reset flags */
-    break_gmm = FALSE;
-    recog->gc->want_rewind = FALSE;
-  }
-#endif
-  if (recog->gmm != NULL && recog->gmmmfcc->valid) {
-    /* GMM 計算を行う */
-    if (recog->gmmmfcc->f == 0) {
-      /* GMM 計算の初期化 */
-      gmm_prepare(recog);
-    }
-    /* このフレームに対するGMMの尤度を計算 */
-    gmm_proceed(recog);
-#ifdef GMM_VAD
-    /* Check for GMM-based VAD */
-    gmm = recog->gc;
-    gmm_check_trigger(recog);
-    if (gmm->after_trigger) {
-      /* after trigger, in speech area */
-      if (gmm->down_trigger) {
-	/* down trigger, end segment */
-#ifdef GMM_VAD_DEBUG
-	printf("GMM_VAD: %d: down trigger\n", recog->gmmmfcc->f);
-#endif
-	recog->gmmmfcc->sparea_start = recog->gmmmfcc->f + 1 - recog->jconf->detect.gmm_margin;
-	if (recog->gmmmfcc->sparea_start < 0) recog->gmmmfcc->sparea_start = 0;
-	gmm->after_trigger = FALSE;
-	recog->gmmmfcc->segmented = TRUE;
-	break_gmm = TRUE;
-      } else {
-	/* keep recognition */
-      }
-    } else {
-      /* before trigger, in noise area */
-      if (gmm->up_trigger) {
-	/* start recognition */
-	/* request caller to rewind to the backstep point and
-	   re-start with normal search */
-	if (recog->gmmmfcc->f + 1 < recog->jconf->detect.gmm_margin) {
-	  gmm->rewind_frame = 0;
-	} else {
-	  gmm->rewind_frame = recog->gmmmfcc->f + 1 - recog->jconf->detect.gmm_margin;
-	}
-#ifdef GMM_VAD_DEBUG
-	printf("GMM_VAD: %d: up trigger, start recognition with %d frame rewind\n", recog->gmmmfcc->f, recog->gmmmfcc->f - gmm->rewind_frame);
-#endif
-	gmm->want_rewind = TRUE;
-	gmm->want_rewind_reprocess = TRUE;
-	gmm->after_trigger = TRUE;
-	return 0;
-      } else {
-	/* before trigger, noise continues */
-
-	/* if noise goes more than a certain frame, shrink the noise area
-	   to avoid unlimited memory usage */
-	if (recog->gmmmfcc->f + 1 > GMM_VAD_AUTOSHRINK_LIMIT) {
-	  gmm->want_rewind = TRUE;
-	  gmm->want_rewind_reprocess = FALSE;
-	  gmm->rewind_frame = recog->gmmmfcc->f + 1 - recog->jconf->detect.gmm_margin;
-	  if (debug2_flag) {
-	    jlog("DEBUG: GMM_VAD: pause exceeded %d, rewind\n", GMM_VAD_AUTOSHRINK_LIMIT);
-	  }
-	}
-
-	/* skip recognition processing */
-	return 0;
-      }
-    }
-#endif /* GMM_VAD */
-  }
-
-  for(p = recog->process_list; p; p = p->next) {
-    if (!p->live) continue;
-    mfcc = p->am->mfcc;
-    if (!mfcc->valid) {
-      /* このフレームの処理をスキップ */
-      /* skip processing the frame */
-      continue;
-    }
-
-    /* mfcc-f のフレームについて認識処理(フレーム同期ビーム探索)を進める */
-    /* proceed beam search for mfcc->f */
-    if (mfcc->f == 0) {
-      /* 最初のフレーム: 探索処理を初期化 */
-      /* initial frame: initialize search process */
-      if (get_back_trellis_init(mfcc->param, p) == FALSE) {
-	jlog("ERROR: %02d %s: failed to initialize the 1st pass\n", p->config->id, p->config->name);
-	return -1;
-      }
-    }
-    if (mfcc->f > 0 || p->am->hmminfo->multipath) {
-      /* 1フレーム探索を進める */
-      /* proceed search for 1 frame */
-      if (get_back_trellis_proceed(mfcc->f, mfcc->param, p, FALSE) == FALSE) {
-	mfcc->segmented = TRUE;
-	break_decode = TRUE;
-      }
-      if (p->config->successive.enabled) {
-	if (detect_end_of_segment(p, mfcc->f - 1)) {
-	  /* セグメント終了検知: 第１パスここで中断 */
-	  mfcc->segmented = TRUE;
-	  break_decode = TRUE;
-	}
-      }
-    }
-  }
-
-  /* セグメントすべきかどうか最終的な判定を行う．
-     デコーダベースVADあるいは spsegment の場合，複数インスタンス間で OR
-     を取る．また，GMMなど複数基準がある場合は基準間で AND を取る．*/
-  /* determine whether to segment at here
-     If multiple segmenter exists, take their AND */
-  break_flag = FALSE;
-  if (break_decode
-#ifdef GMM_VAD
-      || (recog->gmm != NULL && break_gmm)
-#endif
-      ) {
-    break_flag = TRUE;
-  }
-
-  if (break_flag) {
-    /* 探索処理の終了が発生したのでここで認識を終える. 
-       最初のフレームから [f-1] 番目までが認識されたことになる
-    */
-    /* the recognition process tells us to stop recognition, so
-       recognition should be terminated here.
-       the recognized data are [0..f-1] */
-
-    /* 最終フレームを last_time にセット */
-    /* set the last frame to last_time */
-    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-      mfcc->last_time = mfcc->f - 1;
-    }
-
-    if (! recog->jconf->decodeopt.segment) {
-      /* ショートポーズ以外で切れた場合，残りのサンプルは認識せずに捨てる */
-      /* drop rest inputs if segmented by error */
-      for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-	mfcc->param->header.samplenum = mfcc->f;
-	mfcc->param->samplenum = mfcc->f;
-      }
-    }
-
-    return 1;
-  }
-
-  /* call frame-wise callback for the processing results if any */
-#ifdef DETERMINE
-  ok_p = FALSE;
-  for(p=recog->process_list;p;p=p->next) {
-    if (!p->live) continue;
-    if (p->have_determine) {
-      ok_p = TRUE;
-    }
-  }
-  if (ok_p) callback_exec(CALLBACK_RESULT_PASS1_DETERMINED, recog);
-#endif
-  ok_p = FALSE;
-  for(p=recog->process_list;p;p=p->next) {
-    if (!p->live) continue;
-    if (p->have_interim) {
-      ok_p = TRUE;
-    }
-  }
-  if (ok_p) callback_exec(CALLBACK_RESULT_PASS1_INTERIM, recog);
-  
-  return 0;
-}
-
-#ifdef POWER_REJECT
 boolean
-power_reject(Recog *recog)
+RealTimeInit(Recog *recog)
 {
+  Value *para;
+  Jconf *jconf;
+  RealBeam *r;
   MFCCCalc *mfcc;
 
-  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-    /* skip if not realtime and raw file processing */
-    if (mfcc->avg_power == 0.0) continue;
-    if (debug2_flag) jlog("STAT: power_reject: MFCC%02d: avg_power = %f\n", mfcc->id, mfcc->avg_power / mfcc->param->samplenum);
-    if (mfcc->avg_power / mfcc->param->samplenum < recog->jconf->reject.powerthres) return TRUE;
+
+  jconf = recog->jconf;
+  r = &(recog->real);
+
+  /* 最大フレーム長を最大入力時間数から計算 */
+  /* set maximum allowed frame length */
+  r->maxframelen = MAXSPEECHLEN / recog->jconf->input.frameshift;
+
+  /* -ssload 指定時, SS用のノイズスペクトルをファイルから読み込む */
+  /* if "-ssload", load noise spectrum for spectral subtraction from file */
+  for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (mfcc->frontend.ssload_filename && mfcc->frontend.ssbuf == NULL) {
+      if ((mfcc->frontend.ssbuf = new_SS_load_from_file(mfcc->frontend.ssload_filename, &(mfcc->frontend.sslen))) == NULL) {
+	jlog("ERROR: failed to read \"%s\"\n", mfcc->frontend.ssload_filename);
+	return FALSE;
+      }
+      /* check ssbuf length */
+      if (mfcc->frontend.sslen != mfcc->wrk->bflen) {
+	jlog("ERROR: noise spectrum length not match\n");
+	return FALSE;
+      }
+      mfcc->wrk->ssbuf = mfcc->frontend.ssbuf;
+      mfcc->wrk->ssbuflen = mfcc->frontend.sslen;
+      mfcc->wrk->ss_alpha = mfcc->frontend.ss_alpha;
+      mfcc->wrk->ss_floor = mfcc->frontend.ss_floor;
+    }
   }
-  return FALSE;
+
+  for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+  
+    para = mfcc->para;
+
+    /* 対数エネルギー正規化のための初期値 */
+    /* set initial value for log energy normalization */
+    if (para->energy && para->enormal) energy_max_init(&(mfcc->ewrk));
+    /* デルタ計算のためのサイクルバッファを用意 */
+    /* initialize cycle buffers for delta and accel coef. computation */
+    if (para->delta) mfcc->db = WMP_deltabuf_new(para->baselen, para->delWin);
+    if (para->acc) mfcc->ab = WMP_deltabuf_new(para->baselen * 2, para->accWin);
+    /* デルタ計算のためのワークエリアを確保 */
+    /* allocate work area for the delta computation */
+    mfcc->tmpmfcc = (VECT *)mymalloc(sizeof(VECT) * para->vecbuflen);
+    /* MAP-CMN 用の初期ケプストラム平均を読み込んで初期化する */
+    /* Initialize the initial cepstral mean data from file for MAP-CMN */
+    if (para->cmn || para->cvn) mfcc->cmn.wrk = CMN_realtime_new(para, mfcc->cmn.map_weight);
+    /* -cmnload 指定時, CMN用のケプストラム平均の初期値をファイルから読み込む */
+    /* if "-cmnload", load initial cepstral mean data from file for CMN */
+    if (mfcc->cmn.load_filename) {
+      if (para->cmn) {
+	if ((mfcc->cmn.loaded = CMN_load_from_file(mfcc->cmn.wrk, mfcc->cmn.load_filename))== FALSE) {
+	  jlog("ERROR: failed to read initial cepstral mean from \"%s\", do flat start\n", mfcc->cmn.load_filename);
+	  return FALSE;
+	}
+      } else {
+	jlog("WARNING: CMN not required on AM, file \"%s\" ignored\n", mfcc->cmn.load_filename);
+      }
+    }
+
+  }
+  /* 窓長をセット */
+  /* set window length */
+  r->windowlen = recog->jconf->input.framesize + 1;
+  /* 窓かけ用バッファを確保 */
+  /* set window buffer */
+  r->window = mymalloc(sizeof(SP16) * r->windowlen);
+
+  return TRUE;
 }
-#endif
 
 /** 
  * <EN>
- * @brief  End procedure of the first pass (when segmented)
+ * Prepare work are a for MFCC calculation.
+ * Reset values in work area for starting the next input.
+ * Output probability cache for each acoustic model will be also
+ * prepared at this function.
  *
- * This function do things for ending the first pass and prepare for
- * the next recognition, when the input was segmented at the middle of
- * recognition by some reason.
- *
- * First, the best path at each recognition process instance will be parsed
- * and stored.  In case of recognition error or input rejection, the error
- * status will be set.
- *
- * Then, the last pause segment of the processed input will be cut and saved
- * to be processed at first in the recognition of the next or remaining input.
- * 
+ * This function will be called before starting each input (segment).
  * </EN>
  * <JA>
- * @brief  第1パスの終了処理（セグメント時）
- * 
- * 入力が何らかの事由によって途中でセグメントされた時に，第1パスの認識処理を
- * 終了して次回再開するための処理を行う. 
+ * MFCC計算を準備する. 
+ * いくつかのワークエリアをリセットして認識に備える. 
+ * また，音響モデルごとの出力確率計算キャッシュを準備する. 
  *
- * まず，各認識処理インスタンスに対して，最尤単語系列を見付け，第1パスの
- * 認識結果として格納する. また，認識失敗・入力棄却の時はエラーステータスをそ
- * れぞれセットする.
- * 
- * そして，次回の認識で，次のセグメントの認識を，検出された末尾雑音
- * 区間から再開するために，その末尾雑音区間を切り出しておく処理を呼ぶ. 
+ * この関数は，ある入力（あるいはセグメント）の認識が
+ * 始まる前に必ず呼ばれる. 
  * 
  * </JA>
  * 
- * @param recog [in] engine instance
+ * @param recog [i/o] engine instance
  * 
  * @callgraph
  * @callergraph
  */
 void
-decode_end_segmented(Recog *recog)
+reset_mfcc(Recog *recog) 
 {
-  boolean ok_p;
-  int mseclen;
-  RecogProcess *p;
-  int last_status;
-
-  /* rejectshort 指定時, 入力が短ければここで第1パス結果を出力しない */
-  /* suppress 1st pass output if -rejectshort and input shorter than specified */
-  ok_p = TRUE;
-  if (recog->jconf->reject.rejectshortlen > 0) {
-    mseclen = (float)recog->mfcclist->last_time * (float)recog->jconf->input.period * (float)recog->jconf->input.frameshift / 10000.0;
-    if (mseclen < recog->jconf->reject.rejectshortlen) {
-      last_status = J_RESULT_STATUS_REJECT_SHORT;
-      ok_p = FALSE;
-    }
-  }
-  if (recog->jconf->reject.rejectlonglen >= 0) {
-    mseclen = (float)recog->mfcclist->last_time * (float)recog->jconf->input.period * (float)recog->jconf->input.frameshift / 10000.0;
-    if (mseclen >= recog->jconf->reject.rejectlonglen) {
-      last_status = J_RESULT_STATUS_REJECT_LONG;
-      ok_p = FALSE;
-    }
-  }
-
-#ifdef POWER_REJECT
-  if (ok_p) {
-    if (power_reject(recog)) {
-      last_status = J_RESULT_STATUS_REJECT_POWER;
-      ok_p = FALSE;
-    }
-  }
-#endif
-
-  if (ok_p) {
-    for(p=recog->process_list;p;p=p->next) {
-      if (!p->live) continue;
-      finalize_1st_pass(p, p->am->mfcc->last_time);
-    }
-  } else {
-    for(p=recog->process_list;p;p=p->next) {
-      if (!p->live) continue;
-      p->result.status = last_status;
-    }
-  }
-  if (recog->jconf->decodeopt.segment) {
-    finalize_segment(recog);
-  }
-
-  if (recog->gmm != NULL) {
-    /* GMM 計算の終了 */
-    gmm_end(recog);
-  }
-}
-
-/** 
- * <EN>
- * @brief  End procedure of the first pass
- *
- * This function finish the first pass, when the input was fully
- * processed to the end.
- *
- * The best path at each recognition process instance will be parsed
- * and stored.  In case of recognition error or input rejection, the
- * error status will be set.
- *
- * </EN>
- * <JA>
- * @brief  第1パスの終了処理
- * 
- * 入力が最後まで処理されて終了したときに，第1パスの認識処理を
- * 終了させる. 
- *
- * 各認識処理インスタンスに対して，その時点での第1パスの最尤単語
- * 系列を格納する. また，認識失敗・入力棄却の時はエラーステータスをそ
- * れぞれセットする.
- * 
- * </JA>
- * 
- * @param recog [in] engine instance
- * 
- * @callgraph
- * @callergraph
- */
-void
-decode_end(Recog *recog)
-{
+  Value *para;
   MFCCCalc *mfcc;
-  int mseclen;
-  boolean ok_p;
-  RecogProcess *p;
-  int last_status;
+  RealBeam *r;
 
-  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-    mfcc->segmented = FALSE;
+  r = &(recog->real);
+
+  /* 特徴抽出モジュールを初期化 */
+  /* initialize parameter extraction module */
+  for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+
+    para = mfcc->para;
+
+    /* 対数エネルギー正規化のための初期値をセット */
+    /* set initial value for log energy normalization */
+    if (para->energy && para->enormal) energy_max_prepare(&(mfcc->ewrk), para);
+    /* デルタ計算用バッファを準備 */
+    /* set the delta cycle buffer */
+    if (para->delta) WMP_deltabuf_prepare(mfcc->db);
+    if (para->acc) WMP_deltabuf_prepare(mfcc->ab);
   }
 
-  if (recog->gmm != NULL) {
-    /* GMM 計算の終了 */
-    gmm_end(recog);
-  }
-
-#ifdef GMM_VAD
-  /* もしトリガがかからないまま入力終了に達したのなら，そのままエラー終了 */
-  if (recog->jconf->decodeopt.segment) {
-    if (recog->gmm) {
-      if (recog->gc->after_trigger == FALSE) {
-	for(p=recog->process_list;p;p=p->next) {
-	  p->result.status = J_RESULT_STATUS_ONLY_SILENCE;	/* reject by decoding */
-	}
-	/* ショートポーズセグメンテーションの場合,
-	   入力パラメータ分割などの最終処理も行なう */
-	/* When short-pause segmentation enabled */
-	finalize_segment(recog);
-	return;
-      }
-    }
-  }
-#endif
-
-  /* 第１パスの最後のフレームの認識処理を行う */
-  /* finalize 1st pass */
-  for(p=recog->process_list;p;p=p->next) {
-    if (!p->live) continue;
-#ifdef SPSEGMENT_NAIST
-    if (recog->jconf->decodeopt.segment) {
-      if (p->pass1.after_trigger == FALSE) continue;
-    }
-#endif
-    mfcc = p->am->mfcc;
-    if (mfcc->f > 0) {
-      get_back_trellis_end(mfcc->param, p);
-    }
-  }
-
-  /* 終了処理 */
-  for(p=recog->process_list;p;p=p->next) {
-    if (!p->live) continue;
-
-    ok_p = TRUE;
-
-    /* check rejection by no input */
-    if (ok_p) {
-      mfcc = p->am->mfcc;
-      /* 入力長がデルタの計算に十分でない場合，入力無しとする． */
-      /* if input is short for compute all the delta coeff., terminate here */
-      if (mfcc->f == 0) {
-	jlog("STAT: no input frame\n");
-	last_status = J_RESULT_STATUS_FAIL;
-	ok_p = FALSE;
-      }
-    }
-
-    /* check rejection by input length */
-    if (ok_p) {
-      if (recog->jconf->reject.rejectshortlen > 0) {
-	mseclen = (float)mfcc->param->samplenum * (float)recog->jconf->input.period * (float)recog->jconf->input.frameshift / 10000.0;
-	if (mseclen < recog->jconf->reject.rejectshortlen) {
-	  last_status = J_RESULT_STATUS_REJECT_SHORT;
-	  ok_p = FALSE;
-	}
-      }
-      if (recog->jconf->reject.rejectlonglen >= 0) {
-	mseclen = (float)mfcc->param->samplenum * (float)recog->jconf->input.period * (float)recog->jconf->input.frameshift / 10000.0;
-	if (mseclen >= recog->jconf->reject.rejectlonglen) {
-	  last_status = J_RESULT_STATUS_REJECT_LONG;
-	  ok_p = FALSE;
-	}
-      }
-    }
-
-#ifdef POWER_REJECT
-    /* check rejection by average power */
-    if (ok_p) {
-      if (power_reject(recog)) {
-	last_status = J_RESULT_STATUS_REJECT_POWER;
-	ok_p = FALSE;
-      }
-    }
-#endif
-
-#ifdef SPSEGMENT_NAIST
-    /* check rejection non-triggered input segment */
-    if (ok_p) {
-      if (recog->jconf->decodeopt.segment) {
-	if (p->pass1.after_trigger == FALSE) {
-	  last_status = J_RESULT_STATUS_ONLY_SILENCE;	/* reject by decoding */
-	  ok_p = FALSE;
-	}
-      }
-    }
-#endif
-
-    if (ok_p) {
-      /* valid input segment, finalize it */
-      finalize_1st_pass(p, mfcc->param->samplenum);
-    } else {
-      /* invalid input segment */
-      p->result.status = last_status;
-    }
-  }
-  if (recog->jconf->decodeopt.segment) {
-    /* ショートポーズセグメンテーションの場合,
-       入力パラメータ分割などの最終処理も行なう */
-    /* When short-pause segmentation enabled */
-    finalize_segment(recog);
-  }
 }
-
 
 /** 
  * <JA>
- * @brief  フレーム同期ビーム探索メイン関数（バッチ処理用）
+ * @brief  第1パス平行認識処理の準備
  *
- * 与えられた入力ベクトル列に対して第１パス(フレーム同期ビーム探索)を
- * 行い，その結果を出力する. また全フレームに渡る単語終端を，第２パス
- * のために単語トレリス構造体に格納する. 
+ * 計算用変数をリセットし，各種データを準備する. 
+ * この関数は，ある入力（あるいはセグメント）の認識が
+ * 始まる前に呼ばれる. 
  * 
- * この関数は入力ベクトル列があらかじめ得られている場合に用いられる. 
- * 第１パスが入力と並列して実行されるオンライン認識の場合，
- * この関数は用いられず，代わりにこのファイルで定義されている各サブ関数が
- * 直接 realtime-1stpass.c 内から呼ばれる. 
- * 
- * @param recog [in] エンジンインスタンス
  * </JA>
  * <EN>
- * @brief  Frame synchronous beam search: the main (for batch mode)
+ * @brief  Preparation for the on-the-fly 1st pass decoding.
  *
- * This function perform the 1st recognition pass of frame-synchronous beam
- * search and output the result.  It also stores all the word ends in every
- * input frame to word trellis structure.
+ * Variables are reset and data are prepared for the next input recognition.
  *
- * This function will be called if the whole input vector is already given
- * to the end.  When online recognition, where the 1st pass will be
- * processed in parallel with input, this function will not be used.
- * In that case, functions defined in this file will be directly called
- * from functions in realtime-1stpass.c.
+ * This function will be called before starting each input (segment).
  * 
- * @param recog [in] engine instance
  * </EN>
+ *
+ * @param recog [i/o] engine instance
+ *
+ * @return TRUE on success. FALSE on failure.
+ *
  * @callgraph
  * @callergraph
+ * 
  */
 boolean
-get_back_trellis(Recog *recog)
+RealTimePipeLinePrepare(Recog *recog)
 {
-  boolean ok_p;
-  MFCCCalc *mfcc;
-  int rewind_frame;
+  RealBeam *r;
   PROCESS_AM *am;
-  boolean reprocess;
+  MFCCCalc *mfcc;
+#ifdef SPSEGMENT_NAIST
+  RecogProcess *p;
+#endif
 
-  /* initialize mfcc instances */
-  for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-    /* mark all as valid, since all frames are fully prepared beforehand */
-    if (mfcc->param->samplenum == 0) mfcc->valid = FALSE;
-    else mfcc->valid = TRUE;
-    /* set frame pointers to 0 */
+  r = &(recog->real);
+
+  /* 計算用の変数を初期化 */
+  /* initialize variables for computation */
+  r->windownum = 0;
+  /* parameter check */
+  for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    /* パラメータ初期化 */
+    /* parameter initialization */
+    if (recog->jconf->input.speech_input == SP_MFCMODULE) {
+      if (mfc_module_set_header(mfcc, recog) == FALSE) return FALSE;
+    } else {
+      init_param(mfcc);
+    }
+    /* フレームごとのパラメータベクトル保存の領域を確保 */
+    /* あとで必要に応じて伸長される */
+    if (param_alloc(mfcc->param, 1, mfcc->param->veclen) == FALSE) {
+      j_internal_error("ERROR: segmented: failed to allocate memory for rest param\n");
+    }
+    /* フレーム数をリセット */
+    /* reset frame count */
     mfcc->f = 0;
   }
+  /* 準備した param 構造体のデータのパラメータ型を音響モデルとチェックする */
+  /* check type coherence between param and hmminfo here */
+  if (recog->jconf->input.paramtype_check_flag) {
+    for(am=recog->amlist;am;am=am->next) {
+      if (!check_param_coherence(am->hmminfo, am->mfcc->param)) {
+	jlog("ERROR: input parameter type does not match AM\n");
+	return FALSE;
+      }
+    }
+  }
 
-  /* callback of process start */
+  /* 計算用のワークエリアを準備 */
+  /* prepare work area for calculation */
+  if (recog->jconf->input.type == INPUT_WAVEFORM) {
+    reset_mfcc(recog);
+  }
+  /* 音響尤度計算用キャッシュを準備 */
+  /* prepare cache area for acoustic computation of HMM states and mixtures */
+  for(am=recog->amlist;am;am=am->next) {
+    outprob_prepare(&(am->hmmwrk), r->maxframelen);
+  }
+
 #ifdef BACKEND_VAD
   if (recog->jconf->decodeopt.segment) {
-    /* at first time, recognition does not start yet */
-    /* reset segmentation flags */
+    /* initialize segmentation parameters */
     spsegment_init(recog);
-  } else {
-    /* execute callback for pass1 begin here */
-    callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
-    callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
-    recog->triggered = TRUE;
   }
 #else
-  if (recog->jconf->decodeopt.segment) {
-    if (!recog->process_segment) {
-      callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
-    }
-    callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
-  } else {
-    callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
-  }
-  callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
-  recog->triggered = TRUE;
+  recog->triggered = FALSE;
 #endif
+
+#ifdef DEBUG_VTLN_ALPHA_TEST
+  /* store speech */
+  recog->speechlen = 0;
+#endif
+
+  return TRUE;
+}
+
+/** 
+ * <JA>
+ * @brief  音声波形からパラメータベクトルを計算する.
+ * 
+ * 窓単位で取り出された音声波形からMFCCベクトルを計算する.
+ * 計算結果は mfcc->tmpmfcc に保存される. 
+ * 
+ * @param mfcc [i/o] MFCC計算インスタンス
+ * @param window [in] 窓単位で取り出された音声波形データ
+ * @param windowlen [in] @a window の長さ
+ * 
+ * @return 計算成功時，TRUE を返す. デルタ計算において入力フレームが
+ * 少ないなど，まだ得られていない場合は FALSE を返す. 
+ * </JA>
+ * <EN>
+ * @brief  Compute a parameter vector from a speech window.
+ *
+ * This function calculates an MFCC vector from speech data windowed from
+ * input speech.  The obtained MFCC vector will be stored to mfcc->tmpmfcc.
+ * 
+ * @param mfcc [i/o] MFCC calculation instance
+ * @param window [in] speech input (windowed from input stream)
+ * @param windowlen [in] length of @a window
+ * 
+ * @return TRUE on success (an vector obtained).  Returns FALSE if no
+ * parameter vector obtained yet (due to delta delay).
+ * </EN>
+ *
+ * @callgraph
+ * @callergraph
+ * 
+ */
+boolean
+RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
+{
+  int i;
+  boolean ret;
+  VECT *tmpmfcc;
+  Value *para;
+
+  tmpmfcc = mfcc->tmpmfcc;
+  para = mfcc->para;
+
+  /* 音声波形から base MFCC を計算 (recog->mfccwrk を利用) */
+  /* calculate base MFCC from waveform (use recog->mfccwrk) */
+  for (i=0; i < windowlen; i++) {
+    mfcc->wrk->bf[i+1] = (float) window[i];
+  }
+  WMP_calc(mfcc->wrk, tmpmfcc, para);
+
+  if (para->energy && para->enormal) {
+    /* 対数エネルギー項を正規化する */
+    /* normalize log energy */
+    /* リアルタイム入力では発話ごとの最大エネルギーが得られないので
+       直前の発話のパワーで代用する */
+    /* Since the maximum power of the whole input utterance cannot be
+       obtained at real-time input, the maximum of last input will be
+       used to normalize.
+    */
+    tmpmfcc[para->baselen-1] = energy_max_normalize(&(mfcc->ewrk), tmpmfcc[para->baselen-1], para);
+  }
+
+  if (para->delta) {
+    /* デルタを計算する */
+    /* calc delta coefficients */
+    ret = WMP_deltabuf_proceed(mfcc->db, tmpmfcc);
+#ifdef RDEBUG
+    printf("DeltaBuf: ret=%d, status=", ret);
+    for(i=0;i<mfcc->db->len;i++) {
+      printf("%d", mfcc->db->is_on[i]);
+    }
+    printf(", nextstore=%d\n", mfcc->db->store);
+#endif
+    /* ret == FALSE のときはまだディレイ中なので認識処理せず次入力へ */
+    /* if ret == FALSE, there is no available frame.  So just wait for
+       next input */
+    if (! ret) {
+      return FALSE;
+    }
+
+    /* db->vec に現在の元データとデルタ係数が入っているので tmpmfcc にコピー */
+    /* now db->vec holds the current base and full delta, so copy them to tmpmfcc */
+    memcpy(tmpmfcc, mfcc->db->vec, sizeof(VECT) * para->baselen * 2);
+  }
+
+  if (para->acc) {
+    /* Accelerationを計算する */
+    /* calc acceleration coefficients */
+    /* base+delta をそのまま入れる */
+    /* send the whole base+delta to the cycle buffer */
+    ret = WMP_deltabuf_proceed(mfcc->ab, tmpmfcc);
+#ifdef RDEBUG
+    printf("AccelBuf: ret=%d, status=", ret);
+    for(i=0;i<mfcc->ab->len;i++) {
+      printf("%d", mfcc->ab->is_on[i]);
+    }
+    printf(", nextstore=%d\n", mfcc->ab->store);
+#endif
+    /* ret == FALSE のときはまだディレイ中なので認識処理せず次入力へ */
+    /* if ret == FALSE, there is no available frame.  So just wait for
+       next input */
+    if (! ret) {
+      return FALSE;
+    }
+    /* ab->vec には，(base+delta) とその差分係数が入っている. 
+       [base] [delta] [delta] [acc] の順で入っているので,
+       [base] [delta] [acc] を tmpmfcc にコピーする. */
+    /* now ab->vec holds the current (base+delta) and their delta coef. 
+       it holds a vector in the order of [base] [delta] [delta] [acc], 
+       so copy the [base], [delta] and [acc] to tmpmfcc.  */
+    memcpy(tmpmfcc, mfcc->ab->vec, sizeof(VECT) * para->baselen * 2);
+    memcpy(&(tmpmfcc[para->baselen*2]), &(mfcc->ab->vec[para->baselen*3]), sizeof(VECT) * para->baselen);
+  }
+
+#ifdef POWER_REJECT
+  if (para->energy || para->c0) {
+    mfcc->avg_power += tmpmfcc[para->baselen-1];
+  }
+#endif
+
+  if (para->delta && (para->energy || para->c0) && para->absesup) {
+    /* 絶対値パワーを除去 */
+    /* suppress absolute power */
+    memmove(&(tmpmfcc[para->baselen-1]), &(tmpmfcc[para->baselen]), sizeof(VECT) * (para->vecbuflen - para->baselen));
+  }
+
+  /* この時点で tmpmfcc に現時点での最新の特徴ベクトルが格納されている */
+  /* tmpmfcc[] now holds the latest parameter vector */
+
+  /* CMN を計算 */
+  /* perform CMN */
+  if (para->cmn || para->cvn) CMN_realtime(mfcc->cmn.wrk, tmpmfcc);
+
+  return TRUE;
+}
+
+static int
+proceed_one_frame(Recog *recog)
+{
+  MFCCCalc *mfcc;
+  RealBeam *r;
+  int maxf;
+  PROCESS_AM *am;
+  int rewind_frame;
+  boolean reprocess;
+  boolean ok_p;
+
+  r = &(recog->real);
+
+  /* call recognition start callback */
+  ok_p = FALSE;
+  maxf = 0;
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (!mfcc->valid) continue;
+    if (maxf < mfcc->f) maxf = mfcc->f;
+    if (mfcc->f == 0) {
+      ok_p = TRUE;
+    }
+  }
+  if (ok_p && maxf == 0) {
+    /* call callback when at least one of MFCC has initial frame */
+    if (recog->jconf->decodeopt.segment) {
+#ifdef BACKEND_VAD
+      /* not exec pass1 begin callback here */
+#else
+      if (!recog->process_segment) {
+	callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+      }
+      callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+      callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+      recog->triggered = TRUE;
+#endif
+    } else {
+      callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+      callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+      recog->triggered = TRUE;
+    }
+  }
+  /* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
+  switch (decode_proceed(recog)) {
+  case -1: /* error */
+    return -1;
+    break;
+  case 0:			/* success */
+    break;
+  case 1:			/* segmented */
+    /* 認識処理のセグメント要求で終わったことをフラグにセット */
+    /* set flag which indicates that the input has ended with segmentation request */
+    r->last_is_segmented = TRUE;
+    /* tell the caller to be segmented by this function */
+    /* 呼び出し元に，ここで入力を切るよう伝える */
+    return 1;
+  }
+#ifdef BACKEND_VAD
+  /* check up trigger in case of VAD segmentation */
+  if (recog->jconf->decodeopt.segment) {
+    if (recog->triggered == FALSE) {
+      if (spsegment_trigger_sync(recog)) {
+	if (!recog->process_segment) {
+	  callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+	}
+	callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+	callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+	recog->triggered = TRUE;
+      }
+    }
+  }
+#endif
+  
+  if (spsegment_need_restart(recog, &rewind_frame, &reprocess) == TRUE) {
+    /* set total length to the current frame */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (!mfcc->valid) continue;
+      mfcc->param->header.samplenum = mfcc->f + 1;
+      mfcc->param->samplenum = mfcc->f + 1;
+    }
+    /* do rewind for all mfcc here */
+    spsegment_restart_mfccs(recog, rewind_frame, reprocess);
+    /* also tell adin module to rehash the concurrent audio input */
+    recog->adin->rehash = TRUE;
+    /* reset outprob cache for all AM */
+    for(am=recog->amlist;am;am=am->next) {
+      outprob_prepare(&(am->hmmwrk), am->mfcc->param->samplenum);
+    }
+    if (reprocess) {
+      /* process the backstep MFCCs here */
+      while(1) {
+	ok_p = TRUE;
+	for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+	  if (! mfcc->valid) continue;
+	  mfcc->f++;
+	  if (mfcc->f < mfcc->param->samplenum) {
+	    mfcc->valid = TRUE;
+	    ok_p = FALSE;
+	  } else {
+	    mfcc->valid = FALSE;
+	  }
+	}
+	if (ok_p) {
+	  /* すべての MFCC が終わりに達したのでループ終了 */
+	  /* all MFCC has been processed, end of loop  */
+	  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+	    if (! mfcc->valid) continue;
+	    mfcc->f--;
+	  }
+	  break;
+	}
+	/* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
+	switch (decode_proceed(recog)) {
+	case -1: /* error */
+	  return -1;
+	  break;
+	case 0:			/* success */
+	  break;
+	case 1:			/* segmented */
+	  /* ignore segmentation while in the backstep segment */
+	  break;
+	}
+	/* call frame-wise callback */
+	callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+      }
+    }
+  }
+  /* call frame-wise callback if at least one of MFCC is valid at this frame */
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (mfcc->valid) {
+      callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+      break;
+    }
+  }
+  
+  return 0;
+}
+
+
+/** 
+ * <JA>
+ * @brief  第1パス平行音声認識処理のメイン
+ *
+ * この関数内では，漸次的な特徴量抽出および第1パスの認識が行われる. 
+ * 入力データに対して窓掛け・シフトを行いMFCC計算を行いながら，
+ * 音声認識を1フレームずつ並列実行する. 
+ *
+ * 認識処理（decode_proceed()）において，音声区間終了が要求される
+ * ことがある. この場合，未処理の音声を保存して第1パスを終了する
+ * よう呼出元に要求する. 
+ *
+ * SPSEGMENT_NAIST あるいは GMM_VAD などのバックエンドVAD定義時は，デコーダベースの
+ * VAD （音声区間開始検出）に伴うデコーディング制御が行われる. 
+ * トリガ前は，認識処理が呼ばれるが，実際には各関数内で認識処理は
+ * 行われていない. 開始を検出した時，この関数はそこまでに得られた
+ * MFCC列を一定フレーム長分巻戻し，その巻戻し先から通常の認識処理を
+ * 再開する. なお，複数処理インスタンス間がある場合，開始トリガは
+ * どれかのインスタンスが検出した時点で全ての開始が同期される. 
+ * 
+ * この関数は，音声入力ルーチンのコールバックとして呼ばれる.
+ * 音声データの数千サンプル録音ごとにこの関数が呼び出される. 
+ * 
+ * @param Speech [in] 音声データへのバッファへのポインタ
+ * @param nowlen [in] 音声データの長さ
+ * @param recog [i/o] engine instance
+ * 
+ * @return エラー時に -1 を，正常時に 0 を返す. また，第1パスを
+ * 終了するよう呼出元に要求するときは 1 を返す. 
+ * </JA>
+ * <EN>
+ * @brief  Main function of the on-the-fly 1st pass decoding
+ *
+ * This function performs sucessive MFCC calculation and 1st pass decoding.
+ * The given input data are windowed to a certain length, then converted
+ * to MFCC, and decoding for the input frame will be performed in one
+ * process cycle.  The loop cycle will continue with window shift, until
+ * the whole given input has been processed.
+ *
+ * In case of input segment request from decoding process (in
+ * decode_proceed()), this function keeps the rest un-processed speech
+ * to a buffer and tell the caller to stop input and end the 1st pass.
+ *
+ * When back-end VAD such as SPSEGMENT_NAIST or GMM_VAD is defined,  Decoder-based
+ * VAD is enabled and its decoding control will be managed here.
+ * In decoder-based VAD mode, the recognition will be processed but
+ * no output will be done at the first un-triggering input area.
+ * when speech input start is detected, this function will rewind the
+ * already obtained MFCC sequence to a certain frames, and re-start
+ * normal recognition at that point.  When multiple recognition process
+ * instance is running, their segmentation will be synchronized.
+ * 
+ * This function will be called each time a new speech sample comes as
+ * as callback from A/D-in routine.
+ * 
+ * @param Speech [in] pointer to the speech sample segments
+ * @param nowlen [in] length of above
+ * @param recog [i/o] engine instance
+ * 
+ * @return -1 on error (will close stream and terminate recognition),
+ * 0 on success (allow caller to call me for the next segment).  It
+ * returns 1 when telling the caller to segment now at the middle of
+ * input , and 2 when input length overflow is detected.
+ * </EN>
+ *
+ * @callgraph
+ * @callergraph
+ * 
+ */
+int
+RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] = input */
+{
+  int i, now, ret;
+  MFCCCalc *mfcc;
+  RealBeam *r;
+
+  r = &(recog->real);
+
+#ifdef DEBUG_VTLN_ALPHA_TEST
+  /* store speech */
+  adin_cut_callback_store_buffer(Speech, nowlen, recog);
+#endif
+
+  /* window[0..windownum-1] は前回の呼び出しで残った音声データが格納されている */
+  /* window[0..windownum-1] are speech data left from previous call */
+
+  /* 処理用ポインタを初期化 */
+  /* initialize pointer for local processing */
+  now = 0;
+  
+  /* 認識処理がセグメント要求で終わったのかどうかのフラグをリセット */
+  /* reset flag which indicates whether the input has ended with segmentation request */
+  r->last_is_segmented = FALSE;
+
+#ifdef RDEBUG
+  printf("got %d samples\n", nowlen);
+#endif
+
+  while (now < nowlen) {	/* till whole input is processed */
+    /* 入力長が maxframelen に達したらここで強制終了 */
+    /* if input length reaches maximum buffer size, terminate 1st pass here */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (mfcc->f >= r->maxframelen) {
+	jlog("Warning: too long input (> %d frames), segment it now\n", r->maxframelen);
+	return(1);
+      }
+    }
+    /* 窓バッファを埋められるだけ埋める */
+    /* fill window buffer as many as possible */
+    for(i = min(r->windowlen - r->windownum, nowlen - now); i > 0 ; i--)
+      r->window[r->windownum++] = (float) Speech[now++];
+    /* もし窓バッファが埋まらなければ, このセグメントの処理はここで終わる. 
+       処理されなかったサンプル (window[0..windownum-1]) は次回に持ち越し. */
+    /* if window buffer was not filled, end processing here, keeping the
+       rest samples (window[0..windownum-1]) in the window buffer. */
+    if (r->windownum < r->windowlen) break;
+#ifdef RDEBUG
+    /*    printf("%d used, %d rest\n", now, nowlen - now);
+
+	  printf("[f = %d]\n", f);*/
+#endif
+
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      mfcc->valid = FALSE;
+      /* 窓内の音声波形から特徴量を計算して r->tmpmfcc に格納  */
+      /* calculate a parameter vector from current waveform windows
+	 and store to r->tmpmfcc */
+      if ((*(recog->calc_vector))(mfcc, r->window, r->windowlen)) {
+#ifdef ENABLE_PLUGIN
+	/* call post-process plugin if exist */
+	plugin_exec_vector_postprocess(mfcc->tmpmfcc, mfcc->param->veclen, mfcc->f);
+#endif
+	/* MFCC完成，登録 */
+  	mfcc->valid = TRUE;
+	/* now get the MFCC vector of current frame, now store it to param */
+	if (param_alloc(mfcc->param, mfcc->f + 1, mfcc->param->veclen) == FALSE) {
+	  jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+	  return -1;
+	}
+	memcpy(mfcc->param->parvec[mfcc->f], mfcc->tmpmfcc, sizeof(VECT) * mfcc->param->veclen);
+#ifdef RDEBUG
+	printf("DeltaBuf: %02d: got frame %d\n", mfcc->id, mfcc->f);
+#endif
+      }
+    }
+
+    /* 処理を1フレーム進める */
+    /* proceed one frame */
+    ret = proceed_one_frame(recog);
+
+    if (ret == 1 && recog->jconf->decodeopt.segment) {
+      /* ショートポーズセグメンテーション: バッファに残っているデータを
+	 別に保持して，次回の最初に処理する */
+      /* short pause segmentation: there is some data left in buffer, so
+	 we should keep them for next processing */
+      r->rest_len = nowlen - now;
+      if (r->rest_len > 0) {
+	/* copy rest samples to rest_Speech */
+	if (r->rest_Speech == NULL) {
+	  r->rest_alloc_len = r->rest_len;
+	  r->rest_Speech = (SP16 *)mymalloc(sizeof(SP16)*r->rest_alloc_len);
+	} else if (r->rest_alloc_len < r->rest_len) {
+	  r->rest_alloc_len = r->rest_len;
+	  r->rest_Speech = (SP16 *)myrealloc(r->rest_Speech, sizeof(SP16)*r->rest_alloc_len);
+	}
+	memcpy(r->rest_Speech, &(Speech[now]), sizeof(SP16) * r->rest_len);
+      }
+    }
+    if (ret != 0) return ret;
+
+    /* 1フレーム処理が進んだのでポインタを進める */
+    /* proceed frame pointer */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (!mfcc->valid) continue;
+      mfcc->f++;
+    }
+
+    /* 窓バッファを処理が終わった分シフト */
+    /* shift window */
+    memmove(r->window, &(r->window[recog->jconf->input.frameshift]), sizeof(SP16) * (r->windowlen - recog->jconf->input.frameshift));
+    r->windownum -= recog->jconf->input.frameshift;
+  }
+
+  /* 与えられた音声セグメントに対する認識処理が全て終了
+     呼び出し元に, 入力を続けるよう伝える */
+  /* input segment is fully processed
+     tell the caller to continue input */
+  return(0);			
+}
+
+/** 
+ * <JA>
+ * @brief  セグメントの認識再開処理
+ *
+ * この関数はデコーダベースVADやショートポーズセグメンテーションによって
+ * 入力がセグメントに切られた場合に，その後の認識の再開に関する処理を行う. 
+ * 具体的には，入力の認識を開始する前に，前回の入力セグメントにおける
+ * 巻戻し分のMFCC列から認識を開始する. さらに，前回のセグメンテーション時に
+ * 未処理だった残りの音声サンプルがあればそれも処理する.
+ *
+ * @param recog [i/o] エンジンインスタンス
+ * 
+ * @return エラー時 -1，正常時 0 を返す. また，この入力断片の処理中に
+ * 文章の区切りが見つかったときは第1パスをここで中断するために 1 を返す. 
+ * </JA>
+ * </JA>
+ * <EN>
+ * @brief  Resuming recognition for short pause segmentation.
+ *
+ * This function process overlapped data and remaining speech prior
+ * to the next input when input was segmented at last processing.
+ *
+ * @param recog [i/o] engine instance
+ *
+ * @return -1 on error (tell caller to terminate), 0 on success (allow caller
+ * to call me for the next segment), or 1 when an end-of-sentence detected
+ * at this point (in that case caller will stop input and go to 2nd pass)
+ * </EN>
+ *
+ * @callgraph
+ * @callergraph
+ * 
+ */
+int
+RealTimeResume(Recog *recog)
+{
+  MFCCCalc *mfcc;
+  RealBeam *r;
+  boolean ok_p;
+#ifdef SPSEGMENT_NAIST
+  RecogProcess *p;
+#endif
+  PROCESS_AM *am;
+
+  r = &(recog->real);
+
+  /* 計算用のワークエリアを準備 */
+  /* prepare work area for calculation */
+  if (recog->jconf->input.type == INPUT_WAVEFORM) {
+    reset_mfcc(recog);
+  }
+  /* 音響尤度計算用キャッシュを準備 */
+  /* prepare cache area for acoustic computation of HMM states and mixtures */
+  for(am=recog->amlist;am;am=am->next) {
+    outprob_prepare(&(am->hmmwrk), r->maxframelen);
+  }
+
+  /* param にある全パラメータを処理する準備 */
+  /* prepare to process all data in param */
+  for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (mfcc->param->samplenum == 0) mfcc->valid = FALSE;
+    else mfcc->valid = TRUE;
+#ifdef RDEBUG
+    printf("Resume: %02d: f=%d\n", mfcc->id, mfcc->mfcc->param->samplenum-1);
+#endif
+    /* フレーム数をリセット */
+    /* reset frame count */
+    mfcc->f = 0;
+    /* MAP-CMN の初期化 */
+    /* Prepare for MAP-CMN */
+    if (mfcc->para->cmn || mfcc->para->cvn) CMN_realtime_prepare(mfcc->cmn.wrk);
+  }
+
+#ifdef BACKEND_VAD
+  if (recog->jconf->decodeopt.segment) {
+    spsegment_init(recog);
+  }
+  /* not exec pass1 begin callback here */
+#else
+  recog->triggered = FALSE;
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (!mfcc->valid) continue;
+    callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+    callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+    recog->triggered = TRUE;
+    break;
+  }
+#endif
+
+  /* param 内の全フレームについて認識処理を進める */
+  /* proceed recognition for all frames in param */
 
   while(1) {
     ok_p = TRUE;
@@ -2241,21 +1015,298 @@ get_back_trellis(Recog *recog)
       break;
     }
 
+    /* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
     switch (decode_proceed(recog)) {
     case -1: /* error */
-      return FALSE;
+      return -1;
       break;
     case 0:			/* success */
       break;
     case 1:			/* segmented */
-      /* 探索中断: 処理された入力は 0 から t-2 まで */
-      /* search terminated: processed input = [0..t-2] */
-      /* この時点で第1パスを終了する */
-      /* end the 1st pass at this point */
-      decode_end_segmented(recog);
-      /* terminate 1st pass here */
-      return TRUE;
+      /* segmented, end procs ([0..f])*/
+      r->last_is_segmented = TRUE;
+      return 1;		/* segmented by this function */
     }
+
+#ifdef BACKEND_VAD
+    /* check up trigger in case of VAD segmentation */
+    if (recog->jconf->decodeopt.segment) {
+      if (recog->triggered == FALSE) {
+	if (spsegment_trigger_sync(recog)) {
+	  callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+	  callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+	  recog->triggered = TRUE;
+	}
+      }
+    }
+#endif
+
+    /* call frame-wise callback */
+    callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+
+    /* 1フレーム処理が進んだのでポインタを進める */
+    /* proceed frame pointer */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (!mfcc->valid) continue;
+      mfcc->f++;
+    }
+
+  }
+  /* 前回のセグメント時に入力をシフトしていない分をシフトする */
+  /* do the last shift here */
+  if (recog->jconf->input.type == INPUT_WAVEFORM) {
+    memmove(r->window, &(r->window[recog->jconf->input.frameshift]), sizeof(SP16) * (r->windowlen - recog->jconf->input.frameshift));
+    r->windownum -= recog->jconf->input.frameshift;
+    /* これで再開の準備が整ったので,まずは前回の処理で残っていた音声データから
+       処理する */
+    /* now that the search status has been prepared for the next input, we
+       first process the rest unprocessed samples at the last session */
+    if (r->rest_len > 0) {
+      return(RealTimePipeLine(r->rest_Speech, r->rest_len, recog));
+    }
+  }
+
+  /* 新規の入力に対して認識処理は続く… */
+  /* the recognition process will continue for the newly incoming samples... */
+  return 0;
+
+}
+
+
+/** 
+ * <JA>
+ * @brief  第1パス平行認識処理の終了処理を行う.
+ *
+ * この関数は第1パス終了時に呼ばれ，入力長を確定したあと，
+ * decode_end() （セグメントで終了したときは decode_end_segmented()）を
+ * 呼び出して第1パス終了処理を行う. 
+ *
+ * もし音声入力ストリームの終了によって認識が終わった場合（ファイル入力で
+ * 終端に達した場合など）は，デルタバッファに未処理の入力が残っているので，
+ * それをここで処理する. 
+ *
+ * @param recog [i/o] エンジンインスタンス
+ * 
+ * @return 処理成功時 TRUE, エラー時 FALSE を返す. 
+ * </JA>
+ * <EN>
+ * @brief  Finalize the 1st pass on-the-fly decoding.
+ *
+ * This function will be called after the 1st pass processing ends.
+ * It fix the input length of parameter vector sequence, call
+ * decode_end() (or decode_end_segmented() when last input was ended
+ * by segmentation) to finalize the 1st pass.
+ *
+ * If the last input was ended by end-of-stream (in case input reached
+ * EOF in file input etc.), process the rest samples remaining in the
+ * delta buffers.
+ *
+ * @param recog [i/o] engine instance
+ * 
+ * @return TRUE on success, or FALSE on error.
+ * </EN>
+ */
+boolean
+RealTimeParam(Recog *recog)
+{
+  boolean ret1, ret2;
+  RealBeam *r;
+  int ret;
+  int maxf;
+  boolean ok_p;
+  MFCCCalc *mfcc;
+  Value *para;
+#ifdef RDEBUG
+  int i;
+#endif
+
+  r = &(recog->real);
+
+  if (r->last_is_segmented) {
+
+    /* RealTimePipeLine で認識処理側の理由により認識が中断した場合,
+       現状態のMFCC計算データをそのまま次回へ保持する必要があるので,
+       MFCC計算終了処理を行わずに第１パスの結果のみ出力して終わる. */
+    /* When input segmented by recognition process in RealTimePipeLine(),
+       we have to keep the whole current status of MFCC computation to the
+       next call.  So here we only output the 1st pass result. */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      mfcc->param->header.samplenum = mfcc->f + 1;/* len = lastid + 1 */
+      mfcc->param->samplenum = mfcc->f + 1;
+    }
+    decode_end_segmented(recog);
+
+    /* この区間の param データを第２パスのために返す */
+    /* return obtained parameter for 2nd pass */
+    return(TRUE);
+  }
+
+  if (recog->jconf->input.type == INPUT_VECTOR) {
+    /* finalize real-time 1st pass */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      mfcc->param->header.samplenum = mfcc->f;
+      mfcc->param->samplenum = mfcc->f;
+    }
+    /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+    decode_end(recog);
+    return TRUE;
+  }
+
+  /* MFCC計算の終了処理を行う: 最後の遅延フレーム分を処理 */
+  /* finish MFCC computation for the last delayed frames */
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    if (mfcc->para->delta || mfcc->para->acc) {
+      mfcc->valid = TRUE;
+    } else {
+      mfcc->valid = FALSE;
+    }
+  }
+
+  /* loop until all data has been flushed */
+  while (1) {
+
+    /* check frame overflow */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (! mfcc->valid) continue;
+      if (mfcc->f >= r->maxframelen) mfcc->valid = FALSE;
+    }
+
+    /* if all mfcc became invalid, exit loop here */
+    ok_p = FALSE;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (mfcc->valid) {
+	ok_p = TRUE;
+	break;
+      }
+    }
+    if (!ok_p) break;
+
+    /* try to get 1 frame for all mfcc instances */
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      
+      para = mfcc->para;
+      
+      if (! mfcc->valid) continue;
+      
+      /* check if there is data in cycle buffer of delta */
+      ret1 = WMP_deltabuf_flush(mfcc->db);
+#ifdef RDEBUG
+      printf("DeltaBufLast: ret=%d, status=", ret1);
+      for(i=0;i<mfcc->db->len;i++) {
+	printf("%d", mfcc->db->is_on[i]);
+      }
+      printf(", nextstore=%d\n", mfcc->db->store);
+#endif
+      if (ret1) {
+	/* uncomputed delta has flushed, compute it with tmpmfcc */
+	if (para->energy && para->absesup) {
+	  memcpy(mfcc->tmpmfcc, mfcc->db->vec, sizeof(VECT) * (para->baselen - 1));
+	  memcpy(&(mfcc->tmpmfcc[para->baselen-1]), &(mfcc->db->vec[para->baselen]), sizeof(VECT) * para->baselen);
+	} else {
+	  memcpy(mfcc->tmpmfcc, mfcc->db->vec, sizeof(VECT) * para->baselen * 2);
+	}
+	if (para->acc) {
+	  /* this new delta should be given to the accel cycle buffer */
+	  ret2 = WMP_deltabuf_proceed(mfcc->ab, mfcc->tmpmfcc);
+#ifdef RDEBUG
+	  printf("AccelBuf: ret=%d, status=", ret2);
+	  for(i=0;i<mfcc->ab->len;i++) {
+	    printf("%d", mfcc->ab->is_on[i]);
+	  }
+	  printf(", nextstore=%d\n", mfcc->ab->store);
+#endif
+	  if (ret2) {
+	    /* uncomputed accel was given, compute it with tmpmfcc */
+	    memcpy(mfcc->tmpmfcc, mfcc->ab->vec, sizeof(VECT) * (para->veclen - para->baselen));
+	    memcpy(&(mfcc->tmpmfcc[para->veclen - para->baselen]), &(mfcc->ab->vec[para->veclen - para->baselen]), sizeof(VECT) * para->baselen);
+	  } else {
+	    /* still no input is given: */
+	    /* in case of very short input: go on to the next input */
+	    continue;
+	  }
+	}
+	
+      } else {
+      
+	/* no data left in the delta buffer */
+	if (para->acc) {
+	  /* no new data, just flush the accel buffer */
+	  ret2 = WMP_deltabuf_flush(mfcc->ab);
+#ifdef RDEBUG
+	  printf("AccelBuf: ret=%d, status=", ret2);
+	  for(i=0;i<mfcc->ab->len;i++) {
+	    printf("%d", mfcc->ab->is_on[i]);
+	  }
+	  printf(", nextstore=%d\n", mfcc->ab->store);
+#endif
+	  if (ret2) {
+	    /* uncomputed data has flushed, compute it with tmpmfcc */
+	    memcpy(mfcc->tmpmfcc, mfcc->ab->vec, sizeof(VECT) * (para->veclen - para->baselen));
+	    memcpy(&(mfcc->tmpmfcc[para->veclen - para->baselen]), &(mfcc->ab->vec[para->veclen - para->baselen]), sizeof(VECT) * para->baselen);
+	  } else {
+	    /* actually no data exists in both delta and accel */
+	    mfcc->valid = FALSE; /* disactivate this instance */
+	    continue;		/* end this loop */
+	  }
+	} else {
+	  /* only delta: input fully flushed */
+	  mfcc->valid = FALSE; /* disactivate this instance */
+	  continue;		/* end this loop */
+	}
+      }
+      /* a new frame has been obtained from delta buffer to tmpmfcc */
+      if(para->cmn || para->cvn) CMN_realtime(mfcc->cmn.wrk, mfcc->tmpmfcc);
+      if (param_alloc(mfcc->param, mfcc->f + 1, mfcc->param->veclen) == FALSE) {
+	jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+	return FALSE;
+      }
+      /* store to mfcc->f */
+      memcpy(mfcc->param->parvec[mfcc->f], mfcc->tmpmfcc, sizeof(VECT) * mfcc->param->veclen);
+#ifdef ENABLE_PLUGIN
+      /* call postprocess plugin if any */
+      plugin_exec_vector_postprocess(mfcc->param->parvec[mfcc->f], mfcc->param->veclen, mfcc->f);
+#endif
+    }
+
+    /* call recognition start callback */
+    ok_p = FALSE;
+    maxf = 0;
+    for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+      if (!mfcc->valid) continue;
+      if (maxf < mfcc->f) maxf = mfcc->f;
+      if (mfcc->f == 0) {
+	ok_p = TRUE;
+      }
+    }
+
+    if (ok_p && maxf == 0) {
+      /* call callback when at least one of MFCC has initial frame */
+      if (recog->jconf->decodeopt.segment) {
+#ifdef BACKEND_VAD
+	  /* not exec pass1 begin callback here */
+#else
+	if (!recog->process_segment) {
+	  callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+	}
+	callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+	callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+	recog->triggered = TRUE;
+#endif
+      } else {
+	callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+	callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+	recog->triggered = TRUE;
+      }
+    }
+
+    /* proceed for the curent frame */
+    ret = decode_proceed(recog);
+    if (ret == -1) {		/* error */
+      return -1;
+    } else if (ret == 1) {	/* segmented */
+      /* loop out */
+      break;
+    } /* else no event occured */
 
 #ifdef BACKEND_VAD
     /* check up trigger in case of VAD segmentation */
@@ -2273,35 +1324,249 @@ get_back_trellis(Recog *recog)
     }
 #endif
 
-    if (spsegment_need_restart(recog, &rewind_frame, &reprocess) == TRUE) {
-      /* do rewind for all mfcc here */
-      spsegment_restart_mfccs(recog, rewind_frame, reprocess);
-      /* reset outprob cache for all AM */
-      for(am=recog->amlist;am;am=am->next) {
-	outprob_prepare(&(am->hmmwrk), am->mfcc->param->samplenum);
-      }
-    }
     /* call frame-wise callback */
     callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
 
-    /* 1フレーム処理が進んだのでポインタを進める */
-    /* proceed frame pointer */
+    /* move to next */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-      if (!mfcc->valid) continue;
+      if (! mfcc->valid) continue;
       mfcc->f++;
     }
+  }
 
-    if (recog->process_want_terminate) {
-      /* termination requested */
-      decode_end_segmented(recog);
-      return TRUE;
+  /* finalize real-time 1st pass */
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    mfcc->param->header.samplenum = mfcc->f;
+    mfcc->param->samplenum = mfcc->f;
+  }
+  /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+  decode_end(recog);
+
+  return(TRUE);
+}
+
+/** 
+ * <JA>
+ * ケプストラム平均の更新. 
+ * 次回の認識に備えて，入力データからCMN用のケプストラム平均を更新する. 
+ * 
+ * @param mfcc [i/o] 計算対象の MFCC計算インスタンス
+ * @param recog [i/o] エンジンインスタンス
+ *
+ * </JA>
+ * <EN>
+ * Update cepstral mean.
+ *
+ * This function updates the initial cepstral mean for CMN of the next input.
+ *
+ * @param mfcc [i/o] MFCC Calculation instance to update its CMN
+ * @param recog [i/o] engine instance
+ * </EN>
+ */
+void
+RealTimeCMNUpdate(MFCCCalc *mfcc, Recog *recog)
+{
+  boolean cmn_update_p;
+  Value *para;
+  Jconf *jconf;
+  RecogProcess *r;
+
+  jconf = recog->jconf;
+  para = mfcc->para;
+  
+  /* update CMN vector for next speech */
+  if(para->cmn) {
+    if (mfcc->cmn.update) {
+      cmn_update_p = TRUE;
+      for(r=recog->process_list;r;r=r->next) {
+	if (!r->live) continue;
+	if (r->am->mfcc != mfcc) continue;
+	if (r->result.status < 0) { /* input rejected */
+	  cmn_update_p = FALSE;
+	  break;
+	}
+      }
+      if (cmn_update_p) {
+	/* update last CMN parameter for next spech */
+	CMN_realtime_update(mfcc->cmn.wrk, mfcc->param);
+      } else {
+	/* do not update, because the last input is bogus */
+	if (verbose_flag) {
+#ifdef BACKEND_VAD
+	  if (!recog->jconf->decodeopt.segment || recog->triggered) {
+	    jlog("STAT: skip CMN parameter update since last input was invalid\n");
+	  }
+#else
+	  jlog("STAT: skip CMN parameter update since last input was invalid\n");
+#endif
+	}
+      }
     }
+    /* if needed, save the updated CMN parameter to a file */
+    if (mfcc->cmn.save_filename) {
+      if (CMN_save_to_file(mfcc->cmn.wrk, mfcc->cmn.save_filename) == FALSE) {
+	jlog("WARNING: failed to save CMN parameter to \"%s\"\n", mfcc->cmn.save_filename);
+      }
+    }
+  }
+}
+
+/** 
+ * <JA>
+ * 第1パス平行認識処理を中断する. 
+ *
+ * @param recog [i/o] エンジンインスタンス
+ * </JA>
+ * <EN>
+ * Terminate the 1st pass on-the-fly decoding.
+ *
+ * @param recog [i/o] engine instance
+ * </EN>
+ */
+void
+RealTimeTerminate(Recog *recog)
+{
+  MFCCCalc *mfcc;
+
+  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+    mfcc->param->header.samplenum = mfcc->f;
+    mfcc->param->samplenum = mfcc->f;
   }
 
   /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
   decode_end(recog);
+}
 
-  return TRUE;
+/** 
+ * <EN>
+ * Free the whole work area for 1st pass on-the-fly decoding
+ * </EN>
+ * <JA>
+ * 第1パス並行処理のためのワークエリアを開放する
+ * </JA>
+ * 
+ * @param recog [in] engine instance
+ * 
+ */
+void
+realbeam_free(Recog *recog)
+{
+  RealBeam *r;
+
+  r = &(recog->real);
+
+  if (recog->real.window) {
+    free(recog->real.window);
+    recog->real.window = NULL;
+  }
+  if (recog->real.rest_Speech) {
+    free(recog->real.rest_Speech);
+    recog->real.rest_Speech = NULL;
+  }
+}
+
+
+
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
+
+/* MFCC realtime input */
+/** 
+ * <EN>
+ * 
+ * </EN>
+ * <JA>
+ * 
+ * </JA>
+ * 
+ * @param recog 
+ * @param ad_check 
+ * 
+ * @return 2 when input termination requested by recognition process,
+ * 1 when segmentation request returned from input module, 0 when end
+ * of input returned from input module, -1 on error, -2 when input
+ * termination requested by ad_check().
+ * 
+ */
+int
+mfcc_go(Recog *recog, int (*ad_check)(Recog *))
+{
+  RealBeam *r;
+  MFCCCalc *mfcc;
+  int new_f;
+  int ret, ret3;
+
+  r = &(recog->real);
+
+  r->last_is_segmented = FALSE;
+  
+  while(1/*in_data_vec*/) {
+
+    ret = mfc_module_read(recog->mfcclist, &new_f);
+
+    if (debug2_flag) {
+      if (recog->mfcclist->f < new_f) {
+	jlog("%d: %d (%d)\n", recog->mfcclist->f, new_f, ret);
+      }
+    }
+ 
+    /* callback poll */
+    if (ad_check != NULL) {
+      if ((ret3 = (*(ad_check))(recog)) < 0) {
+	if ((ret3 == -1 && recog->mfcclist->f == 0) || ret3 == -2) {
+	  return(-2);
+	}
+      }
+    }
+
+    while(recog->mfcclist->f < new_f) {
+
+      recog->mfcclist->valid = TRUE;
+
+#ifdef ENABLE_PLUGIN
+      /* call post-process plugin if exist */
+      plugin_exec_vector_postprocess(recog->mfcclist->param->parvec[recog->mfcclist->f], recog->mfcclist->param->veclen, recog->mfcclist->f);
+#endif
+
+      /* 処理を1フレーム進める */
+      /* proceed one frame */
+      
+      switch(proceed_one_frame(recog)) {
+      case -1:			/* error */
+	return -1;
+      case 0:			/* normal */
+	break;
+      case 1:			/* segmented by process */
+	return 2;
+      }
+
+      /* 1フレーム処理が進んだのでポインタを進める */
+      /* proceed frame pointer */
+      for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
+	if (!mfcc->valid) continue;
+	mfcc->f++;
+      }
+    }
+    
+    /* check if input end */
+    switch(ret) {
+    case -1: 			/* end of input */
+      return 0;
+    case -2:			/* error */
+      return -1;
+    case -3:			/* end of segment request */
+      return 1;
+    }
+  }
+  /* 与えられた音声セグメントに対する認識処理が全て終了
+     呼び出し元に, 入力を続けるよう伝える */
+  /* input segment is fully processed
+     tell the caller to continue input */
+  return(1);
 }
 
 /* end of file */
+
+

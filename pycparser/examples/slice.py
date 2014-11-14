@@ -1,5 +1,22 @@
 #!/usr/bin/python
 
+"""
+slice.py
+
+Classes:
+  InitializeSlicedVisitor
+  MarkSlicedVisitor
+  FuncDefRenameVisitor
+  IDVisitor
+  DataDependencyVisitor
+  PrintSliceVisitory
+
+Functions:
+  slice_ast
+  print_node
+  print_slice
+"""
+
 import sys
 
 # This is not required if you've installed pycparser into
@@ -21,10 +38,31 @@ class InitializeSlicedVisitor(c_ast.NodeVisitor):
     node.sliced = False
     for c_name, c in node.children():
       self.visit(c)
+"""
+Mark all nodes as part of program slice.
+"""
+class MarkSlicedVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    pass
+  def generic_visit(self, node):
+    node.sliced = True
+    for c_name, c in node.children():
+      self.visit(c)
+"""
+Rename function definition to append _slice. Also change to void type.
+"""
+class FuncDefRenameVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    pass
+  def visit_FuncDef(self, node):
+    # Change slice to void function
+    node.decl.type.type.type.names = ["void"]
+    node.decl.type.type.declname += "_slice"
 
 """
-Identify all IDs in tree. Struct accesses are saved as struct + member (i.e., a->b).
-Arrays should be identified by base name.
+Identify all IDs in tree. 
+Arrays should be identified by base name. (e.g., a[b] is identified by a).
+Struct accesses are saved as all sub-portions. (e.g., a->b->c will save a->b->c, a->b, and a.)
 """
 class IDVisitor(c_ast.NodeVisitor):
   def __init__(self):
@@ -42,8 +80,11 @@ class IDVisitor(c_ast.NodeVisitor):
     if node.name not in self.IDs:
       self.IDs.append(node.name)
   def visit_StructRef(self, node):
-    struct_name = self.cgenerator.visit(node)
-    self.IDs.append(struct_name)
+    # Recursively add struct reference and its base components
+    while not isinstance(node, str):
+      struct_name = self.cgenerator.visit(node)
+      self.IDs.append(struct_name)
+      node = node.name
 
 """
 Identify all data dependencies of the passed variable var.
@@ -160,6 +201,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
       if isinstance(c, c_ast.Return):
         # Create a new compound node
         insert_node = c_ast.Compound([])
+        """
         # If there is a return value, add statement for return_value = value
         if c.expr:
           ret_id = c_ast.ID("return_value")
@@ -167,6 +209,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
           assignment = c_ast.Assignment("=", ret_id, c.expr)
           assignment.sliced = True
           insert_node.block_items.append(assignment)
+        """
         # Goto end of function
         goto = c_ast.Goto(self.end_label)
         goto.sliced = True
@@ -203,6 +246,23 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     self.slice_loop(node)
   def visit_DoWhile(self, node):
     self.slice_loop(node)
+
+  """
+  Always include continue/break and labels to ensure control flow.
+  """
+  def visit_Continue(self, node):
+    node.sliced = True
+  def visit_Break(self, node):
+    node.sliced = True
+  def visit_Label(self, node):
+    node.sliced = True
+  def visit_Compound(self, node):
+    # Mark entire print_loop_counter block as part of slice
+    if isinstance(node.block_items[0], c_ast.Label) and node.block_items[0].name == "print_loop_counter":
+      v = MarkSlicedVisitor()
+      v.visit(node)
+    else:
+      self.generic_visit(node)
 
 """
 Only print out nodes that are considered part of slice
@@ -257,6 +317,9 @@ Return AST containing nodes which affect variable name var.
 def slice_ast(ast, var):
   # Set all nodes to sliced=False
   v = InitializeSlicedVisitor()
+  v.visit(ast)
+  # Rename function
+  v = FuncDefRenameVisitor()
   v.visit(ast)
   # Find immediate data dependencies
   v = DataDependencyVisitor(var)

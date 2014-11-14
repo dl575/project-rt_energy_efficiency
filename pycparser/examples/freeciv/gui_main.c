@@ -19,26 +19,24 @@
     email                : Rafał Bursig <bursig@poczta.fm>
  **********************************************************************/
 
-/*
-#ifdef HAVE_CONFIG_H
-#include <fc_config.h>
-#endif
-
-#include <errno.h>
-
-#ifdef HAVE_LOCALE_H
-#include <locale.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
-#endif
-*/
-
+//#ifdef HAVE_CONFIG_H
+//#include <fc_config.h>
+//#endif
+//
+//#include <errno.h>
+//
+//#ifdef HAVE_LOCALE_H
+//#include <locale.h>
+//#endif
+//
+//#ifdef HAVE_UNISTD_H
+//#include <unistd.h>
+//#endif
+//
+//#ifdef HAVE_WINSOCK
+//#include <winsock.h>
+//#endif
+//
 //#include "SDL.h"
 //
 ///* utility */
@@ -79,8 +77,10 @@
 //#include "themespec.h"
 //#include "spaceshipdlg.h"
 //#include "widget.h"
-
+//
 //#include "gui_main.h"
+//
+//#include "../../../../timing.h"
 
 #define UNITS_TIMER_INTERVAL 128	/* milliseconds */
 #define MAP_SCROLL_TIMER_INTERVAL 500
@@ -468,7 +468,7 @@ static int check_scroll_area(int x, int y) {
 /**************************************************************************
 ...
 **************************************************************************/
-void force_exit_from_event_loop(void)
+void force_exit_from_event_loop()
 {
   SDL_Event Event;
   
@@ -513,22 +513,16 @@ Uint16 gui_event_loop(void *pData,
   static struct timeval tv;
   static fd_set civfdset;
   Uint32 t_current, t_last_unit_anim, t_last_map_scrolling;
-  Uint32 last_t_current;
   Uint32 real_timer_next_call;
   static int result, schot_nr = 0;
   static char schot[32];
 
-  FILE *time_file;
-  time_file = fopen("times.txt", "w");
-  if (time_file == NULL) {
-    printf("Error opening times.txt!\n");
-    exit(1);
-  }
-
   ID = ID_ERROR;
   t_last_map_scrolling = t_last_unit_anim = real_timer_next_call = SDL_GetTicks();
   while (ID == ID_ERROR) {
-    printf("in error loop\n");
+
+    start_timing();
+
     /* ========================================= */
     /* net check with 10ms delay event loop */
     if ((net_socket >= 0) || (ggz_socket >= 0)) {
@@ -566,9 +560,7 @@ Uint16 gui_event_loop(void *pData,
     }
     /* ========================================= */
     
-    last_t_current = t_current;
     t_current = SDL_GetTicks();
-    fprintf(time_file, "time = %d\n", t_current - last_t_current);
     
     if (t_current > real_timer_next_call) {
       real_timer_next_call = t_current + (real_timer_callback() * 1000);
@@ -747,6 +739,9 @@ Uint16 gui_event_loop(void *pData,
         free(cb);
       }
     }
+
+    end_timing();
+    print_timing();
   }
   
   return ID;
@@ -757,7 +752,7 @@ Uint16 gui_event_loop(void *pData,
 /**************************************************************************
   Do any necessary pre-initialization of the UI, if necessary.
 **************************************************************************/
-void ui_init(void)
+void ui_init()
 {
   char device[20];
 /*  struct widget *pInit_String = NULL;*/
@@ -904,7 +899,7 @@ static void resize_window_callback(struct option *poption)
   Extra initializers for client options. Here we make set the callback
   for the specific gui-sdl options.
 ****************************************************************************/
-void gui_options_extra_init(void)
+void gui_options_extra_init()
 {
   struct option *poption;
 
@@ -923,7 +918,7 @@ void gui_options_extra_init(void)
 /**************************************************************************
 ...
 **************************************************************************/
-static void clear_double_messages_call(void)
+static void clear_double_messages_call()
 {
   int i;
   /* clear double call */
@@ -1109,7 +1104,7 @@ void ui_exit()
 /**************************************************************************
   Return our GUI type
 **************************************************************************/
-enum gui_type get_gui_type(void)
+enum gui_type get_gui_type()
 {
   return GUI_SDL;
 }
@@ -1118,7 +1113,7 @@ enum gui_type get_gui_type(void)
   Make a bell noise (beep).  This provides low-level sound alerts even
   if there is no real sound support.
 **************************************************************************/
-void sound_bell(void)
+void sound_bell()
 {
   log_debug("sound_bell : PORT ME");
 }
@@ -1126,7 +1121,7 @@ void sound_bell(void)
 /**************************************************************************
   Show Focused Unit Animation.
 **************************************************************************/
-void enable_focus_animation(void)
+void enable_focus_animation()
 {
   pAnim_User_Event->user.code = ANIM;
   SDL_Client_Flags |= CF_FOCUS_ANIMATION;
@@ -1135,7 +1130,7 @@ void enable_focus_animation(void)
 /**************************************************************************
   Don't show Focused Unit Animation.
 **************************************************************************/
-void disable_focus_animation(void)
+void disable_focus_animation()
 {
   SDL_Client_Flags &= ~CF_FOCUS_ANIMATION;
 }
@@ -1155,7 +1150,7 @@ void add_net_input(int sock)
 /**************************************************************************
   Stop waiting for any server network data.  See add_net_input().
 **************************************************************************/
-void remove_net_input(void)
+void remove_net_input()
 {
   log_debug("Connection DOWN... ");
   net_socket = (-1);
@@ -1177,7 +1172,7 @@ void add_ggz_input(int sock)
   Called on disconnection to remove monitoring on the GGZ socket.  Only
   call this if we're actually in GGZ mode.
 **************************************************************************/
-void remove_ggz_input(void)
+void remove_ggz_input()
 {
   log_debug("GGZ Connection DOWN... ");
   ggz_socket = (-1);
@@ -1201,13 +1196,13 @@ void add_idle_callback(void (callback)(void *), void *data)
 /****************************************************************************
   Stub for editor function
 ****************************************************************************/
-void editgui_tileset_changed(void)
+void editgui_tileset_changed()
 {}
 
 /****************************************************************************
   Stub for editor function
 ****************************************************************************/
-void editgui_refresh(void)
+void editgui_refresh()
 {}
 
 /****************************************************************************
@@ -1219,7 +1214,7 @@ void editgui_popup_properties(const struct tile_list *tiles, int objtype)
 /****************************************************************************
   Stub for editor function
 ****************************************************************************/
-void editgui_popdown_all(void)
+void editgui_popdown_all()
 {}
 
 /****************************************************************************
@@ -1237,13 +1232,13 @@ void editgui_notify_object_created(int tag, int id)
 /****************************************************************************
   Stub for ggz function
 ****************************************************************************/
-void gui_ggz_embed_leave_table(void)
+void gui_ggz_embed_leave_table()
 {}
 
 /****************************************************************************
   Stub for ggz function
 ****************************************************************************/
-void gui_ggz_embed_ensure_server(void)
+void gui_ggz_embed_ensure_server()
 {}
 
 

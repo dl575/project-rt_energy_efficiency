@@ -91,6 +91,9 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     decl = c_ast.Decl("loop_counter", [], [], [], array_decl, init_list, None) 
     node.body.block_items.insert(0, decl)
 
+    # Label for return values to goto
+    label = c_ast.Label("print_loop_counter", None)
+
     # Add printf to the end of function
     # Start of printing
     stmt_start = c_ast.ID("printf(\"loop counter = (\")")
@@ -114,7 +117,7 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     # End of printing
     stmt_end = c_ast.ID("printf(\")\\n\")")
     
-    compound = c_ast.Label("print_loop_counter", c_ast.Compound([stmt_start, for_decl, stmt_for, stmt_end]))
+    compound = c_ast.Compound([label, stmt_start, for_decl, stmt_for, stmt_end])
     node.body.block_items.append(compound)
 
 
