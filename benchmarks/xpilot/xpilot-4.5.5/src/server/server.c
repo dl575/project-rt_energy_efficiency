@@ -383,7 +383,7 @@ void Main_loop_slice()
         while (NumPlayers > 0)
         {
           loop_counter[4]++;
-{}
+          pl_rename0 = Players[NumPlayers - 1];
           if (pl_rename0->conn == NOT_CONNECTED)
           {
             loop_counter[5]++;
@@ -407,7 +407,11 @@ void Main_loop_slice()
 {}
         {
           return_value = FALSE;
+          goto return0;
         }
+        return0:
+        ;
+
       }
     }
     else
@@ -512,6 +516,9 @@ void Main_loop_slice()
 
               }
 
+              return15:
+              ;
+
             }
             {
               int i_rename16;
@@ -558,8 +565,14 @@ void Main_loop_slice()
                 player_shuffle_ptr[i_rename16] = tmp_rename16;
               }
 
+              return16:
+              ;
+
             }
           }
+
+          return4:
+          ;
 
         }
         if (((gameDuration > 0.0) && (game_over_called_rename1 == false)) && (oldTimeLeft_rename1 != (newTimeLeft_rename1 = gameOverTime - time(NULL))))
@@ -578,12 +591,12 @@ void Main_loop_slice()
         for (i_rename1 = 0; i_rename1 < num_player_shuffle; i_rename1++)
         {
           loop_counter[28]++;
-{}
-/*
+          pl_rename1 = Players[i_rename1];
           conn_rename1 = pl_rename1->conn;
           if (conn_rename1 == NOT_CONNECTED)
           {
             loop_counter[29]++;
+            continue;
           }
 
           if ((BIT(pl_rename1->status, PAUSE | GAME_OVER) && (!allowViewing)) && (!pl_rename1->isowner))
@@ -595,6 +608,7 @@ void Main_loop_slice()
               if (frame_loops & 0x03)
               {
                 loop_counter[32]++;
+                continue;
               }
 
             }
@@ -603,6 +617,7 @@ void Main_loop_slice()
               if (frame_loops & 0x01)
               {
                 loop_counter[33]++;
+                continue;
               }
 
             }
@@ -617,6 +632,7 @@ void Main_loop_slice()
             {
               loop_counter[35]++;
               pl_rename1->player_round = 0;
+              continue;
             }
 
           }
@@ -624,8 +640,8 @@ void Main_loop_slice()
           if (Send_start_of_frame(conn_rename1) == (-1))
           {
             loop_counter[36]++;
+            continue;
           }
-          */
 
           if (newTimeLeft_rename1 != oldTimeLeft_rename1)
           {
@@ -638,7 +654,7 @@ void Main_loop_slice()
             loop_counter[38]++;
 {}
           }
-/*
+
 
           if (BIT(pl_rename1->lock.tagged, LOCK_PLAYER))
           {
@@ -659,7 +675,6 @@ void Main_loop_slice()
             ind_rename1 = i_rename1;
           }
 
-          */
           if (Players[ind_rename1]->damaged > 0)
           {
             loop_counter[41]++;
@@ -670,7 +685,6 @@ void Main_loop_slice()
             {
               int ind_rename5 = ind_rename1;
               int conn_rename5 = conn_rename1;
-{}
               player *pl_rename5 = Players[ind_rename5];
               Get_display_parameters(conn_rename5, &view_width, &view_height, &debris_colors, &spark_rand);
               debris_x_areas = (view_width + 255) >> 8;
@@ -680,7 +694,7 @@ void Main_loop_slice()
               vertical_blocks = (view_height + (BLOCK_SZ - 1)) / BLOCK_SZ;
               pv.world.x = pl_rename5->pos.x - (view_width / 2);
               pv.world.y = pl_rename5->pos.y - (view_height / 2);
-{}
+              pv.realWorld = pv.world;
               if (BIT(World.rules->mode, WRAP_PLAY))
               {
                 loop_counter[42]++;
@@ -712,8 +726,10 @@ void Main_loop_slice()
 
               }
 
+              return5:
+              ;
+
             }
-            /*
             int Frame_status_result_rename1;
             {
               int return_value;
@@ -813,6 +829,7 @@ void Main_loop_slice()
                     mods_rename6[i_rename17++] = '0' + num_rename17;
                     {
                       return_value = i_rename17;
+                      goto return17;
                     }
                   }
 
@@ -828,7 +845,11 @@ void Main_loop_slice()
 
                   {
                     return_value = i_rename17 + digits_rename17;
+                    goto return17;
                   }
+                  return17:
+                  ;
+
                   i_rename6 = return_value;
                 }
               }
@@ -862,6 +883,7 @@ void Main_loop_slice()
                     mods_rename6[i_rename18++] = '0' + num_rename18;
                     {
                       return_value = i_rename18;
+                      goto return18;
                     }
                   }
 
@@ -877,7 +899,11 @@ void Main_loop_slice()
 
                   {
                     return_value = i_rename18 + digits_rename18;
+                    goto return18;
                   }
+                  return18:
+                  ;
+
                   i_rename6 = return_value;
                 }
               }
@@ -911,6 +937,7 @@ void Main_loop_slice()
                     mods_rename6[i_rename19++] = '0' + num_rename19;
                     {
                       return_value = i_rename19;
+                      goto return19;
                     }
                   }
 
@@ -926,7 +953,11 @@ void Main_loop_slice()
 
                   {
                     return_value = i_rename19 + digits_rename19;
+                    goto return19;
                   }
+                  return19:
+                  ;
+
                   i_rename6 = return_value;
                 }
               }
@@ -960,6 +991,7 @@ void Main_loop_slice()
                     mods_rename6[i_rename20++] = '0' + num_rename20;
                     {
                       return_value = i_rename20;
+                      goto return20;
                     }
                   }
 
@@ -975,7 +1007,11 @@ void Main_loop_slice()
 
                   {
                     return_value = i_rename20 + digits_rename20;
+                    goto return20;
                   }
+                  return20:
+                  ;
+
                   i_rename6 = return_value;
                 }
               }
@@ -1000,6 +1036,7 @@ void Main_loop_slice()
                 loop_counter[81]++;
                 {
                   return_value = 0;
+                  goto return6;
                 }
               }
 
@@ -1041,14 +1078,18 @@ void Main_loop_slice()
 
               {
                 return_value = 1;
+                goto return6;
               }
+              return6:
+              ;
+
               Frame_status_result_rename1 = return_value;
             }
             if (Frame_status_result_rename1 <= 0)
             {
               loop_counter[88]++;
+              continue;
             }
-*/
 
             {
               int ind_rename7 = ind_rename1;
@@ -1109,17 +1150,15 @@ void Main_loop_slice()
               for (k_rename7 = 0; k_rename7 < World.NumTargets; k_rename7++)
               {
                 loop_counter[94]++;
-{}
+                target_t *targ_rename7;
                 if ((++i_rename7) >= World.NumTargets)
                 {
                   loop_counter[95]++;
                   i_rename7 = 0;
                 }
 
-{}
-                target_t *targ;
-                targ = &World.targets[i_rename7];
-                if (BIT(targ->update_mask, conn_bit_rename7) || ((BIT(targ->conn_mask, conn_bit_rename7) == 0) && block_inview(&bv_rename7, targ->pos.x, targ->pos.y)))
+                targ_rename7 = &World.targets[i_rename7];
+                if (BIT(targ_rename7->update_mask, conn_bit_rename7) || ((BIT(targ_rename7->conn_mask, conn_bit_rename7) == 0) && block_inview(&bv_rename7, targ_rename7->pos.x, targ_rename7->pos.y)))
                 {
                   loop_counter[96]++;
 {}
@@ -1128,6 +1167,7 @@ void Main_loop_slice()
                   if ((++packet_count_rename7) >= max_packet_rename7)
                   {
                     loop_counter[97]++;
+                    break;
                   }
 
                 }
@@ -1158,6 +1198,7 @@ void Main_loop_slice()
                     if ((++packet_count_rename7) >= max_packet_rename7)
                     {
                       loop_counter[102]++;
+                      break;
                     }
 
                   }
@@ -1193,6 +1234,7 @@ void Main_loop_slice()
                       if ((++packet_count_rename7) >= max_packet_rename7)
                       {
                         loop_counter[108]++;
+                        break;
                       }
 
                     }
@@ -1209,42 +1251,42 @@ void Main_loop_slice()
               for (k_rename7 = 0; k_rename7 < World.NumWormholes; k_rename7++)
               {
                 loop_counter[109]++;
-{}
+                wormhole_t *worm_rename7;
                 if ((++i_rename7) >= World.NumWormholes)
                 {
                   loop_counter[110]++;
                   i_rename7 = 0;
                 }
 
-{}
-                wormhole_t * worm;
-                worm = &World.wormHoles[i_rename7];
-                if (((wormholeVisible && worm->temporary) && ((worm->type == WORM_IN) || (worm->type == WORM_NORMAL))) && block_inview(&bv_rename7, worm->pos.x, worm->pos.y))
+                worm_rename7 = &World.wormHoles[i_rename7];
+                if (((wormholeVisible && worm_rename7->temporary) && ((worm_rename7->type == WORM_IN) || (worm_rename7->type == WORM_NORMAL))) && block_inview(&bv_rename7, worm_rename7->pos.x, worm_rename7->pos.y))
                 {
                   loop_counter[111]++;
-                  int x_rename7 = (worm->pos.x * BLOCK_SZ) + (BLOCK_SZ / 2);
-                  int y_rename7 = (worm->pos.y * BLOCK_SZ) + (BLOCK_SZ / 2);
+                  int x_rename7 = (worm_rename7->pos.x * BLOCK_SZ) + (BLOCK_SZ / 2);
+                  int y_rename7 = (worm_rename7->pos.y * BLOCK_SZ) + (BLOCK_SZ / 2);
 {}
                   pl_rename7->last_wormhole_update = i_rename7;
                   bytes_left_rename7 -= max_packet_rename7 * wormhole_packet_size_rename7;
                   if ((++packet_count_rename7) >= max_packet_rename7)
                   {
                     loop_counter[112]++;
+                    break;
                   }
 
                 }
 
               }
 
+              return7:
+              ;
+
             }
-/*
             {
               int ind_rename8 = ind_rename1;
 {}
               player *pl_rename8 = Players[ind_rename8];
               player *pl_i_rename8;
-{}
-              pulse_t * pulse;
+              pulse_t *pulse_rename8;
               int i_rename8;
               int j_rename8;
               int k_rename8;
@@ -1255,15 +1297,15 @@ void Main_loop_slice()
               for (j_rename8 = 0; j_rename8 < NumPulses; j_rename8++)
               {
                 loop_counter[113]++;
-{}
-                pulse = Pulses[j_rename8];
-                if (pulse->len <= 0)
+                pulse_rename8 = Pulses[j_rename8];
+                if (pulse_rename8->len <= 0)
                 {
                   loop_counter[114]++;
+                  continue;
                 }
 
-                x_rename8 = pulse->pos.x;
-                y_rename8 = pulse->pos.y;
+                x_rename8 = pulse_rename8->pos.x;
+                y_rename8 = pulse_rename8->pos.y;
                 if (BIT(World.rules->mode, WRAP_PLAY))
                 {
                   loop_counter[115]++;
@@ -1302,8 +1344,8 @@ void Main_loop_slice()
                 }
                 else
                 {
-                  x_rename8 += tcos(pulse->dir) * pulse->len;
-                  y_rename8 += tsin(pulse->dir) * pulse->len;
+                  x_rename8 += tcos(pulse_rename8->dir) * pulse_rename8->len;
+                  y_rename8 += tsin(pulse_rename8->dir) * pulse_rename8->len;
                   if (BIT(World.rules->mode, WRAP_PLAY))
                   {
                     loop_counter[121]++;
@@ -1342,17 +1384,18 @@ void Main_loop_slice()
                   }
                   else
                   {
+                    continue;
                   }
 
                 }
 
-                if (Team_immune(pulse->id, pl_rename8->id))
+                if (Team_immune(pulse_rename8->id, pl_rename8->id))
                 {
                   loop_counter[127]++;
 {}
                 }
                 else
-                  if ((pulse->id == pl_rename8->id) && selfImmunity)
+                  if ((pulse_rename8->id == pl_rename8->id) && selfImmunity)
                 {
                   loop_counter[128]++;
 {}
@@ -1412,26 +1455,30 @@ void Main_loop_slice()
               {
                 loop_counter[135]++;
                 i_rename8 = player_shuffle_ptr[k_rename8];
-{}
+                pl_i_rename8 = Players[i_rename8];
                 if (!BIT(pl_i_rename8->status, PLAYING | PAUSE))
                 {
                   loop_counter[136]++;
+                  continue;
                 }
 
                 if (BIT(pl_i_rename8->status, GAME_OVER))
                 {
                   loop_counter[137]++;
+                  continue;
                 }
 
                 if (!((((pl_i_rename8->pos.x > pv.world.x) && (pl_i_rename8->pos.x < (pv.world.x + view_width))) || ((pl_i_rename8->pos.x > pv.realWorld.x) && (pl_i_rename8->pos.x < (pv.realWorld.x + view_width)))) && (((pl_i_rename8->pos.y > pv.world.y) && (pl_i_rename8->pos.y < (pv.world.y + view_height))) || ((pl_i_rename8->pos.y > pv.realWorld.y) && (pl_i_rename8->pos.y < (pv.realWorld.y + view_height))))))
                 {
                   loop_counter[138]++;
+                  continue;
                 }
 
                 if (BIT(pl_i_rename8->status, PAUSE))
                 {
                   loop_counter[139]++;
 {}
+                  continue;
                 }
 
                 if (((pl_rename8->visibility[i_rename8].canSee || (i_rename8 == ind_rename8)) || TEAM(i_rename8, ind_rename8)) || ALLIANCE(i_rename8, ind_rename8))
@@ -1490,6 +1537,9 @@ void Main_loop_slice()
 
               }
 
+              return8:
+              ;
+
             }
             {
               int ind_rename9 = ind_rename1;
@@ -1504,18 +1554,13 @@ void Main_loop_slice()
               int teamshot_rename9;
 {}
               int obj_count_rename9;
-{}
-              object * shot;
-              object * (*obj_list);
+              object *shot_rename9;
+              object **obj_list_rename9;
               int hori_blocks_rename9;
               int vert_blocks_rename9;
               hori_blocks_rename9 = (view_width + (BLOCK_SZ - 1)) / (2 * BLOCK_SZ);
               vert_blocks_rename9 = (view_height + (BLOCK_SZ - 1)) / (2 * BLOCK_SZ);
-{}
-{}
-{}
-{}
-              Cell_get_objects(OBJ_X_IN_BLOCKS(pl_rename9), OBJ_Y_IN_BLOCKS(pl_rename9), MAX(hori_blocks_rename9, vert_blocks_rename9), num_object_shuffle, &obj_list, &obj_count_rename9);
+              Cell_get_objects(OBJ_X_IN_BLOCKS(pl_rename9), OBJ_Y_IN_BLOCKS(pl_rename9), MAX(hori_blocks_rename9, vert_blocks_rename9), num_object_shuffle, &obj_list_rename9, &obj_count_rename9);
               for (k_rename9 = 0; k_rename9 < num_object_shuffle; k_rename9++)
               {
                 loop_counter[149]++;
@@ -1523,24 +1568,26 @@ void Main_loop_slice()
                 if (i_rename9 >= obj_count_rename9)
                 {
                   loop_counter[150]++;
+                  continue;
                 }
 
-                shot = obj_list[i_rename9];
-                x_rename9 = shot->pos.x;
-                y_rename9 = shot->pos.y;
+                shot_rename9 = obj_list_rename9[i_rename9];
+                x_rename9 = shot_rename9->pos.x;
+                y_rename9 = shot_rename9->pos.y;
                 if (!((((x_rename9 > pv.world.x) && (x_rename9 < (pv.world.x + view_width))) || ((x_rename9 > pv.realWorld.x) && (x_rename9 < (pv.realWorld.x + view_width)))) && (((y_rename9 > pv.world.y) && (y_rename9 < (pv.world.y + view_height))) || ((y_rename9 > pv.realWorld.y) && (y_rename9 < (pv.realWorld.y + view_height))))))
                 {
                   loop_counter[151]++;
+                  continue;
                 }
 
-                if ((color_rename9 = shot->color) == BLACK)
+                if ((color_rename9 = shot_rename9->color) == BLACK)
                 {
                   loop_counter[152]++;
 {}
                   color_rename9 = WHITE;
                 }
 
-                switch (shot->type)
+                switch (shot_rename9->type)
                 {
                   case OBJ_DEBRIS:
                     if ((fuzz_rename9 >>= 7) < 0x40)
@@ -1552,6 +1599,7 @@ void Main_loop_slice()
                     if ((fuzz_rename9 & 0x7F) >= spark_rand)
                   {
                     loop_counter[154]++;
+                    break;
                   }
 
                     if (debris_colors >= 3)
@@ -1563,11 +1611,11 @@ void Main_loop_slice()
                       if (color_rename9 == BLUE)
                       {
                         loop_counter[157]++;
-                        color_rename9 = shot->life >> 1;
+                        color_rename9 = shot_rename9->life >> 1;
                       }
                       else
                       {
-                        color_rename9 = shot->life >> 2;
+                        color_rename9 = shot_rename9->life >> 2;
                       }
 
                     }
@@ -1576,11 +1624,11 @@ void Main_loop_slice()
                       if (color_rename9 == BLUE)
                       {
                         loop_counter[158]++;
-                        color_rename9 = shot->life >> 2;
+                        color_rename9 = shot_rename9->life >> 2;
                       }
                       else
                       {
-                        color_rename9 = shot->life >> 3;
+                        color_rename9 = shot_rename9->life >> 3;
                       }
 
                     }
@@ -1595,8 +1643,8 @@ void Main_loop_slice()
 
                   {
                     int color_rename21 = color_rename9;
-                    int yf_rename21 = (int) (shot->pos.y - pv.world.y);
-                    int xf_rename21 = (int) (shot->pos.x - pv.world.x);
+                    int yf_rename21 = (int) (shot_rename9->pos.y - pv.world.y);
+                    int xf_rename21 = (int) (shot_rename9->pos.x - pv.world.x);
                     int i_rename21;
                     if (xf_rename21 < 0)
                     {
@@ -1614,6 +1662,7 @@ void Main_loop_slice()
                     {
                       loop_counter[162]++;
                       {
+                        goto return21;
                       }
                     }
 
@@ -1622,6 +1671,7 @@ void Main_loop_slice()
                     {
                       loop_counter[163]++;
                       {
+                        goto return21;
                       }
                     }
 
@@ -1644,6 +1694,7 @@ void Main_loop_slice()
 {}
                         debris_num[i_rename21] = 0;
                         {
+                          goto return21;
                         }
                       }
 
@@ -1652,7 +1703,11 @@ void Main_loop_slice()
 {}
 {}
                     debris_num[i_rename21]++;
+                    return21:
+                    ;
+
                   }
+                    break;
 
                   case OBJ_WRECKAGE:
                     if ((spark_rand != 0) || wreckageCollisionMayKill)
@@ -1662,23 +1717,31 @@ void Main_loop_slice()
 {}
                   }
 
+                    break;
+
+                  case OBJ_ASTEROID:
+                  {
+{}
+{}
+                  }
+                    break;
 
                   case OBJ_CANNON_SHOT:
-                    if ((Team_immune(shot->id, pl_rename9->id) || ((shot->id != NO_ID) && BIT(Players[GetInd[shot->id]]->status, PAUSE))) || (((shot->id == NO_ID) && BIT(World.rules->mode, TEAM_PLAY)) && (shot->team == pl_rename9->team)))
+                    if ((Team_immune(shot_rename9->id, pl_rename9->id) || ((shot_rename9->id != NO_ID) && BIT(Players[GetInd[shot_rename9->id]]->status, PAUSE))) || (((shot_rename9->id == NO_ID) && BIT(World.rules->mode, TEAM_PLAY)) && (shot_rename9->team == pl_rename9->team)))
                   {
                     loop_counter[168]++;
                     color_rename9 = BLUE;
                     teamshot_rename9 = DEBRIS_TYPES;
                   }
                   else
-                    if ((shot->id == pl_rename9->id) && selfImmunity)
+                    if ((shot_rename9->id == pl_rename9->id) && selfImmunity)
                   {
                     loop_counter[169]++;
                     color_rename9 = BLUE;
                     teamshot_rename9 = DEBRIS_TYPES;
                   }
                   else
-                    if (shot->mods.nuclear && (frame_loops & 2))
+                    if (shot_rename9->mods.nuclear && (frame_loops & 2))
                   {
                     loop_counter[170]++;
                     color_rename9 = RED;
@@ -1694,8 +1757,8 @@ void Main_loop_slice()
                   {
                     int offset_rename22 = teamshot_rename9;
                     int color_rename22 = color_rename9;
-                    int yf_rename22 = (int) (shot->pos.y - pv.world.y);
-                    int xf_rename22 = (int) (shot->pos.x - pv.world.x);
+                    int yf_rename22 = (int) (shot_rename9->pos.y - pv.world.y);
+                    int xf_rename22 = (int) (shot_rename9->pos.x - pv.world.x);
                     int i_rename22;
                     if (xf_rename22 < 0)
                     {
@@ -1713,6 +1776,7 @@ void Main_loop_slice()
                     {
                       loop_counter[173]++;
                       {
+                        goto return22;
                       }
                     }
 
@@ -1721,6 +1785,7 @@ void Main_loop_slice()
                     {
                       loop_counter[174]++;
                       {
+                        goto return22;
                       }
                     }
 
@@ -1743,6 +1808,7 @@ void Main_loop_slice()
 {}
                         fastshot_num[i_rename22] = 0;
                         {
+                          goto return22;
                         }
                       }
 
@@ -1751,14 +1817,37 @@ void Main_loop_slice()
 {}
 {}
                     fastshot_num[i_rename22]++;
+                    return22:
+                    ;
+
                   }
+                    break;
+
+                  case OBJ_TORPEDO:
+{}
+{}
+                    break;
+
+                  case OBJ_SMART_SHOT:
+{}
+{}
+                    break;
+
+                  case OBJ_HEAT_SHOT:
+{}
+{}
+                    break;
+
+                  case OBJ_BALL:
+{}
+                    break;
 
                   case OBJ_MINE:
                   {
                     int id_rename9 = 0;
 {}
                     int confused_rename9 = 0;
-                    mineobject *mine_rename9 = MINE_PTR(shot);
+                    mineobject *mine_rename9 = MINE_PTR(shot_rename9);
                     if (identifyMines && (Wrap_length(pl_rename9->pos.x - mine_rename9->pos.x, pl_rename9->pos.y - mine_rename9->pos.y) < ((SHIP_SZ + MINE_SENSE_BASE_RANGE) + (pl_rename9->item[ITEM_SENSOR] * MINE_SENSE_RANGE_FACTOR))))
                     {
                       loop_counter[178]++;
@@ -1796,11 +1885,12 @@ void Main_loop_slice()
 
 {}
                   }
+                    break;
 
                   case OBJ_ITEM:
                   {
 {}
-                    if (BIT(shot->status, RANDOM_ITEM))
+                    if (BIT(shot_rename9->status, RANDOM_ITEM))
                     {
                       loop_counter[183]++;
 {}
@@ -1808,13 +1898,20 @@ void Main_loop_slice()
 
 {}
                   }
+                    break;
+
+                  default:
+{}
+                    break;
 
                 }
 
               }
 
+              return9:
+              ;
+
             }
-*/
             {
               int ind_rename10 = ind_rename1;
               int conn_rename10 = conn_rename1;
@@ -1824,12 +1921,14 @@ void Main_loop_slice()
               int shownuke_rename10;
 {}
               player *pl_rename10 = Players[ind_rename10];
-              object * shot;
-{}
+              object *shot_rename10;
               DFLOAT x_rename10;
               DFLOAT y_rename10;
               {
                 num_radar = 0;
+                return23:
+                ;
+
               }
               if (nukesOnRadar)
               {
@@ -1860,13 +1959,14 @@ void Main_loop_slice()
                 for (i_rename10 = 0; i_rename10 < NumObjs; i_rename10++)
                 {
                   loop_counter[188]++;
-                  shot = Obj[i_rename10];
-                  if (!BIT(shot->type, mask_rename10))
+                  shot_rename10 = Obj[i_rename10];
+                  if (!BIT(shot_rename10->type, mask_rename10))
                   {
                     loop_counter[189]++;
+                    continue;
                   }
 
-                  shownuke_rename10 = nukesOnRadar && shot->mods.nuclear;
+                  shownuke_rename10 = nukesOnRadar && shot_rename10->mods.nuclear;
                   if (shownuke_rename10 && (frame_loops & 2))
                   {
                     loop_counter[190]++;
@@ -1877,28 +1977,30 @@ void Main_loop_slice()
 {}
                   }
 
-                  if (BIT(shot->type, OBJ_MINE))
+                  if (BIT(shot_rename10->type, OBJ_MINE))
                   {
                     loop_counter[191]++;
                     if ((!minesOnRadar) && (!shownuke_rename10))
                     {
                       loop_counter[192]++;
+                      continue;
                     }
 
                     if ((frame_loops % 8) >= 6)
                     {
                       loop_counter[193]++;
+                      continue;
                     }
 
                   }
                   else
-                    if (BIT(shot->type, OBJ_BALL))
+                    if (BIT(shot_rename10->type, OBJ_BALL))
                   {
                     loop_counter[194]++;
 {}
                   }
                   else
-                    if (BIT(shot->type, OBJ_ASTEROID))
+                    if (BIT(shot_rename10->type, OBJ_ASTEROID))
                   {
                     loop_counter[195]++;
 {}
@@ -1909,19 +2011,21 @@ void Main_loop_slice()
                     if ((!missilesOnRadar) && (!shownuke_rename10))
                     {
                       loop_counter[196]++;
+                      continue;
                     }
 
                     if (frame_loops & 1)
                     {
                       loop_counter[197]++;
+                      continue;
                     }
 
                   }
 
 
 
-                  x_rename10 = shot->pos.x;
-                  y_rename10 = shot->pos.y;
+                  x_rename10 = shot_rename10->pos.x;
+                  y_rename10 = shot_rename10->pos.y;
                   if (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) <= pl_rename10->sensor_range)
                   {
                     loop_counter[198]++;
@@ -1952,6 +2056,7 @@ void Main_loop_slice()
 {}
                           num_radar = (max_radar = 0);
                           {
+                            goto return24;
                           }
                         }
 
@@ -1961,6 +2066,9 @@ void Main_loop_slice()
 {}
 {}
 {}
+                      return24:
+                      ;
+
                     }
                   }
 
@@ -1978,6 +2086,7 @@ void Main_loop_slice()
                   if (((Players[i_rename10]->conn == conn_rename10) || (BIT(Players[i_rename10]->status, (PLAYING | PAUSE) | GAME_OVER) != PLAYING)) || ((((!TEAM(i_rename10, ind_rename10)) && (!ALLIANCE(ind_rename10, i_rename10))) && (!OWNS_TANK(ind_rename10, i_rename10))) && ((!playersOnRadar) || (!pl_rename10->visibility[i_rename10].canSee))))
                   {
                     loop_counter[204]++;
+                    continue;
                   }
 
                   x_rename10 = Players[i_rename10]->pos.x;
@@ -1985,11 +2094,13 @@ void Main_loop_slice()
                   if (BIT(World.rules->mode, LIMITED_VISIBILITY) && (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) > pl_rename10->sensor_range))
                   {
                     loop_counter[205]++;
+                    continue;
                   }
 
                   if (((BIT(pl_rename10->used, HAS_COMPASS) && BIT(pl_rename10->lock.tagged, LOCK_PLAYER)) && (GetInd[pl_rename10->lock.pl_id] == i_rename10)) && ((frame_loops % 5) >= 3))
                   {
                     loop_counter[206]++;
+                    continue;
                   }
 
 {}
@@ -2026,6 +2137,7 @@ void Main_loop_slice()
 {}
                         num_radar = (max_radar = 0);
                         {
+                          goto return25;
                         }
                       }
 
@@ -2035,6 +2147,9 @@ void Main_loop_slice()
 {}
 {}
 {}
+                    return25:
+                    ;
+
                   }
                 }
 
@@ -2066,6 +2181,7 @@ void Main_loop_slice()
                 {
                   loop_counter[212]++;
                   {
+                    goto return26;
                   }
                 }
 
@@ -2119,6 +2235,7 @@ void Main_loop_slice()
                     if (radar_y_rename26 >= 1024)
                     {
                       loop_counter[219]++;
+                      continue;
                     }
 
 {}
@@ -2144,7 +2261,13 @@ void Main_loop_slice()
                 }
 
 {}
+                return26:
+                ;
+
               }
+              return10:
+              ;
+
             }
             {
               int ind_rename11 = i_rename1;
@@ -2167,6 +2290,9 @@ void Main_loop_slice()
 
               }
 
+              return11:
+              ;
+
             }
             {
 {}
@@ -2182,6 +2308,9 @@ void Main_loop_slice()
                 }
 
               }
+
+              return12:
+              ;
 
             }
             {
@@ -2199,6 +2328,9 @@ void Main_loop_slice()
 
               }
 
+              return13:
+              ;
+
             }
           }
 
@@ -2212,7 +2344,13 @@ void Main_loop_slice()
           radar_ptr = NULL;
           num_radar = 0;
           max_radar = 0;
+          return14:
+          ;
+
         }
+        return1:
+        ;
+
       }
     }
 
@@ -2243,7 +2381,7 @@ void Main_loop_slice()
         while (NumPlayers > 0)
         {
           loop_counter[232]++;
-{}
+          pl_rename2 = Players[NumPlayers - 1];
           if (pl_rename2->conn == NOT_CONNECTED)
           {
             loop_counter[233]++;
@@ -2267,7 +2405,11 @@ void Main_loop_slice()
 {}
         {
           return_value = FALSE;
+          goto return2;
         }
+        return2:
+        ;
+
       }
     }
 
@@ -2295,7 +2437,7 @@ void Main_loop_slice()
         while (NumPlayers > 0)
         {
           loop_counter[236]++;
-{}
+          pl_rename3 = Players[NumPlayers - 1];
           if (pl_rename3->conn == NOT_CONNECTED)
           {
             loop_counter[237]++;
@@ -2319,7 +2461,11 @@ void Main_loop_slice()
 {}
         {
           return_value = FALSE;
+          goto return3;
         }
+        return3:
+        ;
+
       }
     }
 
@@ -2328,19 +2474,18 @@ void Main_loop_slice()
 {}
 {}
 {}
-  print_loop_counter:
   {
-{}
+    print_loop_counter:
+    printf("loop counter = (");
+
     int i;
-    printf("loop counters = (");
     for (i = 0; i < 238; i++)
       printf("%d, ", loop_counter[i]++);
+
     printf(")\n");
-
-{}
   }
-
 }
+
 
 /*
  * Main_loop with loop counts
