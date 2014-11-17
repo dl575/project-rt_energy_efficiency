@@ -175,6 +175,12 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     # Not part of slice, check children
     else:
       self.generic_visit(node)
+  def visit_FuncCall(self, node):
+    self.generic_visit(node)
+    # If sliced, add arguments to dependency list
+    if node.sliced:
+      self.id_visitor.new_visit(node)
+      self.rvalues += self.id_visitor.IDs
   """
   Modify generic_visit to propagate slice information up tree.
   """
@@ -255,6 +261,12 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   def visit_Break(self, node):
     node.sliced = True
   def visit_Label(self, node):
+    node.sliced = True
+    if isinstance(node.stmt, c_ast.EmptyStatement):
+      node.stmt.sliced = True
+    else:
+      self.generic_visit(node)
+  def visit_Goto(self, node):
     node.sliced = True
   def visit_Compound(self, node):
     # Mark entire print_loop_counter block as part of slice
