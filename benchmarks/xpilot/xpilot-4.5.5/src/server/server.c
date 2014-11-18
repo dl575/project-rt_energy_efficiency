@@ -136,7 +136,8 @@ int main(int argc, char **argv)
     init_error(argv[0]);
     Check_server_versions();
 
-    seedMT((unsigned)time((time_t *)0) * Get_process_id());
+    //seedMT((unsigned)time((time_t *)0) * Get_process_id());
+    seedMT(0xdeadbeef);
 
     if (Parser(argc, argv) == FALSE) {
 	exit(1);

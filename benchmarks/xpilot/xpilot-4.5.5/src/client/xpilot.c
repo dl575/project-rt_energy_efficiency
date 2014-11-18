@@ -128,7 +128,8 @@ int main(int argc, char *argv[])
      */
     init_error(argv[0]);
 
-    seedMT( (unsigned)time((time_t *)0) ^ Get_process_id());
+    //seedMT( (unsigned)time((time_t *)0) ^ Get_process_id());
+    seedMT(0xdeadbeef);
 
     Check_client_versions();
 

@@ -128,7 +128,8 @@ int GrowMapArea(HandlerInfo info)
          }
       }
 
-      time(&seed);
+      //time(&seed);
+      seed = 0xdeadbeef;
       srand((unsigned int)seed);
    }
 

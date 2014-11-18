@@ -127,7 +127,8 @@ static void Default_map(void)
 {
     map.width = 100;
     map.height = 100;
-    map.seed = (unsigned)Get_process_id() ^ (unsigned)time(NULL);
+    //map.seed = (unsigned)Get_process_id() ^ (unsigned)time(NULL);
+    map.seed = 0xdeadbeef;
     map.seed_ratio = 0.16;
     map.fill_ratio = 0.20;
     map.num_bases = 26;
