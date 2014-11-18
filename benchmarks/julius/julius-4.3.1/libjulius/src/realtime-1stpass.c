@@ -1115,16 +1115,13 @@ void RealTimeParam_slice(Recog *recog)
   int loop_counter[35] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   boolean ret1;
   boolean ret2;
-{}
+  RealBeam *r;
   int ret;
   int maxf;
   boolean ok_p;
   MFCCCalc *mfcc;
-  RealBeam * r;
-  Value * para;
+  Value *para;
   r = &recog->real;
-{}
-{}
   if (r->last_is_segmented)
   {
     loop_counter[0]++;
@@ -1137,7 +1134,6 @@ void RealTimeParam_slice(Recog *recog)
 
 {}
     {
-      //return_value = TRUE;
       goto print_loop_counter;
     }
   }
@@ -1154,7 +1150,6 @@ void RealTimeParam_slice(Recog *recog)
 
 {}
     {
-      //return_value = TRUE;
       goto print_loop_counter;
     }
   }
@@ -1183,6 +1178,7 @@ void RealTimeParam_slice(Recog *recog)
       if (!mfcc->valid)
       {
         loop_counter[8]++;
+        continue;
       }
 
       if (mfcc->f >= r->maxframelen)
@@ -1216,7 +1212,6 @@ void RealTimeParam_slice(Recog *recog)
     {
       loop_counter[13]++;
       para = mfcc->para;
-{}
       if (!mfcc->valid)
       {
         loop_counter[14]++;
@@ -1294,7 +1289,6 @@ void RealTimeParam_slice(Recog *recog)
         loop_counter[22]++;
 {}
         {
-          //return_value = FALSE;
           goto print_loop_counter;
         }
       }
@@ -1357,7 +1351,6 @@ void RealTimeParam_slice(Recog *recog)
     {
       loop_counter[30]++;
       {
-        //return_value = -1;
         goto print_loop_counter;
       }
     }
@@ -1365,6 +1358,7 @@ void RealTimeParam_slice(Recog *recog)
       if (ret == 1)
     {
       loop_counter[31]++;
+      break;
     }
 
 
@@ -1392,22 +1386,20 @@ void RealTimeParam_slice(Recog *recog)
 
 {}
   {
-    //return_value = TRUE;
     goto print_loop_counter;
   }
-  print_loop_counter:
   {
-{}
-    int i;
+    print_loop_counter:
     printf("loop counter = (");
+
+    int i;
     for (i = 0; i < 35; i++)
       printf("%d, ", loop_counter[i]++);
+
     printf(")\n");
-
-{}
   }
-
 }
+
 
 /*
  * RealTimeParam with loop count instrumentation.

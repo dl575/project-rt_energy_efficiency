@@ -109,7 +109,7 @@
  * 
  */
 int
-decode_proceed_orig(Recog *recog)
+decode_proceed(Recog *recog)
 {
   MFCCCalc *mfcc;
   boolean break_flag;
@@ -316,7 +316,7 @@ decode_proceed_orig(Recog *recog)
   return 0;
 }
 
-int decode_proceed(Recog *recog)
+int decode_proceed_loop_counters(Recog *recog)
 {
   int decode_proceed_return_value = 0;
   static int loop_counter[22] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
