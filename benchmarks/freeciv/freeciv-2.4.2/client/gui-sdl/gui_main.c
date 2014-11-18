@@ -503,7 +503,7 @@ int FilterMouseMotionEvents(const SDL_Event *event)
  */
 void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 (*key_down_handler)(SDL_keysym Key, void *pData), Uint16 (*key_up_handler)(SDL_keysym Key, void *pData), Uint16 (*mouse_button_down_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_button_up_handler)(SDL_MouseButtonEvent *pButtonEvent, void *pData), Uint16 (*mouse_motion_handler)(SDL_MouseMotionEvent *pMotionEvent, void *pData))
 {
-  int loop_counter[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int loop_counter[56] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   Uint16 ID;
   static struct timeval tv;
   static fd_set civfdset;
@@ -545,9 +545,11 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
         if (errno != EINTR)
         {
           loop_counter[5]++;
+          break;
         }
         else
         {
+          continue;
         }
 
       }
@@ -637,91 +639,173 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
       switch (Main.event.type)
       {
         case SDL_QUIT:
+          loop_counter[17]++;
         {
-          //return_value = MAX_ID;
           goto print_loop_counter;
         }
+          break;
 
         case SDL_KEYUP:
+          loop_counter[18]++;
           switch (Main.event.key.keysym.sym)
         {
+          case SDLK_RSHIFT:
+            loop_counter[19]++;
+{}
+            break;
+
+          case SDLK_LSHIFT:
+            loop_counter[20]++;
+{}
+            break;
+
+          case SDLK_LCTRL:
+            loop_counter[21]++;
+{}
+            break;
+
+          case SDLK_RCTRL:
+            loop_counter[22]++;
+{}
+            break;
+
+          case SDLK_LALT:
+            loop_counter[23]++;
+{}
+            break;
+
           default:
             if (key_up_handler)
           {
-            loop_counter[17]++;
+            loop_counter[24]++;
             ID = key_up_handler(Main.event.key.keysym, pData);
           }
 
+            break;
 
         }
 
+          break;
 
         case SDL_KEYDOWN:
+          loop_counter[25]++;
           switch (Main.event.key.keysym.sym)
         {
+          case SDLK_PRINT:
+            loop_counter[26]++;
+{}
+{}
+{}
+            break;
+
+          case SDLK_RSHIFT:
+            loop_counter[27]++;
+{}
+            break;
+
+          case SDLK_LSHIFT:
+            loop_counter[28]++;
+{}
+            break;
+
+          case SDLK_LCTRL:
+            loop_counter[29]++;
+{}
+            break;
+
+          case SDLK_RCTRL:
+            loop_counter[30]++;
+{}
+            break;
+
+          case SDLK_LALT:
+            loop_counter[31]++;
+{}
+            break;
+
           default:
             if (key_down_handler)
           {
-            loop_counter[18]++;
+            loop_counter[32]++;
             ID = key_down_handler(Main.event.key.keysym, pData);
           }
 
+            break;
 
         }
 
+          break;
 
         case SDL_MOUSEBUTTONDOWN:
+          loop_counter[33]++;
           if (mouse_button_down_handler)
         {
-          loop_counter[19]++;
+          loop_counter[34]++;
           ID = mouse_button_down_handler(&Main.event.button, pData);
         }
 
+          break;
 
         case SDL_MOUSEBUTTONUP:
+          loop_counter[35]++;
           if (mouse_button_up_handler)
         {
-          loop_counter[20]++;
+          loop_counter[36]++;
           ID = mouse_button_up_handler(&Main.event.button, pData);
         }
 
+          break;
 
         case SDL_MOUSEMOTION:
+          loop_counter[37]++;
           if (mouse_motion_handler)
         {
-          loop_counter[21]++;
+          loop_counter[38]++;
           ID = mouse_motion_handler(&Main.event.motion, pData);
         }
 
+          break;
 
         case SDL_USEREVENT:
+          loop_counter[39]++;
           switch (Main.event.user.code)
         {
+          case NET:
+            loop_counter[40]++;
+{}
+            break;
+
+          case GGZ:
+            loop_counter[41]++;
+{}
+            break;
+
           case ANIM:
+            loop_counter[42]++;
           {
             if (button_behavior.counting)
             {
-              loop_counter[22]++;
+              loop_counter[43]++;
               if (((SDL_GetTicks() - button_behavior.button_down_ticks) >= MB_MEDIUM_HOLD_DELAY) && ((SDL_GetTicks() - button_behavior.button_down_ticks) < MB_LONG_HOLD_DELAY))
               {
-                loop_counter[23]++;
+                loop_counter[44]++;
                 if (button_behavior.hold_state != MB_HOLD_MEDIUM)
                 {
-                  loop_counter[24]++;
+                  loop_counter[45]++;
                   button_behavior.hold_state = MB_HOLD_MEDIUM;
-{}
+                  button_down_on_map(&button_behavior);
                 }
 
               }
               else
                 if ((SDL_GetTicks() - button_behavior.button_down_ticks) >= MB_LONG_HOLD_DELAY)
               {
-                loop_counter[25]++;
+                loop_counter[46]++;
                 if (button_behavior.hold_state != MB_HOLD_LONG)
                 {
-                  loop_counter[26]++;
+                  loop_counter[47]++;
                   button_behavior.hold_state = MB_HOLD_LONG;
-{}
+                  button_down_on_map(&button_behavior);
                 }
 
               }
@@ -730,28 +814,55 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
             }
 
             {
+              goto return0;
             }
+            return0:
+            ;
+
           }
 {}
 {}
+            break;
+
+          case SHOW_WIDGET_INFO_LABBEL:
+            loop_counter[48]++;
+{}
+            break;
 
           case TRY_AUTO_CONNECT:
+            loop_counter[49]++;
             if (try_to_autoconnect())
           {
-            loop_counter[27]++;
+            loop_counter[50]++;
 {}
             autoconnect = FALSE;
           }
 
+            break;
+
+          case FLUSH:
+            loop_counter[51]++;
+{}
+            break;
+
+          case MAP_SCROLL:
+            loop_counter[52]++;
+{}
+            break;
 
           case EXIT_FROM_EVENT_LOOP:
+            loop_counter[53]++;
           {
-            //return_value = MAX_ID;
             goto print_loop_counter;
           }
+            break;
+
+          default:
+            break;
 
         }
 
+          break;
 
       }
 
@@ -759,10 +870,10 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
 
     if (ID == ID_ERROR)
     {
-      loop_counter[28]++;
+      loop_counter[54]++;
       if (callbacks && (callback_list_size(callbacks) > 0))
       {
-        loop_counter[29]++;
+        loop_counter[55]++;
 {}
 {}
 {}
@@ -776,24 +887,18 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
   //}
 
   {
-    //return_value = ID;
     goto print_loop_counter;
   }
-  print_loop_counter:
   {
-{}
-/*
-    int i;
+    print_loop_counter:
     printf("loop counter = (");
-    for (i = 0; i < 30; i++)
+
+    int i;
+    for (i = 0; i < 56; i++)
       printf("%d, ", loop_counter[i]++);
+
     printf(")\n");
-    */
-  write_array(loop_counter, 30);
-
-{}
   }
-
 }
 
 /**************************************************************************

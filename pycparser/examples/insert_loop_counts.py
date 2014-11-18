@@ -32,6 +32,10 @@ class LoopCountVisitor(c_ast.NodeVisitor):
     self.insert_in_If(node, stmt)
     # Continue visiting for nested loops/conditionals
     self.generic_visit(node)
+  def visit_Case(self, node):
+    stmt = self.create_loop_counter_stmt()
+    node.stmts.insert(0, stmt)
+    self.generic_visit(node)
   """
   Create a new statement to increment a (new) loop counter.
   """
