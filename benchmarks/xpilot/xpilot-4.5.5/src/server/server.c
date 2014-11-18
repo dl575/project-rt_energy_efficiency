@@ -348,7 +348,7 @@ static int block_inview(block_visibility_t *bv, int x, int y)
  */
 void Main_loop_slice()
 {
-  int loop_counter[238] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int loop_counter[250] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 {}
 {}
 {}
@@ -1590,28 +1590,32 @@ void Main_loop_slice()
 
                 switch (shot_rename9->type)
                 {
+                  case OBJ_SPARK:
+                    loop_counter[153]++;
+
                   case OBJ_DEBRIS:
+                    loop_counter[154]++;
                     if ((fuzz_rename9 >>= 7) < 0x40)
                   {
-                    loop_counter[153]++;
+                    loop_counter[155]++;
                     fuzz_rename9 = randomMT();
                   }
 
                     if ((fuzz_rename9 & 0x7F) >= spark_rand)
                   {
-                    loop_counter[154]++;
+                    loop_counter[156]++;
                     break;
                   }
 
                     if (debris_colors >= 3)
                   {
-                    loop_counter[155]++;
+                    loop_counter[157]++;
                     if (debris_colors > 4)
                     {
-                      loop_counter[156]++;
+                      loop_counter[158]++;
                       if (color_rename9 == BLUE)
                       {
-                        loop_counter[157]++;
+                        loop_counter[159]++;
                         color_rename9 = shot_rename9->life >> 1;
                       }
                       else
@@ -1624,7 +1628,7 @@ void Main_loop_slice()
                     {
                       if (color_rename9 == BLUE)
                       {
-                        loop_counter[158]++;
+                        loop_counter[160]++;
                         color_rename9 = shot_rename9->life >> 2;
                       }
                       else
@@ -1636,7 +1640,7 @@ void Main_loop_slice()
 
                     if (color_rename9 >= debris_colors)
                     {
-                      loop_counter[159]++;
+                      loop_counter[161]++;
                       color_rename9 = debris_colors - 1;
                     }
 
@@ -1649,19 +1653,19 @@ void Main_loop_slice()
                     int i_rename21;
                     if (xf_rename21 < 0)
                     {
-                      loop_counter[160]++;
+                      loop_counter[162]++;
                       xf_rename21 += World.width;
                     }
 
                     if (yf_rename21 < 0)
                     {
-                      loop_counter[161]++;
+                      loop_counter[163]++;
                       yf_rename21 += World.height;
                     }
 
                     if ((((unsigned) xf_rename21) >= ((unsigned) view_width)) || (((unsigned) yf_rename21) >= ((unsigned) view_height)))
                     {
-                      loop_counter[162]++;
+                      loop_counter[164]++;
                       {
                         goto return21;
                       }
@@ -1670,7 +1674,7 @@ void Main_loop_slice()
                     i_rename21 = ((0 + (color_rename21 * debris_areas)) + (((yf_rename21 >> 8) % debris_y_areas) * debris_x_areas)) + ((xf_rename21 >> 8) % debris_x_areas);
                     if (debris_num[i_rename21] >= 255)
                     {
-                      loop_counter[163]++;
+                      loop_counter[165]++;
                       {
                         goto return21;
                       }
@@ -1678,10 +1682,10 @@ void Main_loop_slice()
 
                     if (debris_num[i_rename21] >= debris_max[i_rename21])
                     {
-                      loop_counter[164]++;
+                      loop_counter[166]++;
                       if (debris_num[i_rename21] == 0)
                       {
-                        loop_counter[165]++;
+                        loop_counter[167]++;
                         debris_ptr[i_rename21] = (debris_t *) malloc((debris_max[i_rename21] = 16) * (sizeof(*debris_ptr[i_rename21])));
                       }
                       else
@@ -1691,7 +1695,7 @@ void Main_loop_slice()
 
                       if (debris_ptr[i_rename21] == 0)
                       {
-                        loop_counter[166]++;
+                        loop_counter[168]++;
 {}
                         debris_num[i_rename21] = 0;
                         {
@@ -1711,9 +1715,10 @@ void Main_loop_slice()
                     break;
 
                   case OBJ_WRECKAGE:
+                    loop_counter[169]++;
                     if ((spark_rand != 0) || wreckageCollisionMayKill)
                   {
-                    loop_counter[167]++;
+                    loop_counter[170]++;
 {}
 {}
                   }
@@ -1721,30 +1726,35 @@ void Main_loop_slice()
                     break;
 
                   case OBJ_ASTEROID:
+                    loop_counter[171]++;
                   {
 {}
 {}
                   }
                     break;
 
+                  case OBJ_SHOT:
+                    loop_counter[172]++;
+
                   case OBJ_CANNON_SHOT:
+                    loop_counter[173]++;
                     if ((Team_immune(shot_rename9->id, pl_rename9->id) || ((shot_rename9->id != NO_ID) && BIT(Players[GetInd[shot_rename9->id]]->status, PAUSE))) || (((shot_rename9->id == NO_ID) && BIT(World.rules->mode, TEAM_PLAY)) && (shot_rename9->team == pl_rename9->team)))
                   {
-                    loop_counter[168]++;
+                    loop_counter[174]++;
                     color_rename9 = BLUE;
                     teamshot_rename9 = DEBRIS_TYPES;
                   }
                   else
                     if ((shot_rename9->id == pl_rename9->id) && selfImmunity)
                   {
-                    loop_counter[169]++;
+                    loop_counter[175]++;
                     color_rename9 = BLUE;
                     teamshot_rename9 = DEBRIS_TYPES;
                   }
                   else
                     if (shot_rename9->mods.nuclear && (frame_loops & 2))
                   {
-                    loop_counter[170]++;
+                    loop_counter[176]++;
                     color_rename9 = RED;
                     teamshot_rename9 = DEBRIS_TYPES;
                   }
@@ -1763,19 +1773,19 @@ void Main_loop_slice()
                     int i_rename22;
                     if (xf_rename22 < 0)
                     {
-                      loop_counter[171]++;
+                      loop_counter[177]++;
                       xf_rename22 += World.width;
                     }
 
                     if (yf_rename22 < 0)
                     {
-                      loop_counter[172]++;
+                      loop_counter[178]++;
                       yf_rename22 += World.height;
                     }
 
                     if ((((unsigned) xf_rename22) >= ((unsigned) view_width)) || (((unsigned) yf_rename22) >= ((unsigned) view_height)))
                     {
-                      loop_counter[173]++;
+                      loop_counter[179]++;
                       {
                         goto return22;
                       }
@@ -1784,7 +1794,7 @@ void Main_loop_slice()
                     i_rename22 = ((offset_rename22 + (color_rename22 * debris_areas)) + (((yf_rename22 >> 8) % debris_y_areas) * debris_x_areas)) + ((xf_rename22 >> 8) % debris_x_areas);
                     if (fastshot_num[i_rename22] >= 255)
                     {
-                      loop_counter[174]++;
+                      loop_counter[180]++;
                       {
                         goto return22;
                       }
@@ -1792,10 +1802,10 @@ void Main_loop_slice()
 
                     if (fastshot_num[i_rename22] >= fastshot_max[i_rename22])
                     {
-                      loop_counter[175]++;
+                      loop_counter[181]++;
                       if (fastshot_num[i_rename22] == 0)
                       {
-                        loop_counter[176]++;
+                        loop_counter[182]++;
                         fastshot_ptr[i_rename22] = (debris_t *) malloc((fastshot_max[i_rename22] = 16) * (sizeof(*fastshot_ptr[i_rename22])));
                       }
                       else
@@ -1805,7 +1815,7 @@ void Main_loop_slice()
 
                       if (fastshot_ptr[i_rename22] == 0)
                       {
-                        loop_counter[177]++;
+                        loop_counter[183]++;
 {}
                         fastshot_num[i_rename22] = 0;
                         {
@@ -1825,25 +1835,30 @@ void Main_loop_slice()
                     break;
 
                   case OBJ_TORPEDO:
+                    loop_counter[184]++;
 {}
 {}
                     break;
 
                   case OBJ_SMART_SHOT:
+                    loop_counter[185]++;
 {}
 {}
                     break;
 
                   case OBJ_HEAT_SHOT:
+                    loop_counter[186]++;
 {}
 {}
                     break;
 
                   case OBJ_BALL:
+                    loop_counter[187]++;
 {}
                     break;
 
                   case OBJ_MINE:
+                    loop_counter[188]++;
                   {
                     int id_rename9 = 0;
 {}
@@ -1851,17 +1866,17 @@ void Main_loop_slice()
                     mineobject *mine_rename9 = MINE_PTR(shot_rename9);
                     if (identifyMines && (Wrap_length(pl_rename9->pos.x - mine_rename9->pos.x, pl_rename9->pos.y - mine_rename9->pos.y) < ((SHIP_SZ + MINE_SENSE_BASE_RANGE) + (pl_rename9->item[ITEM_SENSOR] * MINE_SENSE_RANGE_FACTOR))))
                     {
-                      loop_counter[178]++;
+                      loop_counter[189]++;
                       id_rename9 = mine_rename9->id;
                       if (id_rename9 == NO_ID)
                       {
-                        loop_counter[179]++;
+                        loop_counter[190]++;
                         id_rename9 = EXPIRED_MINE_ID;
                       }
 
                       if (BIT(mine_rename9->status, CONFUSED))
                       {
-                        loop_counter[180]++;
+                        loop_counter[191]++;
                         confused_rename9 = 1;
                       }
 
@@ -1869,7 +1884,7 @@ void Main_loop_slice()
 
                     if ((mine_rename9->id != NO_ID) && BIT(Players[GetInd[mine_rename9->id]]->status, PAUSE))
                     {
-                      loop_counter[181]++;
+                      loop_counter[192]++;
 {}
                     }
                     else
@@ -1877,7 +1892,7 @@ void Main_loop_slice()
 {}
                       if (confused_rename9)
                       {
-                        loop_counter[182]++;
+                        loop_counter[193]++;
                         id_rename9 = 0;
 {}
                       }
@@ -1889,11 +1904,12 @@ void Main_loop_slice()
                     break;
 
                   case OBJ_ITEM:
+                    loop_counter[194]++;
                   {
 {}
                     if (BIT(shot_rename9->status, RANDOM_ITEM))
                     {
-                      loop_counter[183]++;
+                      loop_counter[195]++;
 {}
                     }
 
@@ -1933,7 +1949,7 @@ void Main_loop_slice()
               }
               if (nukesOnRadar)
               {
-                loop_counter[184]++;
+                loop_counter[196]++;
                 mask_rename10 = ((OBJ_SMART_SHOT | OBJ_TORPEDO) | OBJ_HEAT_SHOT) | OBJ_MINE;
               }
               else
@@ -1944,33 +1960,33 @@ void Main_loop_slice()
 
               if (treasuresOnRadar)
               {
-                loop_counter[185]++;
+                loop_counter[197]++;
                 mask_rename10 |= OBJ_BALL;
               }
 
               if (asteroidsOnRadar)
               {
-                loop_counter[186]++;
+                loop_counter[198]++;
                 mask_rename10 |= OBJ_ASTEROID;
               }
 
               if (mask_rename10)
               {
-                loop_counter[187]++;
+                loop_counter[199]++;
                 for (i_rename10 = 0; i_rename10 < NumObjs; i_rename10++)
                 {
-                  loop_counter[188]++;
+                  loop_counter[200]++;
                   shot_rename10 = Obj[i_rename10];
                   if (!BIT(shot_rename10->type, mask_rename10))
                   {
-                    loop_counter[189]++;
+                    loop_counter[201]++;
                     continue;
                   }
 
                   shownuke_rename10 = nukesOnRadar && shot_rename10->mods.nuclear;
                   if (shownuke_rename10 && (frame_loops & 2))
                   {
-                    loop_counter[190]++;
+                    loop_counter[202]++;
 {}
                   }
                   else
@@ -1980,16 +1996,16 @@ void Main_loop_slice()
 
                   if (BIT(shot_rename10->type, OBJ_MINE))
                   {
-                    loop_counter[191]++;
+                    loop_counter[203]++;
                     if ((!minesOnRadar) && (!shownuke_rename10))
                     {
-                      loop_counter[192]++;
+                      loop_counter[204]++;
                       continue;
                     }
 
                     if ((frame_loops % 8) >= 6)
                     {
-                      loop_counter[193]++;
+                      loop_counter[205]++;
                       continue;
                     }
 
@@ -1997,13 +2013,13 @@ void Main_loop_slice()
                   else
                     if (BIT(shot_rename10->type, OBJ_BALL))
                   {
-                    loop_counter[194]++;
+                    loop_counter[206]++;
 {}
                   }
                   else
                     if (BIT(shot_rename10->type, OBJ_ASTEROID))
                   {
-                    loop_counter[195]++;
+                    loop_counter[207]++;
 {}
 {}
                   }
@@ -2011,13 +2027,13 @@ void Main_loop_slice()
                   {
                     if ((!missilesOnRadar) && (!shownuke_rename10))
                     {
-                      loop_counter[196]++;
+                      loop_counter[208]++;
                       continue;
                     }
 
                     if (frame_loops & 1)
                     {
-                      loop_counter[197]++;
+                      loop_counter[209]++;
                       continue;
                     }
 
@@ -2029,7 +2045,7 @@ void Main_loop_slice()
                   y_rename10 = shot_rename10->pos.y;
                   if (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) <= pl_rename10->sensor_range)
                   {
-                    loop_counter[198]++;
+                    loop_counter[210]++;
                     {
 {}
 {}
@@ -2037,10 +2053,10 @@ void Main_loop_slice()
                       radar_t *p_rename24;
                       if ((num_radar + 1) > max_radar)
                       {
-                        loop_counter[199]++;
+                        loop_counter[211]++;
                         if (max_radar <= 0)
                         {
-                          loop_counter[200]++;
+                          loop_counter[212]++;
                           max_radar = 1 + 2;
                           radar_ptr = (radar_t *) malloc(max_radar * (sizeof(radar_t)));
                           num_radar = 0;
@@ -2053,7 +2069,7 @@ void Main_loop_slice()
 
                         if (radar_ptr == NULL)
                         {
-                          loop_counter[201]++;
+                          loop_counter[213]++;
 {}
                           num_radar = (max_radar = 0);
                           {
@@ -2079,14 +2095,14 @@ void Main_loop_slice()
 
               if (((playersOnRadar || BIT(World.rules->mode, TEAM_PLAY)) || (NumPseudoPlayers > 0)) || (NumAlliances > 0))
               {
-                loop_counter[202]++;
+                loop_counter[214]++;
                 for (k_rename10 = 0; k_rename10 < num_player_shuffle; k_rename10++)
                 {
-                  loop_counter[203]++;
+                  loop_counter[215]++;
                   i_rename10 = player_shuffle_ptr[k_rename10];
                   if (((Players[i_rename10]->conn == conn_rename10) || (BIT(Players[i_rename10]->status, (PLAYING | PAUSE) | GAME_OVER) != PLAYING)) || ((((!TEAM(i_rename10, ind_rename10)) && (!ALLIANCE(ind_rename10, i_rename10))) && (!OWNS_TANK(ind_rename10, i_rename10))) && ((!playersOnRadar) || (!pl_rename10->visibility[i_rename10].canSee))))
                   {
-                    loop_counter[204]++;
+                    loop_counter[216]++;
                     continue;
                   }
 
@@ -2094,20 +2110,20 @@ void Main_loop_slice()
                   y_rename10 = Players[i_rename10]->pos.y;
                   if (BIT(World.rules->mode, LIMITED_VISIBILITY) && (Wrap_length(pl_rename10->pos.x - x_rename10, pl_rename10->pos.y - y_rename10) > pl_rename10->sensor_range))
                   {
-                    loop_counter[205]++;
+                    loop_counter[217]++;
                     continue;
                   }
 
                   if (((BIT(pl_rename10->used, HAS_COMPASS) && BIT(pl_rename10->lock.tagged, LOCK_PLAYER)) && (GetInd[pl_rename10->lock.pl_id] == i_rename10)) && ((frame_loops % 5) >= 3))
                   {
-                    loop_counter[206]++;
+                    loop_counter[218]++;
                     continue;
                   }
 
 {}
                   if ((TEAM(i_rename10, ind_rename10) || ALLIANCE(ind_rename10, i_rename10)) || OWNS_TANK(ind_rename10, i_rename10))
                   {
-                    loop_counter[207]++;
+                    loop_counter[219]++;
 {}
                   }
 
@@ -2118,10 +2134,10 @@ void Main_loop_slice()
                     radar_t *p_rename25;
                     if ((num_radar + 1) > max_radar)
                     {
-                      loop_counter[208]++;
+                      loop_counter[220]++;
                       if (max_radar <= 0)
                       {
-                        loop_counter[209]++;
+                        loop_counter[221]++;
                         max_radar = 1 + 2;
                         radar_ptr = (radar_t *) malloc(max_radar * (sizeof(radar_t)));
                         num_radar = 0;
@@ -2134,7 +2150,7 @@ void Main_loop_slice()
 
                       if (radar_ptr == NULL)
                       {
-                        loop_counter[210]++;
+                        loop_counter[222]++;
 {}
                         num_radar = (max_radar = 0);
                         {
@@ -2172,7 +2188,7 @@ void Main_loop_slice()
                 size_t shuffle_bufsize_rename26;
                 if (num_radar > MIN(256, 65535))
                 {
-                  loop_counter[211]++;
+                  loop_counter[223]++;
                   num_radar = MIN(256, 65535);
                 }
 
@@ -2180,7 +2196,7 @@ void Main_loop_slice()
                 radar_shuffle_rename26 = (shuffle_t *) malloc(shuffle_bufsize_rename26);
                 if (radar_shuffle_rename26 == ((shuffle_t *) NULL))
                 {
-                  loop_counter[212]++;
+                  loop_counter[224]++;
                   {
                     goto return26;
                   }
@@ -2188,13 +2204,13 @@ void Main_loop_slice()
 
                 for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
                 {
-                  loop_counter[213]++;
+                  loop_counter[225]++;
                   radar_shuffle_rename26[i_rename26] = i_rename26;
                 }
 
                 for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
                 {
-                  loop_counter[214]++;
+                  loop_counter[226]++;
                   dest_rename26 = (int) (rfrac() * num_radar);
                   tmp_rename26 = radar_shuffle_rename26[i_rename26];
                   radar_shuffle_rename26[i_rename26] = radar_shuffle_rename26[dest_rename26];
@@ -2203,10 +2219,10 @@ void Main_loop_slice()
 
                 if (Get_conn_version(conn_rename26) <= 0x4400)
                 {
-                  loop_counter[215]++;
+                  loop_counter[227]++;
                   for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
                   {
-                    loop_counter[216]++;
+                    loop_counter[228]++;
                     p_rename26 = &radar_ptr[radar_shuffle_rename26[i_rename26]];
 {}
                     radar_y_rename26 = (radar_height_rename26 * p_rename26->y) / World.height;
@@ -2223,19 +2239,19 @@ void Main_loop_slice()
                   int fast_count_rename26 = 0;
                   if (num_radar > 256)
                   {
-                    loop_counter[217]++;
+                    loop_counter[229]++;
                     num_radar = 256;
                   }
 
                   for (i_rename26 = 0; i_rename26 < num_radar; i_rename26++)
                   {
-                    loop_counter[218]++;
+                    loop_counter[230]++;
                     p_rename26 = &radar_ptr[radar_shuffle_rename26[i_rename26]];
 {}
                     radar_y_rename26 = (radar_height_rename26 * p_rename26->y) / World.height;
                     if (radar_y_rename26 >= 1024)
                     {
-                      loop_counter[219]++;
+                      loop_counter[231]++;
                       continue;
                     }
 
@@ -2244,7 +2260,7 @@ void Main_loop_slice()
 {}
                     if (p_rename26->size & 0x80)
                     {
-                      loop_counter[220]++;
+                      loop_counter[232]++;
 {}
                     }
 
@@ -2255,7 +2271,7 @@ void Main_loop_slice()
 
                   if (fast_count_rename26 > 0)
                   {
-                    loop_counter[221]++;
+                    loop_counter[233]++;
 {}
                   }
 
@@ -2275,17 +2291,17 @@ void Main_loop_slice()
               player *pl_rename11 = Players[ind_rename11];
               if (pl_rename11->lose_item_state != 0)
               {
-                loop_counter[222]++;
+                loop_counter[234]++;
 {}
                 if (pl_rename11->lose_item_state == 1)
                 {
-                  loop_counter[223]++;
+                  loop_counter[235]++;
                   pl_rename11->lose_item_state = -5;
                 }
 
                 if (pl_rename11->lose_item_state < 0)
                 {
-                  loop_counter[224]++;
+                  loop_counter[236]++;
                   pl_rename11->lose_item_state++;
                 }
 
@@ -2300,10 +2316,10 @@ void Main_loop_slice()
               int i_rename12;
               for (i_rename12 = 0; i_rename12 < DEBRIS_TYPES; i_rename12++)
               {
-                loop_counter[225]++;
+                loop_counter[237]++;
                 if (debris_num[i_rename12] != 0)
                 {
-                  loop_counter[226]++;
+                  loop_counter[238]++;
 {}
                   debris_num[i_rename12] = 0;
                 }
@@ -2319,10 +2335,10 @@ void Main_loop_slice()
               int i_rename13;
               for (i_rename13 = 0; i_rename13 < (DEBRIS_TYPES * 2); i_rename13++)
               {
-                loop_counter[227]++;
+                loop_counter[239]++;
                 if (fastshot_num[i_rename13] != 0)
                 {
-                  loop_counter[228]++;
+                  loop_counter[240]++;
 {}
                   fastshot_num[i_rename13] = 0;
                 }
@@ -2359,17 +2375,17 @@ void Main_loop_slice()
 
   if ((((!NoQuit) && (NumPlayers == (NumRobots + NumPseudoPlayers))) && (!login_in_progress)) && (!NumQueuedPlayers))
   {
-    loop_counter[229]++;
+    loop_counter[241]++;
     if (!NoPlayersEnteredYet)
     {
-      loop_counter[230]++;
+      loop_counter[242]++;
       {
         int return_value;
         player *pl_rename2;
 {}
         if (ShutdownServer == 0)
         {
-          loop_counter[231]++;
+          loop_counter[243]++;
 {}
 {}
 {}
@@ -2381,11 +2397,11 @@ void Main_loop_slice()
 
         while (NumPlayers > 0)
         {
-          loop_counter[232]++;
+          loop_counter[244]++;
           pl_rename2 = Players[NumPlayers - 1];
           if (pl_rename2->conn == NOT_CONNECTED)
           {
-            loop_counter[233]++;
+            loop_counter[245]++;
 {}
           }
           else
@@ -2416,7 +2432,7 @@ void Main_loop_slice()
 
     if ((serverTime + (5 * 60)) < time(NULL))
     {
-      loop_counter[234]++;
+      loop_counter[246]++;
 {}
 {}
       {
@@ -2425,7 +2441,7 @@ void Main_loop_slice()
 {}
         if (ShutdownServer == 0)
         {
-          loop_counter[235]++;
+          loop_counter[247]++;
 {}
 {}
 {}
@@ -2437,11 +2453,11 @@ void Main_loop_slice()
 
         while (NumPlayers > 0)
         {
-          loop_counter[236]++;
+          loop_counter[248]++;
           pl_rename3 = Players[NumPlayers - 1];
           if (pl_rename3->conn == NOT_CONNECTED)
           {
-            loop_counter[237]++;
+            loop_counter[249]++;
 {}
           }
           else
@@ -2480,7 +2496,7 @@ void Main_loop_slice()
     printf("loop counter = (");
 
     int i;
-    for (i = 0; i < 238; i++)
+    for (i = 0; i < 250; i++)
       printf("%d, ", loop_counter[i]++);
 
     printf(")\n");
