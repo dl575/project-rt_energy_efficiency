@@ -796,6 +796,11 @@ void slice(int argc, char *argv[])
     printf(")\n");
 
 {}
+float exec_time;
+exec_time = -57.333500*loop_counter[2] + 131.609000*loop_counter[3] + 0.529983*loop_counter[19] + 0.000000;
+printf("predicted time = %f\n", exec_time);
+
+
   }
 
 }

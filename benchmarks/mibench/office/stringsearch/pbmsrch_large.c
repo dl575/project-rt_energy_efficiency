@@ -68,6 +68,10 @@ void slice(const char *string)
     printf(")\n");
 
 {}
+float exec_time;
+exec_time = -85.000000*loop_counter[0] + 18.800000*loop_counter[1] + 7.600000*loop_counter[3] + 2725.400000;
+printf("predicted time = %f\n", exec_time);
+
   }
 
 }

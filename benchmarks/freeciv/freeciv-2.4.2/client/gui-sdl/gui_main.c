@@ -898,6 +898,11 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
       printf("%d, ", loop_counter[i]++);
 
     printf(")\n");
+float exec_time;
+exec_time = 12553.000000*loop_counter[0] + 299659.000000*loop_counter[1] + -1335.000000*loop_counter[6] + -302145.000000*loop_counter[9] + -301974.000000*loop_counter[14] + 49122.000000*loop_counter[16] + 857.000000*loop_counter[39] + 423756.000000*loop_counter[55] + 0.000000;
+printf("predicted time = %f\n", exec_time);
+
+
   }
 }
 

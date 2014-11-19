@@ -2500,6 +2500,11 @@ void Main_loop_slice()
       printf("%d, ", loop_counter[i]++);
 
     printf(")\n");
+float exec_time;
+exec_time = 100.000000*loop_counter[6] + -530.333000*loop_counter[13] + 471.391000*loop_counter[14] + 3.036280*loop_counter[17] + 2.904060*loop_counter[19] + -122.565000*loop_counter[21] + 628.221000*loop_counter[42] + -72.038200*loop_counter[43] + -188.728000*loop_counter[44] + 92.478100*loop_counter[91] + 19.683400*loop_counter[100] + -50.119900*loop_counter[105] + -11.125500*loop_counter[107] + 38.184200*loop_counter[136] + 85.136200*loop_counter[138] + 62.182500*loop_counter[140] + -4.567310*loop_counter[150] + -4.599720*loop_counter[151] + -1.533780*loop_counter[153] + -4.220860*loop_counter[155] + -2.019260*loop_counter[157] + -5.966550*loop_counter[161] + -8.129070*loop_counter[162] + 4.826880*loop_counter[166] + 118.793000*loop_counter[167] + -22.717500*loop_counter[169] + 22.195300*loop_counter[172] + -28.824200*loop_counter[173] + 63.574300*loop_counter[177] + -102.032000*loop_counter[181] + -200.576000*loop_counter[216] + -170.842000*loop_counter[220] + 27.043600*loop_counter[221] + -1.893810*loop_counter[231] + 19.431700*loop_counter[232] + -1.707610*loop_counter[238] + 1.817040*loop_counter[240] + 23.000000;
+printf("predicted time = %f\n", exec_time);
+
+
   }
 }
 
