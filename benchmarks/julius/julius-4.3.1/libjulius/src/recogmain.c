@@ -676,6 +676,1501 @@ result_error(Recog *recog, int status)
   }
 }
 
+int call_adin_go(Recog *recog)
+{
+  int loop_counter[188] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int ret;
+  {
+    int return_value;
+    callback_exec(CALLBACK_EVENT_SPEECH_READY, recog);
+    {
+      {
+        int return_value;
+        ADIn *a_rename1;
+        int i_rename1;
+        int ad_process_ret_rename1;
+        int imax_rename1;
+        int len_rename1;
+        int cnt_rename1;
+        int wstep_rename1;
+        int end_status_rename1 = 0;
+        boolean transfer_online_local_rename1;
+        int zc_rename1;
+        a_rename1 = recog->adin;
+        if (a_rename1->need_init)
+        {
+          loop_counter[0]++;
+          a_rename1->bpmax = MAXSPEECHLEN;
+          a_rename1->bp = 0;
+          a_rename1->is_valid_data = FALSE;
+          if (a_rename1->adin_cut_on)
+          {
+            loop_counter[1]++;
+            reset_count_zc_e(&a_rename1->zc, a_rename1->thres, a_rename1->c_length, a_rename1->c_offset);
+          }
+
+          a_rename1->end_of_stream = FALSE;
+          a_rename1->nc = 0;
+          a_rename1->sblen = 0;
+          a_rename1->need_init = FALSE;
+        }
+
+        for (;;)
+        {
+          loop_counter[2]++;
+          if (a_rename1->end_of_stream && (a_rename1->bp == 0))
+          {
+            loop_counter[3]++;
+            break;
+          }
+
+          if (a_rename1->end_of_stream)
+          {
+            loop_counter[4]++;
+            a_rename1->current_len = a_rename1->bp;
+          }
+          else
+          {
+            if (a_rename1->down_sample)
+            {
+              loop_counter[5]++;
+              int ad_read_result_rename1 = (*a_rename1->ad_read)(a_rename1->buffer48, (a_rename1->bpmax - a_rename1->bp) * a_rename1->io_rate);
+              cnt_rename1 = ad_read_result_rename1;
+            }
+            else
+            {
+              int ad_read_result_rename1 = (*a_rename1->ad_read)(&a_rename1->buffer[a_rename1->bp], a_rename1->bpmax - a_rename1->bp);
+              cnt_rename1 = ad_read_result_rename1;
+            }
+
+            if (cnt_rename1 < 0)
+            {
+              loop_counter[6]++;
+              switch (cnt_rename1)
+              {
+                case -1:
+                  loop_counter[7]++;
+                  a_rename1->input_side_segment = FALSE;
+                  end_status_rename1 = 0;
+                  break;
+
+                case -2:
+                  loop_counter[8]++;
+                  a_rename1->input_side_segment = FALSE;
+                  end_status_rename1 = -1;
+                  break;
+
+                case -3:
+                  loop_counter[9]++;
+                  a_rename1->input_side_segment = TRUE;
+                  end_status_rename1 = 0;
+
+              }
+
+              a_rename1->end_of_stream = TRUE;
+              cnt_rename1 = 0;
+              if (a_rename1->bp == 0)
+              {
+                loop_counter[10]++;
+                break;
+              }
+
+            }
+
+            if (a_rename1->down_sample && (cnt_rename1 != 0))
+            {
+              loop_counter[11]++;
+              cnt_rename1 = ds48to16(&a_rename1->buffer[a_rename1->bp], a_rename1->buffer48, cnt_rename1, a_rename1->bpmax - a_rename1->bp, a_rename1->ds);
+              if (cnt_rename1 < 0)
+              {
+                loop_counter[12]++;
+                jlog("ERROR: adin_cut: error in down sampling\n");
+                end_status_rename1 = -1;
+                a_rename1->end_of_stream = TRUE;
+                cnt_rename1 = 0;
+                if (a_rename1->bp == 0)
+                {
+                  loop_counter[13]++;
+                  break;
+                }
+
+              }
+
+            }
+
+            if ((cnt_rename1 > 0) && (a_rename1->level_coef != 1.0))
+            {
+              loop_counter[14]++;
+              for (i_rename1 = a_rename1->bp; i_rename1 < (a_rename1->bp + cnt_rename1); i_rename1++)
+              {
+                loop_counter[15]++;
+                a_rename1->buffer[i_rename1] = (SP16) (((float) a_rename1->buffer[i_rename1]) * a_rename1->level_coef);
+              }
+
+            }
+
+            if (cnt_rename1 > 0)
+            {
+              loop_counter[16]++;
+              callback_exec_adin(CALLBACK_ADIN_CAPTURED, recog, &a_rename1->buffer[a_rename1->bp], cnt_rename1);
+              a_rename1->total_captured_len += cnt_rename1;
+            }
+
+            if (cnt_rename1 > 0)
+            {
+              loop_counter[17]++;
+              if (a_rename1->strip_flag)
+              {
+                loop_counter[18]++;
+                len_rename1 = strip_zero(&a_rename1->buffer[a_rename1->bp], cnt_rename1);
+                if (len_rename1 != cnt_rename1)
+                {
+                  loop_counter[19]++;
+                  cnt_rename1 = len_rename1;
+                }
+
+              }
+
+              if (a_rename1->need_zmean)
+              {
+                loop_counter[20]++;
+                sub_zmean(&a_rename1->buffer[a_rename1->bp], cnt_rename1);
+              }
+
+            }
+
+            a_rename1->current_len = a_rename1->bp + cnt_rename1;
+          }
+
+          if (callback_check_in_adin != NULL)
+          {
+            loop_counter[21]++;
+            i_rename1 = callback_check_in_adin(recog);
+            if (i_rename1 < 0)
+            {
+              loop_counter[22]++;
+              if ((i_rename1 == (-2)) || ((i_rename1 == (-1)) && (a_rename1->is_valid_data == FALSE)))
+              {
+                loop_counter[23]++;
+                end_status_rename1 = -2;
+                if (a_rename1->current_len > 0)
+                {
+                  loop_counter[24]++;
+                  callback_exec(CALLBACK_EVENT_SPEECH_STOP, recog);
+                }
+
+                a_rename1->need_init = TRUE;
+                goto break_input;
+              }
+
+            }
+
+          }
+
+          if (a_rename1->current_len == 0)
+          {
+            loop_counter[25]++;
+            continue;
+          }
+
+          if (((!a_rename1->adin_cut_on) && (a_rename1->is_valid_data == FALSE)) && (a_rename1->current_len > 0))
+          {
+            loop_counter[26]++;
+            a_rename1->is_valid_data = TRUE;
+            callback_exec(CALLBACK_EVENT_SPEECH_START, recog);
+          }
+
+          wstep_rename1 = a_rename1->chunk_size;
+          imax_rename1 = a_rename1->current_len < wstep_rename1 ? a_rename1->current_len : wstep_rename1;
+          if (wstep_rename1 > a_rename1->current_len)
+          {
+            loop_counter[27]++;
+            wstep_rename1 = a_rename1->current_len;
+          }
+
+          i_rename1 = 0;
+          while ((i_rename1 + wstep_rename1) <= imax_rename1)
+          {
+            loop_counter[28]++;
+            if (a_rename1->adin_cut_on)
+            {
+              loop_counter[29]++;
+              zc_rename1 = count_zc_e(&a_rename1->zc, &a_rename1->buffer[i_rename1], wstep_rename1);
+              if (zc_rename1 > a_rename1->noise_zerocross)
+              {
+                loop_counter[30]++;
+                if (a_rename1->is_valid_data == FALSE)
+                {
+                  loop_counter[31]++;
+                  a_rename1->is_valid_data = TRUE;
+                  a_rename1->nc = 0;
+                  a_rename1->last_trigger_sample = (((a_rename1->total_captured_len - a_rename1->current_len) + i_rename1) + wstep_rename1) - a_rename1->zc.valid_len;
+                  callback_exec(CALLBACK_EVENT_SPEECH_START, recog);
+                  a_rename1->last_trigger_len = 0;
+                  if (a_rename1->zc.valid_len > wstep_rename1)
+                  {
+                    loop_counter[32]++;
+                    a_rename1->last_trigger_len += a_rename1->zc.valid_len - wstep_rename1;
+                  }
+
+                  if (RealTimePipeLine != NULL)
+                  {
+                    loop_counter[33]++;
+                    zc_copy_buffer(&a_rename1->zc, a_rename1->cbuf, &len_rename1);
+                    if ((len_rename1 - wstep_rename1) > 0)
+                    {
+                      loop_counter[34]++;
+                      callback_exec_adin(CALLBACK_ADIN_TRIGGERED, recog, a_rename1->cbuf, len_rename1 - wstep_rename1);
+                      {
+                        int return_value;
+                        int nowlen_rename2 = len_rename1 - wstep_rename1;
+                        int i_rename2;
+                        int now_rename2;
+                        int ret_rename2;
+                        MFCCCalc *mfcc_rename2;
+                        RealBeam *r_rename2;
+                        r_rename2 = &recog->real;
+                        now_rename2 = 0;
+                        r_rename2->last_is_segmented = FALSE;
+                        while (now_rename2 < nowlen_rename2)
+                        {
+                          loop_counter[35]++;
+                          for (mfcc_rename2 = recog->mfcclist; mfcc_rename2; mfcc_rename2 = mfcc_rename2->next)
+                          {
+                            loop_counter[36]++;
+                            if (mfcc_rename2->f >= r_rename2->maxframelen)
+                            {
+                              loop_counter[37]++;
+                              jlog("Warning: too long input (> %d frames), segment it now\n", r_rename2->maxframelen);
+                              {
+                                return_value = 1;
+                                goto return2;
+                              }
+                            }
+
+                          }
+
+                          for (i_rename2 = min(r_rename2->windowlen - r_rename2->windownum, nowlen_rename2 - now_rename2); i_rename2 > 0; i_rename2--)
+                          {
+                            loop_counter[38]++;
+                            r_rename2->window[r_rename2->windownum++] = (float) a_rename1->cbuf[now_rename2++];
+                          }
+
+                          if (r_rename2->windownum < r_rename2->windowlen)
+                          {
+                            loop_counter[39]++;
+                            break;
+                          }
+
+                          for (mfcc_rename2 = recog->mfcclist; mfcc_rename2; mfcc_rename2 = mfcc_rename2->next)
+                          {
+                            loop_counter[40]++;
+                            mfcc_rename2->valid = FALSE;
+                            if ((*recog->calc_vector)(mfcc_rename2, r_rename2->window, r_rename2->windowlen))
+                            {
+                              loop_counter[41]++;
+                              mfcc_rename2->valid = TRUE;
+                              if (param_alloc(mfcc_rename2->param, mfcc_rename2->f + 1, mfcc_rename2->param->veclen) == FALSE)
+                              {
+                                loop_counter[42]++;
+                                jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+                                {
+                                  return_value = -1;
+                                  goto return2;
+                                }
+                              }
+
+                              memcpy(mfcc_rename2->param->parvec[mfcc_rename2->f], mfcc_rename2->tmpmfcc, (sizeof(VECT)) * mfcc_rename2->param->veclen);
+                            }
+
+                          }
+
+                          {
+                            int return_value;
+                            MFCCCalc *mfcc_rename10;
+                            RealBeam *r_rename10;
+                            int maxf_rename10;
+                            PROCESS_AM *am_rename10;
+                            int rewind_frame_rename10;
+                            boolean reprocess_rename10;
+                            boolean ok_p_rename10;
+                            r_rename10 = &recog->real;
+                            ok_p_rename10 = FALSE;
+                            maxf_rename10 = 0;
+                            for (mfcc_rename10 = recog->mfcclist; mfcc_rename10; mfcc_rename10 = mfcc_rename10->next)
+                            {
+                              loop_counter[43]++;
+                              if (!mfcc_rename10->valid)
+                              {
+                                loop_counter[44]++;
+                                continue;
+                              }
+
+                              if (maxf_rename10 < mfcc_rename10->f)
+                              {
+                                loop_counter[45]++;
+                                maxf_rename10 = mfcc_rename10->f;
+                              }
+
+                              if (mfcc_rename10->f == 0)
+                              {
+                                loop_counter[46]++;
+                                ok_p_rename10 = TRUE;
+                              }
+
+                            }
+
+                            if (ok_p_rename10 && (maxf_rename10 == 0))
+                            {
+                              loop_counter[47]++;
+                              if (recog->jconf->decodeopt.segment)
+                              {
+                                loop_counter[48]++;
+                                if (!recog->process_segment)
+                                {
+                                  loop_counter[49]++;
+                                  callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                                }
+
+                                callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+                                callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                                recog->triggered = TRUE;
+                              }
+                              else
+                              {
+                                callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                                callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                                recog->triggered = TRUE;
+                              }
+
+                            }
+
+                            switch (decode_proceed(recog))
+                            {
+                              case -1:
+                                loop_counter[50]++;
+                              {
+                                return_value = -1;
+                                goto return10;
+                              }
+                                break;
+
+                              case 0:
+                                loop_counter[51]++;
+                                break;
+
+                              case 1:
+                                loop_counter[52]++;
+                                r_rename10->last_is_segmented = TRUE;
+                              {
+                                return_value = 1;
+                                goto return10;
+                              }
+
+                            }
+
+                            if (spsegment_need_restart(recog, &rewind_frame_rename10, &reprocess_rename10) == TRUE)
+                            {
+                              loop_counter[53]++;
+                              for (mfcc_rename10 = recog->mfcclist; mfcc_rename10; mfcc_rename10 = mfcc_rename10->next)
+                              {
+                                loop_counter[54]++;
+                                if (!mfcc_rename10->valid)
+                                {
+                                  loop_counter[55]++;
+                                  continue;
+                                }
+
+                                mfcc_rename10->param->header.samplenum = mfcc_rename10->f + 1;
+                                mfcc_rename10->param->samplenum = mfcc_rename10->f + 1;
+                              }
+
+                              spsegment_restart_mfccs(recog, rewind_frame_rename10, reprocess_rename10);
+                              recog->adin->rehash = TRUE;
+                              for (am_rename10 = recog->amlist; am_rename10; am_rename10 = am_rename10->next)
+                              {
+                                loop_counter[56]++;
+                                outprob_prepare(&am_rename10->hmmwrk, am_rename10->mfcc->param->samplenum);
+                              }
+
+                              if (reprocess_rename10)
+                              {
+                                loop_counter[57]++;
+                                while (1)
+                                {
+                                  loop_counter[58]++;
+                                  ok_p_rename10 = TRUE;
+                                  for (mfcc_rename10 = recog->mfcclist; mfcc_rename10; mfcc_rename10 = mfcc_rename10->next)
+                                  {
+                                    loop_counter[59]++;
+                                    if (!mfcc_rename10->valid)
+                                    {
+                                      loop_counter[60]++;
+                                      continue;
+                                    }
+
+                                    mfcc_rename10->f++;
+                                    if (mfcc_rename10->f < mfcc_rename10->param->samplenum)
+                                    {
+                                      loop_counter[61]++;
+                                      mfcc_rename10->valid = TRUE;
+                                      ok_p_rename10 = FALSE;
+                                    }
+                                    else
+                                    {
+                                      mfcc_rename10->valid = FALSE;
+                                    }
+
+                                  }
+
+                                  if (ok_p_rename10)
+                                  {
+                                    loop_counter[62]++;
+                                    for (mfcc_rename10 = recog->mfcclist; mfcc_rename10; mfcc_rename10 = mfcc_rename10->next)
+                                    {
+                                      loop_counter[63]++;
+                                      if (!mfcc_rename10->valid)
+                                      {
+                                        loop_counter[64]++;
+                                        continue;
+                                      }
+
+                                      mfcc_rename10->f--;
+                                    }
+
+                                    break;
+                                  }
+
+                                  switch (decode_proceed(recog))
+                                  {
+                                    case -1:
+                                      loop_counter[65]++;
+                                    {
+                                      return_value = -1;
+                                      goto return10;
+                                    }
+                                      break;
+
+                                    case 0:
+                                      loop_counter[66]++;
+                                      break;
+
+                                    case 1:
+                                      loop_counter[67]++;
+                                      break;
+
+                                  }
+
+                                  callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                                }
+
+                              }
+
+                            }
+
+                            for (mfcc_rename10 = recog->mfcclist; mfcc_rename10; mfcc_rename10 = mfcc_rename10->next)
+                            {
+                              loop_counter[68]++;
+                              if (mfcc_rename10->valid)
+                              {
+                                loop_counter[69]++;
+                                callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                                break;
+                              }
+
+                            }
+
+                            {
+                              return_value = 0;
+                              goto return10;
+                            }
+                            return10:
+                            ;
+
+                            ret_rename2 = return_value;
+                          }
+                          if ((ret_rename2 == 1) && recog->jconf->decodeopt.segment)
+                          {
+                            loop_counter[70]++;
+                            r_rename2->rest_len = nowlen_rename2 - now_rename2;
+                            if (r_rename2->rest_len > 0)
+                            {
+                              loop_counter[71]++;
+                              if (r_rename2->rest_Speech == NULL)
+                              {
+                                loop_counter[72]++;
+                                r_rename2->rest_alloc_len = r_rename2->rest_len;
+                                r_rename2->rest_Speech = (SP16 *) mymalloc((sizeof(SP16)) * r_rename2->rest_alloc_len);
+                              }
+                              else
+                                if (r_rename2->rest_alloc_len < r_rename2->rest_len)
+                              {
+                                loop_counter[73]++;
+                                r_rename2->rest_alloc_len = r_rename2->rest_len;
+                                r_rename2->rest_Speech = (SP16 *) myrealloc(r_rename2->rest_Speech, (sizeof(SP16)) * r_rename2->rest_alloc_len);
+                              }
+
+
+                              memcpy(r_rename2->rest_Speech, &a_rename1->cbuf[now_rename2], (sizeof(SP16)) * r_rename2->rest_len);
+                            }
+
+                          }
+
+                          if (ret_rename2 != 0)
+                          {
+                            loop_counter[74]++;
+                            return_value = ret_rename2;
+                            goto return2;
+                          }
+
+                          for (mfcc_rename2 = recog->mfcclist; mfcc_rename2; mfcc_rename2 = mfcc_rename2->next)
+                          {
+                            loop_counter[75]++;
+                            if (!mfcc_rename2->valid)
+                            {
+                              loop_counter[76]++;
+                              continue;
+                            }
+
+                            mfcc_rename2->f++;
+                          }
+
+                          memmove(r_rename2->window, &r_rename2->window[recog->jconf->input.frameshift], (sizeof(SP16)) * (r_rename2->windowlen - recog->jconf->input.frameshift));
+                          r_rename2->windownum -= recog->jconf->input.frameshift;
+                        }
+
+                        {
+                          return_value = 0;
+                          goto return2;
+                        }
+                        return2:
+                        ;
+
+                        ad_process_ret_rename1 = return_value;
+                      }
+                      switch (ad_process_ret_rename1)
+                      {
+                        case 1:
+                          loop_counter[77]++;
+                          end_status_rename1 = 2;
+                        {
+                          int from_rename3 = i_rename1;
+                          if ((from_rename3 > 0) && ((a_rename1->current_len - from_rename3) > 0))
+                          {
+                            loop_counter[78]++;
+                            memmove(a_rename1->buffer, &a_rename1->buffer[from_rename3], (a_rename1->current_len - from_rename3) * (sizeof(SP16)));
+                          }
+
+                          a_rename1->bp = a_rename1->current_len - from_rename3;
+                          return3:
+                          ;
+
+                        }
+                          goto break_input;
+
+                        case -1:
+                          loop_counter[79]++;
+                          end_status_rename1 = -1;
+                          goto break_input;
+
+                      }
+
+                    }
+
+                  }
+
+                }
+                else
+                {
+                  if (a_rename1->nc > 0)
+                  {
+                    loop_counter[80]++;
+                    a_rename1->nc = 0;
+                    if (a_rename1->sblen > 0)
+                    {
+                      loop_counter[81]++;
+                      a_rename1->last_trigger_len += a_rename1->sblen;
+                    }
+
+                    if (RealTimePipeLine != NULL)
+                    {
+                      loop_counter[82]++;
+                      if (a_rename1->sblen > 0)
+                      {
+                        loop_counter[83]++;
+                        callback_exec_adin(CALLBACK_ADIN_TRIGGERED, recog, a_rename1->swapbuf, a_rename1->sblen);
+                        {
+                          int return_value;
+                          int nowlen_rename4 = a_rename1->sblen;
+                          int i_rename4;
+                          int now_rename4;
+                          int ret_rename4;
+                          MFCCCalc *mfcc_rename4;
+                          RealBeam *r_rename4;
+                          r_rename4 = &recog->real;
+                          now_rename4 = 0;
+                          r_rename4->last_is_segmented = FALSE;
+                          while (now_rename4 < nowlen_rename4)
+                          {
+                            loop_counter[84]++;
+                            for (mfcc_rename4 = recog->mfcclist; mfcc_rename4; mfcc_rename4 = mfcc_rename4->next)
+                            {
+                              loop_counter[85]++;
+                              if (mfcc_rename4->f >= r_rename4->maxframelen)
+                              {
+                                loop_counter[86]++;
+                                jlog("Warning: too long input (> %d frames), segment it now\n", r_rename4->maxframelen);
+                                {
+                                  return_value = 1;
+                                  goto return4;
+                                }
+                              }
+
+                            }
+
+                            for (i_rename4 = min(r_rename4->windowlen - r_rename4->windownum, nowlen_rename4 - now_rename4); i_rename4 > 0; i_rename4--)
+                            {
+                              loop_counter[87]++;
+                              r_rename4->window[r_rename4->windownum++] = (float) a_rename1->swapbuf[now_rename4++];
+                            }
+
+                            if (r_rename4->windownum < r_rename4->windowlen)
+                            {
+                              loop_counter[88]++;
+                              break;
+                            }
+
+                            for (mfcc_rename4 = recog->mfcclist; mfcc_rename4; mfcc_rename4 = mfcc_rename4->next)
+                            {
+                              loop_counter[89]++;
+                              mfcc_rename4->valid = FALSE;
+                              if ((*recog->calc_vector)(mfcc_rename4, r_rename4->window, r_rename4->windowlen))
+                              {
+                                loop_counter[90]++;
+                                mfcc_rename4->valid = TRUE;
+                                if (param_alloc(mfcc_rename4->param, mfcc_rename4->f + 1, mfcc_rename4->param->veclen) == FALSE)
+                                {
+                                  loop_counter[91]++;
+                                  jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+                                  {
+                                    return_value = -1;
+                                    goto return4;
+                                  }
+                                }
+
+                                memcpy(mfcc_rename4->param->parvec[mfcc_rename4->f], mfcc_rename4->tmpmfcc, (sizeof(VECT)) * mfcc_rename4->param->veclen);
+                              }
+
+                            }
+
+                            {
+                              int return_value;
+                              MFCCCalc *mfcc_rename11;
+                              RealBeam *r_rename11;
+                              int maxf_rename11;
+                              PROCESS_AM *am_rename11;
+                              int rewind_frame_rename11;
+                              boolean reprocess_rename11;
+                              boolean ok_p_rename11;
+                              r_rename11 = &recog->real;
+                              ok_p_rename11 = FALSE;
+                              maxf_rename11 = 0;
+                              for (mfcc_rename11 = recog->mfcclist; mfcc_rename11; mfcc_rename11 = mfcc_rename11->next)
+                              {
+                                loop_counter[92]++;
+                                if (!mfcc_rename11->valid)
+                                {
+                                  loop_counter[93]++;
+                                  continue;
+                                }
+
+                                if (maxf_rename11 < mfcc_rename11->f)
+                                {
+                                  loop_counter[94]++;
+                                  maxf_rename11 = mfcc_rename11->f;
+                                }
+
+                                if (mfcc_rename11->f == 0)
+                                {
+                                  loop_counter[95]++;
+                                  ok_p_rename11 = TRUE;
+                                }
+
+                              }
+
+                              if (ok_p_rename11 && (maxf_rename11 == 0))
+                              {
+                                loop_counter[96]++;
+                                if (recog->jconf->decodeopt.segment)
+                                {
+                                  loop_counter[97]++;
+                                  if (!recog->process_segment)
+                                  {
+                                    loop_counter[98]++;
+                                    callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                                  }
+
+                                  callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+                                  callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                                  recog->triggered = TRUE;
+                                }
+                                else
+                                {
+                                  callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                                  callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                                  recog->triggered = TRUE;
+                                }
+
+                              }
+
+                              switch (decode_proceed(recog))
+                              {
+                                case -1:
+                                  loop_counter[99]++;
+                                {
+                                  return_value = -1;
+                                  goto return11;
+                                }
+                                  break;
+
+                                case 0:
+                                  loop_counter[100]++;
+                                  break;
+
+                                case 1:
+                                  loop_counter[101]++;
+                                  r_rename11->last_is_segmented = TRUE;
+                                {
+                                  return_value = 1;
+                                  goto return11;
+                                }
+
+                              }
+
+                              if (spsegment_need_restart(recog, &rewind_frame_rename11, &reprocess_rename11) == TRUE)
+                              {
+                                loop_counter[102]++;
+                                for (mfcc_rename11 = recog->mfcclist; mfcc_rename11; mfcc_rename11 = mfcc_rename11->next)
+                                {
+                                  loop_counter[103]++;
+                                  if (!mfcc_rename11->valid)
+                                  {
+                                    loop_counter[104]++;
+                                    continue;
+                                  }
+
+                                  mfcc_rename11->param->header.samplenum = mfcc_rename11->f + 1;
+                                  mfcc_rename11->param->samplenum = mfcc_rename11->f + 1;
+                                }
+
+                                spsegment_restart_mfccs(recog, rewind_frame_rename11, reprocess_rename11);
+                                recog->adin->rehash = TRUE;
+                                for (am_rename11 = recog->amlist; am_rename11; am_rename11 = am_rename11->next)
+                                {
+                                  loop_counter[105]++;
+                                  outprob_prepare(&am_rename11->hmmwrk, am_rename11->mfcc->param->samplenum);
+                                }
+
+                                if (reprocess_rename11)
+                                {
+                                  loop_counter[106]++;
+                                  while (1)
+                                  {
+                                    loop_counter[107]++;
+                                    ok_p_rename11 = TRUE;
+                                    for (mfcc_rename11 = recog->mfcclist; mfcc_rename11; mfcc_rename11 = mfcc_rename11->next)
+                                    {
+                                      loop_counter[108]++;
+                                      if (!mfcc_rename11->valid)
+                                      {
+                                        loop_counter[109]++;
+                                        continue;
+                                      }
+
+                                      mfcc_rename11->f++;
+                                      if (mfcc_rename11->f < mfcc_rename11->param->samplenum)
+                                      {
+                                        loop_counter[110]++;
+                                        mfcc_rename11->valid = TRUE;
+                                        ok_p_rename11 = FALSE;
+                                      }
+                                      else
+                                      {
+                                        mfcc_rename11->valid = FALSE;
+                                      }
+
+                                    }
+
+                                    if (ok_p_rename11)
+                                    {
+                                      loop_counter[111]++;
+                                      for (mfcc_rename11 = recog->mfcclist; mfcc_rename11; mfcc_rename11 = mfcc_rename11->next)
+                                      {
+                                        loop_counter[112]++;
+                                        if (!mfcc_rename11->valid)
+                                        {
+                                          loop_counter[113]++;
+                                          continue;
+                                        }
+
+                                        mfcc_rename11->f--;
+                                      }
+
+                                      break;
+                                    }
+
+                                    switch (decode_proceed(recog))
+                                    {
+                                      case -1:
+                                        loop_counter[114]++;
+                                      {
+                                        return_value = -1;
+                                        goto return11;
+                                      }
+                                        break;
+
+                                      case 0:
+                                        loop_counter[115]++;
+                                        break;
+
+                                      case 1:
+                                        loop_counter[116]++;
+                                        break;
+
+                                    }
+
+                                    callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                                  }
+
+                                }
+
+                              }
+
+                              for (mfcc_rename11 = recog->mfcclist; mfcc_rename11; mfcc_rename11 = mfcc_rename11->next)
+                              {
+                                loop_counter[117]++;
+                                if (mfcc_rename11->valid)
+                                {
+                                  loop_counter[118]++;
+                                  callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                                  break;
+                                }
+
+                              }
+
+                              {
+                                return_value = 0;
+                                goto return11;
+                              }
+                              return11:
+                              ;
+
+                              ret_rename4 = return_value;
+                            }
+                            if ((ret_rename4 == 1) && recog->jconf->decodeopt.segment)
+                            {
+                              loop_counter[119]++;
+                              r_rename4->rest_len = nowlen_rename4 - now_rename4;
+                              if (r_rename4->rest_len > 0)
+                              {
+                                loop_counter[120]++;
+                                if (r_rename4->rest_Speech == NULL)
+                                {
+                                  loop_counter[121]++;
+                                  r_rename4->rest_alloc_len = r_rename4->rest_len;
+                                  r_rename4->rest_Speech = (SP16 *) mymalloc((sizeof(SP16)) * r_rename4->rest_alloc_len);
+                                }
+                                else
+                                  if (r_rename4->rest_alloc_len < r_rename4->rest_len)
+                                {
+                                  loop_counter[122]++;
+                                  r_rename4->rest_alloc_len = r_rename4->rest_len;
+                                  r_rename4->rest_Speech = (SP16 *) myrealloc(r_rename4->rest_Speech, (sizeof(SP16)) * r_rename4->rest_alloc_len);
+                                }
+
+
+                                memcpy(r_rename4->rest_Speech, &a_rename1->swapbuf[now_rename4], (sizeof(SP16)) * r_rename4->rest_len);
+                              }
+
+                            }
+
+                            if (ret_rename4 != 0)
+                            {
+                              loop_counter[123]++;
+                              return_value = ret_rename4;
+                              goto return4;
+                            }
+
+                            for (mfcc_rename4 = recog->mfcclist; mfcc_rename4; mfcc_rename4 = mfcc_rename4->next)
+                            {
+                              loop_counter[124]++;
+                              if (!mfcc_rename4->valid)
+                              {
+                                loop_counter[125]++;
+                                continue;
+                              }
+
+                              mfcc_rename4->f++;
+                            }
+
+                            memmove(r_rename4->window, &r_rename4->window[recog->jconf->input.frameshift], (sizeof(SP16)) * (r_rename4->windowlen - recog->jconf->input.frameshift));
+                            r_rename4->windownum -= recog->jconf->input.frameshift;
+                          }
+
+                          {
+                            return_value = 0;
+                            goto return4;
+                          }
+                          return4:
+                          ;
+
+                          ad_process_ret_rename1 = return_value;
+                        }
+                        a_rename1->sblen = 0;
+                        switch (ad_process_ret_rename1)
+                        {
+                          case 1:
+                            loop_counter[126]++;
+                            end_status_rename1 = 2;
+                          {
+                            int from_rename5 = i_rename1;
+                            if ((from_rename5 > 0) && ((a_rename1->current_len - from_rename5) > 0))
+                            {
+                              loop_counter[127]++;
+                              memmove(a_rename1->buffer, &a_rename1->buffer[from_rename5], (a_rename1->current_len - from_rename5) * (sizeof(SP16)));
+                            }
+
+                            a_rename1->bp = a_rename1->current_len - from_rename5;
+                            return5:
+                            ;
+
+                          }
+                            goto break_input;
+
+                          case -1:
+                            loop_counter[128]++;
+                            end_status_rename1 = -1;
+                            goto break_input;
+
+                        }
+
+                      }
+
+                    }
+
+                  }
+
+                }
+
+              }
+              else
+                if (a_rename1->is_valid_data == TRUE)
+              {
+                loop_counter[129]++;
+                if (a_rename1->nc == 0)
+                {
+                  loop_counter[130]++;
+                  a_rename1->rest_tail = a_rename1->sbsize - a_rename1->c_length;
+                  a_rename1->sblen = 0;
+                }
+
+                a_rename1->nc++;
+              }
+
+
+            }
+
+            if (((a_rename1->adin_cut_on && a_rename1->is_valid_data) && (a_rename1->nc > 0)) && (a_rename1->rest_tail == 0))
+            {
+              loop_counter[131]++;
+              if ((a_rename1->sblen + wstep_rename1) > a_rename1->sbsize)
+              {
+                loop_counter[132]++;
+                jlog("ERROR: adin_cut: swap buffer for re-triggering overflow\n");
+              }
+
+              memcpy(&a_rename1->swapbuf[a_rename1->sblen], &a_rename1->buffer[i_rename1], wstep_rename1 * (sizeof(SP16)));
+              a_rename1->sblen += wstep_rename1;
+            }
+            else
+            {
+              if ((!a_rename1->adin_cut_on) || (a_rename1->is_valid_data == TRUE))
+              {
+                loop_counter[133]++;
+                if (a_rename1->nc > 0)
+                {
+                  loop_counter[134]++;
+                  if (a_rename1->rest_tail < wstep_rename1)
+                  {
+                    loop_counter[135]++;
+                    a_rename1->rest_tail = 0;
+                  }
+                  else
+                    a_rename1->rest_tail -= wstep_rename1;
+
+                }
+
+                a_rename1->last_trigger_len += wstep_rename1;
+                if (RealTimePipeLine != NULL)
+                {
+                  loop_counter[136]++;
+                  callback_exec_adin(CALLBACK_ADIN_TRIGGERED, recog, &a_rename1->buffer[i_rename1], wstep_rename1);
+                  {
+                    int return_value;
+                    int nowlen_rename6 = wstep_rename1;
+                    int i_rename6;
+                    int now_rename6;
+                    int ret_rename6;
+                    MFCCCalc *mfcc_rename6;
+                    RealBeam *r_rename6;
+                    r_rename6 = &recog->real;
+                    now_rename6 = 0;
+                    r_rename6->last_is_segmented = FALSE;
+                    while (now_rename6 < nowlen_rename6)
+                    {
+                      loop_counter[137]++;
+                      for (mfcc_rename6 = recog->mfcclist; mfcc_rename6; mfcc_rename6 = mfcc_rename6->next)
+                      {
+                        loop_counter[138]++;
+                        if (mfcc_rename6->f >= r_rename6->maxframelen)
+                        {
+                          loop_counter[139]++;
+                          jlog("Warning: too long input (> %d frames), segment it now\n", r_rename6->maxframelen);
+                          {
+                            return_value = 1;
+                            goto return6;
+                          }
+                        }
+
+                      }
+
+                      for (i_rename6 = min(r_rename6->windowlen - r_rename6->windownum, nowlen_rename6 - now_rename6); i_rename6 > 0; i_rename6--)
+                      {
+                        loop_counter[140]++;
+                        r_rename6->window[r_rename6->windownum++] = (float) a_rename1->buffer[now_rename6++];
+                      }
+
+                      if (r_rename6->windownum < r_rename6->windowlen)
+                      {
+                        loop_counter[141]++;
+                        break;
+                      }
+
+                      for (mfcc_rename6 = recog->mfcclist; mfcc_rename6; mfcc_rename6 = mfcc_rename6->next)
+                      {
+                        loop_counter[142]++;
+                        mfcc_rename6->valid = FALSE;
+                        if ((*recog->calc_vector)(mfcc_rename6, r_rename6->window, r_rename6->windowlen))
+                        {
+                          loop_counter[143]++;
+                          mfcc_rename6->valid = TRUE;
+                          if (param_alloc(mfcc_rename6->param, mfcc_rename6->f + 1, mfcc_rename6->param->veclen) == FALSE)
+                          {
+                            loop_counter[144]++;
+                            jlog("ERROR: failed to allocate memory for incoming MFCC vectors\n");
+                            {
+                              return_value = -1;
+                              goto return6;
+                            }
+                          }
+
+                          memcpy(mfcc_rename6->param->parvec[mfcc_rename6->f], mfcc_rename6->tmpmfcc, (sizeof(VECT)) * mfcc_rename6->param->veclen);
+                        }
+
+                      }
+
+                      {
+                        int return_value;
+                        MFCCCalc *mfcc_rename12;
+                        RealBeam *r_rename12;
+                        int maxf_rename12;
+                        PROCESS_AM *am_rename12;
+                        int rewind_frame_rename12;
+                        boolean reprocess_rename12;
+                        boolean ok_p_rename12;
+                        r_rename12 = &recog->real;
+                        ok_p_rename12 = FALSE;
+                        maxf_rename12 = 0;
+                        for (mfcc_rename12 = recog->mfcclist; mfcc_rename12; mfcc_rename12 = mfcc_rename12->next)
+                        {
+                          loop_counter[145]++;
+                          if (!mfcc_rename12->valid)
+                          {
+                            loop_counter[146]++;
+                            continue;
+                          }
+
+                          if (maxf_rename12 < mfcc_rename12->f)
+                          {
+                            loop_counter[147]++;
+                            maxf_rename12 = mfcc_rename12->f;
+                          }
+
+                          if (mfcc_rename12->f == 0)
+                          {
+                            loop_counter[148]++;
+                            ok_p_rename12 = TRUE;
+                          }
+
+                        }
+
+                        if (ok_p_rename12 && (maxf_rename12 == 0))
+                        {
+                          loop_counter[149]++;
+                          if (recog->jconf->decodeopt.segment)
+                          {
+                            loop_counter[150]++;
+                            if (!recog->process_segment)
+                            {
+                              loop_counter[151]++;
+                              callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                            }
+
+                            callback_exec(CALLBACK_EVENT_SEGMENT_BEGIN, recog);
+                            callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                            recog->triggered = TRUE;
+                          }
+                          else
+                          {
+                            callback_exec(CALLBACK_EVENT_RECOGNITION_BEGIN, recog);
+                            callback_exec(CALLBACK_EVENT_PASS1_BEGIN, recog);
+                            recog->triggered = TRUE;
+                          }
+
+                        }
+
+                        switch (decode_proceed(recog))
+                        {
+                          case -1:
+                            loop_counter[152]++;
+                          {
+                            return_value = -1;
+                            goto return12;
+                          }
+                            break;
+
+                          case 0:
+                            loop_counter[153]++;
+                            break;
+
+                          case 1:
+                            loop_counter[154]++;
+                            r_rename12->last_is_segmented = TRUE;
+                          {
+                            return_value = 1;
+                            goto return12;
+                          }
+
+                        }
+
+                        if (spsegment_need_restart(recog, &rewind_frame_rename12, &reprocess_rename12) == TRUE)
+                        {
+                          loop_counter[155]++;
+                          for (mfcc_rename12 = recog->mfcclist; mfcc_rename12; mfcc_rename12 = mfcc_rename12->next)
+                          {
+                            loop_counter[156]++;
+                            if (!mfcc_rename12->valid)
+                            {
+                              loop_counter[157]++;
+                              continue;
+                            }
+
+                            mfcc_rename12->param->header.samplenum = mfcc_rename12->f + 1;
+                            mfcc_rename12->param->samplenum = mfcc_rename12->f + 1;
+                          }
+
+                          spsegment_restart_mfccs(recog, rewind_frame_rename12, reprocess_rename12);
+                          recog->adin->rehash = TRUE;
+                          for (am_rename12 = recog->amlist; am_rename12; am_rename12 = am_rename12->next)
+                          {
+                            loop_counter[158]++;
+                            outprob_prepare(&am_rename12->hmmwrk, am_rename12->mfcc->param->samplenum);
+                          }
+
+                          if (reprocess_rename12)
+                          {
+                            loop_counter[159]++;
+                            while (1)
+                            {
+                              loop_counter[160]++;
+                              ok_p_rename12 = TRUE;
+                              for (mfcc_rename12 = recog->mfcclist; mfcc_rename12; mfcc_rename12 = mfcc_rename12->next)
+                              {
+                                loop_counter[161]++;
+                                if (!mfcc_rename12->valid)
+                                {
+                                  loop_counter[162]++;
+                                  continue;
+                                }
+
+                                mfcc_rename12->f++;
+                                if (mfcc_rename12->f < mfcc_rename12->param->samplenum)
+                                {
+                                  loop_counter[163]++;
+                                  mfcc_rename12->valid = TRUE;
+                                  ok_p_rename12 = FALSE;
+                                }
+                                else
+                                {
+                                  mfcc_rename12->valid = FALSE;
+                                }
+
+                              }
+
+                              if (ok_p_rename12)
+                              {
+                                loop_counter[164]++;
+                                for (mfcc_rename12 = recog->mfcclist; mfcc_rename12; mfcc_rename12 = mfcc_rename12->next)
+                                {
+                                  loop_counter[165]++;
+                                  if (!mfcc_rename12->valid)
+                                  {
+                                    loop_counter[166]++;
+                                    continue;
+                                  }
+
+                                  mfcc_rename12->f--;
+                                }
+
+                                break;
+                              }
+
+                              switch (decode_proceed(recog))
+                              {
+                                case -1:
+                                  loop_counter[167]++;
+                                {
+                                  return_value = -1;
+                                  goto return12;
+                                }
+                                  break;
+
+                                case 0:
+                                  loop_counter[168]++;
+                                  break;
+
+                                case 1:
+                                  loop_counter[169]++;
+                                  break;
+
+                              }
+
+                              callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                            }
+
+                          }
+
+                        }
+
+                        for (mfcc_rename12 = recog->mfcclist; mfcc_rename12; mfcc_rename12 = mfcc_rename12->next)
+                        {
+                          loop_counter[170]++;
+                          if (mfcc_rename12->valid)
+                          {
+                            loop_counter[171]++;
+                            callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
+                            break;
+                          }
+
+                        }
+
+                        {
+                          return_value = 0;
+                          goto return12;
+                        }
+                        return12:
+                        ;
+
+                        ret_rename6 = return_value;
+                      }
+                      if ((ret_rename6 == 1) && recog->jconf->decodeopt.segment)
+                      {
+                        loop_counter[172]++;
+                        r_rename6->rest_len = nowlen_rename6 - now_rename6;
+                        if (r_rename6->rest_len > 0)
+                        {
+                          loop_counter[173]++;
+                          if (r_rename6->rest_Speech == NULL)
+                          {
+                            loop_counter[174]++;
+                            r_rename6->rest_alloc_len = r_rename6->rest_len;
+                            r_rename6->rest_Speech = (SP16 *) mymalloc((sizeof(SP16)) * r_rename6->rest_alloc_len);
+                          }
+                          else
+                            if (r_rename6->rest_alloc_len < r_rename6->rest_len)
+                          {
+                            loop_counter[175]++;
+                            r_rename6->rest_alloc_len = r_rename6->rest_len;
+                            r_rename6->rest_Speech = (SP16 *) myrealloc(r_rename6->rest_Speech, (sizeof(SP16)) * r_rename6->rest_alloc_len);
+                          }
+
+
+                          memcpy(r_rename6->rest_Speech, &a_rename1->buffer[now_rename6], (sizeof(SP16)) * r_rename6->rest_len);
+                        }
+
+                      }
+
+                      if (ret_rename6 != 0)
+                      {
+                        loop_counter[176]++;
+                        return_value = ret_rename6;
+                        goto return6;
+                      }
+
+                      for (mfcc_rename6 = recog->mfcclist; mfcc_rename6; mfcc_rename6 = mfcc_rename6->next)
+                      {
+                        loop_counter[177]++;
+                        if (!mfcc_rename6->valid)
+                        {
+                          loop_counter[178]++;
+                          continue;
+                        }
+
+                        mfcc_rename6->f++;
+                      }
+
+                      memmove(r_rename6->window, &r_rename6->window[recog->jconf->input.frameshift], (sizeof(SP16)) * (r_rename6->windowlen - recog->jconf->input.frameshift));
+                      r_rename6->windownum -= recog->jconf->input.frameshift;
+                    }
+
+                    {
+                      return_value = 0;
+                      goto return6;
+                    }
+                    return6:
+                    ;
+
+                    ad_process_ret_rename1 = return_value;
+                  }
+                  switch (ad_process_ret_rename1)
+                  {
+                    case 1:
+                      loop_counter[179]++;
+                    {
+                      int from_rename7 = i_rename1 + wstep_rename1;
+                      if ((from_rename7 > 0) && ((a_rename1->current_len - from_rename7) > 0))
+                      {
+                        loop_counter[180]++;
+                        memmove(a_rename1->buffer, &a_rename1->buffer[from_rename7], (a_rename1->current_len - from_rename7) * (sizeof(SP16)));
+                      }
+
+                      a_rename1->bp = a_rename1->current_len - from_rename7;
+                      return7:
+                      ;
+
+                    }
+                      end_status_rename1 = 2;
+                      goto break_input;
+
+                    case -1:
+                      loop_counter[181]++;
+                      end_status_rename1 = -1;
+                      goto break_input;
+
+                  }
+
+                }
+
+              }
+
+            }
+
+            if ((a_rename1->adin_cut_on && a_rename1->is_valid_data) && (a_rename1->nc >= a_rename1->nc_max))
+            {
+              loop_counter[182]++;
+              a_rename1->is_valid_data = FALSE;
+              a_rename1->sblen = 0;
+              callback_exec(CALLBACK_EVENT_SPEECH_STOP, recog);
+              {
+                int from_rename8 = i_rename1 + wstep_rename1;
+                if ((from_rename8 > 0) && ((a_rename1->current_len - from_rename8) > 0))
+                {
+                  loop_counter[183]++;
+                  memmove(a_rename1->buffer, &a_rename1->buffer[from_rename8], (a_rename1->current_len - from_rename8) * (sizeof(SP16)));
+                }
+
+                a_rename1->bp = a_rename1->current_len - from_rename8;
+                return8:
+                ;
+
+              }
+              end_status_rename1 = 1;
+              goto break_input;
+            }
+
+            i_rename1 += wstep_rename1;
+          }
+
+          {
+            int from_rename9 = i_rename1;
+            if ((from_rename9 > 0) && ((a_rename1->current_len - from_rename9) > 0))
+            {
+              loop_counter[184]++;
+              memmove(a_rename1->buffer, &a_rename1->buffer[from_rename9], (a_rename1->current_len - from_rename9) * (sizeof(SP16)));
+            }
+
+            a_rename1->bp = a_rename1->current_len - from_rename9;
+            return9:
+            ;
+
+          }
+        }
+
+        break_input:
+        if (a_rename1->end_of_stream)
+        {
+          loop_counter[185]++;
+          callback_exec(CALLBACK_EVENT_SPEECH_STOP, recog);
+          if (a_rename1->bp == 0)
+          {
+            loop_counter[186]++;
+            a_rename1->need_init = TRUE;
+          }
+
+          if (end_status_rename1 >= 0)
+          {
+            loop_counter[187]++;
+            end_status_rename1 = a_rename1->bp ? 1 : 0;
+          }
+
+        }
+
+
+        {
+          return_value = end_status_rename1;
+          goto return1;
+        }
+        return1:
+        ;
+
+        return_value = return_value;
+      }
+      goto return0;
+    }
+    return0:
+    ;
+
+    ret = return_value;
+  }
+  {
+    print_loop_counter:
+    
+
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 188; i++)
+      printf("%d, ", loop_counter[i]);
+
+    printf(")\n");
+  }
+float exec_time;
+exec_time = -42349.000000*loop_counter[0] + -325.460000*loop_counter[4] + 55.279200*loop_counter[140] + 115.722000*loop_counter[141] + -8792.340000*loop_counter[147] + 0.000000;
+printf("predicted time = %f\n", exec_time);
+
+  return ret;
+}
+
+
 /** 
  * <EN>
  * @brief  Execute recognition.
@@ -947,13 +2442,14 @@ j_recognize_stream_core(Recog *recog)
 	/* process the incoming input */
 	if (jconf->input.type == INPUT_WAVEFORM) {
 	  /* get speech and process it on real-time */
-	  ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
+	  //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
+      // Run adin_go with loop counts
+      call_adin_go(recog);
 	} else {
 	  /* get feature vector and process it */
 	  ret = mfcc_go(recog, callback_check_in_adin);
 	}
 
-  RealTimeParam_slice(recog);
   start_timing();
 	
 	if (ret < 0) {		/* error end in adin_go */
