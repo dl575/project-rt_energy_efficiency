@@ -2497,7 +2497,7 @@ void Main_loop_slice()
 
     int i;
     for (i = 0; i < 250; i++)
-      printf("%d, ", loop_counter[i]++);
+      printf("%d, ", loop_counter[i]);
 
     printf(")\n");
 float exec_time;
@@ -4906,7 +4906,7 @@ void Main_loop_loop_counters(void)
     printf("loop counter = (");
     int i;
     for (i = 0; i < 238; i++)
-      printf("%d, ", loop_counter[i]++);
+      printf("%d, ", loop_counter[i]);
 
     printf(")\n");
   }

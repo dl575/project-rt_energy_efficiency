@@ -895,7 +895,7 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
 
     int i;
     for (i = 0; i < 56; i++)
-      printf("%d, ", loop_counter[i]++);
+      printf("%d, ", loop_counter[i]);
 
     printf(")\n");
 float exec_time;
@@ -1623,7 +1623,7 @@ Uint16 gui_event_loop_loop_counters(void *pData, void (*loop_action)(void *pData
       printf("loop counter = (");
       int i;
       for (i = 0; i < 30; i++) {
-        printf("%d, ", loop_counter[i]++);
+        printf("%d, ", loop_counter[i]);
         loop_counter[i] = 0;
       }
 

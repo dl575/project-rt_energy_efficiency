@@ -632,7 +632,7 @@ void slice(int argc, char **argv)
     int i;
     printf("loop counter = (");
     for (i = 0; i < 47; i++)
-      printf("%d, ", loop_counter[i]++);
+      printf("%d, ", loop_counter[i]);
     printf(")\n");
 
 {}

@@ -114,7 +114,7 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     # i++
     next_stmt = c_ast.UnaryOp("p++", c_ast.ID("i"))
     # printf in for
-    stmt = c_ast.ID("printf(\"%d, \", loop_counter[i]++)")
+    stmt = c_ast.ID("printf(\"%d, \", loop_counter[i])")
     # Cosntruct for loop
     stmt_for = c_ast.For(init, cond, next_stmt, stmt)
 

@@ -64,7 +64,7 @@ void slice(const char *string)
     int i;
     printf("loop counter = (");
     for (i = 0; i < 4; i++)
-      printf("%d, ", loop_counter[i]++);
+      printf("%d, ", loop_counter[i]);
     printf(")\n");
 
 {}
