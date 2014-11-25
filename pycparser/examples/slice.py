@@ -252,6 +252,8 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     self.slice_loop(node)
   def visit_DoWhile(self, node):
     self.slice_loop(node)
+  def visit_Switch(self, node):
+    self.slice_loop(node)
 
   """
   Always include continue/break and labels to ensure control flow.

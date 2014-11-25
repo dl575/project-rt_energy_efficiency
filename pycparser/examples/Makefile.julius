@@ -3,7 +3,9 @@ PYTHON=/usr/bin/python
 slice: preprocess
 	#$(PYTHON) inline.py julius/recogmain3.c j_recognize_stream_core > julius/recogmain_inline.c
 	#$(PYTHON) inline.py julius/recogmain3.c decode_proceed > julius/recogmain_inline.c
-	$(PYTHON) inline.py julius/recogmain3.c RealTimeParam > julius/recogmain_inline.c
+	#$(PYTHON) inline.py julius/recogmain3.c RealTimeParam > julius/recogmain_inline.c
+	#$(PYTHON) inline.py julius/recogmain3.c RealTimePipeLine > julius/recogmain_inline.c
+	$(PYTHON) inline.py julius/recogmain3.c call_adin_go > julius/recogmain_inline.c
 	$(PYTHON) insert_loop_counts.py julius/recogmain_inline.c > julius/recogmain_loop_counts.c
 	time $(PYTHON) slice.py julius/recogmain_loop_counts.c loop_counter > julius/recogmain_slice.c
 
@@ -43,6 +45,7 @@ preprocess:
 	$(call td,"VECT")
 	$(call td,"RealBeam")
 	$(call td,"Value")
+	$(call td,"ADIn")
 
 	# # for multi-gram.c
 	# $(call td,"DFA_INFO")
