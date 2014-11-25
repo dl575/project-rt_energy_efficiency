@@ -25,6 +25,15 @@ def run_prediction(train_filename, test_filename, policy):
   # Predict times using the passed policy
   predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
 
+  s = 0
+  for i in range(1, len(predict_times)):
+    s += abs(predict_times[i] - predict_times[i-1])
+  print float(s)/(len(predict_times) - 1)
+  import numpy
+  print numpy.std(predict_times)
+  print min(predict_times), max(predict_times)
+
+
   return (predict_times, test_times)
 
 input_data_dir = "data/"
@@ -32,14 +41,12 @@ output_dir = "predict_times/"
 # Create output directory if it does not exist
 if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
-policies = [policy_pid_timeliness, 
+policies = [
     policy_tuned_pid,
-    policy_data_dependent_oracle, 
-    policy_data_dependent_lp, 
-    #policy_data_dependent_lp_quadratic, 
-    policy_oracle]
-benchmarks = ["rijndael", "stringsearch", "freeciv", "sha", "julius", "xpilot", 
-  "xpilot_slice", "freeciv_slice", "julius_slice"]
+    #policy_data_dependent_oracle, 
+    #policy_data_dependent_lp, 
+    #policy_oracle
+    ]
 
 # For each DVFS policy
 for policy in policies:
@@ -50,6 +57,9 @@ for policy in policies:
     test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
     print "  " + train_filename
     (predict_times, times) = run_prediction(train_filename, test_filename, policy)
+    # Save lp solve output
+    if policy == policy_data_dependent_lp:
+      os.system("cp temp.lps lps/%s.lps" % benchmark)
     # Write prediction out to file
     out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
     out_file.write("\n".join([str(x) for x in predict_times]))

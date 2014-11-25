@@ -40,6 +40,11 @@ import random
 import numpy
 import os
 
+#benchmarks = ["rijndael", "stringsearch", "freeciv", "sha", "julius", "xpilot", 
+#  "xpilot_slice", "xpilot_loop", "freeciv_slice", "julius_slice"]
+benchmarks = ["rijndael", "sha", "stringsearch", "freeciv", "freeciv_slice",
+  "xpilot", "xpilot_slice", "julius", "julius_slice"]
+
 #default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
 default_dvfs_levels = [.1*x for x in range(1, 11)]
@@ -161,6 +166,14 @@ def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metr
     # Skip non-stable controllers
     if max(predict_times) > 10*deadline:
       continue
+    # Heuristic to skip non-stable/marginally stable controllers
+    # If average difference in predicted times is greater than standard deviation, filter out
+    diffs = 0
+    for i in range(1, len(predict_times)):
+      diffs += abs(predict_times[i] - predict_times[i-1])
+    if float(diffs)/(len(predict_times) - 1) > numpy.std(predict_times):
+      continue
+
     frequencies = [scale_frequency_perfect(margin*t, deadline) for t in predict_times]
     result_times = [dvfs_time(t, f) for (t, f) in zip(train_times, frequencies)]
     misses = deadline_misses(result_times, frequencies, deadline) 
@@ -176,6 +189,7 @@ def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metr
         best_misses = misses
         best_energy = energy(result_times, frequencies, deadline)
         best_PID = (P, I, D)
+  print best_PID
 
   # Use parameters to run PID on test set
   return policy_pid(test_times, P=best_PID[0], I=best_PID[1], D=best_PID[2])
