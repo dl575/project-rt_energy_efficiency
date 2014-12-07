@@ -112,6 +112,85 @@ static void Check_server_versions(void);
 extern void Main_loop(void);
 static void Handle_signal(int sig_no);
 
+//---------------------modified by TJSong----------------------//
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DEADLINE_TIME 685  //big
+//#define DEADLINE_TIME 8980   //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+#define MIN_FREQ ((CORE)?(200000):(200000))
+
+void print_power(void){
+  FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+  float watt; //Value (Watt) at start point.
+  int khz; //Value (khz) at start point.
+
+  if(CORE==0){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("LITTLE core power : %fW, LITTLE core freq : %dkhz\n", watt, khz);  
+  }  
+  else if(CORE==1){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+  }  
+  return;
+}
+
+void set_freq(float exec_time){
+  int predicted_freq = MAX_FREQ;
+  FILE *fp_max_freq; //File pointer of A7 (LITTLE) core's scaling_max_freq
+
+  if(CORE==0){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }else if(CORE==1){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }
+  //calculate predicted freq
+  predicted_freq = ((int)exec_time * MAX_FREQ) / DEADLINE_TIME;
+  if (predicted_freq < MIN_FREQ)
+    predicted_freq = MIN_FREQ;
+
+  //set maximum frequency, because performance governor always use maximum freq.
+  fprintf(fp_max_freq, "%d", predicted_freq);
+
+  fclose(fp_max_freq);
+  return;
+}
+
+//---------------------modified by TJSong----------------------//
+
+
 int main(int argc, char **argv)
 {
     int			timer_tick_rate;
@@ -2500,10 +2579,18 @@ void Main_loop_slice()
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
+//float exec_time;
+//exec_time = 100.000000*loop_counter[6] + -530.333000*loop_counter[13] + 471.391000*loop_counter[14] + 3.036280*loop_counter[17] + 2.904060*loop_counter[19] + -122.565000*loop_counter[21] + 628.221000*loop_counter[42] + -72.038200*loop_counter[43] + -188.728000*loop_counter[44] + 92.478100*loop_counter[91] + 19.683400*loop_counter[100] + -50.119900*loop_counter[105] + -11.125500*loop_counter[107] + 38.184200*loop_counter[136] + 85.136200*loop_counter[138] + 62.182500*loop_counter[140] + -4.567310*loop_counter[150] + -4.599720*loop_counter[151] + -1.533780*loop_counter[153] + -4.220860*loop_counter[155] + -2.019260*loop_counter[157] + -5.966550*loop_counter[161] + -8.129070*loop_counter[162] + 4.826880*loop_counter[166] + 118.793000*loop_counter[167] + -22.717500*loop_counter[169] + 22.195300*loop_counter[172] + -28.824200*loop_counter[173] + 63.574300*loop_counter[177] + -102.032000*loop_counter[181] + -200.576000*loop_counter[216] + -170.842000*loop_counter[220] + 27.043600*loop_counter[221] + -1.893810*loop_counter[231] + 19.431700*loop_counter[232] + -1.707610*loop_counter[238] + 1.817040*loop_counter[240] + 23.000000;
+//printf("predicted time = %f\n", exec_time);
+
 float exec_time;
-exec_time = 100.000000*loop_counter[6] + -530.333000*loop_counter[13] + 471.391000*loop_counter[14] + 3.036280*loop_counter[17] + 2.904060*loop_counter[19] + -122.565000*loop_counter[21] + 628.221000*loop_counter[42] + -72.038200*loop_counter[43] + -188.728000*loop_counter[44] + 92.478100*loop_counter[91] + 19.683400*loop_counter[100] + -50.119900*loop_counter[105] + -11.125500*loop_counter[107] + 38.184200*loop_counter[136] + 85.136200*loop_counter[138] + 62.182500*loop_counter[140] + -4.567310*loop_counter[150] + -4.599720*loop_counter[151] + -1.533780*loop_counter[153] + -4.220860*loop_counter[155] + -2.019260*loop_counter[157] + -5.966550*loop_counter[161] + -8.129070*loop_counter[162] + 4.826880*loop_counter[166] + 118.793000*loop_counter[167] + -22.717500*loop_counter[169] + 22.195300*loop_counter[172] + -28.824200*loop_counter[173] + 63.574300*loop_counter[177] + -102.032000*loop_counter[181] + -200.576000*loop_counter[216] + -170.842000*loop_counter[220] + 27.043600*loop_counter[221] + -1.893810*loop_counter[231] + 19.431700*loop_counter[232] + -1.707610*loop_counter[238] + 1.817040*loop_counter[240] + 23.000000;
+exec_time = -1218.000000*loop_counter[6] + 99.249600*loop_counter[13] + -139.348000*loop_counter[14] + -5.394570*loop_counter[19] + -449.644000*loop_counter[21] + 1073.690000*loop_counter[42] + 304.113000*loop_counter[43] + -58.779800*loop_counter[44] + 303.235000*loop_counter[45] + 193.233000*loop_counter[46] + 346.277000*loop_counter[91] + 71.605600*loop_counter[93] + -43.818600*loop_counter[100] + -141.945000*loop_counter[101] + -77.581300*loop_counter[105] + 137.839000*loop_counter[107] + 123.437000*loop_counter[136] + 258.986000*loop_counter[138] + 476.771000*loop_counter[140] + 1.506140*loop_counter[150] + 1.514470*loop_counter[151] + -9.491610*loop_counter[153] + 3.338800*loop_counter[155] + 7.583750*loop_counter[156] + 9.841430*loop_counter[157] + -44.177000*loop_counter[161] + 2.235980*loop_counter[162] + -1.146980*loop_counter[163] + 112.813000*loop_counter[166] + -106.775000*loop_counter[167] + 61.523000*loop_counter[169] + 55.506400*loop_counter[172] + -46.703500*loop_counter[173] + 16.750300*loop_counter[177] + 8.123860*loop_counter[178] + -339.766000*loop_counter[181] + 67.066600*loop_counter[194] + -42.191400*loop_counter[216] + 226.415000*loop_counter[220] + -1490.970000*loop_counter[221] + -413.302000*loop_counter[231] + -237.569000*loop_counter[232] + -31.873200*loop_counter[238] + -48.086600*loop_counter[240] + -1385.000000*loop_counter[241] + 1507.000000;
 printf("predicted time = %f\n", exec_time);
 
+
+#if PREDICT_EN
+  set_freq(exec_time); //TJSong
+#endif
 
   }
 }
@@ -4916,6 +5003,11 @@ void Main_loop_loop_counters(void)
 
 void Main_loop(void)
 {
+  static int cnt = 0;
+  if (cnt == 0)
+    printf("deadline time : %d us\n\n", DEADLINE_TIME);//TJSong
+  cnt++;
+  print_power(); //TJSong
   Main_loop_slice();
   // Start timing task
   start_timing();
