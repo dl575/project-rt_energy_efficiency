@@ -1,0 +1,80 @@
+obj/annexb.o.dbg: src/annexb.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/annexb.h inc/nalucommon.h inc/memalloc.h
+obj/biaridecod.o.dbg: src/biaridecod.c inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/memalloc.h
+obj/block.o.dbg: src/block.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/block.h inc/image.h inc/mbuffer.h \
+  inc/mb_access.h
+obj/cabac.o.dbg: src/cabac.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/cabac.h inc/memalloc.h inc/elements.h inc/image.h inc/mbuffer.h \
+  inc/biaridecod.h inc/mb_access.h
+obj/context_ini.o.dbg: src/context_ini.c inc/defines.h inc/global.h \
+  inc/parsetcommon.h inc/biaridecod.h inc/ctx_tables.h
+obj/erc_api.o.dbg: src/erc_api.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/memalloc.h inc/erc_api.h inc/erc_globals.h
+obj/erc_do_i.o.dbg: src/erc_do_i.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/erc_do.h inc/erc_api.h inc/erc_globals.h
+obj/erc_do_p.o.dbg: src/erc_do_p.c inc/mbuffer.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/memalloc.h inc/erc_do.h inc/erc_api.h \
+  inc/erc_globals.h inc/image.h
+obj/errorconcealment.o.dbg: src/errorconcealment.c inc/contributors.h \
+  inc/global.h inc/defines.h inc/parsetcommon.h inc/elements.h
+obj/filehandle.o.dbg: src/filehandle.c inc/contributors.h inc/global.h \
+  inc/defines.h inc/parsetcommon.h inc/mbuffer.h
+obj/fmo.o.dbg: src/fmo.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/elements.h inc/header.h inc/fmo.h
+obj/header.o.dbg: src/header.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/elements.h inc/fmo.h inc/vlc.h inc/mbuffer.h inc/header.h \
+  inc/ctx_tables.h
+obj/image.o.dbg: src/image.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/errorconcealment.h inc/image.h inc/mbuffer.h \
+  inc/fmo.h inc/nalu.h inc/nalucommon.h inc/parset.h inc/header.h \
+  inc/rtp.h inc/sei.h inc/output.h inc/biaridecod.h inc/mb_access.h \
+  inc/memalloc.h inc/annexb.h inc/context_ini.h inc/cabac.h \
+  inc/loopfilter.h inc/vlc.h inc/erc_api.h inc/erc_globals.h
+obj/ldecod.o.dbg: src/ldecod.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/rtp.h inc/nalucommon.h inc/memalloc.h \
+  inc/mbuffer.h inc/leaky_bucket.h inc/fmo.h inc/annexb.h inc/output.h \
+  inc/cabac.h inc/erc_api.h inc/erc_globals.h
+obj/leaky_bucket.o.dbg: src/leaky_bucket.c inc/contributors.h inc/global.h \
+  inc/defines.h inc/parsetcommon.h
+obj/loopFilter.o.dbg: src/loopFilter.c inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/image.h inc/mbuffer.h inc/mb_access.h \
+  inc/loopfilter.h
+obj/macroblock.o.dbg: src/macroblock.c inc/contributors.h inc/global.h \
+  inc/defines.h inc/parsetcommon.h inc/mbuffer.h inc/elements.h \
+  inc/errorconcealment.h inc/macroblock.h inc/fmo.h inc/cabac.h \
+  inc/vlc.h inc/image.h inc/mb_access.h inc/biaridecod.h \
+  inc/transform8x8.h
+obj/mb_access.o.dbg: src/mb_access.c inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/mbuffer.h
+obj/mbuffer.o.dbg: src/mbuffer.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/mbuffer.h inc/memalloc.h inc/output.h inc/image.h inc/header.h
+obj/memalloc.o.dbg: src/memalloc.c inc/memalloc.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h
+obj/nal.o.dbg: src/nal.c inc/contributors.h inc/defines.h inc/global.h \
+  inc/parsetcommon.h
+obj/nal_part.o.dbg: src/nal_part.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/elements.h
+obj/nalu.o.dbg: src/nalu.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/nalu.h inc/nalucommon.h
+obj/nalucommon.o.dbg: src/nalucommon.c inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/nalu.h inc/nalucommon.h inc/memalloc.h
+obj/output.o.dbg: src/output.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/mbuffer.h inc/image.h inc/memalloc.h
+obj/parset.o.dbg: src/parset.c inc/global.h inc/defines.h inc/parsetcommon.h \
+  inc/parset.h inc/nalucommon.h inc/nalu.h inc/memalloc.h inc/fmo.h \
+  inc/cabac.h inc/vlc.h inc/mbuffer.h inc/erc_api.h inc/erc_globals.h
+obj/parsetcommon.o.dbg: src/parsetcommon.c inc/parsetcommon.h inc/defines.h \
+  inc/memalloc.h inc/global.h
+obj/rtp.o.dbg: src/rtp.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/errorconcealment.h inc/rtp.h inc/nalucommon.h \
+  inc/fmo.h inc/sei.h inc/memalloc.h
+obj/sei.o.dbg: src/sei.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/memalloc.h inc/sei.h inc/vlc.h inc/header.h \
+  inc/mbuffer.h inc/parset.h inc/nalucommon.h
+obj/transform8x8.o.dbg: src/transform8x8.c inc/transform8x8.h inc/global.h \
+  inc/defines.h inc/parsetcommon.h inc/image.h inc/mbuffer.h \
+  inc/mb_access.h inc/elements.h
+obj/vlc.o.dbg: src/vlc.c inc/contributors.h inc/global.h inc/defines.h \
+  inc/parsetcommon.h inc/vlc.h inc/elements.h
