@@ -28,11 +28,6 @@ def run_prediction(train_filename, test_filename, policy):
   s = 0
   for i in range(1, len(predict_times)):
     s += abs(predict_times[i] - predict_times[i-1])
-  print float(s)/(len(predict_times) - 1)
-  import numpy
-  print numpy.std(predict_times)
-  print min(predict_times), max(predict_times)
-
 
   return (predict_times, test_times)
 
@@ -42,9 +37,9 @@ output_dir = "predict_times/"
 if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
 policies = [
-    policy_tuned_pid,
-    #policy_data_dependent_oracle, 
-    #policy_data_dependent_lp, 
+    #policy_tuned_pid,
+    policy_data_dependent_oracle, 
+    policy_data_dependent_lp, 
     #policy_oracle
     ]
 
@@ -60,6 +55,8 @@ for policy in policies:
     # Save lp solve output
     if policy == policy_data_dependent_lp:
       os.system("cp temp.lps lps/%s.lps" % benchmark)
+    elif policy == policy_data_dependent_oracle:
+      os.system("cp temp.lps regression_coeffs/%s.lps" % benchmark)
     # Write prediction out to file
     out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
     out_file.write("\n".join([str(x) for x in predict_times]))

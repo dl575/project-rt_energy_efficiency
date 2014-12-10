@@ -385,6 +385,10 @@ def policy_data_dependent_oracle(train_times, train_metrics, test_times=None, te
   x = numpy.array(train_metrics)
   coeffs = regression(y, x)
 
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
   predicted_times = [0]*len(test_times)
   for i in range(len(test_times)):
     x = [1] + test_metrics[i]
