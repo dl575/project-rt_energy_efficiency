@@ -151,6 +151,85 @@ struct callback {
 
 struct callback_list *callbacks;
 
+//---------------------modified by TJSong----------------------//
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DEADLINE_TIME 760504  //big
+//#define DEADLINE_TIME 8980   //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+#define MIN_FREQ ((CORE)?(200000):(200000))
+
+void print_power(void){
+  FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+  float watt; //Value (Watt) at start point.
+  int khz; //Value (khz) at start point.
+
+  if(CORE==0){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("LITTLE core power : %fW, LITTLE core freq : %dkhz\n", watt, khz);  
+  }  
+  else if(CORE==1){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+  }  
+  return;
+}
+
+void set_freq(float exec_time){
+  int predicted_freq = MAX_FREQ;
+  FILE *fp_max_freq; //File pointer of A7 (LITTLE) core's scaling_max_freq
+
+  if(CORE==0){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }else if(CORE==1){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }
+  //calculate predicted freq
+  predicted_freq = ((int)exec_time * MAX_FREQ) / DEADLINE_TIME;
+  if (predicted_freq < MIN_FREQ)
+    predicted_freq = MIN_FREQ;
+
+  //set maximum frequency, because performance governor always use maximum freq.
+  fprintf(fp_max_freq, "%d", predicted_freq);
+
+  fclose(fp_max_freq);
+  return;
+}
+
+//---------------------modified by TJSong----------------------//
+
+
 /* =========================================================== */
 
 /****************************************************************************
@@ -545,11 +624,11 @@ void gui_event_loop_slice(void *pData, void (*loop_action)(void *pData), Uint16 
         if (errno != EINTR)
         {
           loop_counter[5]++;
-          break;
+          //break;
         }
         else
         {
-          continue;
+          //continue;
         }
 
       }
@@ -902,7 +981,18 @@ float exec_time;
 exec_time = 12553.000000*loop_counter[0] + 299659.000000*loop_counter[1] + -1335.000000*loop_counter[6] + -302145.000000*loop_counter[9] + -301974.000000*loop_counter[14] + 49122.000000*loop_counter[16] + 857.000000*loop_counter[39] + 423756.000000*loop_counter[55] + 0.000000;
 printf("predicted time = %f\n", exec_time);
 
+//float exec_time;
+//exec_time = 19990.000000*loop_counter[0] + 449023.000000*loop_counter[1] + -150402.000000*loop_counter[6] + 1994560.000000*loop_counter[9] + -456049.000000*loop_counter[14] + 11550.200000*loop_counter[16] + -436665.000000*loop_counter[33] + -157729.000000*loop_counter[35] + 1805460.000000*loop_counter[39] + -125617.000000*loop_counter[55] + 0.000000;
+//printf("predicted time = %f\n", exec_time);
 
+//A15
+//float exec_time;
+//exec_time = 314053.000000*loop_counter[0] + 457989.000000*loop_counter[1] + -643751.000000*loop_counter[6] + -303942.000000*loop_counter[9] + -761790.000000*loop_counter[14] + 3202.000000*loop_counter[16] + -307106.000000*loop_counter[39] + 161771.000000*loop_counter[55] + 0.000000;
+//printf("predicted time = %f\n", exec_time);
+
+#if PREDICT_EN
+  set_freq(exec_time); //TJSong
+#endif
   }
 }
 
@@ -927,7 +1017,12 @@ Uint16 gui_event_loop(void *pData,
 
   ID = ID_ERROR;
   t_last_map_scrolling = t_last_unit_anim = real_timer_next_call = SDL_GetTicks();
+
+  printf("deadline time : %d us\n\n", DEADLINE_TIME);//TJSong
+
   while (ID == ID_ERROR) {
+
+    print_power(); //TJSong
 
     gui_event_loop_slice(NULL, NULL, main_key_down_handler, main_key_up_handler,
       main_mouse_button_down_handler, main_mouse_button_up_handler,
@@ -1152,8 +1247,8 @@ Uint16 gui_event_loop(void *pData,
     }
 
     end_timing();
-    //print_timing();
-    write_timing();
+    print_timing();
+    //write_timing();
   }
   
   return ID;

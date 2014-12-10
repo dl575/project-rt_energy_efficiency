@@ -22,6 +22,81 @@ static size_t table[UCHAR_MAX + 1];
 static size_t len;
 static char *findme;
 
+//---------------------modified by TJSong----------------------//
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define DEADLINE_TIME 3794  //big
+//#define DEADLINE_TIME 8980   //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+
+void print_power(void){
+  FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+  float watt; //Value (Watt) at start point.
+  int khz; //Value (khz) at start point.
+
+  if(CORE==0){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("LITTLE core power : %fW, LITTLE core freq : %dkhz\n", watt, khz);  
+  }  
+  else if(CORE==1){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fclose(fp_power);
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+      printf("ERROR : FILE READ FAILED\n");
+      return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fclose(fp_freq);
+    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+  }  
+  return;
+}
+
+void set_freq(float exec_time){
+  int predicted_freq = MAX_FREQ;
+  FILE *fp_max_freq; //File pointer of A7 (LITTLE) core's scaling_max_freq
+
+  if(CORE==0){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }else if(CORE==1){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+  }
+  //calculate predicted freq
+  predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME;
+  
+  //set maximum frequency, because performance governor always use maximum freq.
+  fprintf(fp_max_freq, "%f", predicted_freq);
+
+  fclose(fp_max_freq);
+  return;
+}
+
+//---------------------modified by TJSong----------------------//
+
 void slice(const char *string)
 {
   int loop_counter[4] = {0, 0, 0, 0};
@@ -68,10 +143,28 @@ void slice(const char *string)
     printf(")\n");
 
 {}
+//float exec_time;
+//exec_time = -85.000000*loop_counter[0] + 18.800000*loop_counter[1] + 7.600000*loop_counter[3] + 2725.400000;
+//printf("predicted time = %f\n", exec_time);
+
+//A7
+//float exec_time;
+//exec_time = -1098.000000*loop_counter[0] + 75.571400*loop_counter[1] + 1861.430000*loop_counter[3] + 8363.000000;
+//printf("predicted time = %f\n", exec_time);
+
+//A7 and A15
+//float exec_time;
+//exec_time = -344.000000*loop_counter[0] + 135.500000*loop_counter[1] + 939.000000*loop_counter[3] + 2423.500000;
+//printf("predicted time = %f\n", exec_time);
+
+//A15
 float exec_time;
-exec_time = -85.000000*loop_counter[0] + 18.800000*loop_counter[1] + 7.600000*loop_counter[3] + 2725.400000;
+exec_time = -198.000000*loop_counter[0] + 129.000000*loop_counter[1] + 762.000000*loop_counter[3] + 2318.000000;
 printf("predicted time = %f\n", exec_time);
 
+#if PREDICT_EN
+   set_freq(exec_time); //TJSong
+#endif
   }
 
 }
@@ -2796,10 +2889,16 @@ NULL};
 };
       int i;
 
+      printf("deadline time : %d us\n\n", DEADLINE_TIME);//TJSong
+
       for (i = 0; find_strings[i]; i++)
       {
             init_search(find_strings[i]);
+            
+            print_power();//TJSong
+            
             slice(search_strings[i]);
+            
             start_timing();
 
             int k;
