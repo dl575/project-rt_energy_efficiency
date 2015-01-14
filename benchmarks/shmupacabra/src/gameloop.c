@@ -23,6 +23,111 @@ static float frames_per_second;
  */
 uint64_t game_time;
 
+/*
+ * run_game function with loop counters.
+ */
+void run_game_loop_counters(lua_State *L)
+{
+  int loop_counter[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint32_t now = SDL_GetTicks();
+  uint32_t delta_time = now >= before ? now - before : (((uint32_t) (-1)) - before) + now;
+  before = now;
+  if (delta_time > 50)
+  {
+    loop_counter[0]++;
+    delta_time = 50;
+  }
+
+  uint32_t game_delta_time = delta_time;
+  game_time += game_delta_time;
+  fps_count++;
+  if ((now - fps_time) >= config.FPSUpdateInterval)
+  {
+    loop_counter[1]++;
+    frames_per_second = (fps_count * 1000.0) / (now - fps_time);
+    fps_time = now;
+    fps_count = 0;
+  }
+
+  process_events(L);
+  extern mem_pool mp_world;
+  for (World *world = mp_first(&mp_world); world != NULL; world = mp_next(world))
+  {
+    loop_counter[2]++;
+    if (world->killme)
+    {
+      loop_counter[3]++;
+      continue;
+    }
+
+    while (game_time >= world->next_step_time)
+    {
+      loop_counter[4]++;
+      world->next_step_time += world->step_ms;
+      world_step(world, L);
+      process_events(L);
+      if (world->killme)
+      {
+        loop_counter[5]++;
+        break;
+      }
+
+    }
+
+  }
+
+  for (World *world = mp_first(&mp_world); world != NULL;)
+  {
+    loop_counter[6]++;
+    if (world->killme)
+    {
+      loop_counter[7]++;
+      World *tmp = world;
+      world = mp_next(world);
+      world_free(tmp);
+      continue;
+    }
+
+    if (world->static_body.step == 0)
+    {
+      loop_counter[8]++;
+      world_step(world, L);
+    }
+
+    world = mp_next(world);
+  }
+
+  render_clear();
+  for (Camera *cam = cam_list; cam != NULL; cam = cam->next)
+  {
+    loop_counter[9]++;
+    if (!cam->disabled)
+    {
+      loop_counter[10]++;
+      render(cam);
+    }
+
+  }
+
+  if ((debug_cam != NULL) && (debug_cam->objtype == OBJTYPE_CAMERA))
+  {
+    loop_counter[11]++;
+    render_debug(debug_cam);
+  }
+
+  {
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 12; i++)
+      printf("%d, ", loop_counter[i]);
+
+    printf(")\n");
+  }
+}
+
+/*
+ * Original run_game function.
+ */
 void
 run_game(lua_State *L)
 {
