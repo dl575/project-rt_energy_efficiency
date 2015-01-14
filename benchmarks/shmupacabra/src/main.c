@@ -32,6 +32,8 @@ void    cleanup_framebuffer(void);
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "timing.h"
+
 int     eapi_index;     /* "eapi" namespace table stack location. */
 int     errfunc_index;  /* Error handler stack location. */
 int     callfunc_index; /* eapi.__CallFunc. */
@@ -194,9 +196,17 @@ main(int argc, char *argv[])
         abort();
 #endif
         for (;;) {
+               
+                // Start of frame
+                start_timing();
+          
                 bind_main_framebuffer();
                 run_game(L);
                 draw_main_framebuffer();
+
+                // End of frame
+                end_timing();
+                print_timing();
 #if ENABLE_SDL2
                 SDL_GL_SwapWindow(win);
 #else
