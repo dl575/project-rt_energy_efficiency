@@ -17,12 +17,13 @@ opts = tsg_plot.PlotOptions()
 # Common options for plots
 attribute_dict = \
     {
-        'colors' : ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fdbf6f"],
+        #'colors' : ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fdbf6f"],
+        #'colors' : ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3'],
+        'colors' : ['#d7191c', '#abd9e9', '#2c7bb6', '#fdae61'],
         'bar_width' : 0.7,
-        'figsize' : (7.5, 2),
-        'fontsize' : 8,
-        'labels_fontsize' : 8,
-        'legend_ncol' : 3,
+        'figsize' : (7.0, 3.0),
+        'fontsize' : 10,
+        'legend_ncol' : 2,
         'legend_bbox': (0.0, 1.1, 1.0, 0.1),
         'file_name' : 'plot_metrics.pdf',
         'rotate_labels' : True,
@@ -33,8 +34,10 @@ attribute_dict = \
         'paper_mode' : True,
         'yrange' : (0, 100),
         'plot_idx' : 1,
-        'num_cols' : 3,
-        'num_rows' : 1
+        'num_cols' : 2,
+        'num_rows' : 1,
+        'legend_columnspacing' : 1.0,
+        'legend_handlelength' : 1.0
     }
 for name, value in attribute_dict.iteritems():
   setattr(opts, name, value)
@@ -56,13 +59,14 @@ for line in f:
     data = numpy.array(data).transpose()
     # Add to options
     opts.data = data
-    opts.labels = [benchmarks, policies]
-    opts.ylabel = metric + " [%]"
+    #opts.labels = [benchmarks, policies]
+    opts.labels = [benchmarks, ["PID Controller", "Least-Squares", "Conservative", "Oracle"]]
+    opts.ylabel = metric.replace('_', ' ') + " [%]"
     # Only show legend in middle plot
-    if opts.plot_idx == 2:
-      opts.legend_enabled = True
-    else:
-      opts.legend_enabled = False
+    #if opts.plot_idx == 1:
+    #  opts.legend_enabled = True
+    #else:
+    #  opts.legend_enabled = False
     # Plot
     tsg_plot.add_plot(opts)
 

@@ -37,10 +37,10 @@ output_dir = "predict_times/"
 if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
 policies = [
-    #policy_tuned_pid,
+    policy_tuned_pid,
     policy_data_dependent_oracle, 
     policy_data_dependent_lp, 
-    #policy_oracle
+    policy_oracle
     ]
 
 # For each DVFS policy

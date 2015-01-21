@@ -28,12 +28,15 @@ class PlotOptions:
 
     # default values
     self.title = "test bar plot"
-    self.ylabel = "y axis"
-    self.xlabel = "x axis"
+    self.ylabel = None
+    self.xlabel = None
     self.bar_width = 0.70
 
     self.valid_plot_types = ["bar", "stacked_bar", "scatter_bar", "scatter"]
     self.plot_type = "bar"
+
+    # Error bars, lists of 2 lists. The first contains the minimums to draw and the second contains the maximums to draw.
+    self.errorbars = None
 
     # if true, draws an arrow from the earlier to later
     self.scatter_bar_arrow = False
@@ -82,6 +85,11 @@ class PlotOptions:
     self.legend_ncol = 1
     # Position of legend (x, y, width, height)
     self.legend_bbox = (0., 1.05, 1., 0.1)
+    # Spacing and sizing of text/handles
+    self.legend_columnspacing = None
+    self.legend_handlelength = None
+    self.legend_handletextpad = None
+
 
     self.figsize = (8, 6) # (width, height) in inches
 
@@ -99,7 +107,7 @@ class PlotOptions:
     #self.colors = [ 'r', 'b', 'g', 'y', 'c', 'm', 'k', 'w' ]
     # Selected from colobrewer2.org for 9 categories, qualitative, print friendly
     self.colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']
-    self.hatch  = [ ' ' ] * 9
+    self.hatch = None
     self.symbols = [ 'o', 'd', '^', 's', 'p', '*', 'x' ]
 
     random.seed( 0xdeadbeef )
@@ -324,14 +332,31 @@ def add_bar_plot( ax, opt ):
                     color='k')
 
     else:
-      bars.append( ax.bar( indexes[i], bar_data[i], width, \
-                           color=opt.get_color(i), \
-                           linewidth=bar_linewidth, \
-                           bottom=bottom,
-                           hatch = opt.hatch[i]
-                          ) )
+      if opt.hatch:
+        bars.append( ax.bar( indexes[i], bar_data[i], width, \
+                             color=opt.get_color(i), \
+                             linewidth=bar_linewidth, \
+                             bottom=bottom,
+                             hatch = opt.hatch[i]
+                            ) )
+      else:
+        bars.append( ax.bar( indexes[i], bar_data[i], width, \
+                             color=opt.get_color(i), \
+                             linewidth=bar_linewidth, \
+                             bottom=bottom
+                            ) )
+
     if opt.plot_type == "stacked_bar":
       bottom += bar_data[i]
+
+  if opt.errorbars:
+    min_errors = np.array(opt.errorbars[0]).transpose()
+    max_errors = np.array(opt.errorbars[1]).transpose()
+    for i in range(len(indexes)):
+      # Calculate center point of error bar
+      error_indexes = [x + width/2.0 for x in indexes[i]]
+      # Plot error bars
+      plt.errorbar(error_indexes, bar_data[i], yerr=[min_errors[i], max_errors[i]], fmt='.', markersize=0, color='k')
 
   # we force that there is no empty space to the right
   ax.set_xlim( (0.0, 0.0 + num_cat ) )
@@ -389,7 +414,10 @@ def set_legend( ax, opt, legend, legend_labels ):
     # using fancy translucent legend box
     leg = ax.legend( legend, \
                      legend_labels, loc='best', fancybox=True, \
-                     prop={'size':opt.fontsize} )
+                     prop={'size':opt.fontsize} , \
+                     columnspacing=opt.legend_columnspacing, \
+                     handlelength=opt.legend_handlelength, \
+                     handletextpad=opt.legend_handletextpad)
     leg.get_frame().set_alpha( 0.5 )
   else:
     leg = ax.legend( legend, \
@@ -397,7 +425,10 @@ def set_legend( ax, opt, legend, legend_labels ):
                      bbox_to_anchor=opt.legend_bbox, \
                      ncol=opt.legend_ncol, \
                      borderaxespad=0., \
-                     prop={'size':opt.fontsize} )
+                     prop={'size':opt.fontsize} , \
+                     columnspacing=opt.legend_columnspacing, \
+                     handlelength=opt.legend_handlelength, \
+                     handletextpad=opt.legend_handletextpad)
     # we dissappear the box
     leg.get_frame().set_color("white")
 
@@ -407,8 +438,10 @@ def set_common( ax, opt ):
   if not opt.paper_mode:
     ax.set_title( opt.title )
 
-  ax.set_xlabel( opt.xlabel, fontsize=opt.fontsize )
-  ax.set_ylabel( opt.ylabel, fontsize=opt.fontsize )
+  if opt.xlabel:
+    ax.set_xlabel( opt.xlabel, fontsize=opt.fontsize )
+  if opt.ylabel:
+    ax.set_ylabel( opt.ylabel, fontsize=opt.fontsize )
 
   if opt.paper_mode:
     # enable grid

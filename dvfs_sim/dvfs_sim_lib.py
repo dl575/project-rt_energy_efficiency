@@ -40,10 +40,8 @@ import random
 import numpy
 import os
 
-#benchmarks = ["rijndael", "stringsearch", "freeciv", "sha", "julius", "xpilot", 
-#  "xpilot_slice", "xpilot_loop", "freeciv_slice", "julius_slice"]
-benchmarks = ["rijndael", "sha", "stringsearch", "freeciv", "freeciv_slice",
-  "xpilot", "xpilot_slice", "julius", "julius_slice"]
+benchmarks = ["rijndael", "sha", "stringsearch", "freeciv_slice",
+  "xpilot_slice", "julius_slice", "shmupacabra", "shmupacabra_slice"]
 
 #default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]

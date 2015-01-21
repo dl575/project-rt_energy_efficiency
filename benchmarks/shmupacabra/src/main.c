@@ -197,16 +197,30 @@ main(int argc, char *argv[])
 #endif
         for (;;) {
                
-                // Start of frame
-                start_timing();
           
                 bind_main_framebuffer();
+
+                // Fork a new process to run slice
+                pid_t pid = fork();
+                if (pid == 0) {
+                  // Child process runs slice
+                  run_game_slice(L);
+                  _Exit(0);
+                } else {
+                  // Parent waits for child to finish
+                  int status;
+                  waitpid(pid, &status, 0);
+                }
+                // Start of frame
+                start_timing();
+
                 run_game(L);
+                //run_game_loop_counters(L);
                 draw_main_framebuffer();
 
                 // End of frame
                 end_timing();
-                print_timing();
+                write_timing();
 #if ENABLE_SDL2
                 SDL_GL_SwapWindow(win);
 #else

@@ -56,7 +56,7 @@ for (i, policy) in enumerate(policies):
   predict_times = read_predict_file(filename)
   #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels) 
   #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=[0.05, 0.1, 0.15, 0.2, 0.25, 0.5, 0.75, 1.0]) 
-  (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None) 
+  (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None)  # Continuous
 
   subplot(2, 1, 1)
   plot(result_times, '.-', color = colors[i], linewidth=2)

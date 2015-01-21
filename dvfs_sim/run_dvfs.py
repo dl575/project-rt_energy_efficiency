@@ -34,18 +34,18 @@ def read_predict_file(filename):
   return data
 
 
-policies = ["policy_pid_timeliness",
+policies = [
+  #"policy_pid_timeliness",
   "policy_tuned_pid",
   "policy_data_dependent_oracle", 
   "policy_data_dependent_lp", 
   #"policy_data_dependent_lp_quadratic", 
   "policy_oracle"]
-benchmarks = ["rijndael", "stringsearch", "freeciv", "sha", "julius", "xpilot", 
-  "xpilot_slice", "freeciv_slice", "julius_slice"]
 input_dir = "data"
 output_dir = "predict_times"
 
-for metric in [deadline_misses, avg_normalized_tardiness, energy]:
+#for metric in [deadline_misses, avg_normalized_tardiness, energy]:
+for metric in [deadline_misses, energy]:
   print metric.__name__
   print list_to_csv([""] + benchmarks + ["average"])
   for policy in policies:
@@ -58,7 +58,12 @@ for metric in [deadline_misses, avg_normalized_tardiness, energy]:
 
       # Perform DVFS
       #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
-      (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=None) # Continuous
+      deadline = None
+      if "freeciv" in benchmark:
+        deadline = 30000
+      elif "shmupacabra" in benchmark:
+        deadline = 1000000./60 # 60fps
+      (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=deadline) # Continuous
 
       # Calculate metric of interest
       metric_result = metric(result_times, frequencies, deadline)

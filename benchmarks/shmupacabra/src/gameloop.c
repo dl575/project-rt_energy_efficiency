@@ -24,6 +24,113 @@ static float frames_per_second;
 uint64_t game_time;
 
 /*
+ * Program slice to calculate loop counters for run_game.
+ */
+void run_game_slice(lua_State *L)
+{
+  int loop_counter[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  uint32_t now = SDL_GetTicks();
+  uint32_t delta_time = now >= before ? now - before : (((uint32_t) (-1)) - before) + now;
+  before = now;
+  if (delta_time > 50)
+  {
+    loop_counter[0]++;
+    delta_time = 50;
+  }
+
+  uint32_t game_delta_time = delta_time;
+  game_time += game_delta_time;
+{}
+  if ((now - fps_time) >= config.FPSUpdateInterval)
+  {
+    loop_counter[1]++;
+{}
+    fps_time = now;
+{}
+  }
+
+{}
+  extern mem_pool mp_world;
+  for (World *world = mp_first(&mp_world); world != NULL; world = mp_next(world))
+  {
+    loop_counter[2]++;
+    if (world->killme)
+    {
+      loop_counter[3]++;
+      continue;
+    }
+
+    while (game_time >= world->next_step_time)
+    {
+      loop_counter[4]++;
+      world->next_step_time += world->step_ms;
+{}
+{}
+      if (world->killme)
+      {
+        loop_counter[5]++;
+        break;
+      }
+
+    }
+
+  }
+
+  for (World *world = mp_first(&mp_world); world != NULL;)
+  {
+    loop_counter[6]++;
+    if (world->killme)
+    {
+      loop_counter[7]++;
+{}
+      world = mp_next(world);
+{}
+      continue;
+    }
+
+    if (world->static_body.step == 0)
+    {
+      loop_counter[8]++;
+{}
+    }
+
+    world = mp_next(world);
+  }
+
+{}
+  for (Camera *cam = cam_list; cam != NULL; cam = cam->next)
+  {
+    loop_counter[9]++;
+    if (!cam->disabled)
+    {
+      loop_counter[10]++;
+{}
+    }
+
+  }
+
+  if ((debug_cam != NULL) && (debug_cam->objtype == OBJTYPE_CAMERA))
+  {
+    loop_counter[11]++;
+{}
+  }
+
+  {
+    /*
+    print_loop_counter:
+    printf("loop counter = (");
+
+    int i;
+    for (i = 0; i < 12; i++)
+      printf("%d, ", loop_counter[i]);
+
+    printf(")\n");
+    */
+    write_array(loop_counter, 12);
+  }
+}
+
+/*
  * run_game function with loop counters.
  */
 void run_game_loop_counters(lua_State *L)
@@ -116,12 +223,15 @@ void run_game_loop_counters(lua_State *L)
   }
 
   {
+    /*
     printf("loop counter = (");
     int i;
     for (i = 0; i < 12; i++)
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
+    */
+    write_array(loop_counter, 12);
   }
 }
 
