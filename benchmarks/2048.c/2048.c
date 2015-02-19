@@ -17,6 +17,8 @@
 #include <time.h>
 #include <signal.h>
 
+#include "../timing.h"
+
 #define SIZE 4
 uint32_t score=0;
 uint8_t scheme=0;
@@ -381,6 +383,9 @@ int main(int argc, char *argv[]) {
 	setBufferedInput(false);
 	while (true) {
 		c=getchar();
+
+    start_timing();
+
 		switch(c) {
 			case 97:	// 'a' key
 			case 104:	// 'h' key
@@ -402,6 +407,10 @@ int main(int argc, char *argv[]) {
 		}
 		if (success) {
 			drawBoard(board);
+
+      end_timing();
+      write_timing();
+
 			usleep(150000);
 			addRandom(board);
 			drawBoard(board);
