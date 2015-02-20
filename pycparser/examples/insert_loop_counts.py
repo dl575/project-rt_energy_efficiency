@@ -85,6 +85,10 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
   def __init__(self, loop_counter_size):
     self.loop_counter_size = loop_counter_size
   def visit_FuncDef(self, node):
+    # Skip if no loop counters exist
+    if self.loop_counter_size == 0:
+      return
+
     # Create loop_counter declaration/initialization
     constants = [c_ast.Constant("int", '0') for i in range(self.loop_counter_size)]
     init_list = c_ast.InitList(constants)
