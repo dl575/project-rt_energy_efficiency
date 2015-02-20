@@ -157,6 +157,9 @@ class RenameVisitor(c_ast.NodeVisitor):
   def visit_ID(self, node):
     if node.name == self.old_name:
       node.name = self.new_name
+  def visit_Decl(self, node):
+    # Visit type decl but not init
+    self.visit(node.type)
   def visit_TypeDecl(self, node):
     if node.declname == self.old_name:
       node.declname = self.new_name
