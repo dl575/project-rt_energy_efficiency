@@ -3,7 +3,7 @@
 import os
 import filecmp
 
-tests = ["arg_rename"]
+tests = ["arg_rename", "pass_array", "board_rename"]
 
 errors = []
 
