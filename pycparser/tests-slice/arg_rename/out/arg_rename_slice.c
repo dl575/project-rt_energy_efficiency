@@ -3,10 +3,12 @@ void main_slice()
 {
   int loop_counter[1] = {0};
   int a;
+  int *a_ptr;
   {
     int a_rename0 = a;
 {}
-    if (a_rename0)
+{}
+    if (a_rename0 || a_ptr)
     {
       loop_counter[0]++;
       a_rename0++;
