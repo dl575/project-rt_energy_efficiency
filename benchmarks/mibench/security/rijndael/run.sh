@@ -5,7 +5,7 @@ xdotool type odroid
 xdotool key KP_Enter
 
 PROJECT_PATH=/home/odroid/project-rt_energy_efficiency
-BENCHMARK=stringsearch
+BENCHMARK=rijndael
 GOVERNORS=( "performance" "interactive" "conservative" "ondemand" "powersave" ) 
 
 if [[ $# < 1 ]] ; then
@@ -43,8 +43,8 @@ if [[ $2 ]] ; then
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $2"..."
-    taskset $TASKSET_FLAG ./runme_large.sh
-    mv output_large.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
+    taskset $TASKSET_FLAG ./runme_slice.sh > $2
+    mv $2 $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     echo [ done ]
     exit 1
@@ -56,8 +56,8 @@ do
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $i"..."
-    taskset $TASKSET_FLAG ./runme_large.sh
-    mv output_large.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
+    taskset $TASKSET_FLAG ./runme_slice.sh > $i
+    mv $i $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
 done
 
 #SET TO PERFORMANCE AFTER RUN ALL

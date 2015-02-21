@@ -12,11 +12,12 @@ import matplotlib.pyplot as plt
 #big_little='little'
 big_little="big"
 
-#             freeciv_slice, xpilot_slice  stringsearch
-sample_frame=[700          , 1500        , 1300         ];
+#             rijndael, sha, freeciv_slice, xpilot_slice  stringsearch
+sample_frame=[200,      100, 700          , 1500        , 1300        ];
 
 #variables
 total_energy=0;
+deadline_margin=1.1;
 
 cur_path=os.getcwd()
 
@@ -73,7 +74,7 @@ for k in range(0, 2):
             time = parse_lib.parse(cur_path+"/"+big_little+"/"+j+"/"+i, "time [0-9]+ = ([0-9]+) us")
             time = [int(x) for x in time]
             for i in xrange(1, len(time)):
-                if(time[i]>deadline_time[0]):
+                if(time[i]>deadline_time[0]*deadline_margin):
                     deadline_miss=deadline_miss+1
             deadline_miss=deadline_miss/len(time)*100
             for i in xrange(1, len(time)):
