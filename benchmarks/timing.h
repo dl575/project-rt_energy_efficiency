@@ -1,4 +1,6 @@
 #include <sys/time.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifndef __TIMING_H__
 #define __TIMING_H__
@@ -8,6 +10,9 @@ struct timeval start, end;
 void start_timing();
 void end_timing();
 void print_timing();
+void write_timing();
+void write_array(int *array, int array_len);
+void init_time_file();
 
 /*
  * Start of section to time.
@@ -41,11 +46,7 @@ void write_timing() {
 
   // Open file for writing
   FILE *time_file;
-  if (instance_number == 0) {
-    time_file = fopen("times.txt", "w");
-  } else {
-    time_file = fopen("times.txt", "a");
-  }
+  time_file = fopen("times.txt", "a");
   if (time_file == NULL) {
     printf("Error opening times.txt!\n");
     exit(1);
@@ -67,11 +68,7 @@ void write_array(int *array, int array_len) {
 
   // Open file for writing
   FILE *time_file;
-  if (instance_number == 0) {
-    time_file = fopen("times.txt", "w");
-  } else {
-    time_file = fopen("times.txt", "a");
-  }
+  time_file = fopen("times.txt", "a");
   if (time_file == NULL) {
     printf("Error opening times.txt!\n");
     exit(1);
@@ -86,6 +83,12 @@ void write_array(int *array, int array_len) {
   fprintf(time_file, ")\n");
   instance_number++;
 
+  fclose(time_file);
+}
+
+void init_time_file() {
+  FILE *time_file;
+  time_file = fopen("times.txt", "w");
   fclose(time_file);
 }
 
