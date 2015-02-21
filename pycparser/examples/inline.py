@@ -157,9 +157,6 @@ class RenameVisitor(c_ast.NodeVisitor):
   def visit_ID(self, node):
     if node.name == self.old_name:
       node.name = self.new_name
-  def visit_Decl(self, node):
-    # Visit type decl but not init
-    self.visit(node.type)
   def visit_TypeDecl(self, node):
     if node.declname == self.old_name:
       node.declname = self.new_name
@@ -306,6 +303,12 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
     # Create a copy of the function
     function_copy = copy.deepcopy(function)
 
+    # Find all declared variables and rename them to prevent aliasing with upper-level
+    self.decl_visitor = GetDeclVisitor()
+    self.decl_visitor.visit(function_copy.body)
+    for decl in self.decl_visitor.decls:
+      self.rename_visitor.new_visit(decl, decl + "_rename%d" % self.rename_counter, function_copy)
+
     ###################################
     # Function Arguments
     ###################################
@@ -338,21 +341,17 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
           # Assign passed value to argument declaration
           arg.init = init
           # Save list of argument name for renaming
-          args.append(self.get_Decl_name(arg))
+          arg_name = self.get_Decl_name(arg)
+          args.append(arg_name)
+          # Rename arguments to prevent aliasing with upper-level
+          self.rename_visitor.new_visit(arg_name, arg_name + "_rename%d" % self.rename_counter, function_copy.body)
+          self.set_Decl_name(arg, arg_name + "_rename%d" % self.rename_counter)
           # Insert into start of function
           function_copy.body.block_items.insert(0, arg)
 
-    # Rename arguments to prevent aliasing with upper-level
-    for arg in args:
-      self.rename_visitor.new_visit(arg, arg + "_rename%d" % self.rename_counter, function_copy)
-    # Rename pointers to the passed pointer variable
+    # Rename pointers and arrays to the passed variable
     for arg in ptr_args:
       self.rename_visitor.new_visit(arg[0], arg[1], function_copy)
-    # Find all declared variables and rename them
-    self.decl_visitor = GetDeclVisitor()
-    self.decl_visitor.visit(function_copy)
-    for decl in self.decl_visitor.decls:
-      self.rename_visitor.new_visit(decl, decl + "_rename%d" % self.rename_counter, function_copy)
     # Increment rename counter to ensure unique names
     self.rename_counter += 1
 
