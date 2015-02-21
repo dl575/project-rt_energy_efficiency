@@ -331,6 +331,9 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
             arg.show(nodenames=True, showcoord=True)
             init.show(nodenames=True, showcoord=True)
             raise Exception("Unsupported init type %s" % (type(init)))
+        # Arrays also get renamed, no re-declare
+        elif isinstance(arg.type, c_ast.ArrayDecl):
+          ptr_args.append((self.get_Decl_name(arg), init))
         else:
           # Assign passed value to argument declaration
           arg.init = init
