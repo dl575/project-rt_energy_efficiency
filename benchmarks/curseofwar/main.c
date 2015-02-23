@@ -71,9 +71,37 @@ void win_or_lose_message(struct state *st, int k) {
   }
 }
 
+int run_loop(struct state *st, struct ui *ui) {
+  static int k = 0;
+  int finished = 0;
+
+  if (time_to_redraw) {
+    k++;
+    if (k>=1600) k=0;
+    
+    int slowdown = game_slowdown(st->speed);
+    if (k % slowdown == 0 && st->speed != sp_pause) { 
+      kings_move(st);
+      simulate(st);
+      if (st->show_timeline) {
+        if (st->time%10 == 0)
+          update_timeline(st);
+      }
+    }
+    output_grid(st, ui, k);
+    if (st->show_timeline) {
+      if (st->time%10 == 0)
+        output_timeline(st, ui);
+    }
+    time_to_redraw = 0;
+    win_or_lose_message(st, k);
+  }
+  finished = update_from_input(st, ui);
+  return finished;
+}
+
 /* Run the game */
 void run (struct state *st, struct ui *ui) {
-  int k = 0;
   int finished = 0;
 
   init_time_file();
@@ -82,28 +110,7 @@ void run (struct state *st, struct ui *ui) {
     
     start_timing();
 
-    if (time_to_redraw) {
-      k++;
-      if (k>=1600) k=0;
-      
-      int slowdown = game_slowdown(st->speed);
-      if (k % slowdown == 0 && st->speed != sp_pause) { 
-        kings_move(st);
-        simulate(st);
-        if (st->show_timeline) {
-          if (st->time%10 == 0)
-            update_timeline(st);
-        }
-      }
-      output_grid(st, ui, k);
-      if (st->show_timeline) {
-        if (st->time%10 == 0)
-          output_timeline(st, ui);
-      }
-      time_to_redraw = 0;
-      win_or_lose_message(st, k);
-    }
-    finished = update_from_input(st, ui);
+    finished = run_loop(st, ui);
 
     end_timing();
     write_timing();
