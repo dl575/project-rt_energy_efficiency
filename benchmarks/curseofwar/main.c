@@ -38,6 +38,9 @@
 #include "server.h"
 #include "main-common.h"
 
+#include "timing.h"
+#include <stdlib.h>
+
 /*****************************************************************************/
 /*                           Global Constants                                */
 /*****************************************************************************/
@@ -72,7 +75,13 @@ void win_or_lose_message(struct state *st, int k) {
 void run (struct state *st, struct ui *ui) {
   int k = 0;
   int finished = 0;
+
+  init_time_file();
+
   while( !finished ) {
+    
+    start_timing();
+
     if (time_to_redraw) {
       k++;
       if (k>=1600) k=0;
@@ -95,6 +104,10 @@ void run (struct state *st, struct ui *ui) {
       win_or_lose_message(st, k);
     }
     finished = update_from_input(st, ui);
+
+    end_timing();
+    write_timing();
+
     pause(); // sleep until woken up by SIGALRM
   }
 }
