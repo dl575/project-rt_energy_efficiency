@@ -71,10 +71,246 @@ void win_or_lose_message(struct state *st, int k) {
   }
 }
 
-int run_loop(struct state *st, struct ui *ui) {
-  static int k = 0;
-  int finished = 0;
+void run_loop_slice(struct state *st, struct ui *ui, int k)
+{
+  int loop_counter[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  if (time_to_redraw)
+  {
+    loop_counter[0]++;
+    k++;
+    if (k >= 1600)
+    {
+      loop_counter[1]++;
+      k = 0;
+    }
 
+    int slowdown = game_slowdown(st->speed);
+    if (((k % slowdown) == 0) && (st->speed != sp_pause))
+    {
+      loop_counter[2]++;
+      {
+        int i_rename0;
+        int ev_rename0 = 0;
+        for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+        {
+          loop_counter[3]++;
+          int pl_rename0 = st->king[i_rename0].pl;
+          place_flags(&st->king[i_rename0], &st->grid, &st->fg[pl_rename0]);
+          int code_rename0 = builder_default(&st->king[i_rename0], &st->country[pl_rename0], &st->grid, &st->fg[pl_rename0]);
+          ev_rename0 = ev_rename0 || (code_rename0 == 0);
+        }
+
+        if (ev_rename0)
+        {
+          loop_counter[4]++;
+          for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+          {
+            loop_counter[5]++;
+            king_evaluate_map(&st->king[i_rename0], &st->grid, st->dif);
+          }
+
+        }
+
+        return0:
+        ;
+
+      }
+{}
+      if (st->show_timeline)
+      {
+        loop_counter[6]++;
+        if ((st->time % 10) == 0)
+        {
+          loop_counter[7]++;
+{}
+        }
+
+      }
+
+    }
+
+{}
+    if (st->show_timeline)
+    {
+      loop_counter[8]++;
+      if ((st->time % 10) == 0)
+      {
+        loop_counter[9]++;
+{}
+      }
+
+    }
+
+    time_to_redraw = 0;
+    {
+      int k_rename1 = k;
+      if ((k_rename1 % 100) == 0)
+      {
+        loop_counter[10]++;
+        switch (win_or_lose(st))
+        {
+          case 1:
+            loop_counter[11]++;
+{}
+{}
+            break;
+
+          case -1:
+            loop_counter[12]++;
+{}
+{}
+            break;
+
+        }
+
+      }
+
+      return1:
+      ;
+
+    }
+  }
+
+  {
+    goto print_loop_counter;
+  }
+  {
+    print_loop_counter:
+    /*
+    printf("loop counter = (");
+
+    int i;
+    for (i = 0; i < 13; i++)
+      printf("%d, ", loop_counter[i]);
+
+    printf(")\n");
+    */
+    write_array(loop_counter, 13);
+  }
+}
+
+int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
+{
+  int loop_counter[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  if (time_to_redraw)
+  {
+    loop_counter[0]++;
+    k++;
+    if (k >= 1600)
+    {
+      loop_counter[1]++;
+      k = 0;
+    }
+
+    int slowdown = game_slowdown(st->speed);
+    if (((k % slowdown) == 0) && (st->speed != sp_pause))
+    {
+      loop_counter[2]++;
+      {
+        int i_rename0;
+        int ev_rename0 = 0;
+        for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+        {
+          loop_counter[3]++;
+          int pl_rename0 = st->king[i_rename0].pl;
+          place_flags(&st->king[i_rename0], &st->grid, &st->fg[pl_rename0]);
+          int code_rename0 = builder_default(&st->king[i_rename0], &st->country[pl_rename0], &st->grid, &st->fg[pl_rename0]);
+          ev_rename0 = ev_rename0 || (code_rename0 == 0);
+        }
+
+        if (ev_rename0)
+        {
+          loop_counter[4]++;
+          for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+          {
+            loop_counter[5]++;
+            king_evaluate_map(&st->king[i_rename0], &st->grid, st->dif);
+          }
+
+        }
+
+        return0:
+        ;
+
+      }
+      simulate(st);
+      if (st->show_timeline)
+      {
+        loop_counter[6]++;
+        if ((st->time % 10) == 0)
+        {
+          loop_counter[7]++;
+          update_timeline(st);
+        }
+
+      }
+
+    }
+
+    output_grid(st, ui, k);
+    if (st->show_timeline)
+    {
+      loop_counter[8]++;
+      if ((st->time % 10) == 0)
+      {
+        loop_counter[9]++;
+        output_timeline(st, ui);
+      }
+
+    }
+
+    time_to_redraw = 0;
+    {
+      int k_rename1 = k;
+      if ((k_rename1 % 100) == 0)
+      {
+        loop_counter[10]++;
+        switch (win_or_lose(st))
+        {
+          case 1:
+            loop_counter[11]++;
+            attrset(A_BOLD | COLOR_PAIR(4));
+            mvaddstr(2 + st->grid.height, 31, "You are victorious!");
+            break;
+
+          case -1:
+            loop_counter[12]++;
+            attrset(A_BOLD | COLOR_PAIR(2));
+            mvaddstr(2 + st->grid.height, 31, "You are defeated!");
+            break;
+
+          default:
+            ;
+
+        }
+
+      }
+
+      return1:
+      ;
+
+    }
+  }
+
+  {
+    print_loop_counter:
+    
+
+    /*
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 13; i++)
+      printf("%d, ", loop_counter[i]);
+
+    printf(")\n");
+    */
+    write_array(loop_counter, 13);
+  }
+  return k;
+}
+
+int run_loop(struct state *st, struct ui *ui, int k) 
+{
   if (time_to_redraw) {
     k++;
     if (k>=1600) k=0;
@@ -96,13 +332,14 @@ int run_loop(struct state *st, struct ui *ui) {
     time_to_redraw = 0;
     win_or_lose_message(st, k);
   }
-  finished = update_from_input(st, ui);
-  return finished;
+
+  return k;
 }
 
 /* Run the game */
 void run (struct state *st, struct ui *ui) {
   int finished = 0;
+  int k = 0;
 
   init_time_file();
 
@@ -110,8 +347,19 @@ void run (struct state *st, struct ui *ui) {
     
     start_timing();
 
-    finished = run_loop(st, ui);
+    //k = run_loop_loop_counters(st, ui, k);
+    // Fork a new process to run slice
+    pid_t pid = fork();
+    if (pid == 0) {
+      run_loop_slice(st, ui, k);
+      _Exit(0);
+    } else {
+      int status;
+      waitpid(pid, &status, 0);
+    }
+    k = run_loop(st, ui, k);
 
+    finished = update_from_input(st, ui);
     end_timing();
     write_timing();
 
