@@ -34,6 +34,8 @@ for benchmark in benchmarks:
     # Bound errors
     errors = [min(1, x) for x in errors]
     errors = [max(-1, x) for x in errors]
+    # Convert to percentage
+    errors = [100*x for x in errors]
 
     # Plot histogram
     subplot(1, 2, i+1)
