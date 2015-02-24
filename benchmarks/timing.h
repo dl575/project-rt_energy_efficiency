@@ -1,4 +1,5 @@
 #include <sys/time.h>
+#include <stdio.h>
 
 #ifndef __TIMING_H__
 #define __TIMING_H__
@@ -32,6 +33,26 @@ void print_timing() {
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
 }
+
+/*
+ * Print timing information to stdout.
+ */
+void print_set_dvfs_timing() {
+  static int instance_number = 0;
+  printf("time_set_dvfs %d = %d us\n", instance_number, 
+    (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+  instance_number++;
+}
+
+/*
+ * Print timing information to stdout.
+ */
+int exec_timing() {
+//  static int instance_number = 0;
+//  printf("time %d = %d us\n", instance_number, 
+  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+}
+
 
 /*
  * Write timing information out to a file.
