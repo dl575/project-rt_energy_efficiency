@@ -360,8 +360,10 @@ void run (struct state *st, struct ui *ui) {
     k = run_loop(st, ui, k);
 
     finished = update_from_input(st, ui);
-    end_timing();
-    write_timing();
+    if (!finished) {
+      end_timing();
+      write_timing();
+    }
 
     pause(); // sleep until woken up by SIGALRM
   }
