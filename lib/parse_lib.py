@@ -10,6 +10,8 @@ Functions:
   median(l)
   list_to_int(l)
 
+  list_to_csv(l)
+
   data_remove_constant_cols(array)
 
   parse_execution_times(filename)
@@ -88,6 +90,12 @@ Return passed list with all elements converted to integers.
 """
 def list_to_int(l):
   return [int(ll) for ll in l]
+
+"""
+Create a comma delimited list for outputting to csv.
+"""
+def list_to_csv(l):
+  return ','.join(['' if x == None else str(x) for x in l])
 
 """
 Remove columns from the passed numpy array which are always constant. The
