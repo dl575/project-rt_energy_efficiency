@@ -1391,6 +1391,13 @@ void main_loop_slice(char c, uint8_t board[4][4])
     */
     write_array(loop_counter, 94);
   }
+
+  float exec_time;
+  exec_time = 200.398000*loop_counter[0] + -5.860250*loop_counter[8] + -1.528460*loop_counter[9] + 0.464678*loop_counter[11] + 4.017320*loop_counter[12] + -1.690330*loop_counter[14] + -2.927810*loop_counter[15] + 165.354000*loop_counter[22] + 13.912700*loop_counter[34] + -14.964600*loop_counter[35] + 11.835200*loop_counter[37] + -62.354600*loop_counter[38] + 77.105200*loop_counter[40] + 14.218800*loop_counter[41] + 223.893000*loop_counter[44] + 0.067371*loop_counter[49] + -0.756571*loop_counter[51] + -5.658170*loop_counter[53] + -0.711828*loop_counter[54] + -0.256172*loop_counter[56] + -6.162460*loop_counter[57] + 216.404000*loop_counter[58] + -7.736950*loop_counter[68] + 0.200460*loop_counter[69] + -2.111090*loop_counter[70] + -1.173260*loop_counter[72] + -1.819350*loop_counter[74] + -0.051382*loop_counter[75] + 1.249660*loop_counter[83] + 0.000000;
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+  fprintf(time_file, "predicted time = %f\n", exec_time);
+  fclose(time_file);
 }
 
 bool main_loop_loop_counters(char c, uint8_t board[4][4])

@@ -187,6 +187,13 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
     */
     write_array(loop_counter, 13);
   }
+
+  float exec_time;
+  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+  fprintf(time_file, "predicted time = %f\n", exec_time);
+  fclose(time_file);
 }
 
 int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
