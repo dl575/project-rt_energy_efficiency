@@ -447,8 +447,8 @@ if __name__ == "__main__":
   functions = v.funcs
 
   # Remove function calls from being embedded in conditionals
-  # v = RemoveIfFunctionVisitor()
-  # v.visit(ast)
+  v = RemoveIfFunctionVisitor()
+  v.visit(ast)
   # Inline functions
   v = ExpandFunctionVisitor(top_func, functions)
   v.visit(ast)
