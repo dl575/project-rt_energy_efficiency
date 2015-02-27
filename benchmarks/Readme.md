@@ -12,3 +12,9 @@ Julius is a speech recognition program. To build, first go into `benchmarks/juli
 ## XPilot
 
 XPilot is a game similar to asteroids. To build, run `xmkmf -a` followed by `make` (Refer to `INSTALL.txt` if needed). The XPilot application consists of 2 parts: a server and a client. First run the server by running `src/servre/xpilots`. Then, launch a client by running `src/client/xpilot`.
+
+## 2048.c
+
+C clone of the puzzle game 2048. To build, run `make`. Use WASD to play rather than arrow keys because arrow keys generate extra button presses, and thus extra "jobs".
+
+Source: https://github.com/mevdschee/2048.c
