@@ -1,0 +1,13 @@
+uzbl-core
+local.mk
+*.o
+*.lo
+*.pyc
+*.sw[a-z]
+*~
+tags
+sandbox
+uzbl.desktop
+uzbl-browser.1
+/build
+bin/uzbl-browser
