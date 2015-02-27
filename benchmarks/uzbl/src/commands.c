@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "timing.h"
+
 /* TODO: (WebKit2)
  *
  *   - Add commands for registering custom schemes.
@@ -277,7 +279,18 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     GArray *argv = uzbl_commands_args_new ();
     const UzblCommand *info = uzbl_commands_parse (cmd, argv);
 
+    // Print out command
+    printf("cmd = ");
+    g_printf(cmd);
+    printf("\n");
+    // Start timing job
+    start_timing();
+
     uzbl_commands_run_parsed (info, argv, result);
+
+    // Stop timing job and print out
+    end_timing();
+    print_timing();
 
     uzbl_commands_args_free (argv);
 }
