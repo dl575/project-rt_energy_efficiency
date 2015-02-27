@@ -273,6 +273,32 @@ uzbl_commands_run_argv (const gchar *cmd, GArray *argv, GString *result)
     uzbl_commands_run_parsed (info, argv, result);
 }
 
+// Hand constructed slice of uzbl_commands_run_parsed
+void uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GString *result)
+{
+    if (info) {
+      printf("function pointer = (%d, )\n", (int)info->function);
+    }
+    int loop_counter[3] = {0, 0, 0};
+    if (!info) {
+      loop_counter[0]++;
+      goto print_loop_counter;
+    }
+    if (result) {
+      loop_counter[1]++;
+    }
+    if (info->send_event) {
+      loop_counter[2]++;
+    }
+print_loop_counter:
+    printf("loop counter = (");
+    int i;
+    for (i = 0; i < 3; i++) {
+      printf("%d, ", loop_counter[i]);
+    }
+    printf(")\n");
+}
+
 void
 uzbl_commands_run (const gchar *cmd, GString *result)
 {
@@ -286,6 +312,7 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     // Start timing job
     start_timing();
 
+    uzbl_commands_run_parsed_slice (info, argv, result);
     uzbl_commands_run_parsed (info, argv, result);
 
     // Stop timing job and print out
