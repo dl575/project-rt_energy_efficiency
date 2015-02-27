@@ -82,8 +82,10 @@ Define loop counter at start of function. Print out loop counter values at
 end of function.
 """
 class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
-  def __init__(self, loop_counter_size):
+  def __init__(self, loop_counter_size, write_to_file = False):
     self.loop_counter_size = loop_counter_size
+    # Write to file instead of printing to stdout
+    self.write_to_file = write_to_file
   def visit_FuncDef(self, node):
     # Skip if no loop counters exist
     if self.loop_counter_size == 0:
@@ -102,30 +104,36 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     # Label for return values to goto
     label = c_ast.Label("print_loop_counter", None)
 
-    # Add printf to the end of function
-    # Start of printing
-    stmt_start = c_ast.ID("printf(\"loop counter = (\")")
+    # Write to file
+    if self.write_to_file:
+      stmt = c_ast.ID("write_array(loop_counter, %d);\n" % (self.loop_counter_size))
+      compound = c_ast.Compound([label, stmt])
+    # Print to stdout
+    else:
+      # Add printf to the end of function
+      # Start of printing
+      stmt_start = c_ast.ID("printf(\"loop counter = (\")")
 
-    # For loop
-    # int i;
-    identifier_type = c_ast.IdentifierType(["int"])
-    type_decl = c_ast.TypeDecl("i", [], identifier_type)
-    for_decl = c_ast.Decl("i", [], [], [], type_decl, [], None)
-    # i = 0
-    init = c_ast.Assignment("=", c_ast.ID("i"), c_ast.Constant("int", '0'))
-    # i < self.loop_counter_size
-    cond = c_ast.BinaryOp("<", c_ast.ID("i"), c_ast.Constant("int", str(self.loop_counter_size)))
-    # i++
-    next_stmt = c_ast.UnaryOp("p++", c_ast.ID("i"))
-    # printf in for
-    stmt = c_ast.ID("printf(\"%d, \", loop_counter[i])")
-    # Cosntruct for loop
-    stmt_for = c_ast.For(init, cond, next_stmt, stmt)
+      # For loop
+      # int i;
+      identifier_type = c_ast.IdentifierType(["int"])
+      type_decl = c_ast.TypeDecl("i", [], identifier_type)
+      for_decl = c_ast.Decl("i", [], [], [], type_decl, [], None)
+      # i = 0
+      init = c_ast.Assignment("=", c_ast.ID("i"), c_ast.Constant("int", '0'))
+      # i < self.loop_counter_size
+      cond = c_ast.BinaryOp("<", c_ast.ID("i"), c_ast.Constant("int", str(self.loop_counter_size)))
+      # i++
+      next_stmt = c_ast.UnaryOp("p++", c_ast.ID("i"))
+      # printf in for
+      stmt = c_ast.ID("printf(\"%d, \", loop_counter[i])")
+      # Cosntruct for loop
+      stmt_for = c_ast.For(init, cond, next_stmt, stmt)
 
-    # End of printing
-    stmt_end = c_ast.ID("printf(\")\\n\")")
-    
-    compound = c_ast.Compound([label, stmt_start, for_decl, stmt_for, stmt_end])
+      # End of printing
+      stmt_end = c_ast.ID("printf(\")\\n\")")
+      
+      compound = c_ast.Compound([label, stmt_start, for_decl, stmt_for, stmt_end])
     node.body.block_items.append(compound)
 
 
@@ -143,6 +151,10 @@ if __name__ == "__main__":
     filename = sys.argv[1]
   else:
     filename = "c_files/test_insert_loop_counts.c"
+  if "--write_to_file" in sys.argv:
+    write_to_file = True
+  else:
+    write_to_file = False
 
   # Generate AST
   ast = parse_file(filename, use_cpp=True)
@@ -150,7 +162,7 @@ if __name__ == "__main__":
   v = LoopCountVisitor()
   v.visit(ast)
   # Insert init/print
-  v = LoopCountInitPrintVisitor(v.loop_counter_index)
+  v = LoopCountInitPrintVisitor(v.loop_counter_index, write_to_file)
   v.visit(ast)
   # Print out result
   print_node(ast)
