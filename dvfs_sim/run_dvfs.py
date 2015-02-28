@@ -39,7 +39,7 @@ policies = [
   "policy_tuned_pid",
   "policy_data_dependent_oracle", 
   "policy_data_dependent_lp", 
-  #"policy_data_dependent_lp_quadratic", 
+  "policy_lasso",
   "policy_oracle"]
 input_dir = "data"
 output_dir = "predict_times"
@@ -59,6 +59,7 @@ for metric in [deadline_misses, energy]:
       # Perform DVFS
       #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
       deadline = None
+      # Custom deadlines
       if "freeciv" in benchmark:
         deadline = 30000
       elif "shmupacabra" in benchmark:

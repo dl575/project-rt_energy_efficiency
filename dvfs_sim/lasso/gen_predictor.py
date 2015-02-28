@@ -16,7 +16,7 @@ def gen_predictor(coeffs):
   predictor += "exec_time = "
   non_zero_count = 0
   for (ci, c) in enumerate(coeffs[:-1]):
-    if c != 0:
+    if abs(c) > 1e-6:
       non_zero_count += 1
       predictor += "%f*loop_counter[%d] + " % (c, ci)
   predictor += "%f;\n" % coeffs[-1]
