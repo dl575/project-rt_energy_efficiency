@@ -1,6 +1,6 @@
 int main()
 {
-  int loop_counter[1] = {0};
+  int loop_counter[2] = {0, 0};
   int a[] = {1, 1};
   a[0]++;
   a[1]++;
@@ -51,6 +51,7 @@ int main()
       break;
 
     default:
+      loop_counter[1]++;
       break;
 
   }
@@ -61,7 +62,7 @@ int main()
 
     printf("loop counter = (");
     int i;
-    for (i = 0; i < 1; i++)
+    for (i = 0; i < 2; i++)
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
