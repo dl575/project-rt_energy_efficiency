@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 rm output_slice.txt
 # ./sha input_small.asc > output_slice.txt
 # ./sha input_large.asc >> output_slice.txt

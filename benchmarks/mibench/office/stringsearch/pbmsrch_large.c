@@ -26,73 +26,60 @@ static char *findme;
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
-#define DEADLINE_TIME 3794  //big
-//#define DEADLINE_TIME 8980   //LITTLE
+#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DEADLINE_TIME 4215  //big
+//#define DEADLINE_TIME    //LITTLE
 //automatically set
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
 
-void print_power(void){
-  FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
-  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
-  float watt; //Value (Watt) at start point.
-  int khz; //Value (khz) at start point.
+FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+float watt; //Value (Watt) at start point.
+int khz; //Value (khz) at start point.
 
-  if(CORE==0){
-    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
-      printf("ERROR : FILE READ FAILED\n");
-      return;
+FILE *fp_max_freq; //File pointer scaling_max_freq
+int predicted_freq = MAX_FREQ;
+
+void fopen_all(void){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
     }
-    fscanf(fp_power, "%f", &watt);
-    fclose(fp_power);
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
-      printf("ERROR : FILE READ FAILED\n");
-      return;
-    }
-    fscanf(fp_freq, "%d", &khz);
-    fclose(fp_freq);
-    printf("LITTLE core power : %fW, LITTLE core freq : %dkhz\n", watt, khz);  
-  }  
-  else if(CORE==1){
+    return;
+}
+
+void fclose_all(void){
+   fclose(fp_max_freq);
+    return;
+}
+
+void print_power(void){
     if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
-      printf("ERROR : FILE READ FAILED\n");
-      return;
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
     }
     fscanf(fp_power, "%f", &watt);
-    fclose(fp_power);
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-      printf("ERROR : FILE READ FAILED\n");
-      return;
-    }
     fscanf(fp_freq, "%d", &khz);
-    fclose(fp_freq);
     printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
-  }  
-  return;
+    fclose(fp_power); 
+    fclose(fp_freq);
+    return;
 }
 
 void set_freq(float exec_time){
-  int predicted_freq = MAX_FREQ;
-  FILE *fp_max_freq; //File pointer of A7 (LITTLE) core's scaling_max_freq
-
-  if(CORE==0){
-    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-      return;
-    }
-  }else if(CORE==1){
-    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-      printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-      return;
-    }
-  }
-  //calculate predicted freq
-  predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME;
-  
-  //set maximum frequency, because performance governor always use maximum freq.
-  fprintf(fp_max_freq, "%f", predicted_freq);
-
-  fclose(fp_max_freq);
-  return;
+    //calculate predicted freq and round up by adding 99999
+    predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
+    printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    fflush(fp_max_freq);
+    return;
 }
 
 //---------------------modified by TJSong----------------------//
@@ -2889,14 +2876,15 @@ NULL};
 };
       int i;
 
-      printf("deadline time : %d us\n\n", DEADLINE_TIME);//TJSong
+      fopen_all();//TJSong 
 
       for (i = 0; find_strings[i]; i++)
       {
             init_search(find_strings[i]);
             
-            print_power();//TJSong
-            
+            printf("============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+
+      
             slice(search_strings[i]);
             
             start_timing();
@@ -2908,7 +2896,24 @@ NULL};
             }
 
             end_timing();
-            print_timing();
+//---------------------modified by TJSong----------------------//
+#if DELAY_EN
+    int delay_time;
+    static int instance_number = 0;
+    if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
+        start_timing();  
+        usleep(delay_time);
+        end_timing();
+        printf("delayed by %d us\n", exec_timing());
+        printf("time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+    }else
+        printf("time %d = %d us\n", instance_number, exec_timing());
+    instance_number++;
+#else
+    print_timing();
+#endif
+    print_power();//TJSong
+//---------------------modified by TJSong----------------------//
 
             printf("\"%s\" is%s in \"%s\"", find_strings[i],
                   here ? "" : " not", search_strings[i]);
@@ -2917,6 +2922,7 @@ NULL};
             putchar('\n');
       }
 
+      fclose_all();//TJSong
       return 0;
 }
 
