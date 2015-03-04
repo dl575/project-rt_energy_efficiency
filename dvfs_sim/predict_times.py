@@ -87,6 +87,8 @@ for policy in policies:
       os.system("cp temp.lps lps/%s.lps" % benchmark)
     elif policy == policy_data_dependent_oracle:
       os.system("cp temp.lps regression_coeffs/%s.lps" % benchmark)
+    elif policy == policy_lasso:
+      os.system("cp temp.lps lasso/%s.lps" % benchmark)
     # Write prediction out to file
     out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
     out_file.write("\n".join([str(x) for x in predict_times]))

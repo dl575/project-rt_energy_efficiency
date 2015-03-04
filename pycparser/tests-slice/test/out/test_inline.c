@@ -1,0 +1,93 @@
+int main()
+{
+  int a = 1;
+  int b = 2;
+  int *ptr;
+  int c;
+  {
+    // Inline function: sum;
+    int return_value;
+    int two_rename0 = b;
+    int one_rename0 = a;
+    // End of arguments;
+    int s_rename0 = 0;
+    s_rename0 = one_rename0 + two_rename0;
+    {
+      return_value = s_rename0;
+      goto return0;
+    }
+    return0:
+    ;
+
+  }
+  c = 0;
+  if (c)
+  {
+    {
+      // Inline function: sum;
+      int return_value;
+      int two_rename1 = c;
+      int one_rename1 = a;
+      // End of arguments;
+      int s_rename1 = 0;
+      s_rename1 = one_rename1 + two_rename1;
+      {
+        return_value = s_rename1;
+        goto return1;
+      }
+      return1:
+      ;
+
+      c = return_value;
+    }
+    printf("c = %d\n", c);
+  }
+  else
+  {
+    {
+      // Inline function: sum;
+      int return_value;
+      int two_rename2 = c;
+      int one_rename2 = b;
+      // End of arguments;
+      int s_rename2 = 0;
+      s_rename2 = one_rename2 + two_rename2;
+      {
+        return_value = s_rename2;
+        goto return2;
+      }
+      return2:
+      ;
+
+      c = return_value;
+    }
+    printf("c = %d\n", c);
+  }
+
+  int i;
+  for (i = 0; i < 10; i++)
+    a++;
+
+  {
+    // Inline function: check;
+    // End of arguments;
+    int a_rename3 = 1;
+    int b_rename3 = 2;
+    if (a_rename3)
+    {
+      goto return3;
+    }
+
+    int c_rename3 = 1 + 2;
+    {
+      goto return3;
+    }
+    return3:
+    ;
+
+  }
+  printf("c = %d\n", c);
+  return 0;
+}
+
+

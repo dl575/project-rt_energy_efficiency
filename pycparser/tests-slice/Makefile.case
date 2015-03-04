@@ -1,6 +1,6 @@
 PYTHON=/usr/bin/python
-FILENAME=arg_rename
-DIRNAME=arg_rename
+FILENAME=case
+DIRNAME=case
 FUNCNAME=main
 
 slice: preprocess
@@ -14,7 +14,6 @@ preprocess:
 	./cleanup_gccE.py $(DIRNAME)/$(FILENAME)2.c > $(DIRNAME)/$(FILENAME)3.c
 
 	# Define custom types
-	$(call td, "uint8_t")
 
 clean:
 	rm -f $(DIRNAME)/$(FILENAME)2.c
