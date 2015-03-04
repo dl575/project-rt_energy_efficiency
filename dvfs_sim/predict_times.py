@@ -6,7 +6,7 @@ from parse_lib import *
 from dvfs_sim_lib import *
 
 def function_pointers(filename):
-  """
+  """ 
   Get function pointers from log file and convert them to 1-hot encoding.
   """
   # Get the function pointer lines
@@ -24,7 +24,7 @@ def function_pointers(filename):
   for func_ptr in func_ptrs:
     vector = [0]*len(unique_func_ptrs) 
     for f in func_ptr:
-      vector[unique_func_ptrs.index(f)] = 1
+      vector[unique_func_ptrs.index(f)] = 1 
     vectors.append(vector)
   return vectors
 
@@ -70,8 +70,6 @@ policies = [
     policy_tuned_pid,
     policy_data_dependent_oracle, 
     policy_data_dependent_lp, 
-    policy_lasso,
-    policy_lasso_conservative,
     policy_oracle
     ]
 

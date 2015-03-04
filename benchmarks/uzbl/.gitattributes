@@ -1,0 +1,5 @@
+hash.sh  export-subst
+*.c      diff=cpp
+*.h      diff=cpp
+*.py     diff=python
+*.html   diff=html

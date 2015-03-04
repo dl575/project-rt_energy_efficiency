@@ -1,0 +1,95 @@
+Uzbl would never be what it is today without the help of these people.
+
+
+Special roles:
+- global/C code management/QA: Dieter, Rob
+- python code management/QA: Mason, Tom
+- website/mailinglist/bugtracker/...: Dieter, Michael W.
+
+In alphabetical order:
+
+    (bobpaul) - session script patches
+    (dequis) - Uzbl.run, birectional socket, javascript commands
+    (evocallaghan) - tiny patches
+    (israellevin) - toggle_zoom_type
+    (kmeaw) - fix for multibyte utf8 characters segfault
+    (mxf) - uzblcat
+    (neutralinsomniac) - load_progress = 0 fix
+    (nmeum) - man pages, various small fixes
+    (salinasv) - move some variables to heap
+    (sentientswitch) - Cleaned up code. Added some commands.
+    (tczy) - patches
+    Aaron Griffin (phrakture) - Makefile patches to build on OSX
+    Abel Camarillo (00z) - various portability fixes, such as BSD fixes for Makefile and posix shell scripts
+    Aldrik Dunbar (n30n) - scroll % script
+    Alex Alexander - Makefile patches
+    Andraž 'ruskie' Levstik - font_family patch
+    Andrea Marchesini <baku@ippolita.net> - resource-request-starting
+    Andy Spencer - security fixes
+    Barak A. Pearlmutter - typo fix
+    Ben Boeckel (mathstuf) - added scroll events, refactored the default shell scripts
+    Brendan Taylor (bct) - various bugfixes, making misc variables much better using expand(), refactoring some internal var stuff
+    Cedric Staub - Javascript cookies
+    Chris Mason - code snippets such as basic cookie handler
+    Chris van Dijk (quigybo) - work on uzbl-tabbed
+    Christer Sjöholm - uzbl-tabbed bugfixes
+    Ciprian Dorin, Craciun - patches
+    Daiki Ueno (ueno)  - fix for crash when opening image in new window
+    Damien Leon - misc
+    Daniel M. Hackney - documentation cleanups
+    David Keijser (keis) - the add_cookie/delete_cookie + distributor system, consistent event syntax, various C and python patches.
+    Devon Jones <devon.jones@gmail.com> - uzbl_tabbed: bring_to_front
+    Dieter Plaetinck (Dieter@be) <dieter AT plaetinck.be> - several contributions
+    Dmytro Milinevskyy - uzbl-tabbed useability patches
+    Dusan Popovic (dusanx) - many contributions to early uzbl
+    Evgeny Grablyk - libsoup settings
+    Gustavo Chaín <g@0xff.cl> - newbg command
+    Gregor Uhlenheuer (kongo2002) <kongo2002@googlemail.com> - uzbl vim syntax & related files
+    Helmut Grohne (helmut) - move void **ptr to union, various fixes
+    Henri Kemppainen (DuClare) <email is akarinotengoku AT THE DOMAIN OF gmail.com> - many contributions, mostly old handler code
+    Håkan Jerning - uzbl-tabbed: autosave_session patch
+    Igor Bogomazov - mouse ptr events
+    Jake Probst <jake.probst@gmail.com> - uzbl_tabbed: multiline tablist, new window opening patches
+    James Campos (aeosynth) <james.r.campos@gmail.com> - Re-orderable gtk notebook tabs in uzbl-tabbed
+    James S Wheaton (uranther) - zoom level, test framework
+    Jan Kolkmeier (jouz) - scrolling, link following
+    Jason Woofenden (JasonWoof) - geometry=maximized, link following
+    Jochen Sprickerhof - session.sh enhancements
+    k0ral - split status bar, cleanup and bugfix patches
+    Klaus T. Aehlig - various patches
+    Lars-Dominik Braun (PromyLOPh) - added ability to enable/disable the webkit page cache
+    Laurence Withers (lwithers) - talk_to_socket
+    Luca Bruno <lucab@debian.org> - bashims fixes
+    Mark Nevill - misc patches
+    Mason Larobina (mason-l) <mason.larobina@gmail.com> - uzbl-tabbed, uzbl-cookie-daemon, uzbl-event-manager & plugins, uzbl vim syntax ...
+    Matthew Bauer <mjbauer95@gmail.com> - userscripts
+    Maximilian Gaß (mxey) - several small patches
+    Michael Fiano (axionix) - added cookie_daemon.py whitelist
+    Michael Raskin - added show_inspector command
+    Michael Walker (Barrucadu) <mike AT barrucadu.co.uk> - contributions to early uzbl
+    Moritz Lenz - small doc fix
+    Nicolas Pouillard - refactored scroll command
+    Olivier Schwander - auto file:// prepend
+    Olof-Joachim Frahm - bugfixes
+    Paul Tomak - formfiller.sh script, uzbl vim syntax
+    Paweł Zuzelski (pawelz) <pawelz@pld-linux.org> - http auth handler, misc patches
+    Peter Suschlik - backwards searching
+    Přemysl Hrubý (anydot) <email is dfenze AT gmail.com> - several C contributions and cleanups
+    Robert Manea (robm) <email is rob DOT manea AT gmail DOT com> - C code all over the place
+    Sergey Shepelev (temoto) - doc patch
+    Simon Lipp (sloonz) - various patches, EM contributions
+    Sylvester Johansson (scj) - form filler script & different take on link follower
+    Tassilo Horn (tsdh) - $VISUAL patch
+    Taylan Ulrich Bayırlı (taylanub) - updated form filler
+    Thorsten Wilms - logo design
+    Tom Adams (holizz) - few patches, cookies.py, gtkplug/socket & proof of concept uzbl_tabbed.py, scheme_handler
+    Uli Schlachter (psychon) - basic mime_policy_cb & Makefile patch
+    Zane Ashby (HashBox) - Rewrote FIFO interface. Fixed various bugs.
+
+Also, thanks to all people who've posted useful things to the mailing list and/or wiki.
+
+
+Originally based on http://trac.webkit.org/browser/trunk/WebKitTools/GtkLauncher/main.c
+Which is  copyrighted:
+2006, 2007 Apple Inc
+2007 Alp Toker <alp@atoker.com>

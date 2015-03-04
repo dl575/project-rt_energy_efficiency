@@ -115,7 +115,7 @@ static void Handle_signal(int sig_no);
 //---------------------modified by TJSong----------------------//
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define DEADLINE_TIME 685  //big
 //#define DEADLINE_TIME 8980   //LITTLE
 //automatically set

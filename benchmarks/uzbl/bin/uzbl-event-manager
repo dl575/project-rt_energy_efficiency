@@ -1,0 +1,3 @@
+#!/usr/bin/python3
+from uzbl import event_manager
+event_manager.main()

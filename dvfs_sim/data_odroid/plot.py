@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 #big_little='little'
 big_little="big"
 
-#             rijndael, sha, freeciv_slice, xpilot_slice  stringsearch
-sample_frame=[200,      100, 700          , 1500        , 1300        ];
+benchmarks = ["stringsearch", "xpilot_slice", "sha", "rijndael", "julius_slice"]#, "average"]
+sample_frame=[1300          , 2200          , 100  , 200       , 50]
+governor_files = ["performance", "prediction", "powersave", "conservative", "interactive", "ondemand"]
 
 #variables
 total_energy=0;
@@ -46,8 +47,6 @@ attribute_dict = \
 
 
 for k in range(0, 2):
-    benchmarks = [f for f in os.listdir(cur_path+"/"+big_little) ]
-    governor_files = [f for f in os.listdir(cur_path+"/"+big_little+"/stringsearch") ]
     cnt=0 
     f=open('parsed_data.csv', 'w')
     f.close()    
@@ -58,12 +57,11 @@ for k in range(0, 2):
         
     for j in benchmarks:
         cnt2=0
-        print "------------"
-        print j
+        #print j
         f=open('parsed_data.csv', 'a')
         f.write('\n'+j);
         for i in governor_files:
-            print i
+            #print i
             total_energy=0.0
             deadline_miss=0.0
             deadline_time = parse_lib.parse(cur_path+"/"+big_little+"/"+j+"/"+i, "deadline time : ([0-9\.]+) us")
@@ -88,9 +86,10 @@ for k in range(0, 2):
                 total_energy_performance=total_energy
                 cnt2=1
             if k == 0 :
-                print total_energy_performance
+                #print total_energy_performance
                 f.write(","+"%f"%(total_energy/total_energy_performance*100))
             elif k == 1 :
+                #print deadline miss rage
                 f.write(","+"%f"%(deadline_miss))
         cnt=cnt+1
         f.close()    
