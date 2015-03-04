@@ -73,6 +73,68 @@
 
 #define RAND(a,b) (((a = 36969 * (a & 65535) + (a >> 16)) << 16) + (b = 18000 * (b & 65535) + (b >> 16))  )
 
+//---------------------modified by TJSong----------------------//
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DEADLINE_TIME 360496  //big
+//#define DEADLINE_TIME    //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+
+FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+float watt; //Value (Watt) at start point.
+int khz; //Value (khz) at start point.
+
+FILE *fp_max_freq; //File pointer scaling_max_freq
+int predicted_freq = MAX_FREQ;
+
+void fopen_all(void){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    return;
+}
+
+void fclose_all(void){
+   fclose(fp_max_freq);
+    return;
+}
+
+void print_power(void){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fscanf(fp_freq, "%d", &khz);
+    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+    fclose(fp_power); 
+    fclose(fp_freq);
+    return;
+}
+
+void set_freq(float exec_time){
+    //calculate predicted freq and round up by adding 99999
+    predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
+    printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    fflush(fp_max_freq);
+    return;
+}
+
+//---------------------modified by TJSong----------------------//
+
 void fillrand(char *buf, int len)
 {   static unsigned long a[2], mt = 1, count = 4;
     static char          r[4];
@@ -110,7 +172,7 @@ int encfile(FILE *fin, FILE *fout, aes *ctx, char* fn)
     fillrand(inbuf, 1);             /* make top 4 bits of a byte random */
     l = 15;                         /* and store the length of the last */
                                     /* block in the lower 4 bits        */
-    inbuf[0] = ((char)flen & 15) | (inbuf[0] & ~15);
+    //inbuf[0] = ((char)flen & 15) | (inbuf[0] & ~15);
 
     while(!feof(fin))               /* loop to encrypt the input file   */
     {                               /* input 1st 16 bytes to buf[1..16] */
@@ -446,7 +508,7 @@ void slice(int argc, char *argv[])
 
       }
       l_rename1 = 15;
-      inbuf_rename1[0] = (((char) flen_rename1) & 15) | (inbuf_rename1[0] & (~15));
+      //inbuf_rename1[0] = (((char) flen_rename1) & 15) | (inbuf_rename1[0] & (~15));
       while (!feof(fin))
       {
         loop_counter[19]++;
@@ -796,10 +858,17 @@ void slice(int argc, char *argv[])
     printf(")\n");
 
 {}
+//float exec_time;
+//exec_time = -57.333500*loop_counter[2] + 131.609000*loop_counter[3] + 0.529983*loop_counter[19] + 0.000000;
+//printf("predicted time = %f\n", exec_time);
+
 float exec_time;
-exec_time = -57.333500*loop_counter[2] + 131.609000*loop_counter[3] + 0.529983*loop_counter[19] + 0.000000;
+exec_time = 506.417000*loop_counter[2] + -411.756000*loop_counter[3] + 1.098300*loop_counter[19] + 0.000000;
 printf("predicted time = %f\n", exec_time);
 
+#if PREDICT_EN
+   set_freq(exec_time); //TJSong
+#endif
 
   }
 
@@ -807,6 +876,10 @@ printf("predicted time = %f\n", exec_time);
 
 int main(int argc, char *argv[])
 {   
+
+    fopen_all();//TJSong 
+    printf("============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+
     slice(argc, argv);
     start_timing();
   
@@ -887,7 +960,25 @@ exit:
 
 
     end_timing();
+ //---------------------modified by TJSong----------------------//
+#if DELAY_EN
+    int delay_time;
+    static int instance_number = 0;
+    if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
+        start_timing();  
+        usleep(delay_time);
+        end_timing();
+        printf("delayed by %d us\n", exec_timing());
+        printf("time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+    }else
+        printf("time %d = %d us\n", instance_number, exec_timing());
+    instance_number++;
+#else
     print_timing();
+#endif
+    print_power();//TJSong
+    fclose_all();//TJSong
+//---------------------modified by TJSong----------------------//
 
     return err;
 }

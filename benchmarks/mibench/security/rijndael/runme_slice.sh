@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #./rijndael_slice input_large.asc output_large.enc e 1234567890abcdeffedcba09876543211234567890abcdeffedcba0987654321
 for i in {1..200}
 do

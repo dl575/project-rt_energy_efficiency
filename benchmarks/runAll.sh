@@ -4,7 +4,8 @@
 xdotool type odroid
 xdotool key KP_Enter
 
-BENCHMARKS=("mibench/office/stringsearch" "xpilot/xpilot-4.5.5 mibench/security/sha" "mibench/security/rijndael")
+BENCHMARKS=("mibench/office/stringsearch" "mibench/security/sha" "mibench/security/rijndael" )
+#BENCHMARKS=("mibench/office/stringsearch" "xpilot/xpilot-4.5.5" "mibench/security/sha" "mibench/security/rijndael" "julius/julius-4.3.1")
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
 
 if [[ $# < 1 ]] ; then
