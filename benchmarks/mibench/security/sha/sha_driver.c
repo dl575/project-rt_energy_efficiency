@@ -10,7 +10,7 @@
 //---------------------modified by TJSong----------------------//
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define DEADLINE_TIME 52905  //big
 //#define DEADLINE_TIME    //LITTLE
@@ -55,15 +55,20 @@ void print_power(void){
     return;
 }
 
-void set_freq(float exec_time){
+inline void set_freq(float exec_time){
     //calculate predicted freq and round up by adding 99999
     predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
-    printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
+    //start_timing();
     fflush(fp_max_freq);
+    //end_timing();
+   // print_set_dvfs_timing();
+    
+
     return;
 }
 
@@ -71,6 +76,7 @@ void set_freq(float exec_time){
 
 void slice(int argc, char **argv)
 {
+    start_timing();//TJSong
   int loop_counter[47] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   FILE *fin;
   SHA_INFO sha_info;
@@ -706,9 +712,16 @@ float exec_time;
 exec_time = 73.413500*loop_counter[23] + 74.177900*loop_counter[25] + 0.108232*loop_counter[27] + -35.387000*loop_counter[34] + 0.000000;
 printf("predicted time = %f\n", exec_time);
 
+//---------------------modified by TJSong----------------------//
+    end_timing();
+    print_slice_timing();
 #if PREDICT_EN
-   set_freq(exec_time); //TJSong
+    start_timing();
+    set_freq(exec_time); //TJSong
+    end_timing();
+    print_set_dvfs_timing();
 #endif
+//---------------------modified by TJSong----------------------//
   }
 
 }

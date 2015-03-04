@@ -10,6 +10,9 @@ struct timeval start, end;
 void start_timing();
 void end_timing();
 void print_timing();
+void print_slice_timing();
+void print_set_dvfs_timing();
+int exec_timing();
 void write_timing();
 void write_array(int *array, int array_len);
 void init_time_file();
@@ -34,6 +37,16 @@ void end_timing() {
 void print_timing() {
   static int instance_number = 0;
   printf("time %d = %d us\n", instance_number, 
+    (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+  instance_number++;
+}
+
+/*
+ * Print timing information to stdout.
+ */
+void print_slice_timing() {
+  static int instance_number = 0;
+  printf("time_slice %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
 }

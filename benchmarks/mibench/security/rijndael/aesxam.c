@@ -126,7 +126,7 @@ void set_freq(float exec_time){
     predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
-    printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
     fflush(fp_max_freq);
@@ -867,7 +867,10 @@ exec_time = 506.417000*loop_counter[2] + -411.756000*loop_counter[3] + 1.098300*
 printf("predicted time = %f\n", exec_time);
 
 #if PREDICT_EN
-   set_freq(exec_time); //TJSong
+    start_timing();
+    set_freq(exec_time); //TJSong
+    end_timing();
+    print_set_dvfs_timing();
 #endif
 
   }
