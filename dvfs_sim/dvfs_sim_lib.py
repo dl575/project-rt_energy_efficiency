@@ -24,6 +24,7 @@ Functions:
   policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
   policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times, test_metrics)
   policy_data_dependent_oracle(train_times, train_metrics, test_times, test_metrics)
+  policy_lasso(train_times, train_metrics, test_times, test_metrics);
   policy_oracle(train_times, train_metrics, test_times, test_metrics)
 
   deadline_misses(times, frequencies, deadline)
@@ -39,9 +40,11 @@ import math
 import random
 import numpy
 import os
+import cvxpy
+import sklearn.linear_model
 
 benchmarks = ["rijndael", "sha", "stringsearch", "freeciv_slice",
-  "xpilot_slice", "julius_slice", "shmupacabra", "shmupacabra_slice"]
+  "xpilot_slice", "julius_slice", "2048_slice", "curseofwar_slice", "uzbl_slice"]
 
 #default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
@@ -356,20 +359,6 @@ def policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times=No
     metric += [m*m for m in metric]
   return policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
 
-"""
-def policy_data_dependent_lp_quadratic_crossterms(times, metrics):
-  n = len(metrics)
-  for i in range(n):
-    squared_terms = [m*m for m in metrics[i]]
-    cross_terms = []
-    for j in range(len(metrics[i])):
-      for k in range(j+1, len(metrics[i])):
-        cross_terms.append(metrics[i][j]*metrics[i][k])
-    metrics[i] += squared_terms
-    metrics[i] += cross_terms
-  return policy_data_dependent_lp(times, metrics)
-"""
-
 def policy_data_dependent_oracle(train_times, train_metrics, test_times=None, test_metrics=None):
   """
   Use all times and metrics to perform regression first. Then, use complete model
@@ -391,6 +380,95 @@ def policy_data_dependent_oracle(train_times, train_metrics, test_times=None, te
   for i in range(len(test_times)):
     x = [1] + test_metrics[i]
     predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_least_squares(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  Linear least squares regression using CVXPY.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  obj = cvxpy.Minimize(cvxpy.norm(y - X*b))
+  prob = cvxpy.Problem(obj)
+
+  # Solve
+  prob.solve(max_iters=int(1e6), reltol=1)
+  # Write out results
+  coeffs = numpy.array(b.value)
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_lasso(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  LASSO implemented using CVXPY.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  obj = cvxpy.Minimize(cvxpy.norm(y - X*b) + cvxpy.norm(b, 1))
+  prob = cvxpy.Problem(obj)
+
+  # Solve
+  prob.solve(max_iters=int(1e6), reltol=1)
+  # Write out results
+  coeffs = numpy.array(b.value)
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_lasso(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  LASSO-based regression.
+  """
+
+  # Fit Lasso model based on training set
+  y = numpy.array([train_times]).transpose()
+  x = numpy.array(train_metrics)
+  clf = sklearn.linear_model.Lasso()
+  clf.fit(x, y)
+  # Write model out
+  f = open("temp.lps", "w")
+  f.write(', '.join(map(str, clf.coef_)))
+  f.write(", ")
+  f.write(str(clf.intercept_[0]))
+  f.close()
+
+  # Apply prediction to test set
+  predicted_times = clf.predict(test_metrics)
   return predicted_times
 
 def policy_oracle(train_times, train_metrics=None, test_times=None, test_metrics=None):

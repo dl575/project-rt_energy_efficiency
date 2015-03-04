@@ -18,3 +18,13 @@ XPilot is a game similar to asteroids. To build, run `xmkmf -a` followed by `mak
 C clone of the puzzle game 2048. To build, run `make`. Use WASD to play rather than arrow keys because arrow keys generate extra button presses, and thus extra "jobs".
 
 Source: https://github.com/mevdschee/2048.c
+
+## curseofwar
+
+Terminal-based strategy game. To build, run `make`.
+
+## uzbl
+
+Web browser. Run `make` to build. May need to run `make install` to set up config, but can run `make uninstall` and still run binary. Also, run `source setup.sh` to setup paths needed.
+
+Source: https://github.com/uzbl/uzbl

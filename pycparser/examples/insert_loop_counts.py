@@ -36,6 +36,10 @@ class LoopCountVisitor(c_ast.NodeVisitor):
     stmt = self.create_loop_counter_stmt()
     node.stmts.insert(0, stmt)
     self.generic_visit(node)
+  def visit_Default(self, node):
+    stmt = self.create_loop_counter_stmt()
+    node.stmts.insert(0, stmt)
+    self.generic_visit(node)
   """
   Create a new statement to increment a (new) loop counter.
   """

@@ -5,6 +5,29 @@ import sys
 from parse_lib import *
 from dvfs_sim_lib import *
 
+def function_pointers(filename):
+  """ 
+  Get function pointers from log file and convert them to 1-hot encoding.
+  """
+  # Get the function pointer lines
+  func_ptrs = parse(filename, "function pointer = \((.*)\)")
+  func_ptrs = [x.strip().strip(',').split(',') for x in func_ptrs]
+  func_ptrs = [map(int, x) for x in func_ptrs]
+
+  # No function pointers, return
+  if len(func_ptrs) == 0:
+    return []
+
+  # Convert to 1-hot encoding
+  unique_func_ptrs = list(set(reduce(lambda x, y: x+y, func_ptrs)))
+  vectors = []
+  for func_ptr in func_ptrs:
+    vector = [0]*len(unique_func_ptrs) 
+    for f in func_ptr:
+      vector[unique_func_ptrs.index(f)] = 1 
+    vectors.append(vector)
+  return vectors
+
 def run_prediction(train_filename, test_filename, policy):
   """
   Runs [policy] on the data in [filename] in order to predict the execution
@@ -21,6 +44,13 @@ def run_prediction(train_filename, test_filename, policy):
   test_metrics = parse(test_filename, "loop counter [0-9 ]*= \((.*)\)")
   test_metrics = [x.strip().strip(',').split(',') for x in test_metrics]
   test_metrics = [[int(y) for y in x] for x in test_metrics]
+  # Add function pointers
+  fp = function_pointers(train_filename)
+  if fp:
+    train_metrics = map(lambda x, y: x+y, train_metrics, fp)
+  fp = function_pointers(test_filename)
+  if fp:
+    test_metrics = map(lambda x, y: x+y, test_metrics, fp)
 
   # Predict times using the passed policy
   predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
@@ -57,6 +87,8 @@ for policy in policies:
       os.system("cp temp.lps lps/%s.lps" % benchmark)
     elif policy == policy_data_dependent_oracle:
       os.system("cp temp.lps regression_coeffs/%s.lps" % benchmark)
+    elif policy == policy_lasso:
+      os.system("cp temp.lps lasso/%s.lps" % benchmark)
     # Write prediction out to file
     out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
     out_file.write("\n".join([str(x) for x in predict_times]))

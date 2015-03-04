@@ -42,6 +42,19 @@ attribute_dict = \
 for name, value in attribute_dict.iteritems():
   setattr(opts, name, value)
 
+def policy_to_label(policy):
+  d = {
+      "policy_tuned_pid" : "PID Controller",
+      "policy_data_dependent_oracle" : "Least-Squares",
+      "policy_data_dependent_lp" : "Conservative",
+      "policy_oracle" : "Oracle"
+      }
+  policy = policy.strip()
+  if policy in d.keys():
+    return d[policy]
+  else:
+    return policy
+
 f = open(filename, 'r')
 data = []
 subplot_index = 1
@@ -59,8 +72,7 @@ for line in f:
     data = numpy.array(data).transpose()
     # Add to options
     opts.data = data
-    #opts.labels = [benchmarks, policies]
-    opts.labels = [benchmarks, ["PID Controller", "Least-Squares", "Conservative", "Oracle"]]
+    opts.labels = [benchmarks, map(policy_to_label, policies)]
     opts.ylabel = metric.replace('_', ' ') + " [%]"
     # Only show legend in middle plot
     #if opts.plot_idx == 1:
