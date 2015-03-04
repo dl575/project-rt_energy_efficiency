@@ -1,2100 +1,1531 @@
+
 cmd = set keycmd @[csl]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 582 = 383 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 582 = 436 us
 cmd = set keycmd @[csl.]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 583 = 400 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 583 = 434 us
 cmd = set keycmd @[csl.c]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 584 = 440 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 584 = 320 us
 cmd = set keycmd @[csl.co]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 585 = 284 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 585 = 410 us
 cmd = set keycmd @[csl.cor]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 586 = 317 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 586 = 404 us
 cmd = set keycmd @[csl.corn]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 587 = 290 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 587 = 371 us
 cmd = set keycmd @[csl.corne]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 588 = 462 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 588 = 430 us
 cmd = set keycmd @[csl.cornel]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 589 = 392 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 589 = 468 us
 cmd = set keycmd @[csl.cornell]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 590 = 700 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 590 = 564 us
 cmd = set keycmd @[csl.cornell.]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 591 = 386 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 591 = 298 us
 cmd = set keycmd @[csl.cornell.e]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 592 = 376 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 592 = 395 us
 cmd = set keycmd @[csl.cornell.ed]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 593 = 514 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 593 = 286 us
 cmd = set keycmd @[csl.cornell.edu]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 594 = 315 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 594 = 288 us
 cmd = event KEYCMD_EXEC_CURRENT
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 595 = 13 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 595 = 16 us
 cmd = set modcmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 596 = 281 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 596 = 292 us
 cmd = set keycmd @[csl.cornell.edu]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 597 = 183 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 597 = 50 us
 cmd = uri csl.cornell.edu
-function pointer = (134551458, )
-loop counter = (0, 1, 1, )
-time 598 = 1378 us
+loop counter = (0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 598 = 247 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 599 = 1033 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 599 = 276 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 600 = 228 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 600 = 194 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 601 = 225 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 601 = 164 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 602 = 203 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 602 = 142 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 603 = 695 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 603 = 523 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 604 = 930 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 604 = 481 us
 cmd = set mode_indicator Cmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 605 = 332 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 605 = 449 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 606 = 102 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 606 = 169 us
 cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 607 = 275 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 607 = 494 us
 cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 608 = 270 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 608 = 1056 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 609 = 320 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 609 = 921 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 610 = 266 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 610 = 312 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 611 = 321 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 611 = 332 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 612 = 250 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 612 = 255 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 613 = 74 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 613 = 80 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 614 = 374 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 614 = 259 us
 cmd = set modcmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 615 = 346 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 615 = 277 us
 cmd = set progress.output [==>       ]17
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 616 = 322 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 616 = 405 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
 time 617 = 261 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 618 = 256 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 618 = 285 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 619 = 70 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 619 = 72 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 620 = 62 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 620 = 63 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
 time 621 = 45 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
 time 622 = 43 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 623 = 42 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 623 = 43 us
 cmd = set progress.output [==>       ]25
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 624 = 2616 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 624 = 1348 us
 cmd = set progress.output [===>      ]28
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 625 = 2288 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 625 = 630 us
 cmd = set progress.output [===>      ]30
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 626 = 4459 us
-cmd = set progress.output [===>      ]32
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 627 = 769 us
-cmd = set progress.output [===>      ]34
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 628 = 662 us
-cmd = set progress.output [===>      ]36
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 629 = 417 us
-cmd = set progress.output [===>      ]38
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 630 = 848 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 626 = 1606 us
+cmd = set progress.output [===>      ]33
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 627 = 559 us
+cmd = set progress.output [===>      ]35
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 628 = 588 us
+cmd = set progress.output [===>      ]37
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 629 = 512 us
+cmd = set progress.output [====>     ]39
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 630 = 479 us
 cmd = set progress.output [====>     ]41
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 631 = 254 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 631 = 793 us
 cmd = set progress.output [====>     ]43
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 632 = 476 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 632 = 456 us
 cmd = set progress.output [====>     ]46
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 633 = 417 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 633 = 513 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 634 = 346 us
+cmd = set status_message <span foreground="gold">done</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 635 = 264 us
+cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 636 = 3474 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 634 = 379 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 635 = 826 us
-cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 636 = 778 us
-cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 637 = 5944 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 637 = 554 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 638 = 551 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 638 = 644 us
 cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 639 = 247 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 639 = 163 us
 cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
-function pointer = (134563067, )
-loop counter = (0, 1, 1, )
-time 640 = 5472 us
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, )
+time 640 = 4965 us
 cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 641 = 221 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 641 = 157 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 642 = 693 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 642 = 596 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 643 = 568 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 643 = 369 us
 cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 644 = 667 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 644 = 458 us
 cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 645 = 418 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 645 = 329 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 646 = 473 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 646 = 334 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 647 = 434 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 647 = 331 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 648 = 361 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 648 = 255 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 649 = 104 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 649 = 78 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 650 = 403 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 650 = 274 us
 cmd = set progress.output [=>        ]16
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 651 = 327 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 651 = 402 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 652 = 270 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 652 = 312 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 653 = 266 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 653 = 467 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 654 = 91 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 654 = 112 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 655 = 72 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 655 = 74 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 656 = 46 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 656 = 52 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 657 = 1591 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 657 = 50 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 658 = 131 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 658 = 49 us
 cmd = set progress.output [==>       ]24
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 659 = 443 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 659 = 415 us
 cmd = set progress.output [==>       ]27
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 660 = 1088 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 660 = 750 us
 cmd = set progress.output [===>      ]29
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 661 = 2978 us
-cmd = set progress.output [===>      ]31
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 662 = 459 us
-cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 663 = 1418 us
-cmd = set progress.output [===>      ]36
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 664 = 316 us
-cmd = set progress.output [===>      ]38
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 665 = 5554 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 661 = 4030 us
+cmd = set progress.output [===>      ]32
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 662 = 859 us
+cmd = set progress.output [===>      ]34
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 663 = 1413 us
+cmd = set progress.output [===>      ]37
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 664 = 680 us
 cmd = set progress.output [====>     ]40
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 666 = 636 us
-cmd = set progress.output [====>     ]42
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 667 = 457 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 665 = 5897 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 668 = 1219 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 666 = 556 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 669 = 398 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 667 = 808 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 670 = 5245 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 668 = 4688 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.5e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 671 = 707 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 669 = 401 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 672 = 473 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 670 = 622 us
 cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 673 = 117 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 671 = 117 us
 cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
-function pointer = (134563067, )
-loop counter = (0, 1, 1, )
-time 674 = 6867 us
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, )
+time 672 = 4658 us
 cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 675 = 106 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 673 = 468 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 676 = 459 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 674 = 509 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 677 = 299 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 675 = 692 us
 cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 678 = 592 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 676 = 553 us
 cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 679 = 315 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 677 = 422 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 680 = 398 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 678 = 359 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 681 = 352 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 679 = 365 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 682 = 268 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 680 = 264 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 683 = 78 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 681 = 79 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 684 = 272 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 682 = 272 us
 cmd = set progress.output [==>       ]17
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 685 = 190 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 683 = 314 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 686 = 153 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 684 = 268 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 687 = 132 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 685 = 265 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 688 = 53 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 686 = 81 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 689 = 20 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 687 = 61 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 690 = 9 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 688 = 44 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 691 = 8 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 689 = 42 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 692 = 8 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 690 = 41 us
 cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 693 = 497 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 691 = 299 us
 cmd = set progress.output [===>      ]35
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 694 = 725 us
-cmd = set progress.output [===>      ]37
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 695 = 370 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 692 = 1502 us
+cmd = set progress.output [===>      ]38
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 693 = 598 us
 cmd = set progress.output [====>     ]40
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 696 = 359 us
-cmd = set progress.output [====>     ]42
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 697 = 366 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 698 = 7989 us
-cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 699 = 931 us
-cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 700 = 9091 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.1e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 701 = 1210 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 702 = 671 us
-cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 703 = 165 us
-cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
-function pointer = (134563067, )
-loop counter = (0, 1, 1, )
-time 704 = 11737 us
-cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 705 = 246 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 706 = 2180 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 707 = 429 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 708 = 540 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 709 = 365 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 710 = 422 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 711 = 559 us
-cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 712 = 326 us
-cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 713 = 84 us
-cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 714 = 292 us
-cmd = set progress.output [==>       ]18
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 715 = 792 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 716 = 296 us
-cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 717 = 292 us
-cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 718 = 105 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 719 = 76 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 720 = 47 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 721 = 44 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 722 = 61 us
-cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 723 = 601 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,6.8e+02,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 724 = 2825 us
-cmd = set progress.output [===>      ]37
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 725 = 555 us
-cmd = set progress.output [====>     ]39
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 726 = 1689 us
-cmd = set progress.output [====>     ]41
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 727 = 89 us
-cmd = set progress.output [====>     ]43
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 728 = 296 us
-cmd = set progress.output [====>     ]46
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 729 = 492 us
-cmd = set progress.output [====>     ]48
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 730 = 525 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,8.7e+02,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 731 = 865 us
-cmd = set progress.output [=====>    ]51
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 732 = 407 us
-cmd = set progress.output [=====>    ]53
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 733 = 346 us
-cmd = set progress.output [=====>    ]57
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 734 = 849 us
-cmd = set progress.output [=====>    ]59
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 735 = 525 us
-cmd = set progress.output [=====>    ]61
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 736 = 553 us
-cmd = set progress.output [======>   ]65
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 737 = 344 us
-cmd = set progress.output [======>   ]67
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 738 = 619 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 739 = 400 us
-cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 740 = 348 us
-cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 741 = 6305 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 742 = 671 us
-cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 743 = 166 us
-cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
-function pointer = (134563067, )
-loop counter = (0, 1, 1, )
-time 744 = 8284 us
-cmd = event KEYCMD_CLEAR
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 745 = 156 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 746 = 474 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 747 = 283 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 748 = 506 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 749 = 340 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 750 = 462 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 751 = 441 us
-cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 752 = 260 us
-cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 753 = 79 us
-cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 754 = 271 us
-cmd = set progress.output [=>        ]16
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 755 = 732 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 756 = 857 us
-cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 757 = 955 us
-cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 758 = 1253 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 759 = 399 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 760 = 92 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 761 = 86 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 762 = 699 us
-cmd = set progress.output [===>      ]32
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 763 = 2805 us
-cmd = set progress.output [===>      ]35
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 764 = 437 us
-cmd = set progress.output [===>      ]37
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 765 = 628 us
-cmd = set progress.output [====>     ]39
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 766 = 1806 us
-cmd = set progress.output [====>     ]41
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 767 = 484 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 694 = 1128 us
 cmd = set progress.output [====>     ]44
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 768 = 707 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 695 = 723 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 769 = 375 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 696 = 289 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 770 = 297 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 697 = 292 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 771 = 3802 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 772 = 508 us
-cmd = back
-function pointer = (134551125, )
-loop counter = (0, 1, 1, )
-time 773 = 204 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 774 = 271 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 775 = 154 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 776 = 743 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 777 = 315 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 778 = 337 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 779 = 484 us
-cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 780 = 314 us
-cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 781 = 79 us
-cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 782 = 277 us
-cmd = set progress.output [==>       ]18
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 783 = 2387 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 784 = 11166 us
-cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 785 = 375 us
-cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 786 = 117 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 787 = 71 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 788 = 52 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 789 = 54 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 790 = 54 us
-cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 791 = 735 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 792 = 487 us
-cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 793 = 482 us
-cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 794 = 7888 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,8.7e+02,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 795 = 3337 us
-cmd = back
-function pointer = (134551125, )
-loop counter = (0, 1, 1, )
-time 796 = 203 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 797 = 316 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 798 = 162 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 799 = 389 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 800 = 272 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 801 = 320 us
-cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 802 = 327 us
-cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 803 = 253 us
-cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 804 = 78 us
-cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 805 = 302 us
-cmd = set progress.output [==>       ]17
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 806 = 324 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 807 = 266 us
-cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 808 = 264 us
-cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 809 = 1568 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 810 = 102 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 811 = 63 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 812 = 61 us
-cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 813 = 63 us
-cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 814 = 1528 us
-cmd = set progress.output [====>     ]39
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 815 = 318 us
-cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 816 = 2005 us
-cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 817 = 6982 us
-cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 818 = 11981 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 698 = 4752 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.1e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 819 = 968 us
-cmd = forward
-function pointer = (134551206, )
-loop counter = (0, 1, 1, )
-time 820 = 350 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 821 = 382 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 822 = 222 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 823 = 506 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 824 = 380 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 825 = 408 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 699 = 1155 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 826 = 412 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 700 = 524 us
+cmd = event KEYCMD_CLEAR
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 701 = 149 us
+cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, )
+time 702 = 5122 us
+cmd = event KEYCMD_CLEAR
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 703 = 240 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 704 = 797 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 705 = 544 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 706 = 557 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 707 = 340 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 708 = 337 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 709 = 341 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 827 = 1448 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 710 = 275 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 828 = 220 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 711 = 80 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 829 = 471 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 712 = 274 us
 cmd = set progress.output [==>       ]18
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 830 = 1009 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 713 = 391 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 831 = 562 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 714 = 306 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 832 = 460 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 715 = 305 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 833 = 313 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 716 = 106 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 834 = 110 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 717 = 71 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 835 = 178 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 718 = 52 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 836 = 59 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 719 = 49 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 837 = 53 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 720 = 48 us
 cmd = set progress.output [===>      ]33
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 838 = 1701 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 721 = 360 us
+cmd = set progress.output [===>      ]36
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 722 = 601 us
+cmd = set progress.output [===>      ]38
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 723 = 991 us
+cmd = set progress.output [====>     ]40
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 724 = 436 us
+cmd = set progress.output [====>     ]42
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 725 = 322 us
+cmd = set progress.output [====>     ]45
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 726 = 1124 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 839 = 638 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 727 = 994 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 840 = 426 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 728 = 455 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 841 = 17681 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 729 = 9805 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,8.7e+02,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 842 = 599 us
-cmd = forward
-function pointer = (134551206, )
-loop counter = (0, 1, 1, )
-time 843 = 328 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 844 = 294 us
-cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 845 = 261 us
-cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 846 = 1406 us
-cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 847 = 598 us
-cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 848 = 462 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 730 = 583 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 849 = 451 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 731 = 1092 us
+cmd = event KEYCMD_CLEAR
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 732 = 120 us
+cmd = spawn_sh 'if [ "$0" = INPUT -o "$0" = TEXTAREA -o "$0" = SELECT ]; then echo "set mode insert" > $UZBL_FIFO; fi' A
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, )
+time 733 = 8492 us
+cmd = event KEYCMD_CLEAR
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 734 = 137 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 735 = 456 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 736 = 279 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 737 = 593 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 738 = 381 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 739 = 445 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 740 = 437 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 850 = 367 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 741 = 348 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 851 = 102 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 742 = 103 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 852 = 365 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 743 = 358 us
 cmd = set progress.output [=>        ]16
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 853 = 914 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 744 = 388 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 854 = 1735 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 745 = 363 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 855 = 357 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 746 = 301 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 856 = 122 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 747 = 106 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 857 = 85 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 748 = 75 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 858 = 51 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 749 = 52 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 859 = 53 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 750 = 49 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 860 = 241 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 751 = 49 us
 cmd = set progress.output [===>      ]32
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 861 = 15460 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 752 = 488 us
+cmd = set progress.output [===>      ]35
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 753 = 1942 us
+cmd = set progress.output [===>      ]37
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 754 = 827 us
+cmd = set progress.output [====>     ]39
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 755 = 695 us
+cmd = set progress.output [====>     ]42
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 756 = 528 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 757 = 658 us
+cmd = set status_message <span foreground="gold">done</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 758 = 417 us
+cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 759 = 3089 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 760 = 479 us
+cmd = back
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 761 = 220 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 762 = 317 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 763 = 156 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 764 = 419 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 765 = 307 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 766 = 326 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 767 = 334 us
+cmd = set forward_keys 0
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 768 = 260 us
+cmd = event MODE_CONFIRM command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 769 = 81 us
+cmd = set keycmd_prompt
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 770 = 317 us
+cmd = set progress.output [==>       ]18
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 771 = 354 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 772 = 313 us
+cmd = set status_message <span foreground="green">recv</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 773 = 309 us
+cmd = js page string 'uzbl = {}'
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 774 = 103 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 775 = 70 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 776 = 52 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 777 = 49 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 778 = 48 us
+cmd = set progress.output [===>      ]33
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 779 = 421 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 780 = 469 us
+cmd = set status_message <span foreground="gold">done</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 781 = 299 us
+cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 782 = 3047 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,8.7e+02,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 783 = 612 us
+cmd = back
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 784 = 313 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 785 = 424 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 786 = 230 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 787 = 558 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 788 = 372 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 789 = 445 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 790 = 294 us
+cmd = set forward_keys 0
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 791 = 350 us
+cmd = event MODE_CONFIRM command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 792 = 105 us
+cmd = set keycmd_prompt
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 793 = 417 us
+cmd = set progress.output [==>       ]17
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 794 = 291 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 795 = 503 us
+cmd = set status_message <span foreground="green">recv</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 796 = 1054 us
+cmd = js page string 'uzbl = {}'
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 797 = 253 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 798 = 122 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 799 = 66 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 800 = 56 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 801 = 58 us
+cmd = set progress.output [===>      ]33
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 802 = 491 us
+cmd = set progress.output [====>     ]39
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 803 = 1375 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 804 = 312 us
+cmd = set status_message <span foreground="gold">done</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 805 = 274 us
+cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 806 = 3634 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.1e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 807 = 5783 us
+cmd = forward
+loop counter = (0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 808 = 223 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 809 = 314 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 810 = 164 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 811 = 512 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 812 = 379 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 813 = 475 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 814 = 465 us
+cmd = set forward_keys 0
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 815 = 346 us
+cmd = event MODE_CONFIRM command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 816 = 103 us
+cmd = set keycmd_prompt
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 817 = 364 us
+cmd = set progress.output [==>       ]18
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 818 = 551 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 819 = 274 us
+cmd = set status_message <span foreground="green">recv</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 820 = 267 us
+cmd = js page string 'uzbl = {}'
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 821 = 92 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 822 = 62 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 823 = 45 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 824 = 43 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 825 = 42 us
+cmd = set progress.output [===>      ]33
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 826 = 820 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 827 = 6445 us
+cmd = set status_message <span foreground="gold">done</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 828 = 670 us
+cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 829 = 3756 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,8.7e+02,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 830 = 715 us
+cmd = forward
+loop counter = (0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 831 = 268 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 832 = 1117 us
+cmd = set keycmd
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 833 = 236 us
+cmd = set progress.output [=>        ]10
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 834 = 511 us
+cmd = set status_message <span foreground="khaki">wait</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 835 = 365 us
+cmd = set mode
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 836 = 431 us
+cmd = set mode command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 837 = 484 us
+cmd = set forward_keys 0
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 838 = 352 us
+cmd = event MODE_CONFIRM command
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 839 = 103 us
+cmd = set keycmd_prompt
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 840 = 367 us
+cmd = set progress.output [=>        ]16
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 841 = 379 us
+cmd = set progress.output [========>]100
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 842 = 308 us
+cmd = set status_message <span foreground="green">recv</span>
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 843 = 316 us
+cmd = js page string 'uzbl = {}'
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 844 = 104 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 845 = 62 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 846 = 44 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 847 = 42 us
+cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 848 = 43 us
+cmd = set progress.output [===>      ]32
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 849 = 306 us
 cmd = set progress.output [====>     ]48
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 862 = 733 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 850 = 292 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 863 = 542 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 851 = 349 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 864 = 3617 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 852 = 268 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 865 = 13288 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 853 = 3983 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 866 = 722 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 854 = 585 us
 cmd = reload cached
-function pointer = (134551283, )
-loop counter = (0, 1, 1, )
-time 867 = 267 us
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, )
+time 855 = 170 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 868 = 380 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 856 = 275 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 869 = 236 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 857 = 172 us
 cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 870 = 499 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 858 = 454 us
 cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 871 = 1737 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 859 = 277 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 872 = 517 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 860 = 332 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 873 = 411 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 861 = 330 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 874 = 297 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 862 = 260 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 875 = 89 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 863 = 83 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 876 = 315 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 864 = 281 us
 cmd = set progress.output [=>        ]16
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 877 = 656 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 865 = 491 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 878 = 468 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 866 = 458 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 879 = 461 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 867 = 324 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 880 = 143 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 868 = 159 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 881 = 86 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 869 = 148 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 882 = 63 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 870 = 109 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 883 = 63 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 871 = 105 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 884 = 69 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 872 = 103 us
 cmd = set progress.output [==>       ]24
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 885 = 661 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 886 = 759 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 873 = 473 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 887 = 773 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 874 = 759 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 888 = 395 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 875 = 681 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 889 = 4245 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 876 = 4959 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 890 = 1105 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 877 = 503 us
 cmd = reload cached
-function pointer = (134551283, )
-loop counter = (0, 1, 1, )
-time 891 = 185 us
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, )
+time 878 = 212 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 892 = 280 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 879 = 271 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 893 = 167 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 880 = 177 us
 cmd = set progress.output [=>        ]10
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 894 = 419 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 881 = 478 us
 cmd = set status_message <span foreground="khaki">wait</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 895 = 291 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 882 = 286 us
 cmd = set mode
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 896 = 327 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 883 = 337 us
 cmd = set mode command
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 897 = 334 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 884 = 346 us
 cmd = set forward_keys 0
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 898 = 260 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 885 = 263 us
 cmd = event MODE_CONFIRM command
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 899 = 79 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 886 = 81 us
 cmd = set keycmd_prompt
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 900 = 274 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 887 = 272 us
 cmd = set progress.output [=>        ]16
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 901 = 893 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 888 = 517 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 902 = 566 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 889 = 434 us
 cmd = set status_message <span foreground="green">recv</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 903 = 402 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 890 = 453 us
 cmd = js page string 'uzbl = {}'
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 904 = 196 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 891 = 158 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/formfiller.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 905 = 122 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 892 = 210 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/follow.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 906 = 61 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 893 = 84 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/go_input.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 907 = 41 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 894 = 72 us
 cmd = js page file /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/navigation.js
-function pointer = (134561494, )
-loop counter = (0, 1, 1, )
-time 908 = 39 us
+loop counter = (0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 895 = 76 us
 cmd = set progress.output [==>       ]24
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 909 = 4444 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 896 = 403 us
 cmd = set progress.output [========>]100
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 910 = 385 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 897 = 418 us
 cmd = set status_message <span foreground="gold">done</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 911 = 304 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 898 = 306 us
 cmd = spawn /home/dlo/.local/share/uzbl:/usr/local/share/uzbl/examples/data:scripts/history.sh
-function pointer = (134562828, )
-loop counter = (0, 1, 1, )
-time 912 = 3721 us
+loop counter = (0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 899 = 4619 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 913 = 476 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 900 = 395 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 914 = 666 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 901 = 621 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 915 = 345 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 902 = 620 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 916 = 1709 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 903 = 400 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 917 = 715 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 918 = 7256 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 919 = 500 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 920 = 929 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 921 = 757 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 922 = 320 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 923 = 271 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 924 = 3253 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 925 = 806 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 926 = 701 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 927 = 435 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 928 = 1056 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 929 = 551 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 930 = 310 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 931 = 287 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 932 = 460 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 933 = 277 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 934 = 2155 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 935 = 355 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 936 = 1202 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 937 = 1879 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 938 = 294 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 939 = 185 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 940 = 323 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 941 = 258 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 942 = 629 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 943 = 724 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 944 = 498 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 945 = 345 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 946 = 457 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 947 = 1628 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 948 = 486 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 949 = 670 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 950 = 4163 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 951 = 3089 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 952 = 606 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 953 = 476 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 954 = 352 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 955 = 303 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 956 = 210 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 957 = 134 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 958 = 556 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 959 = 359 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 960 = 1055 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 961 = 808 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 962 = 549 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 963 = 327 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 964 = 455 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 965 = 492 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 966 = 440 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 967 = 355 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 968 = 568 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 969 = 5429 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 970 = 714 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 971 = 670 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 972 = 477 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 973 = 339 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 974 = 466 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 975 = 12 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 976 = 750 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 977 = 445 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 978 = 932 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 979 = 1104 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 980 = 670 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 981 = 4311 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 982 = 248 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 983 = 2369 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 984 = 545 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 985 = 334 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 986 = 949 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 987 = 365 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 988 = 560 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 989 = 478 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 990 = 741 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 991 = 287 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 992 = 415 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 993 = 2480 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 994 = 389 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 995 = 360 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 996 = 1402 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 997 = 3632 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 998 = 270 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 999 = 218 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1000 = 703 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1001 = 327 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1002 = 281 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1003 = 163 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1004 = 803 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1005 = 2014 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1006 = 1112 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1007 = 1109 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 904 = 453 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1008 = 595 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 905 = 508 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1009 = 328 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 906 = 745 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1010 = 2906 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 907 = 610 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1011 = 1643 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 908 = 1100 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 909 = 350 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 910 = 305 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1012 = 725 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 911 = 576 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1013 = 643 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 912 = 457 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1014 = 509 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 913 = 339 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1015 = 310 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 914 = 262 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1016 = 276 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 915 = 487 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1017 = 251 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 916 = 340 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1018 = 470 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 917 = 291 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1019 = 946 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1020 = 860 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1021 = 416 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 918 = 193 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 919 = 3657 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 920 = 413 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1022 = 3135 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 921 = 342 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1023 = 1012 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 922 = 263 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1024 = 1968 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 923 = 536 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1025 = 2067 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 924 = 1195 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1026 = 461 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 925 = 424 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1027 = 1659 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 926 = 623 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1028 = 509 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 927 = 452 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1029 = 428 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 928 = 1681 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1030 = 407 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 929 = 940 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1031 = 513 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 930 = 358 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1032 = 3052 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 931 = 667 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1033 = 2753 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 932 = 626 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1034 = 1467 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 933 = 331 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1035 = 471 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1036 = 399 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1037 = 480 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1038 = 572 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1039 = 413 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1040 = 304 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1041 = 450 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 934 = 261 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1042 = 376 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 935 = 2939 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1043 = 294 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 936 = 350 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1044 = 2337 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 937 = 648 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1045 = 714 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1046 = 5173 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1047 = 700 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1048 = 1539 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1049 = 396 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1050 = 547 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1051 = 585 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1052 = 365 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1053 = 338 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1054 = 435 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1055 = 317 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1056 = 311 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1057 = 253 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1058 = 218 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1059 = 134 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1060 = 418 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1061 = 229 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1062 = 401 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1063 = 415 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1064 = 869 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1065 = 701 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1066 = 601 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1067 = 1232 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1068 = 423 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1069 = 525 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1070 = 307 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1071 = 184 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1072 = 404 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1073 = 258 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1074 = 282 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1075 = 122 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1076 = 253 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1077 = 160 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1078 = 219 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1079 = 154 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1080 = 403 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1081 = 190 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1082 = 994 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1083 = 1389 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1084 = 450 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.8e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1085 = 372 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1086 = 483 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1087 = 438 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1088 = 519 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1089 = 154 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1090 = 143 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1091 = 160 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1092 = 381 us
-cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1093 = 301 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 938 = 568 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 939 = 495 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 940 = 354 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 941 = 405 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 942 = 337 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 943 = 578 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 944 = 86 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 945 = 549 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 946 = 232 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 947 = 3006 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 948 = 360 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 949 = 362 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 950 = 291 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 951 = 405 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 952 = 318 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 953 = 370 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 954 = 288 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 955 = 711 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 956 = 1161 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 957 = 1542 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 958 = 3144 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 959 = 474 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 960 = 260 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 961 = 570 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 962 = 455 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 963 = 223 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 964 = 174 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 965 = 206 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 966 = 144 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 967 = 297 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 968 = 254 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 969 = 284 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 970 = 256 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 971 = 185 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 972 = 121 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 973 = 190 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 974 = 121 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 975 = 232 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 976 = 127 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 977 = 767 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 978 = 453 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 979 = 595 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 980 = 296 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1094 = 284 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 981 = 373 us
 cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1095 = 149 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 982 = 293 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 983 = 439 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(40,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 984 = 348 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 985 = 1177 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(80,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 986 = 297 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 987 = 221 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 988 = 134 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 989 = 488 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 990 = 4003 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 991 = 409 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 992 = 253 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 993 = 369 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 994 = 4229 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 995 = 301 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 996 = 327 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 997 = 335 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 998 = 254 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 999 = 175 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1000 = 122 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1001 = 412 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1002 = 316 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1003 = 323 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1004 = 258 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1005 = 2133 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1006 = 833 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1007 = 342 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1008 = 758 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1009 = 546 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1010 = 213 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1011 = 1428 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1012 = 404 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1013 = 1448 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1014 = 572 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1015 = 601 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1016 = 492 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1017 = 465 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1018 = 350 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1019 = 913 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1020 = 263 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1021 = 206 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1022 = 158 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1023 = 191 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1024 = 134 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1025 = 864 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1026 = 751 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1027 = 467 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1028 = 330 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1029 = 425 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1030 = 553 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1031 = 719 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+03,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1032 = 639 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1033 = 589 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1034 = 512 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1035 = 168 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1036 = 163 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1037 = 734 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(9e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1038 = 332 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1039 = 704 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(8.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1040 = 411 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1041 = 405 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1042 = 272 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1043 = 432 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1044 = 342 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1045 = 610 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(7e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1046 = 2589 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1047 = 207 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1048 = 148 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1049 = 473 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(6.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1050 = 210 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1051 = 200 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1052 = 150 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1053 = 362 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1054 = 233 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1055 = 337 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(5e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1056 = 214 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1057 = 222 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1058 = 161 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1059 = 228 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(4.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1060 = 154 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1061 = 405 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.8e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1062 = 331 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1063 = 215 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1064 = 142 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1065 = 1394 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(3e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1066 = 212 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1067 = 221 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.6e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1068 = 140 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1069 = 501 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(2.2e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1070 = 367 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1071 = 495 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1.4e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1072 = 411 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1073 = 226 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(1e+02,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1074 = 153 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1075 = 2239 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(65,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1076 = 449 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1077 = 274 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(25,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1078 = 255 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1079 = 440 us
+cmd = set scroll_message @<(function(curr, min, max, size){if(max == size) return '--'; var p=(curr/(max - size)); return Math.round(10000*p)/100;})(0,0,1.6e+03,5.8e+02)>@
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1080 = 171 us
 cmd = set keycmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1096 = 491 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1081 = 314 us
 cmd = set keycmd @[:]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1097 = 367 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1082 = 430 us
 cmd = set modcmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1098 = 814 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1083 = 325 us
 cmd = set keycmd @[:e]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1099 = 320 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1084 = 292 us
 cmd = set keycmd @[:ex]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1100 = 579 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1085 = 1285 us
 cmd = set keycmd @[:exi]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1101 = 295 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1086 = 570 us
 cmd = set keycmd @[:exit]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1102 = 294 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1087 = 299 us
 cmd = event KEYCMD_EXEC_CURRENT
-function pointer = (134563980, )
-loop counter = (0, 1, 0, )
-time 1103 = 16 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 1088 = 15 us
 cmd = set modcmd
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1104 = 325 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1089 = 314 us
 cmd = set keycmd @[:exit]@<span @cursor_style>@[ ]@</span>
-function pointer = (134563550, )
-loop counter = (0, 1, 0, )
-time 1105 = 228 us
+loop counter = (0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, )
+time 1090 = 167 us
 cmd = exit
-function pointer = (134563410, )
-loop counter = (0, 1, 1, )
-time 1106 = 6683 us
+loop counter = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, )
+time 1091 = 4788 us
