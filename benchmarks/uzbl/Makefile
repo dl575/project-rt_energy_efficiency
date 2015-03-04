@@ -121,7 +121,8 @@ HEADERS := \
     uzbl-core.h \
     variables.h \
     webkit.h \
-    3p/async-queue-source/rb-async-queue-watch.h
+    3p/async-queue-source/rb-async-queue-watch.h \
+		function_addresses.h
 
 ifneq ($(ENABLE_WEBKIT2),yes)
 SOURCES += \

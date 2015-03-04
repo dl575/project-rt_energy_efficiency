@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "timing.h"
+#include "function_addresses.h"
 
 /* TODO: (WebKit2)
  *
@@ -276,10 +277,12 @@ uzbl_commands_run_argv (const gchar *cmd, GArray *argv, GString *result)
 // Hand constructed slice of uzbl_commands_run_parsed
 void uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GString *result)
 {
+    /*
     if (info) {
-      printf("function pointer = (%d, )\n", (int)info->function);
+      printf("function pointer = (%x, )\n", (int)info->function);
     }
-    int loop_counter[3] = {0, 0, 0};
+    */
+    int loop_counter[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     if (!info) {
       loop_counter[0]++;
       goto print_loop_counter;
@@ -290,13 +293,73 @@ void uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GStr
     if (info->send_event) {
       loop_counter[2]++;
     }
+    
+    // Function pointers
+    int func_ptr = 0;
+    if (info) {
+      func_ptr = (int)info->function;
+    }
+    switch(func_ptr) {
+      case ADDR_CMD_URI :
+        loop_counter[3] = 1;
+        break;
+      case ADDR_CMD_JS :
+        loop_counter[4] = 1;
+        break;
+      case ADDR_CMD_FORWARD :
+        loop_counter[5] = 1;
+        break;
+      case ADDR_CMD_SPAWN :
+        loop_counter[6] = 1;
+        break;
+      case ADDR_CMD_EVENT :
+        loop_counter[7] = 1;
+        break;
+      case ADDR_CMD_BACK :
+        loop_counter[8] = 1;
+        break;
+      case ADDR_CMD_SPAWN_SYNC :
+        loop_counter[9] = 1;
+        break;
+      case ADDR_CMD_EXIT :
+        loop_counter[10] = 1;
+        break;
+      case ADDR_CMD_RELOAD :
+        loop_counter[11] = 1;
+        break;
+      case ADDR_CMD_SPAWN_SYNC_EXEC :
+        loop_counter[12] = 1;
+        break;
+      case ADDR_CMD_SPAWN_SH_SYNC :
+        loop_counter[13] = 1;
+        break;
+      case ADDR_CMD_MENU :
+        loop_counter[14] = 1;
+        break;
+      case ADDR_CMD_SPAWN_SH :
+        loop_counter[15] = 1;
+        break;
+      case ADDR_CMD_SET :
+        loop_counter[16] = 1;
+        break;
+      case ADDR_CMD_DUMP_CONFIG_AS_EVENTS :
+        loop_counter[17] = 1;
+        break;
+      default :
+        loop_counter[18] = 1;
+    }
+
 print_loop_counter:
     printf("loop counter = (");
     int i;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 19; i++) {
       printf("%d, ", loop_counter[i]);
     }
     printf(")\n");
+
+float exec_time;
+exec_time = 178.000000*loop_counter[1] + 33.000000*loop_counter[2] + 4.000000*loop_counter[3] + 57.000000*loop_counter[4] + 47.000000*loop_counter[5] + 5964.000000*loop_counter[6] + 4654.000000*loop_counter[10] + 88.000000*loop_counter[11] + 5076.000000*loop_counter[15] + 5695.000000*loop_counter[16] + 0.000000;
+printf("predicted time = %f\n", exec_time);
 }
 
 void
