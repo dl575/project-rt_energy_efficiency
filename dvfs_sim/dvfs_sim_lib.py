@@ -33,6 +33,8 @@ Functions:
   avg_normalized_tardiness(times, frequencies, deadline)
   max_normalized_tardiness(times, frequencies, deadline)
   energy(times, frequencies, deadline)
+
+  read_predict_file(filename)
 """
 
 import itertools
@@ -43,8 +45,8 @@ import os
 import cvxpy
 import sklearn.linear_model
 
-benchmarks = ["rijndael", "sha", "stringsearch", "freeciv_slice",
-  "xpilot_slice", "julius_slice", "2048_slice", "curseofwar_slice", "uzbl_slice"]
+benchmarks = ["rijndael", "sha", "stringsearch", "julius_slice", "2048_slice",
+  "curseofwar_slice", "uzbl"]
 
 #default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
 #default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
@@ -402,7 +404,9 @@ def policy_cvx_least_squares(train_times, train_metrics, test_times=None, test_m
   prob = cvxpy.Problem(obj)
 
   # Solve
-  prob.solve(max_iters=int(1e6), reltol=1)
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
   # Write out results
   coeffs = numpy.array(b.value)
   f = open("temp.lps", 'w')
@@ -416,7 +420,7 @@ def policy_cvx_least_squares(train_times, train_metrics, test_times=None, test_m
     predicted_times[i] = numpy.dot(x, coeffs)[0]
   return predicted_times
 
-def policy_cvx_lasso(train_times, train_metrics, test_times=None, test_metrics=None):
+def policy_cvx_lasso(train_times, train_metrics, test_times=None, test_metrics=None, lasso_weight=10):
   """
   LASSO implemented using CVXPY.
   """
@@ -432,11 +436,127 @@ def policy_cvx_lasso(train_times, train_metrics, test_times=None, test_metrics=N
 
   # Construct the problem
   b = cvxpy.Variable(X.shape[1])
-  obj = cvxpy.Minimize(cvxpy.norm(y - X*b) + cvxpy.norm(b, 1))
+  obj = cvxpy.Minimize(cvxpy.norm(y - X*b, 2) + lasso_weight*cvxpy.norm(b, 1))
   prob = cvxpy.Problem(obj)
 
   # Solve
-  prob.solve(max_iters=int(1e6), reltol=1)
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
+  # Write out results
+  coeffs = numpy.array(b.value)
+  print sum(map(lambda x: x > 1e-6, coeffs))
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_conservative(train_times, train_metrics, test_times=None, test_metrics=None):
+  """
+  Linear least squares regression using CVXPY.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  constraints = []
+  for i in range(len(y)):
+    constraints.append((X*b - y)[i] >= 0)
+  obj = cvxpy.Minimize(cvxpy.norm(y - X*b, 2))
+  prob = cvxpy.Problem(obj, constraints)
+
+  # Solve
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
+  # Write out results
+  coeffs = numpy.array(b.value)
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_conservative_penalty(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100):
+  """
+  Linear least squares regression using CVXPY.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  constraints = []
+  obj = cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, underpredict_penalty)))
+  prob = cvxpy.Problem(obj, constraints)
+
+  # Solve
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
+  # Write out results
+  coeffs = numpy.array(b.value)
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_conservative_lasso(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100, lasso_weight=10):
+  """
+  Linear least squares regression using CVXPY.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  constraints = []
+  obj = cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, underpredict_penalty)) + lasso_weight*cvxpy.norm(b, 1))
+  prob = cvxpy.Problem(obj, constraints)
+
+  # Solve
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
   # Write out results
   coeffs = numpy.array(b.value)
   f = open("temp.lps", 'w')
@@ -462,9 +582,9 @@ def policy_lasso(train_times, train_metrics, test_times=None, test_metrics=None)
   clf.fit(x, y)
   # Write model out
   f = open("temp.lps", "w")
-  f.write(', '.join(map(str, clf.coef_)))
-  f.write(", ")
   f.write(str(clf.intercept_[0]))
+  f.write(", ")
+  f.write(', '.join(map(str, clf.coef_)))
   f.close()
 
   # Apply prediction to test set
@@ -499,3 +619,14 @@ def max_normalized_tardiness(times, frequencies, deadline):
 def energy(times, frequencies, deadline):
   energies = [x*x for x in frequencies]
   return average(energies)
+
+def read_predict_file(filename):
+  """
+  Return list of predicted times from filename.
+  """
+  f = open(filename, 'r')
+  data = []
+  for line in f:
+    data.append(float(line))
+  f.close()
+  return data

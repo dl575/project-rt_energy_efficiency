@@ -17,9 +17,7 @@ opts = tsg_plot.PlotOptions()
 # Common options for plots
 attribute_dict = \
     {
-        #'colors' : ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fdbf6f"],
-        #'colors' : ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3'],
-        'colors' : ['#d7191c', '#abd9e9', '#2c7bb6', '#fdae61'],
+        'colors' : ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fdbf6f"],
         'bar_width' : 0.7,
         'figsize' : (7.0, 3.0),
         'fontsize' : 10,

@@ -14,12 +14,13 @@ def get_coeffs(filename):
 def gen_predictor(coeffs):
   predictor = "float exec_time;\n"
   predictor += "exec_time = "
+  predictor += "%f + " % coeffs[0]
   non_zero_count = 0
-  for (ci, c) in enumerate(coeffs[:-1]):
+  for (ci, c) in enumerate(coeffs[1:]):
     if c != 0:
       non_zero_count += 1
       predictor += "%f*loop_counter[%d] + " % (c, ci)
-  predictor += "%f;\n" % coeffs[-1]
+  predictor += "0;\n"
   predictor += "printf(\"predicted time = %f\\n\", exec_time);"
   print "// non-zero coeffs = %d" % non_zero_count
   return predictor

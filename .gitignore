@@ -5,4 +5,5 @@
 *.pod
 *.pc
 .DS_STORE
-*.swp
+*.sw[a-z]
+*.pyc
