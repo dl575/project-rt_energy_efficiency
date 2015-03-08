@@ -76,7 +76,7 @@
 //---------------------modified by TJSong----------------------//
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define DEADLINE_TIME 360496  //big
 //#define DEADLINE_TIME    //LITTLE
@@ -297,6 +297,7 @@ int decfile(FILE *fin, FILE *fout, aes *ctx, char* ifn, char* ofn)
 
 void slice(int argc, char *argv[])
 {
+    start_timing();//TJSong
   int loop_counter[46] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 {}
   FILE *fin = 0;
@@ -866,14 +867,17 @@ float exec_time;
 exec_time = 506.417000*loop_counter[2] + -411.756000*loop_counter[3] + 1.098300*loop_counter[19] + 0.000000;
 printf("predicted time = %f\n", exec_time);
 
+//---------------------modified by TJSong----------------------//
+    end_timing();
+    print_slice_timing();
 #if PREDICT_EN
     start_timing();
     set_freq(exec_time); //TJSong
     end_timing();
     print_set_dvfs_timing();
 #endif
-
-  }
+//---------------------modified by TJSong----------------------//
+ }
 
 }
 

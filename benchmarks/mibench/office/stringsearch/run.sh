@@ -43,7 +43,7 @@ if [[ $2 ]] ; then
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $2"..."
-    sudo nice --19 taskset $TASKSET_FLAG ./runme_large.sh
+    taskset $TASKSET_FLAG ./runme_large.sh
     mv output_large.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     echo [ done ]
@@ -56,7 +56,7 @@ do
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $i"..."
-    sudo nice --19 taskset $TASKSET_FLAG ./runme_large.sh
+    taskset $TASKSET_FLAG ./runme_large.sh
     mv output_large.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
 done
 

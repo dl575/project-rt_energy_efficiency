@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 big_little="big"
 
 benchmarks = ["stringsearch", "xpilot_slice", "sha", "rijndael", "julius_slice"]#, "average"]
-sample_frame=[1300          , 2200          , 100  , 200       , 50]
+sample_frame=[1300          , 2260          , 100  , 200       , 50]
 governor_files = ["performance", "prediction", "powersave", "conservative", "interactive", "ondemand"]
 
 #variables
@@ -57,7 +57,7 @@ for k in range(0, 2):
         
     for j in benchmarks:
         cnt2=0
-        #print j
+        print j
         f=open('parsed_data.csv', 'a')
         f.write('\n'+j);
         for i in governor_files:

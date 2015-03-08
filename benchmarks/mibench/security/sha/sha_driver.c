@@ -708,13 +708,13 @@ void slice(int argc, char **argv)
 //exec_time = 2.058300*loop_counter[23] + 1988.040000*loop_counter[25] + -14.939600*loop_counter[27] + -504.579000*loop_counter[34] + 0.000000;
 //printf("predicted time = %f\n", exec_time);
 
+//---------------------modified by TJSong----------------------//
 float exec_time;
 exec_time = 73.413500*loop_counter[23] + 74.177900*loop_counter[25] + 0.108232*loop_counter[27] + -35.387000*loop_counter[34] + 0.000000;
-printf("predicted time = %f\n", exec_time);
 
-//---------------------modified by TJSong----------------------//
     end_timing();
     print_slice_timing();
+    printf("predicted time = %f\n", exec_time);
 #if PREDICT_EN
     start_timing();
     set_freq(exec_time); //TJSong

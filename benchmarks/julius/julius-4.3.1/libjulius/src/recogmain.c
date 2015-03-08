@@ -191,6 +191,74 @@ print_mem()
 
 #include "timing.h"
 
+//---------------------modified by TJSong----------------------//
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DEADLINE_TIME 42004  //big
+//#define DEADLINE_TIME    //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+
+FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+float watt; //Value (Watt) at start point.
+int khz; //Value (khz) at start point.
+
+FILE *fp_max_freq; //File pointer scaling_max_freq
+int predicted_freq = MAX_FREQ;
+
+void fopen_all(void){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    return;
+}
+
+void fclose_all(void){
+   fclose(fp_max_freq);
+    return;
+}
+
+void print_power(void){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fscanf(fp_freq, "%d", &khz);
+    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+    fclose(fp_power); 
+    fclose(fp_freq);
+    return;
+}
+
+inline void set_freq(float exec_time){
+    //calculate predicted freq and round up by adding 99999
+    predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
+    //printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    //start_timing();
+    fflush(fp_max_freq);
+    //end_timing();
+   // print_set_dvfs_timing();
+    
+
+    return;
+}
+
+//---------------------modified by TJSong----------------------//
+
+
 /** 
  * <EN>
  * allocate storage of recognition alignment results.
@@ -678,6 +746,7 @@ result_error(Recog *recog, int status)
 
 int call_adin_go(Recog *recog)
 {
+    start_timing();//TJSong
   int loop_counter[188] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int ret;
   {
@@ -2163,10 +2232,23 @@ int call_adin_go(Recog *recog)
 
     printf(")\n");
   }
-float exec_time;
-exec_time = -42349.000000*loop_counter[0] + -325.460000*loop_counter[4] + 55.279200*loop_counter[140] + 115.722000*loop_counter[141] + -8792.340000*loop_counter[147] + 0.000000;
-printf("predicted time = %f\n", exec_time);
+//---------------------modified by TJSong----------------------//
+//float exec_time;
+//exec_time = -42349.000000*loop_counter[0] + -325.460000*loop_counter[4] + 55.279200*loop_counter[140] + 115.722000*loop_counter[141] + -8792.340000*loop_counter[147] + 0.000000;
+    float exec_time;
+    exec_time = 20241.300000*loop_counter[0] + -4915.170000*loop_counter[4] + 27231.900000*loop_counter[27] + -73.834400*loop_counter[140] + 12716.000000*loop_counter[147] + 0.000000;
+    printf("predicted time = %f\n", exec_time);
 
+    end_timing();
+    print_slice_timing();
+#if PREDICT_EN
+    start_timing();
+    set_freq(exec_time); //TJSong
+    end_timing();
+    print_set_dvfs_timing();
+#endif
+//---------------------modified by TJSong----------------------//
+ 
   return ret;
 }
 
@@ -2443,8 +2525,12 @@ j_recognize_stream_core(Recog *recog)
 	if (jconf->input.type == INPUT_WAVEFORM) {
 	  /* get speech and process it on real-time */
 	  //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
+
+    fopen_all();//TJSong 
+    printf("============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+
       // Run adin_go with loop counts
-      call_adin_go(recog);
+      call_adin_go(recog);//slice
 	} else {
 	  /* get feature vector and process it */
 	  ret = mfcc_go(recog, callback_check_in_adin);
@@ -2861,7 +2947,26 @@ j_recognize_stream_core(Recog *recog)
     callback_exec(CALLBACK_RESULT, recog);
 
     end_timing();
+//---------------------modified by TJSong----------------------//
+#if DELAY_EN
+    int delay_time;
+    static int instance_number = 0;
+    if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
+        start_timing();  
+        usleep(delay_time);
+        end_timing();
+        printf("delayed by %d us\n", exec_timing());
+        printf("time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+    }else
+        printf("time %d = %d us\n", instance_number, exec_timing());
+    instance_number++;
+#else
     print_timing();
+    write_timing();
+#endif
+    print_power();//TJSong
+    fclose_all();//TJSong
+//---------------------modified by TJSong----------------------//
 
 #ifdef ENABLE_PLUGIN
     plugin_exec_process_result(recog);

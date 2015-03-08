@@ -25,7 +25,7 @@ static char *findme;
 //---------------------modified by TJSong----------------------//
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define DEADLINE_TIME 4215  //big
 //#define DEADLINE_TIME    //LITTLE
@@ -86,6 +86,7 @@ void set_freq(float exec_time){
 
 void slice(const char *string)
 {
+    start_timing();//TJSong
   int loop_counter[4] = {0, 0, 0, 0};
   register size_t shift;
   register size_t pos = len - 1;
@@ -149,9 +150,16 @@ float exec_time;
 exec_time = -198.000000*loop_counter[0] + 129.000000*loop_counter[1] + 762.000000*loop_counter[3] + 2318.000000;
 printf("predicted time = %f\n", exec_time);
 
+//---------------------modified by TJSong----------------------//
+    end_timing();
+    print_slice_timing();
 #if PREDICT_EN
-   set_freq(exec_time); //TJSong
+    start_timing();
+    set_freq(exec_time); //TJSong
+    end_timing();
+    print_set_dvfs_timing();
 #endif
+//---------------------modified by TJSong----------------------//
   }
 
 }
