@@ -41,6 +41,78 @@
 #include "timing.h"
 #include <stdlib.h>
 
+//---------------------modified by TJSong----------------------//
+struct timeval start, end;
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DEADLINE_TIME 5784  //big
+//#define DEADLINE_TIME    //LITTLE
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+
+FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+float watt; //Value (Watt) at start point.
+int khz; //Value (khz) at start point.
+
+FILE *fp_max_freq; //File pointer scaling_max_freq
+int predicted_freq = MAX_FREQ;
+
+void fopen_all(void){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    return;
+}
+
+void fclose_all(void){
+   fclose(fp_max_freq);
+    return;
+}
+
+void print_power(void){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    fscanf(fp_power, "%f", &watt);
+    fscanf(fp_freq, "%d", &khz);
+    fprintf(time_file, "big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+    fclose(time_file); 
+    fclose(fp_power); 
+    fclose(fp_freq);
+    return;
+}
+
+void set_freq(float exec_time){
+    //calculate predicted freq and round up by adding 99999
+    predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
+    //printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    //start_timing();
+    fflush(fp_max_freq);
+    //end_timing();
+   // print_set_dvfs_timing();
+    
+
+    return;
+}
+
+//---------------------modified by TJSong----------------------//
+
+
 /*****************************************************************************/
 /*                           Global Constants                                */
 /*****************************************************************************/
@@ -73,6 +145,7 @@ void win_or_lose_message(struct state *st, int k) {
 
 void run_loop_slice(struct state *st, struct ui *ui, int k)
 {
+    start_timing();//TJSong
   int loop_counter[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   if (time_to_redraw)
   {
@@ -188,12 +261,32 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
     write_array(loop_counter, 13);
   }
 
-  float exec_time;
-  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
-  FILE *time_file;
-  time_file = fopen("times.txt", "a");
-  fprintf(time_file, "predicted time = %f\n", exec_time);
-  fclose(time_file);
+//---------------------modified by TJSong----------------------//
+//  float exec_time;
+//  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
+float exec_time;
+exec_time = 1099.000000*loop_counter[0] + -133.000000*loop_counter[1] + 3048.000000*loop_counter[2] + 1723.000000*loop_counter[4] + 22.000000*loop_counter[10] + 0.000000;
+
+    end_timing(); //end of slice
+    FILE *time_file;
+    static int instance_number1=0;
+    time_file = fopen("times.txt", "a");
+    //print_slice_timing();
+    fprintf(time_file, "time_slice %d = %d us\n", instance_number1++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+    //printf("predicted time = %f\n", exec_time);
+    fprintf(time_file, "predicted time = %f\n", exec_time);
+    fclose(time_file);
+#if PREDICT_EN
+    time_file = fopen("times.txt", "a");
+    static int instance_number2=0;
+    start_timing(); //start of dvfs
+    set_freq(exec_time); //TJSong
+    end_timing();  //end of dvfs
+    //print_set_dvfs_timing();
+    fprintf(time_file, "time_set_dvfs %d = %d us\n", instance_number2++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+    fclose(time_file);
+#endif
+//---------------------modified by TJSong----------------------//
 }
 
 int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
@@ -351,8 +444,16 @@ void run (struct state *st, struct ui *ui) {
   init_time_file();
 
   while( !finished ) {
-    
-    start_timing();
+    static int cnt = 0; //TJSong    
+    //start_timing();
+//---------------------modified by TJSong----------------------//
+    fopen_all();//TJSong 
+
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+    fclose(time_file);
+//---------------------modified by TJSong----------------------//
 
     //k = run_loop_loop_counters(st, ui, k);
     // Fork a new process to run slice
@@ -364,12 +465,40 @@ void run (struct state *st, struct ui *ui) {
       int status;
       waitpid(pid, &status, 0);
     }
+    start_timing();
     k = run_loop(st, ui, k);
 
     finished = update_from_input(st, ui);
+    if(cnt++ > 2000)//TJSong
+        finished = 1;
+
     if (!finished) {
       end_timing();
-      write_timing();
+   //   write_timing();
+//---------------------modified by TJSong----------------------//
+    time_file = fopen("times.txt", "a");
+    static int instance_number = 0;
+    fprintf(time_file, "time_exec is %d us\n", exec_timing());
+#if DELAY_EN
+    int delay_time;
+    if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
+        start_timing();  
+        usleep(delay_time);
+        end_timing();
+        fprintf(time_file, "calculated delay is %d us\n", delay_time);
+        fprintf(time_file, "actually delayed by %d us\n", exec_timing());
+        fprintf(time_file, "time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+    }else
+        fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
+#else
+    //print_timing();
+    fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
+#endif
+    instance_number++;
+    fclose(time_file);
+    print_power();//TJSong
+    fclose_all();//TJSong
+//---------------------modified by TJSong----------------------//
     }
 
     pause(); // sleep until woken up by SIGALRM

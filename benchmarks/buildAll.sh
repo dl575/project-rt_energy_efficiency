@@ -5,12 +5,16 @@ SOURCE_FILES=("mibench/security/sha/sha_driver.c"
             "mibench/office/stringsearch/pbmsrch_large.c"
             "mibench/security/rijndael/aesxam.c" 
             "xpilot/xpilot-4.5.5/src/server/server.c" 
-            "julius/julius-4.3.1/libjulius/src/recogmain.c")
+            "julius/julius-4.3.1/libjulius/src/recogmain.c"
+            "2048.c/2048.c"
+            "curseofwar/main.c")
 SOURCE_PATH=("mibench/security/sha" 
             "mibench/office/stringsearch"
             "mibench/security/rijndael"
             "xpilot/xpilot-4.5.5"
-            "julius/julius-4.3.1")
+            "julius/julius-4.3.1"  
+            "2048.c")
+            "curseofwar")
 
 PREDICT_ENABLED="PREDICT_EN 1"
 PREDICT_DISABLED="PREDICT_EN 0"

@@ -192,6 +192,7 @@ print_mem()
 #include "timing.h"
 
 //---------------------modified by TJSong----------------------//
+struct timeval start, end;
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
@@ -223,6 +224,8 @@ void fclose_all(void){
 }
 
 void print_power(void){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
     if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return;
@@ -233,7 +236,8 @@ void print_power(void){
     }
     fscanf(fp_power, "%f", &watt);
     fscanf(fp_freq, "%d", &khz);
-    printf("big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+    fprintf(time_file, "big core power : %fW, big core freq : %dkhz\n", watt, khz);  
+    fclose(time_file);
     fclose(fp_power); 
     fclose(fp_freq);
     return;
@@ -2224,13 +2228,15 @@ int call_adin_go(Recog *recog)
   {
     print_loop_counter:
     
-
+/*
     printf("loop counter = (");
     int i;
     for (i = 0; i < 188; i++)
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
+*/
+    write_array(loop_counter, 188);  
   }
 //---------------------modified by TJSong----------------------//
 //float exec_time;
@@ -2239,13 +2245,24 @@ int call_adin_go(Recog *recog)
     exec_time = 20241.300000*loop_counter[0] + -4915.170000*loop_counter[4] + 27231.900000*loop_counter[27] + -73.834400*loop_counter[140] + 12716.000000*loop_counter[147] + 0.000000;
     printf("predicted time = %f\n", exec_time);
 
-    end_timing();
-    print_slice_timing();
+    end_timing(); //end of slice
+    FILE *time_file;
+    static int instance_number1=0;
+    time_file = fopen("times.txt", "a");
+    //print_slice_timing();
+    fprintf(time_file, "time_slice %d = %d us\n", instance_number1++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+    //printf("predicted time = %f\n", exec_time);
+    fprintf(time_file, "predicted time = %f\n", exec_time);
+    fclose(time_file);
 #if PREDICT_EN
+    time_file = fopen("times.txt", "a");
+    static int instance_number2=0;
     start_timing();
     set_freq(exec_time); //TJSong
     end_timing();
-    print_set_dvfs_timing();
+    //print_set_dvfs_timing();
+    fprintf(time_file, "time_set_dvfs %d = %d us\n", instance_number2++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+    fclose(time_file);
 #endif
 //---------------------modified by TJSong----------------------//
  
@@ -2525,9 +2542,14 @@ j_recognize_stream_core(Recog *recog)
 	if (jconf->input.type == INPUT_WAVEFORM) {
 	  /* get speech and process it on real-time */
 	  //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
-
+//---------------------modified by TJSong----------------------//
     fopen_all();//TJSong 
-    printf("============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+    fclose(time_file);
+//---------------------modified by TJSong----------------------//
 
       // Run adin_go with loop counts
       call_adin_go(recog);//slice
@@ -2948,25 +2970,31 @@ j_recognize_stream_core(Recog *recog)
 
     end_timing();
 //---------------------modified by TJSong----------------------//
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    static int instance_number = 0;
+    fprintf(time_file, "time_exec is %d us\n", exec_timing());
 #if DELAY_EN
     int delay_time;
-    static int instance_number = 0;
     if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
         start_timing();  
         usleep(delay_time);
         end_timing();
-        printf("delayed by %d us\n", exec_timing());
-        printf("time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+        fprintf(time_file, "calculated delay is %d us\n", delay_time);
+        fprintf(time_file, "actually delayed by %d us\n", exec_timing());
+        fprintf(time_file, "time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
     }else
-        printf("time %d = %d us\n", instance_number, exec_timing());
-    instance_number++;
+        fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
 #else
-    print_timing();
-    write_timing();
+    //print_timing();
+    fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
 #endif
+    instance_number++;
+    fclose(time_file);
     print_power();//TJSong
     fclose_all();//TJSong
 //---------------------modified by TJSong----------------------//
+
 
 #ifdef ENABLE_PLUGIN
     plugin_exec_process_result(recog);

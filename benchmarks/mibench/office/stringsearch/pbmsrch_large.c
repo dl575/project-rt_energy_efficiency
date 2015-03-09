@@ -23,6 +23,7 @@ static size_t len;
 static char *findme;
 
 //---------------------modified by TJSong----------------------//
+struct timeval start, end;
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
@@ -2908,11 +2909,13 @@ NULL};
 #if DELAY_EN
     int delay_time;
     static int instance_number = 0;
+    printf("time_exec is %d us\n", exec_timing());
     if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
         start_timing();  
         usleep(delay_time);
-        end_timing();
-        printf("delayed by %d us\n", exec_timing());
+        printf("calculated delay is %d us\n", delay_time);
+        printf("actually delayed by %d us\n", exec_timing());
+    end_timing();
         printf("time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
     }else
         printf("time %d = %d us\n", instance_number, exec_timing());

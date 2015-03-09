@@ -5,7 +5,7 @@
 #ifndef __TIMING_H__
 #define __TIMING_H__
 
-struct timeval start, end;
+extern struct timeval start, end;
 
 void start_timing();
 void end_timing();
@@ -111,7 +111,7 @@ void write_array(int *array, int array_len) {
   fprintf(time_file, "loop counter = (");
   int i;
   for (i = 0; i < array_len; i++) {
-      fprintf(time_file, "%d, ", array[i]++);
+      fprintf(time_file, "%d, ", array[i]);
   }
   fprintf(time_file, ")\n");
   instance_number++;
