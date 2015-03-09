@@ -13,7 +13,7 @@ SOURCE_PATH=("mibench/security/sha"
             "mibench/security/rijndael"
             "xpilot/xpilot-4.5.5"
             "julius/julius-4.3.1"  
-            "2048.c")
+            "2048.c"
             "curseofwar")
 
 PREDICT_ENABLED="PREDICT_EN 1"
