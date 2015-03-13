@@ -1,5 +1,24 @@
 #!/usr/bin/python
 
+"""
+inline.py
+
+Classes:
+	GetFuncCallVisitor
+	ReplaceFuncCallVisitor
+	RemoveIfFunctionVisitor
+	RenameVisitor
+	ReturnToGotoVisitor
+	ExpandFunctionVisitor
+	GetFunctionsVisitor
+	GetDeclVisitor
+  GetFuncDeclVisitor
+
+Functions:
+	replace_node
+	print_node
+"""
+
 import copy
 import sys
 
@@ -87,9 +106,11 @@ class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
     if (func_result == 1)
   """
 
-  def __init__(self):
+  def __init__(self, func_decls):
     self.visitor = GetFuncCallVisitor()
     self.replace_visitor = ReplaceFuncCallVisitor()
+    # List of all function declarations
+    self.func_decls = func_decls
   def generic_visit(self, node):
     """
     Rewrite generic_visit to check for FuncCall nodes in the condition of If
@@ -109,8 +130,8 @@ class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
             func_name = func_call.name.name
             result_name = func_name + "_result%d" % fi
             # Declare result variable
-            it = c_ast.IdentifierType(["int"])
-            td = c_ast.TypeDecl(result_name, [], it)
+            td = copy.deepcopy(self.get_function_type(func_call))
+            self.set_decl_name(td, result_name)
             d = c_ast.Decl(result_name, [], [], [], td, None, None)
             stmts.append(d)
             # Call function, assign into result variable
@@ -127,6 +148,35 @@ class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
           replace_node(node, compound, ci, c_name)
 
       self.visit(c)
+  def get_function_type(self, node):
+    """
+    Returns the return type of the passed function call node.
+    """
+    assert(isinstance(node, c_ast.FuncCall))
+
+    # Find function definition
+    func_name = node.name.name
+    for function in self.func_decls:
+      if self.get_decl_name(function) == func_name:
+        # Return type 
+        return function.type
+    raise Exception("Function declaration for %s not found" % func_name)
+  def get_decl_name(self, node):
+    """
+    Returns name for passed *Decl node.
+    """
+    if isinstance(node, c_ast.TypeDecl):
+      return node.declname
+    else:
+      return self.get_decl_name(node.type)
+  def set_decl_name(self, node, name):
+    """
+    Sets the name for the passed *Decl node.
+    """
+    if isinstance(node, c_ast.TypeDecl):
+      node.declname = name
+    else:
+      self.set_decl_name(node.type, name)
 
 class RenameVisitor(c_ast.NodeVisitor):
   """
@@ -430,17 +480,21 @@ class GetDeclVisitor(c_ast.NodeVisitor):
     if node.name:
       self.decls.append(node.name)
 
+class GetFuncDeclVisitor(c_ast.NodeVisitor):
+  """
+  Find all function declarations (but not definitions).
+  """
+  def __init__(self):
+    self.func_decls = []
+  def visit_FuncDecl(self, node):
+    self.func_decls.append(node)
+
 if __name__ == "__main__":
   if len(sys.argv) > 2:
     filename = sys.argv[1]
     top_func = sys.argv[2]
-
-    remove_if_function = False
-    if len(sys.argv) > 3:
-      if sys.argv[3] == "--remove_if_function":
-        remove_if_function = True
   else:
-    print "usage: ./inline.py file.c top_level_function [--remove_if_function]"
+    print "usage: ./inline.py file.c top_level_function"
     sys.exit()
 
   # Generate AST
@@ -452,9 +506,10 @@ if __name__ == "__main__":
   functions = v.funcs
 
   # Remove function calls from being embedded in conditionals
-  if remove_if_function:
-    v = RemoveIfFunctionVisitor()
-    v.visit(ast)
+  v = GetFuncDeclVisitor()
+  v.visit(ast)
+  v = RemoveIfFunctionVisitor(v.func_decls)
+  v.visit(ast)
   # Inline functions
   v = ExpandFunctionVisitor(top_func, functions)
   v.visit(ast)

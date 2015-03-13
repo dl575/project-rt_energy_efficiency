@@ -1,6 +1,9 @@
-void main_slice()
+typedef int FILE;
+FILE *fopen();
+int global;
+void main_slice(int argc, char *argv[])
 {
-  int loop_counter[3] = {0, 0, 0};
+  int loop_counter[4] = {0, 0, 0, 0};
 {}
 {}
 {}
@@ -82,11 +85,21 @@ void main_slice()
 
   }
   {
+    FILE *fopen_result0;
+    fopen_result0 = fopen(argv[1], "rb");
+    if (!(fin = fopen_result0))
+    {
+      loop_counter[3]++;
+{}
+    }
+
+  }
+  {
     print_loop_counter:
     printf("loop counter = (");
 
     int i;
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 4; i++)
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");

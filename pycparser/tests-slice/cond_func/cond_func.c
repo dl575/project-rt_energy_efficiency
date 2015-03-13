@@ -1,8 +1,10 @@
+int global;
+
 int func(int a) {
   return 1;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   int a, b, c, d;
 
   if (func(1) == 1) {
@@ -14,5 +16,9 @@ int main() {
 
   if (func(c) || func(d)) {
     c++;
+  }
+
+  if (!(fin = fopen(argv[1], "rb"))) {
+    d++;
   }
 }

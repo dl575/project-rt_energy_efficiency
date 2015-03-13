@@ -293,17 +293,18 @@ extern "C"
 #define cf_dec  aes_ret
 #endif
 
-typedef struct
-{
-    word    Nkey;               /* the number of words in the key input block */
-    word    Nrnd;               /* the number of cipher rounds                */
-    word    e_key[KS_LENGTH];   /* the encryption key schedule                */
-    word    d_key[KS_LENGTH];   /* the decryption key schedule                */
-#if !defined(BLOCK_SIZE)
-    word    Ncol;               /* the number of columns in the cipher state  */
-#endif
-    byte    mode;               /* encrypt, decrypt or both                   */
-} c_name(aes);
+//typedef struct
+//{
+//    word    Nkey;               /* the number of words in the key input block */
+//    word    Nrnd;               /* the number of cipher rounds                */
+//    word    e_key[KS_LENGTH];   /* the encryption key schedule                */
+//    word    d_key[KS_LENGTH];   /* the decryption key schedule                */
+//#if !defined(BLOCK_SIZE)
+//    word    Ncol;               /* the number of columns in the cipher state  */
+//#endif
+//    byte    mode;               /* encrypt, decrypt or both                   */
+//} c_name(aes);
+typedef struct aes;
 
 cf_dec c_name(set_key)(const byte key[], const word n_bytes, const enum aes_key f, c_name(aes) *cx);
 cf_dec c_name(encrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx);
