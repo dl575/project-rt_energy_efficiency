@@ -30,7 +30,6 @@ for test in tests:
     test_results.append("\033[92m%s passed\033[0m" % (test))
   # Clean-up
   os.system("make clean")
-os.system("rm Makefile")
 
 print
 print '\n'.join(test_results)
