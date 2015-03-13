@@ -434,8 +434,13 @@ if __name__ == "__main__":
   if len(sys.argv) > 2:
     filename = sys.argv[1]
     top_func = sys.argv[2]
+
+    remove_if_function = False
+    if len(sys.argv) > 3:
+      if sys.argv[3] == "--remove_if_function":
+        remove_if_function = True
   else:
-    print "usage: ./inline.py file.c top_level_function"
+    print "usage: ./inline.py file.c top_level_function [--remove_if_function]"
     sys.exit()
 
   # Generate AST
@@ -447,8 +452,9 @@ if __name__ == "__main__":
   functions = v.funcs
 
   # Remove function calls from being embedded in conditionals
-  v = RemoveIfFunctionVisitor()
-  v.visit(ast)
+  if remove_if_function:
+    v = RemoveIfFunctionVisitor()
+    v.visit(ast)
   # Inline functions
   v = ExpandFunctionVisitor(top_func, functions)
   v.visit(ast)

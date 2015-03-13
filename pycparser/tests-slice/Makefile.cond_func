@@ -4,7 +4,7 @@ DIRNAME=cond_func
 FUNCNAME=main
 
 slice: preprocess
-	$(PYTHON) inline.py $(DIRNAME)/$(FILENAME)3.c $(FUNCNAME) > $(DIRNAME)/$(FILENAME)_inline.c
+	$(PYTHON) inline.py $(DIRNAME)/$(FILENAME)3.c $(FUNCNAME) --remove_if_function > $(DIRNAME)/$(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(DIRNAME)/$(FILENAME)_inline.c > $(DIRNAME)/$(FILENAME)_loop_counts.c
 	$(PYTHON) slice.py $(DIRNAME)/$(FILENAME)_loop_counts.c loop_counter > $(DIRNAME)/$(FILENAME)_slice.c
 
