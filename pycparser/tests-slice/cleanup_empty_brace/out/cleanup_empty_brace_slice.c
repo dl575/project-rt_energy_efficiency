@@ -1,4 +1,4 @@
-void main_reduced()
+void main_slice()
 {
   int loop_counter[4] = {0, 0, 0, 0};
   int a;

@@ -3,7 +3,7 @@ void main_slice()
   int loop_counter[3] = {0, 0, 0};
   int a = 1;
   int b = 2;
-{}
+  {}
   int c;
   {
     int return_value;
@@ -38,7 +38,7 @@ void main_slice()
 
       c = return_value;
     }
-{}
+    {}
   }
   else
   {
@@ -57,7 +57,7 @@ void main_slice()
 
       c = return_value;
     }
-{}
+    {}
   }
 
   int i;
@@ -69,14 +69,14 @@ void main_slice()
 
   {
     int a_rename3 = 1;
-{}
+    {}
     if (a_rename3)
     {
       loop_counter[2]++;
       goto return3;
     }
 
-{}
+    {}
     {
       goto return3;
     }
@@ -84,7 +84,7 @@ void main_slice()
     ;
 
   }
-{}
+  {}
   {
     goto print_loop_counter;
   }

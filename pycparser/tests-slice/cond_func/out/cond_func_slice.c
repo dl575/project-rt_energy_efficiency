@@ -4,15 +4,15 @@ int global;
 void main_slice(int argc, char *argv[])
 {
   int loop_counter[4] = {0, 0, 0, 0};
-{}
-{}
-{}
-{}
+  {}
+  {}
+  {}
+  {}
   {
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return0;
@@ -25,7 +25,7 @@ void main_slice(int argc, char *argv[])
     if (func_result0 == 1)
     {
       loop_counter[0]++;
-{}
+      {}
     }
 
   }
@@ -33,7 +33,7 @@ void main_slice(int argc, char *argv[])
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return1;
@@ -46,7 +46,7 @@ void main_slice(int argc, char *argv[])
     if (func_result0)
     {
       loop_counter[1]++;
-{}
+      {}
     }
 
   }
@@ -54,7 +54,7 @@ void main_slice(int argc, char *argv[])
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return2;
@@ -67,7 +67,7 @@ void main_slice(int argc, char *argv[])
     int func_result1;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return3;
@@ -80,7 +80,7 @@ void main_slice(int argc, char *argv[])
     if (func_result0 || func_result1)
     {
       loop_counter[2]++;
-{}
+      {}
     }
 
   }
@@ -90,7 +90,7 @@ void main_slice(int argc, char *argv[])
     if (!(fin = fopen_result0))
     {
       loop_counter[3]++;
-{}
+      {}
     }
 
   }

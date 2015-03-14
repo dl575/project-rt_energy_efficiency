@@ -6,7 +6,7 @@ FUNCNAME=main
 slice: preprocess
 	$(PYTHON) inline.py $(DIRNAME)/$(FILENAME)3.c $(FUNCNAME) > $(DIRNAME)/$(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(DIRNAME)/$(FILENAME)_inline.c > $(DIRNAME)/$(FILENAME)_loop_counts.c
-	$(PYTHON) slice_array_index.py $(DIRNAME)/$(FILENAME)_loop_counts.c loop_counter[1] > $(DIRNAME)/$(FILENAME)_slice_temp.c
+	$(PYTHON) slice.py $(DIRNAME)/$(FILENAME)_loop_counts.c loop_counter[1] > $(DIRNAME)/$(FILENAME)_slice_temp.c
 	$(PYTHON) cleanup.py $(DIRNAME)/$(FILENAME)_slice_temp.c > $(DIRNAME)/$(FILENAME)_slice.c
 
 

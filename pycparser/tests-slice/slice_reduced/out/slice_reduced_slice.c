@@ -1,7 +1,7 @@
 typedef int fpos_t;
 typedef int aes;
 typedef int FILE;
-void main_slice_reduced(int argc, char *argv[])
+void main_slice(int argc, char *argv[])
 {
   int loop_counter[2] = {0, 0};
   {

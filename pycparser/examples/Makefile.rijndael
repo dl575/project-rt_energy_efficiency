@@ -4,15 +4,30 @@ slice: preprocess
 	$(PYTHON) inline.py rijndael/aes3.c main > rijndael/aes_inline.c
 	$(PYTHON) insert_loop_counts.py rijndael/aes_inline.c > rijndael/aes_loop_counts.c
 	time $(PYTHON) slice.py rijndael/aes_loop_counts.c loop_counter > rijndael/aes_slice.c
+	# conservative
+	time $(PYTHON) slice.py rijndael/aes_slice.c loop_counter[2] loop_counter[3] loop_counter[24] loop_counter[31] loop_counter[32] > rijndael/aes_slice_reduced.c
+	# cvx_conservative_100_0
+	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[3] loop_counter[22] loop_counter[24] loop_counter[26] loop_counter[27] loop_counter[28] loop_counter[31] loop_counter[33] loop_counter[35] loop_counter[36] loop_counter[37] > rijndael/aes_slice_reduced.c
+	# cvx_conservative_100_1000
+	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[24] > rijndael/aes_slice_reduced.c
+	# No terms
+	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[999] > rijndael/aes_slice_reduced.c
+	$(PYTHON) cleanup.py rijndael/aes_slice_reduced.c > rijndael/aes_slice_reduced_cleanup.c
 
 td = echo "typedef int $1;" | cat - rijndael/aes3.c > temp && mv temp rijndael/aes3.c
+fd = echo "$1 ();" | cat - rijndael/aes3.c > temp && mv temp rijndael/aes3.c
 preprocess:
 	gcc -E rijndael/aes.c > rijndael/aes2.c
 	./cleanup_gccE.py rijndael/aes2.c > rijndael/aes3.c
 
-	$(call td,"FILE")
-	$(call td,"aes")
-	$(call td,"fpos_t")
+	$(call fd, "FILE \* fopen")
+	$(call fd, "size_t fwrite")
+	$(call fd, "size_t fread")
+	$(call fd, "int toupper")
+	$(call td, "size_t")
+	$(call td, "FILE")
+	$(call td, "aes")
+	$(call td, "fpos_t")
 
 clean:
-	rm -f rijndael/aes2.c rijndael/aes3.c rijndael/aes_inline.c rijndael/aes_loop_counts.c rijndael/aes_slice.c
+	rm -f rijndael/aes2.c rijndael/aes3.c rijndael/aes_inline.c rijndael/aes_loop_counts.c rijndael/aes_slice.c rijndael/aes_slice_reduced.c rijndael/aes_slice_reduced_cleanup.c

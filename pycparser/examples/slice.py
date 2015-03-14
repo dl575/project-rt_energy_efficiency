@@ -14,6 +14,7 @@ Classes:
 Functions:
   slice_ast
   print_node
+  str_node
   print_slice
 """
 
@@ -57,7 +58,8 @@ class FuncDefRenameVisitor(c_ast.NodeVisitor):
   def visit_FuncDef(self, node):
     # Change slice to void function
     node.decl.type.type.type.names = ["void"]
-    node.decl.type.type.declname += "_slice"
+    if node.decl.type.type.declname.split('_')[-1] != "slice":
+      node.decl.type.type.declname += "_slice"
 
 """
 Identify all IDs in tree. 
@@ -90,9 +92,11 @@ class IDVisitor(c_ast.NodeVisitor):
 Identify all data dependencies of the passed variable var.
 """
 class DataDependencyVisitor(c_ast.NodeVisitor):
-  def __init__(self, var):
+  def __init__(self, var, specific_array_index=False):
     # Variable of interest
     self.var = var
+    # Indicates that slice should be for a specific array index
+    self.specific_array_index = specific_array_index
     # Set of rvalues to be used for future DataDependenceVisitors
     self.rvalues = []
     # Label to jump to on return statements
@@ -104,14 +108,15 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   """
   Reinitialize DataDependencyVisitor with a new target variable.
   """
-  def reset(self, var):
+  def reset(self, var, specific_array_index=False):
     self.var = var
+    self.specific_array_index = specific_array_index
     self.rvalues = []
   """
   Reinitialize and run a new visit.
   """
-  def new_visit(self, var, node):
-    self.reset(var)
+  def new_visit(self, var, node, specific_array_index=False):
+    self.reset(var, specific_array_index=specific_array_index)
     self.visit(node)
 
   """
@@ -120,7 +125,14 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   def slice_data(self, node):
     node.sliced = True
     self.id_visitor.new_visit(node)
-    self.rvalues += self.id_visitor.IDs
+    if self.specific_array_index:
+      for i in self.id_visitor.IDs:
+        # Check that ID does not match base name when slicing for specific
+        # array indices (should only be used for loop_counter[i].
+        if i != self.var.split('[')[0]:
+          self.rvalues.append(i)
+    else:
+      self.rvalues += self.id_visitor.IDs
     """
     print "Adding to slice:"
     print_node(node)
@@ -131,7 +143,13 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   Get base name of array without index
   """
   def get_ArrayRef_name(self, node):
-    if isinstance(node, c_ast.ID):
+    # If slicing is set up for specific array index, then compare based on
+    # full string of array reference. This is meant to only be used for
+    # slicing for specific loop_counter[i]
+    if self.specific_array_index:
+      return str_node(node)
+    # Otherwise, we want to use the base variable of the array
+    elif isinstance(node, c_ast.ID):
       return node.name
     elif isinstance(node, c_ast.StructRef):
       return node
@@ -168,8 +186,8 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     else:
       self.generic_visit(node)
   def visit_Decl(self, node):
-    # For structs, only use base name
-    base_name = self.var.split("->")[0]
+    # For arrays and structs, only use base name
+    base_name = self.var.split("->")[0].split("[")[0]
     if (node.name == base_name):
       self.slice_data(node)
     # Not part of slice, check children
@@ -272,7 +290,7 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
     node.sliced = True
   def visit_Compound(self, node):
     # Mark entire print_loop_counter block as part of slice
-    if isinstance(node.block_items[0], c_ast.Label) and node.block_items[0].name == "print_loop_counter":
+    if node.block_items and isinstance(node.block_items[0], c_ast.Label) and node.block_items[0].name == "print_loop_counter":
       v = MarkSlicedVisitor()
       v.visit(node)
     else:
@@ -312,7 +330,7 @@ class PrintSliceVisitor(c_generator.CGenerator):
         if n.sliced:
           return indent + self.visit(n) + ';\n'
         else:
-          return '{}\n'
+          return indent + '{}\n'
     elif typ in (c_ast.Compound,):
       # No extra indentation required before the opening brace of a
         # compound - because it consists of multiple lines it has to
@@ -326,26 +344,35 @@ class PrintSliceVisitor(c_generator.CGenerator):
         return ''
 
 """
-Return AST containing nodes which affect variable name var.
+Return AST containing nodes which affect variables in the list slice_vars.
 """
-def slice_ast(ast, var):
+def slice_ast(ast, slice_vars):
   # Set all nodes to sliced=False
   v = InitializeSlicedVisitor()
   v.visit(ast)
   # Rename function
   v = FuncDefRenameVisitor()
   v.visit(ast)
-  # Find immediate data dependencies
-  v = DataDependencyVisitor(var)
-  v.visit(ast)
 
   # Variables already sliced
-  handled_rvalues = [var]
-  # Get list of dependent variables that need to be further sliced
+  handled_rvalues = []
+  # Variables that still need to be sliced
   rvalues = []
-  for rvalue in v.rvalues:
-    if rvalue not in handled_rvalues and rvalue not in rvalues:
-      rvalues.append(rvalue)
+  # Create visitor
+  v = DataDependencyVisitor(None)
+  # Find immediate data dependencies
+  for var in slice_vars:
+    if '[' in var:
+      v.new_visit(var, ast, specific_array_index=True)
+    else:
+      v.new_visit(var, ast, specific_array_index=False)
+    # Add to list of sliced variables
+    handled_rvalues.append(var)
+    # Get list of dependent variables that need to be further sliced
+    for rvalue in v.rvalues:
+      if rvalue not in handled_rvalues and rvalue not in rvalues:
+        rvalues.append(rvalue)
+
   # Iteratively find all data dependencies until no new variables to slice
   while rvalues:
     new_rvalues = []
@@ -370,6 +397,12 @@ def print_node(node):
   generator = c_generator.CGenerator()
   print generator.visit(node)
 """
+Return a string of the passed AST/node.
+"""
+def str_node(node):
+  generator = c_generator.CGenerator()
+  return generator.visit(node)
+"""
 Pretty print only the sliced parts of the passed AST.
 """
 def print_slice(node):
@@ -381,15 +414,16 @@ def print_slice(node):
 if __name__ == "__main__":
   if len(sys.argv) > 2:
     filename = sys.argv[1]
-    var = sys.argv[2]
+    #var = sys.argv[2]
+    slice_vars = sys.argv[2:]
   else:
-    filename = "c_files/mv-search2.c"
-    var = "LineSadBlk0"
+    print "usage: slice.py filename var0 [var1 ...]"
+    sys.exit()
 
   # Generate AST
   ast = parse_file(filename, use_cpp=True)
   # Generate slice
-  slice_ast(ast, var)
+  slice_ast(ast, slice_vars)
   # Output generated slice
   print_slice(ast)
 

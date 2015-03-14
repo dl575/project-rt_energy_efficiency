@@ -6,8 +6,8 @@ void main_slice()
   int *a_ptr;
   {
     int a_rename0 = a;
-{}
-{}
+    {}
+    {}
     if (a_rename0 || a_ptr)
     {
       loop_counter[0]++;
@@ -49,11 +49,11 @@ void main_slice()
         if (board[x_rename2][y_rename2] != 0)
         {
           loop_counter[5]++;
-{}
+          {}
         }
         else
         {
-{}
+          {}
         }
 
       }

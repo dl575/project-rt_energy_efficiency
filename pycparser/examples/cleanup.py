@@ -66,7 +66,7 @@ if __name__ == "__main__":
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   else:
-    print "usage: slice_array_index.py filename"
+    print "usage: cleanup.py filename"
     sys.exit()
 
   # Generate AST

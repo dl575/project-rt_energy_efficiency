@@ -1,1 +1,0 @@
-../examples/slice_array_index.py
