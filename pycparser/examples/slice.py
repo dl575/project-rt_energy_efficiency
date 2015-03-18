@@ -9,7 +9,7 @@ Classes:
   FuncDefRenameVisitor
   IDVisitor
   DataDependencyVisitor
-  PrintSliceVisitory
+  PrintSliceVisitor
 
 Functions:
   slice_ast
@@ -308,6 +308,11 @@ class PrintSliceVisitor(c_generator.CGenerator):
     method = "visit_" + node.__class__.__name__
     ret = getattr(self, method, self.generic_visit)(node)
     return ret
+  def visit_Typedef(self, node):
+    """
+    Always print out typedefs for syntactic reasons in case of more passes.
+    """
+    return str_node(node)
   def _generate_stmt(self, n, add_indent=False):
     """ Generation from a statement node. This method exists as a wrapper
             for individual visit_* methods to handle different treatment of
