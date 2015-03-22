@@ -1,0 +1,33 @@
+PYTHON=/usr/bin/python
+DIRNAME=globals
+FILENAME=$(DIRNAME)/globals
+FUNCNAME=func
+
+slice: preprocess
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) globals.py $(FILENAME)_inline.c func true > $(FILENAME)_loop_counts.c
+	cp $(FILENAME)_loop_counts.c $(FILENAME)_slice.c
+
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+gd = echo "$1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+preprocess:
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
+
+	# Define custom types
+	$(call gd, "struct thing global_thing_s")
+	$(call gd, "int global_var0")
+	$(call gd, "int global_var1")
+	$(call gd, "int global_var2")
+	$(call gd, "int global_var3")
+	$(call gd, "int global_array[4]")
+	$(call gd, "int global_big_array[4][4][4]")
+
+	$(call td, "bool")
+
+clean:
+	rm -f $(FILENAME)2.c
+	rm -f $(FILENAME)3.c
+	rm -f $(FILENAME)_inline.c
+	rm -f $(FILENAME)_loop_counts.c
+	rm -f $(FILENAME)_slice.c

@@ -47,6 +47,7 @@ struct timeval start, end, moment;
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
+#define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs 
 
 #define OVERHEAD_TIME 27550 //overhead deadline
 #define AVG_OVERHEAD_TIME 3709 //avg overhead deadline
@@ -56,7 +57,7 @@ struct timeval start, end, moment;
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 //to get overhead deadline
 
-#define DEBUG_EN 1 //debug information print on/off
+#define DEBUG_EN 0 //debug information print on/off
 //automatically set
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
 
@@ -72,15 +73,19 @@ int slice_time = 0;
 int dvfs_time = 0;
 
 void fopen_all(void){
+#if DVFS_EN
     if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
         printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
         return;
     }
+#endif
     return;
 }
 
 void fclose_all(void){
+#if DVFS_EN
    fclose(fp_max_freq);
+#endif
     return;
 }
 
@@ -142,13 +147,13 @@ void win_or_lose_message(struct state *st, int k) {
   }
 }
 
-void run_loop_slice(struct state *st, struct ui *ui, int k)
+float run_loop_slice(struct state *st, struct ui *ui, int k)
 {
-//---------------------modified by TJSong----------------------//
-    start_timing();
-//---------------------modified by TJSong----------------------//
-  int loop_counter[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  if (time_to_redraw)
+  volatile sig_atomic_t time_to_redraw_rename = time_to_redraw;
+  struct ui *ui_rename = ui;
+  struct state *st_rename = st;
+  int loop_counter[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  if (time_to_redraw_rename)
   {
     loop_counter[0]++;
     k++;
@@ -158,29 +163,29 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
       k = 0;
     }
 
-    int slowdown = game_slowdown(st->speed);
-    if (((k % slowdown) == 0) && (st->speed != sp_pause))
+    int slowdown = game_slowdown(st_rename->speed);
+    if (((k % slowdown) == 0) && (st_rename->speed != sp_pause))
     {
       loop_counter[2]++;
       {
         int i_rename0;
         int ev_rename0 = 0;
-        for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+        for (i_rename0 = 0; i_rename0 < st_rename->kings_num; ++i_rename0)
         {
           loop_counter[3]++;
-          int pl_rename0 = st->king[i_rename0].pl;
-          place_flags(&st->king[i_rename0], &st->grid, &st->fg[pl_rename0]);
-          int code_rename0 = builder_default(&st->king[i_rename0], &st->country[pl_rename0], &st->grid, &st->fg[pl_rename0]);
+          int pl_rename0 = st_rename->king[i_rename0].pl;
+          place_flags(&st_rename->king[i_rename0], &st_rename->grid, &st_rename->fg[pl_rename0]);
+          int code_rename0 = builder_default(&st_rename->king[i_rename0], &st_rename->country[pl_rename0], &st_rename->grid, &st_rename->fg[pl_rename0]);
           ev_rename0 = ev_rename0 || (code_rename0 == 0);
         }
 
         if (ev_rename0)
         {
           loop_counter[4]++;
-          for (i_rename0 = 0; i_rename0 < st->kings_num; ++i_rename0)
+          for (i_rename0 = 0; i_rename0 < st_rename->kings_num; ++i_rename0)
           {
             loop_counter[5]++;
-            king_evaluate_map(&st->king[i_rename0], &st->grid, st->dif);
+            king_evaluate_map(&st_rename->king[i_rename0], &st_rename->grid, st_rename->dif);
           }
 
         }
@@ -189,51 +194,46 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
         ;
 
       }
-{}
-      if (st->show_timeline)
+      if (st_rename->show_timeline)
       {
         loop_counter[6]++;
-        if ((st->time % 10) == 0)
+        if ((st_rename->time % 10) == 0)
         {
           loop_counter[7]++;
-{}
         }
 
       }
 
     }
 
-{}
-    if (st->show_timeline)
+    if (st_rename->show_timeline)
     {
       loop_counter[8]++;
-      if ((st->time % 10) == 0)
+      if ((st_rename->time % 10) == 0)
       {
         loop_counter[9]++;
-{}
       }
 
     }
 
-    time_to_redraw = 0;
+    time_to_redraw_rename = 0;
     {
       int k_rename1 = k;
       if ((k_rename1 % 100) == 0)
       {
         loop_counter[10]++;
-        switch (win_or_lose(st))
+        switch (win_or_lose(st_rename))
         {
           case 1:
             loop_counter[11]++;
-{}
-{}
             break;
 
           case -1:
             loop_counter[12]++;
-{}
-{}
             break;
+
+          default:
+            loop_counter[13]++;
 
         }
 
@@ -250,48 +250,21 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
   }
   {
     print_loop_counter:
-    /*
-    printf("loop counter = (");
-    int i;
-    for (i = 0; i < 13; i++)
-      printf("%d, ", loop_counter[i]);
-    printf(")\n");
-    */
-    write_array(loop_counter, 13);
+    if (DEBUG_EN)
+      write_array(loop_counter, 14);
+
+
   }
+  {
+    predict_exec_time:
+    ;
 
-//---------------------modified by TJSong----------------------//
-  float exec_time;
-//  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
-
-exec_time = 1150.000000*loop_counter[0] + -3.000000*loop_counter[1] + 3112.000000*loop_counter[2] + 2224.000000*loop_counter[4] + -147.000000*loop_counter[10] + 0.000000;
-
-
-    end_timing();
-    slice_time = fprint_slice_timing();
-
-#if DEBUG_EN
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "predicted time = %f\n", exec_time);
-    fclose(time_file);
-#endif
-
-#if GET_OVERHEAD
-    start_timing();
-#endif
-
-#if !GET_PREDICT
-    set_freq(exec_time, slice_time); //do dvfs
-#endif
-
-#if GET_OVERHEAD
-    end_timing();
-    dvfs_time = fprint_dvfs_timing();
-#endif
-//---------------------modified by TJSong----------------------//
-
+    float exec_time;
+    exec_time = 1150.000000*loop_counter[0] + -3.000000*loop_counter[1] + 3112.000000*loop_counter[2] + 2224.000000*loop_counter[4] + -147.000000*loop_counter[10] + 0.000000;
+    return exec_time;
+  }
 }
+
 
 int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
 {
@@ -456,59 +429,70 @@ void run (struct state *st, struct ui *ui) {
     fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
     fclose(time_file);
 //---------------------modified by TJSong----------------------//
-    //start_timing();
 
-    //k = run_loop_loop_counters(st, ui, k);
-    // Fork a new process to run slice
-    pid_t pid = fork();
-    if (pid == 0) {
 //---------------------modified by TJSong----------------------//
-    FILE *time_file;
+
+    float exec_time;
     #if !PREDICT_EN //!PREDICT_EN
-        #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
         moment_timing();
         time_file = fopen("times.txt", "a");
         fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
         fclose(time_file);
-        //start_timing();
-        #else //!PREDICT_EN & GET_PREDICT
-        moment_timing();
-        time_file = fopen("times.txt", "a");
-        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-        fclose(time_file);
-        run_loop_slice(st, ui, k);//slice
-        //start_timing(); //overwrite start timing
+        #if GET_PREDICT //!PREDICT_EN && GET_PREDICT
+            start_timing();
+            exec_time = run_loop_slice(st, ui, k);//slice
+            end_timing();
+            slice_time = fprint_slice_timing();
         #endif
     #elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
+        #if !OVERHEAD_EN //prediction without overhead
+            start_timing();
+            exec_time = run_loop_slice(st, ui, k);//slice
+            end_timing();
+            slice_time = fprint_slice_timing();
+        #endif 
+        moment_timing();
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+        fclose(time_file);
         #if OVERHEAD_EN //prediction with overhead
-        moment_timing();
-        time_file = fopen("times.txt", "a");
-        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-        fclose(time_file);
-        run_loop_slice(st, ui, k);//slice
-        //start_timing();
-        #else //prediction without overhead
-        run_loop_slice(st, ui, k);//slice
-        moment_timing();
-        time_file = fopen("times.txt", "a");
-        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-        fclose(time_file);
-        //start_timing();
-        #endif
+            start_timing();
+            exec_time = run_loop_slice(st, ui, k);//slice
+            end_timing();
+            slice_time = fprint_slice_timing();
+        #endif 
     #else //PREDICT_EN & GET_OVERHEAD
-        run_loop_slice(st, ui, k);//slice
-        //start_timing(); //overwrite start #endif
+        start_timing();
+        exec_time = run_loop_slice(st, ui, k);//slice
+        end_timing();
+        slice_time = fprint_slice_timing();
     #endif
 
+
     #if DEBUG_EN
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "predicted time = %f\n", exec_time);
+        fclose(time_file);
+    #endif
+    
+    #if GET_OVERHEAD
+        start_timing();
+    #endif
+    
+    #if !GET_PREDICT && DVFS_EN
+        set_freq(exec_time, slice_time); //do dvfs
+    #endif
+    
+    #if GET_OVERHEAD
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+
+
+    #if DEBUG_EN && DVFS_EN
         print_freq(); //[DEBUG] check frequency 
     #endif
 //---------------------modified by TJSong----------------------//
-      _Exit(0);
-    } else {
-      int status;
-      waitpid(pid, &status, 0);
-    }
 
     start_timing();
 

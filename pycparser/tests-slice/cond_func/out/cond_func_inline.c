@@ -1,4 +1,10 @@
-int main()
+typedef int FILE
+;
+FILE *fopen()
+;
+int global
+;
+int main(int argc, char *argv[])
 {
   int a;
   int b;
@@ -82,6 +88,15 @@ int main()
     if (func_result0 || func_result1)
     {
       c++;
+    }
+
+  }
+  {
+    FILE *fopen_result0;
+    fopen_result0 = fopen(argv[1], "rb");
+    if (!(fin = fopen_result0))
+    {
+      d++;
     }
 
   }

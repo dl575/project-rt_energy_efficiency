@@ -21,6 +21,7 @@
 
 #define SIZE 4
 uint32_t score=0;
+uint32_t turns=0;
 uint8_t scheme=0;
 
 void getColor(uint8_t value, char *color, size_t length) {
@@ -45,7 +46,8 @@ void drawBoard(uint8_t board[SIZE][SIZE]) {
 	char color[40], reset[] = "\e[m";
 	printf("\e[H");
 
-	printf("2048.c %17d pts\n\n",score);
+	printf("2048.c %17d pts\n",score);
+	printf("       %17d turns\n\n",turns);
 
 	for (y=0;y<SIZE;y++) {
 		for (x=0;x<SIZE;x++) {

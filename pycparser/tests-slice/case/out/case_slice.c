@@ -2,22 +2,22 @@ void main_slice()
 {
   int loop_counter[3] = {0, 0, 0};
   int c;
-{}
+  {}
   switch (c)
   {
     case 1:
       loop_counter[0]++;
-{}
+      {}
       break;
 
     case 2:
       loop_counter[1]++;
-{}
+      {}
       break;
 
     default:
       loop_counter[2]++;
-{}
+      {}
 
   }
 

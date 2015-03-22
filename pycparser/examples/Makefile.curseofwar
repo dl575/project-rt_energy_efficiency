@@ -1,20 +1,31 @@
 PYTHON=/usr/bin/python
-FILENAME=main
 DIRNAME=curseofwar
+FILENAME=$(DIRNAME)/main
 FUNCNAME=run_loop
 LOOP_COUNT_FLAGS=--write_to_file
 
 slice: preprocess
-	$(PYTHON) inline.py $(DIRNAME)/$(FILENAME)3.c $(FUNCNAME) > $(DIRNAME)/$(FILENAME)_inline.c
-	$(PYTHON) insert_loop_counts.py $(DIRNAME)/$(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(DIRNAME)/$(FILENAME)_loop_counts.c
-	time $(PYTHON) slice.py $(DIRNAME)/$(FILENAME)_loop_counts.c loop_counter > $(DIRNAME)/$(FILENAME)_slice.c
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	$(PYTHON) globals.py $(FILENAME)_slice.c run_loop_slice > $(FILENAME)_globals.c
+	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
 
-td = echo "typedef int $1;" | cat - $(DIRNAME)/$(FILENAME)3.c > temp && mv temp $(DIRNAME)/$(FILENAME)3.c
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 preprocess:
-	gcc -E $(DIRNAME)/$(FILENAME).c > $(DIRNAME)/$(FILENAME)2.c
-	./cleanup_gccE.py $(DIRNAME)/$(FILENAME)2.c > $(DIRNAME)/$(FILENAME)3.c
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
 
-	# Define custom types
+	$(call fd, "int client_init_session")
+	$(call fd, "int server_init")
+	$(call fd, "int server_get_msg")
+	$(call fd, "int sa_match")
+	$(call fd, "int get_options")
+	$(call fd, "int sigaction")
+	$(call fd, "size_t fread")
+	$(call td, "size_t")
+
 	$(call td, "sigset_t")
 	$(call td, "uint8_t")
 	$(call td, "ssize_t")
@@ -22,8 +33,10 @@ preprocess:
 	$(call td, "sig_atomic_t")
 
 clean:
-	rm -f $(DIRNAME)/$(FILENAME)2.c
-	rm -f $(DIRNAME)/$(FILENAME)3.c
-	rm -f $(DIRNAME)/$(FILENAME)_inline.c
-	rm -f $(DIRNAME)/$(FILENAME)_loop_counts.c
-	rm -f $(DIRNAME)/$(FILENAME)_slice.c
+	rm -f $(FILENAME)2.c
+	rm -f $(FILENAME)3.c
+	rm -f $(FILENAME)_inline.c
+	rm -f $(FILENAME)_loop_counts.c
+	rm -f $(FILENAME)_slice.c
+	rm -f $(FILENAME)_globals.c
+	rm -f $(FILENAME)_cleanup.c

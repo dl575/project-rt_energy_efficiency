@@ -1,3 +1,6 @@
+
+enum config_speed {sp_pause, sp_slowest, sp_slower, sp_slow, sp_normal, sp_fast, sp_faster, sp_fastest};
+
 /******************************************************************************
 
   Curse of War -- Real Time Strategy Game for Linux.

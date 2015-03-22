@@ -1,15 +1,18 @@
-void main_slice()
+typedef int FILE;
+FILE *fopen();
+int global;
+void main_slice(int argc, char *argv[])
 {
-  int loop_counter[3] = {0, 0, 0};
-{}
-{}
-{}
-{}
+  int loop_counter[4] = {0, 0, 0, 0};
+  {}
+  {}
+  {}
+  {}
   {
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return0;
@@ -22,7 +25,7 @@ void main_slice()
     if (func_result0 == 1)
     {
       loop_counter[0]++;
-{}
+      {}
     }
 
   }
@@ -30,7 +33,7 @@ void main_slice()
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return1;
@@ -43,7 +46,7 @@ void main_slice()
     if (func_result0)
     {
       loop_counter[1]++;
-{}
+      {}
     }
 
   }
@@ -51,7 +54,7 @@ void main_slice()
     int func_result0;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return2;
@@ -64,7 +67,7 @@ void main_slice()
     int func_result1;
     {
       int return_value;
-{}
+      {}
       {
         return_value = 1;
         goto return3;
@@ -77,7 +80,17 @@ void main_slice()
     if (func_result0 || func_result1)
     {
       loop_counter[2]++;
-{}
+      {}
+    }
+
+  }
+  {
+    FILE *fopen_result0;
+    fopen_result0 = fopen(argv[1], "rb");
+    if (!(fin = fopen_result0))
+    {
+      loop_counter[3]++;
+      {}
     }
 
   }
@@ -86,7 +99,7 @@ void main_slice()
     printf("loop counter = (");
 
     int i;
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 4; i++)
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
