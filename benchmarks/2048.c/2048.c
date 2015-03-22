@@ -31,7 +31,7 @@ struct timeval start, end, moment;
 #define CORE 1 //0:LITTLE, 1:big
 
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
 
 #define OVERHEAD_TIME 4752 //overhead deadline
