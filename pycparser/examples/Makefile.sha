@@ -5,7 +5,8 @@ slice: preprocess
 	$(PYTHON) insert_loop_counts.py sha/sha_inline.c > sha/sha_loop_counts.c
 	time $(PYTHON) slice.py sha/sha_loop_counts.c loop_counter > sha/sha_slice.c
 	time $(PYTHON) slice.py sha/sha_slice.c loop_counter[25] > sha/sha_slice_reduced.c
-	$(PYTHON) cleanup.py sha/sha_slice_reduced.c > sha/sha_slice_reduced_cleanup.c
+	$(PYTHON) cleanup.py sha/sha_slice_reduced.c > sha/sha_cleanup.c
+	./insert_preprocessor.sh sha/sha_cleanup.c > sha/sha_debugflag.c
 
 td = echo "typedef int $1;" | cat - sha/sha3.c > temp && mv temp sha/sha3.c
 preprocess:
@@ -19,3 +20,4 @@ preprocess:
 
 clean:
 	rm -f sha/sha2.c sha/sha3.c sha/sha_inline.c sha/sha_loop_counts.c sha/sha_slice.c
+	rm -f sha/sha_debugflag.c

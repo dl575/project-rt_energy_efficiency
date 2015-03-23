@@ -66,13 +66,19 @@ float main_slice()
   }
   {
     print_loop_counter:
-    printf("loop counter = (");
+    ;
 
-    int i;
-    for (i = 0; i < 6; i++)
-      printf("%d, ", loop_counter[i]);
+    {
+      printf("loop counter = (");
+      int i;
+      for (i = 0; i < 6; i++)
+        printf("%d, ", loop_counter[i]);
 
-    printf(")\n");
+      printf(")\n");
+    }
+    print_loop_counter_end:
+    ;
+
   }
   {
     predict_exec_time:
