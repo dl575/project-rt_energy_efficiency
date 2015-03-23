@@ -12,14 +12,14 @@ some of all benchmarks use.
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
 
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
 
 #define GET_PREDICT 0 //to get prediction equation
-#define GET_DEADLINE 0 // to get execution deadline
-#define GET_OVERHEAD 1 //to get overhead deadline
-#define DEBUG_EN 1 //debug information print on/off
+#define GET_OVERHEAD 0 // to get execution deadline
+#define GET_OVERHEAD 0 //to get overhead deadline
+#define DEBUG_EN 0 //debug information print on/off
 
 //always set this as 1 on ODROID
 #define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
