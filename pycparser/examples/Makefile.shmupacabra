@@ -1,17 +1,20 @@
 PYTHON=/usr/bin/python
-FILENAME=gameloop
 DIRNAME=shmupacabra
+FILENAME=$(DIRNAME)/gameloop
 FUNCNAME=run_game
+LOOP_COUNT_FLAGS=--write_to_file
 
 slice: preprocess
-	$(PYTHON) inline.py $(DIRNAME)/$(FILENAME)3.c $(FUNCNAME) > $(DIRNAME)/$(FILENAME)_inline.c
-	$(PYTHON) insert_loop_counts.py $(DIRNAME)/$(FILENAME)_inline.c > $(DIRNAME)/$(FILENAME)_loop_counts.c
-	time $(PYTHON) slice.py $(DIRNAME)/$(FILENAME)_loop_counts.c loop_counter > $(DIRNAME)/$(FILENAME)_slice.c
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS)> $(FILENAME)_loop_counts.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	time $(PYTHON) slice.py $(FILENAME)_slice.c loop_counter[0] loop_counter[1] loop_counter[2] loop_counter[3] loop_counter[4] > $(FILENAME)_slice_reduced.c
+	./cleanup.py $(FILENAME)_slice_reduced.c > $(FILENAME)_slice_reduced_cleanup.c
 
-td = echo "typedef int $1;" | cat - $(DIRNAME)/$(FILENAME)3.c > temp && mv temp $(DIRNAME)/$(FILENAME)3.c
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 preprocess:
-	gcc -E $(DIRNAME)/$(FILENAME).c > $(DIRNAME)/$(FILENAME)2.c
-	./cleanup_gccE.py $(DIRNAME)/$(FILENAME)2.c > $(DIRNAME)/$(FILENAME)3.c
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
 
 	# Define custom types
 	$(call td, "Camera")
@@ -22,8 +25,10 @@ preprocess:
 	$(call td, "World")
 
 clean:
-	rm -f $(DIRNAME)/$(FILENAME)2.c
-	rm -f $(DIRNAME)/$(FILENAME)3.c
-	rm -f $(DIRNAME)/$(FILENAME)_inline.c
-	rm -f $(DIRNAME)/$(FILENAME)_loop_counts.c
-	rm -f $(DIRNAME)/$(FILENAME)_slice.c
+	rm -f $(FILENAME)2.c
+	rm -f $(FILENAME)3.c
+	rm -f $(FILENAME)_inline.c
+	rm -f $(FILENAME)_loop_counts.c
+	rm -f $(FILENAME)_slice.c
+	rm -f $(FILENAME)_slice_reduced.c
+	rm -f $(FILENAME)_slice_reduced_cleanup.c

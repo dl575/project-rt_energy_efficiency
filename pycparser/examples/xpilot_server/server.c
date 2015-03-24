@@ -1,3 +1,24 @@
+
+#define MIN(a,b)  ((a) < (b) ? (a) : (b))
+#define BIT(w, bit)		( (w) & (bit) )
+#define IS_TANK_PTR(pl)		(BIT((pl)->type_ext,OBJ_EXT_TANK)==OBJ_EXT_TANK)
+#define IS_HUMAN_PTR(pl)	(!BIT((pl)->type_ext,OBJ_EXT_TANK|OBJ_EXT_ROBOT))
+#define IS_ROBOT_PTR(pl)	(BIT((pl)->type_ext,OBJ_EXT_ROBOT)==OBJ_EXT_ROBOT)
+#define IS_TANK_IND(ind)	IS_TANK_PTR(Players[ind])
+#define TEAM(i, j) \
+	(BIT(World.rules->mode, TEAM_PLAY) \
+	&& (Players[i]->team == Players[j]->team) \
+	&& (Players[i]->team != TEAM_NOT_SET))
+#define OWNS_TANK(i, j) \
+	(IS_TANK_IND(j) \
+	&& (Players[j]->lock.pl_id != -1) \
+	&& (GetInd[Players[j]->lock.pl_id] == (i)))
+#define ALLIANCE(i, j)	\
+	((Players[i]->alliance != ALLIANCE_NOT_SET) \
+	&& (Players[j]->alliance == Players[i]->alliance))
+
+
+
 /* $Id: server.c,v 5.21 2002/02/13 17:09:18 dik Exp $
  *
  * XPilot, a multiplayer gravity war game.  Copyright (C) 1991-2001 by

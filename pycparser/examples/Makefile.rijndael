@@ -5,11 +5,11 @@ slice: preprocess
 	$(PYTHON) insert_loop_counts.py rijndael/aes_inline.c > rijndael/aes_loop_counts.c
 	time $(PYTHON) slice.py rijndael/aes_loop_counts.c loop_counter > rijndael/aes_slice.c
 	# conservative
-	time $(PYTHON) slice.py rijndael/aes_slice.c loop_counter[2] loop_counter[3] loop_counter[24] loop_counter[31] loop_counter[32] > rijndael/aes_slice_reduced.c
+	#time $(PYTHON) slice.py rijndael/aes_slice.c loop_counter[2] loop_counter[3] loop_counter[24] loop_counter[31] loop_counter[32] > rijndael/aes_slice_reduced.c
 	# cvx_conservative_100_0
 	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[3] loop_counter[22] loop_counter[24] loop_counter[26] loop_counter[27] loop_counter[28] loop_counter[31] loop_counter[33] loop_counter[35] loop_counter[36] loop_counter[37] > rijndael/aes_slice_reduced.c
 	# cvx_conservative_100_1000
-	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[24] > rijndael/aes_slice_reduced.c
+	time $(PYTHON) slice.py rijndael/aes_slice.c loop_counter[24] > rijndael/aes_slice_reduced.c
 	# No terms
 	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[999] > rijndael/aes_slice_reduced.c
 	$(PYTHON) cleanup.py rijndael/aes_slice_reduced.c > rijndael/aes_slice_reduced_cleanup.c
