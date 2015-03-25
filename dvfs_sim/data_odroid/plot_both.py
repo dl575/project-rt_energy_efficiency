@@ -21,7 +21,8 @@ big_little="big"
 #benchmarks = ["stringsearch", "xpilot_slice", "sha", "rijndael", "julius_slice", "2048_slice", "curseofwar_slice"]#, "average"]
 #sample_frame=[1300          , 2260          , 100  , 200       , 50            , 50          , 2000]
 #benchmarks =   ["sha", "rijndael", "stringsearch", "xpilot_slice", "julius_slice"]
-benchmarks =   ["stringsearch", "sha"]#, "julius_slice"]
+#benchmarks =   ["stringsearch", "sha", "rijndael", "xpilot_slice", "julius_slice", "2048_slice", "curseofwar_slice"]
+benchmarks =   ["stringsearch", "sha", "rijndael", "xpilot_slice",  "2048_slice", "curseofwar_slice"]
 #sample_frame = [100]
 
 #governor_files = ["performance", "prediction_with_overhead", "prediction_wo_overhead", "powersave", "conservative", "interactive", "ondemand"]

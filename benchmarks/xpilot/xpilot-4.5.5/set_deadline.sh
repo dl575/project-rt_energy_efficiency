@@ -6,8 +6,8 @@ xdotool key KP_Enter
 
 DATA_ODROID_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/data_odroid/
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-SOURCE_FILES=("mibench/security/sha/sha_driver.c")
-SOURCE_PATH=("mibench/security/sha") 
+SOURCE_FILES=("xpilot/xpilot-4.5.5/src/server/server.c")
+SOURCE_PATH=("xpilot/xpliot-4.5.5") 
 
 PREDICT_ENABLED="PREDICT_EN 1"
 PREDICT_DISABLED="PREDICT_EN 0"
@@ -44,12 +44,46 @@ find . -type f | xargs -n 5 touch
 taskset 0xff make clean
 taskset 0xff make -j16
 
+PID_FREECIV_SERVER=$(pgrep 'xpilot')
+kill -9 $PID_FREECIV_SERVER
+
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M0.txt
+    taskset $TASKSET_FLAG ./src/server/xpilots > M0.txt &
+    sleep 3;
+    taskset $TASKSET_FLAG ./src/client/xpilot &
+    
+    #find the window 
+    xdotool search --sync --onlyvisible --class "xpilot"  
+    #maximize the window
+    xdotool key alt+F10
+    #press join
+    xdotool mousemove 65 95
+    xdotool click 1
+    sleep 3
+    #press click
+    xdotool mousemove 490 100
+    xdotool click 1
+    sleep 3
+    #playing
+    for j in {1..10}
+    do
+        xdotool keydown Return 
+        xdotool keydown shift+a
+        sleep 15
+        xdotool keyup Return 
+        xdotool keyup shift+a
+    done
+    sleep 3
+    #press QUIT
+    xdotool mousemove 40 300
+    xdotool click 1
+    sleep 3
+    
+    PID_FREECIV_SERVER=$(pgrep 'xpilot')
+    kill -9 $PID_FREECIV_SERVER
 
 # prediction/get_predict enable, others disable, run prediction
 sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$SOURCE_FILES
@@ -65,8 +99,39 @@ echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M1M2.txt
+    taskset $TASKSET_FLAG ./src/server/xpilots > M1M2.txt &
+    sleep 3;
+    taskset $TASKSET_FLAG ./src/client/xpilot &
+    
+    #find the window 
+    xdotool search --sync --onlyvisible --class "xpilot"  
+    #maximize the window
+    xdotool key alt+F10
+    #press join
+    xdotool mousemove 65 95
+    xdotool click 1
+    sleep 3
+    #press click
+    xdotool mousemove 490 100
+    xdotool click 1
+    sleep 3
+    #playing
+    for j in {1..10}
+    do
+        xdotool keydown Return 
+        xdotool keydown shift+a
+        sleep 15
+        xdotool keyup Return 
+        xdotool keyup shift+a
+    done
+    sleep 3
+    #press QUIT
+    xdotool mousemove 40 300
+    xdotool click 1
+    sleep 3
+    
+    PID_FREECIV_SERVER=$(pgrep 'xpilot')
+    kill -9 $PID_FREECIV_SERVER
 
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 

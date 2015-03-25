@@ -15,13 +15,16 @@ struct timeval start, end, moment;
 #define CORE 1 //0:LITTLE, 1:big
 
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
 
-#define OVERHEAD_TIME 37496 //overhead deadline
-#define DEADLINE_TIME 51802 + OVERHEAD_TIME //deadline
-#define MAX_DVFS_TIME 2584 //max dvfs time
+#define OVERHEAD_TIME 41589 //overhead deadline
+#define AVG_OVERHEAD_TIME 11042 //avg overhead deadline
+#define DEADLINE_TIME 26952 + OVERHEAD_TIME //deadline
+#define MAX_DVFS_TIME 2517 //max dvfs time
+#define AVG_DVFS_TIME 1370 //average dvfs time
 #define GET_PREDICT 0 //to get prediction equation
+#define GET_OVERHEAD 0 //to get overhead deadline
 
 #define DEBUG_EN 1 //debug information print on/off
 //automatically set
@@ -64,7 +67,7 @@ void print_freq(void){
 
 inline void set_freq(float exec_time, int slice_time){
     //calculate predicted freq and round up by adding 99999
-    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - MAX_DVFS_TIME) + 99999;
+    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - AVG_DVFS_TIME) + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
     //set maximum frequency, because performance governor always use maximum freq.
@@ -713,7 +716,7 @@ void slice(int argc, char **argv)
 
 //---------------------modified by TJSong----------------------//
 float exec_time;
-exec_time = 73.413500*loop_counter[23] + 74.177900*loop_counter[25] + 0.108232*loop_counter[27] + -35.387000*loop_counter[34] + 0.000000;
+exec_time = 259.608000*loop_counter[23] + -107.353000*loop_counter[25] + 1.530150*loop_counter[27] + -96.939800*loop_counter[34] + 0.000000;
 
     end_timing();
     slice_time = print_slice_timing();
@@ -722,13 +725,15 @@ exec_time = 73.413500*loop_counter[23] + 74.177900*loop_counter[25] + 0.108232*l
     printf("predicted time = %f\n", exec_time);
 #endif
 
-#if GET_PREDICT
+#if GET_OVERHEAD
     start_timing();
 #endif
 
+#if !GET_PREDICT
     set_freq(exec_time, slice_time); //do dvfs
+#endif
 
-#if GET_PREDICT
+#if GET_OVERHEAD
     end_timing();
     dvfs_time = print_dvfs_timing();
 #endif
@@ -746,11 +751,18 @@ int main(int argc, char **argv)
     printf("============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
 
 //---------------------modified by TJSong----------------------//
-#if !PREDICT_EN //no prediction
+#if !PREDICT_EN //!PREDICT_EN
+    #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
     moment_timing();
     printf("moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
     start_timing();
-#elif !GET_PREDICT //PREDICT_EN & !GET_PREDICT
+    #else //!PREDICT_EN & GET_PREDICT
+    moment_timing();
+    printf("moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    slice(argc, argv);
+    start_timing(); //overwrite start timing
+    #endif
+#elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
     #if OVERHEAD_EN //prediction with overhead
     moment_timing();
     printf("moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
@@ -762,7 +774,7 @@ int main(int argc, char **argv)
     printf("moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
     start_timing();
     #endif
-#else //PREDICT_EN & GET_PREDICT
+#else //PREDICT_EN & GET_OVERHEAD
     slice(argc, argv);
     start_timing(); //overwrite start timing
 #endif
@@ -794,7 +806,7 @@ int main(int argc, char **argv)
     int exec_time = exec_timing();
     int delay_time = 0;
     static int instance_number = 0;
-#if DELAY_EN
+#if DELAY_EN //DELAY_EN 
     printf("exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
     if( (delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0 ){
         printf("calculated delay is %d us\n", delay_time); //[DEBUG]
@@ -806,9 +818,13 @@ int main(int argc, char **argv)
         printf("total_time %d = %d us\n", instance_number, exec_time + delay_time + slice_time + dvfs_time);
     }else
         printf("total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
-#else //DELAY_EN
+#else //!DELAY_EN
+    #if !GET_PREDICT //!DELAY_EN & !GET_PREDICT
     printf("total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
-#endif //DELAY_EN
+    #else //!DELAY_EN & GET_PREDICT
+    printf("time %d = %d us\n", instance_number, exec_time);
+    #endif
+#endif
     moment_timing();
     printf("moment_end : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
     instance_number++;

@@ -192,13 +192,25 @@ print_mem()
 #include "timing.h"
 
 //---------------------modified by TJSong----------------------//
-struct timeval start, end;
+struct timeval start, end, moment;
+
+#define MILLION 1000000L
 //manually set below
 #define CORE 1 //0:LITTLE, 1:big
+
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 1 //0:delay off, 1:delay on
-#define DEADLINE_TIME 42004  //big
-//#define DEADLINE_TIME    //LITTLE
+#define DELAY_EN 0 //0:delay off, 1:delay on
+#define OVERHEAD_EN 0//1:measure dvfs, slice timing
+
+#define OVERHEAD_TIME 919920 //overhead deadline
+#define AVG_OVERHEAD_TIME 431075 //avg overhead deadline
+#define DEADLINE_TIME 463 + OVERHEAD_TIME //deadline
+#define MAX_DVFS_TIME 2458 //max dvfs time
+#define AVG_DVFS_TIME 900 //average dvfs time
+#define GET_PREDICT 0 //to get prediction equation
+#define GET_OVERHEAD 0 //to get overhead deadline
+
+#define DEBUG_EN 1 //debug information print on/off
 //automatically set
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
 
@@ -209,6 +221,9 @@ int khz; //Value (khz) at start point.
 
 FILE *fp_max_freq; //File pointer scaling_max_freq
 int predicted_freq = MAX_FREQ;
+
+int slice_time = 0;
+int dvfs_time = 0;
 
 void fopen_all(void){
     if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
@@ -223,43 +238,30 @@ void fclose_all(void){
     return;
 }
 
-void print_power(void){
+void print_freq(void){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
-        printf("ERROR : FILE READ FAILED\n");
-        return;
-    }
     if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return;
     }
-    fscanf(fp_power, "%f", &watt);
     fscanf(fp_freq, "%d", &khz);
-    fprintf(time_file, "big core power : %fW, big core freq : %dkhz\n", watt, khz);  
-    fclose(time_file);
-    fclose(fp_power); 
+    fprintf(time_file, "big core freq : %dkhz\n", khz);  
     fclose(fp_freq);
+    fclose(time_file); 
     return;
 }
 
-inline void set_freq(float exec_time){
+inline void set_freq(float exec_time, int slice_time){
     //calculate predicted freq and round up by adding 99999
-    predicted_freq = exec_time * MAX_FREQ / DEADLINE_TIME + 99999;
+    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - AVG_DVFS_TIME) + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
-    //printf("predicted freq %d in set_freq function (rounded up)\n", predicted_freq); 
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
-    //start_timing();
     fflush(fp_max_freq);
-    //end_timing();
-   // print_set_dvfs_timing();
-    
-
     return;
 }
-
 //---------------------modified by TJSong----------------------//
 
 
@@ -750,7 +752,9 @@ result_error(Recog *recog, int status)
 
 int call_adin_go(Recog *recog)
 {
-    start_timing();//TJSong
+//---------------------modified by TJSong----------------------//
+    start_timing();
+//---------------------modified by TJSong----------------------//
   int loop_counter[188] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int ret;
   {
@@ -2239,30 +2243,30 @@ int call_adin_go(Recog *recog)
     write_array(loop_counter, 188);  
   }
 //---------------------modified by TJSong----------------------//
-//float exec_time;
-//exec_time = -42349.000000*loop_counter[0] + -325.460000*loop_counter[4] + 55.279200*loop_counter[140] + 115.722000*loop_counter[141] + -8792.340000*loop_counter[147] + 0.000000;
-    float exec_time;
-    exec_time = 20241.300000*loop_counter[0] + -4915.170000*loop_counter[4] + 27231.900000*loop_counter[27] + -73.834400*loop_counter[140] + 12716.000000*loop_counter[147] + 0.000000;
-    printf("predicted time = %f\n", exec_time);
+float exec_time;
+exec_time = 18685.500000*loop_counter[0] + -4633.150000*loop_counter[4] + 26144.000000*loop_counter[27] + -68.212000*loop_counter[140] + 11764.000000*loop_counter[147] + 0.000000;
 
-    end_timing(); //end of slice
+    end_timing();
+    slice_time = fprint_slice_timing();
+
+#if DEBUG_EN
     FILE *time_file;
-    static int instance_number1=0;
     time_file = fopen("times.txt", "a");
-    //print_slice_timing();
-    fprintf(time_file, "time_slice %d = %d us\n", instance_number1++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
-    //printf("predicted time = %f\n", exec_time);
     fprintf(time_file, "predicted time = %f\n", exec_time);
     fclose(time_file);
-#if PREDICT_EN
-    time_file = fopen("times.txt", "a");
-    static int instance_number2=0;
+#endif
+
+#if GET_OVERHEAD
     start_timing();
-    set_freq(exec_time); //TJSong
+#endif
+
+#if !GET_PREDICT
+    set_freq(exec_time, slice_time); //do dvfs
+#endif
+
+#if GET_OVERHEAD
     end_timing();
-    //print_set_dvfs_timing();
-    fprintf(time_file, "time_set_dvfs %d = %d us\n", instance_number2++, (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
-    fclose(time_file);
+    dvfs_time = fprint_dvfs_timing();
 #endif
 //---------------------modified by TJSong----------------------//
  
@@ -2481,84 +2485,125 @@ j_recognize_stream_core(Recog *recog)
       /* after this part, directly jump to the beginning of the 2nd pass */
       
       if (recog->process_segment) {
-	/*****************************************************************/
-	/* short-pause segmentation: process last remaining frames first */
-	/*****************************************************************/
-	/* last was segmented by short pause */
-	/* the margin segment in the last input will be re-processed first,
-	   and then the speech input will be processed */
-	/* process the last remaining parameters */
-	ret = RealTimeResume(recog);
-	if (ret < 0) {		/* error end in the margin */
-	  jlog("ERROR: failed to process last remaining samples on RealTimeResume\n"); /* exit now! */
-	  return -1;
-	}
-	if (ret != 1) {	/* if segmented again in the margin, not process the rest */
-	  /* last parameters has been processed, so continue with the
-	     current input as normal */
-	  /* process the incoming input */
-	  if (jconf->input.type == INPUT_WAVEFORM) {
-	    /* get speech and process it on real-time */
-	    ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
-	  } else {
-	    /* get feature vector and process it */
-	    ret = mfcc_go(recog, callback_check_in_adin);
-	  }
-	  if (ret < 0) {		/* error end in adin_go */
-	    if (ret == -2 || recog->process_want_terminate) {
-	      /* terminated by callback */
-	      RealTimeTerminate(recog);
-	      /* reset param */
-	      for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
-		param_init_content(mfcc->param);
-	      }
-	      /* execute callback at end of pass1 */
-	      if (recog->triggered) {
-		callback_exec(CALLBACK_EVENT_PASS1_END, recog);
-		/* output result terminate */
-		result_error(recog, J_RESULT_STATUS_TERMINATE);
-	      }
-	      goto end_recog; /* cancel this recognition */
-	    }
-	    jlog("ERROR: an error occured at on-the-fly 1st pass decoding\n");          /* exit now! */
-	    return(-1);
-	  }
-	}
+        /*****************************************************************/
+        /* short-pause segmentation: process last remaining frames first */
+        /*****************************************************************/
+        /* last was segmented by short pause */
+        /* the margin segment in the last input will be re-processed first,
+        and then the speech input will be processed */
+        /* process the last remaining parameters */
+        ret = RealTimeResume(recog);
+        if (ret < 0) {		/* error end in the margin */
+        jlog("ERROR: failed to process last remaining samples on RealTimeResume\n"); /* exit now! */
+        return -1;
+        }
+        if (ret != 1) {	/* if segmented again in the margin, not process the rest */
+        /* last parameters has been processed, so continue with the
+            current input as normal */
+            /* process the incoming input */
+            if (jconf->input.type == INPUT_WAVEFORM) {
+                /* get speech and process it on real-time */
+                ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
+            } else {
+                /* get feature vector and process it */
+                ret = mfcc_go(recog, callback_check_in_adin);
+            }
+            if (ret < 0) {		/* error end in adin_go */
+                if (ret == -2 || recog->process_want_terminate) {
+                /* terminated by callback */
+                RealTimeTerminate(recog);
+                /* reset param */
+                for(mfcc=recog->mfcclist;mfcc;mfcc=mfcc->next) {
+                param_init_content(mfcc->param);
+                }
+                /* execute callback at end of pass1 */
+                if (recog->triggered) {
+                callback_exec(CALLBACK_EVENT_PASS1_END, recog);
+                /* output result terminate */
+                result_error(recog, J_RESULT_STATUS_TERMINATE);
+                }
+                goto end_recog; /* cancel this recognition */
+                }
+                jlog("ERROR: an error occured at on-the-fly 1st pass decoding\n");          /* exit now! */
+                return(-1);
+            }
+	   }
 	
       } else {
 
-	/***********************************************************/
-	/* last was not segmented, process the new incoming input  */
-	/***********************************************************/
-	/* end of this input will be determined by either end of stream
-	   (in case of file input), or silence detection by adin_go(), or
-	   'TERMINATE' command from module (if module mode) */
-	/* prepare work area for on-the-fly processing */
-	if (RealTimePipeLinePrepare(recog) == FALSE) {
-	  jlog("ERROR: failed to prepare for on-the-fly 1st pass decoding\n");
-	  return (-1);
-	}
-	/* process the incoming input */
-	if (jconf->input.type == INPUT_WAVEFORM) {
-	  /* get speech and process it on real-time */
-	  //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
+        /***********************************************************/
+        /* last was not segmented, process the new incoming input  */
+        /***********************************************************/
+        /* end of this input will be determined by either end of stream
+        (in case of file input), or silence detection by adin_go(), or
+        'TERMINATE' command from module (if module mode) */
+        /* prepare work area for on-the-fly processing */
+        if (RealTimePipeLinePrepare(recog) == FALSE) {
+            jlog("ERROR: failed to prepare for on-the-fly 1st pass decoding\n");
+            return (-1);
+        }
+        /* process the incoming input */
+        if (jconf->input.type == INPUT_WAVEFORM) {
+        /* get speech and process it on real-time */
+        //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
 //---------------------modified by TJSong----------------------//
     fopen_all();//TJSong 
 
     FILE *time_file;
     time_file = fopen("times.txt", "a");
+    
     fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
     fclose(time_file);
 //---------------------modified by TJSong----------------------//
 
       // Run adin_go with loop counts
-      call_adin_go(recog);//slice
+//---------------------modified by TJSong----------------------//
+#if !PREDICT_EN //!PREDICT_EN
+    #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
+    moment_timing();
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    fclose(time_file);
+    start_timing();
+    #else //!PREDICT_EN & GET_PREDICT
+    moment_timing();
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    fclose(time_file);
+    call_adin_go(recog);//slice
+    start_timing(); //overwrite start timing
+    #endif
+#elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
+    #if OVERHEAD_EN //prediction with overhead
+    moment_timing();
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    fclose(time_file);
+    call_adin_go(recog);//slice
+    start_timing();
+    #else //prediction without overhead
+    call_adin_go(recog);//slice
+    moment_timing();
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    fclose(time_file);
+    start_timing();
+    #endif
+#else //PREDICT_EN & GET_OVERHEAD
+    call_adin_go(recog);//slice
+    start_timing(); //overwrite start #endif
+#endif
+
+#if DEBUG_EN
+    print_freq(); //[DEBUG] check frequency 
+#endif
+//---------------------modified by TJSong----------------------//
 	} else {
 	  /* get feature vector and process it */
 	  ret = mfcc_go(recog, callback_check_in_adin);
 	}
 
-  start_timing();
+//  start_timing();
 	
 	if (ret < 0) {		/* error end in adin_go */
 	  if (ret == -2 || recog->process_want_terminate) {	
@@ -2972,29 +3017,34 @@ j_recognize_stream_core(Recog *recog)
 //---------------------modified by TJSong----------------------//
     FILE *time_file;
     time_file = fopen("times.txt", "a");
+    int exec_time = exec_timing();
+    int delay_time = 0;
     static int instance_number = 0;
-    fprintf(time_file, "time_exec is %d us\n", exec_timing());
-#if DELAY_EN
-    int delay_time;
-    if( (delay_time = DEADLINE_TIME - exec_timing()) > 0 ){
+#if DELAY_EN //DELAY_EN 
+    fprintf(time_file, "exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
+    if( (delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0 ){
+        fprintf(time_file, "calculated delay is %d us\n", delay_time); //[DEBUG]
         start_timing();  
         usleep(delay_time);
         end_timing();
-        fprintf(time_file, "calculated delay is %d us\n", delay_time);
-        fprintf(time_file, "actually delayed by %d us\n", exec_timing());
-        fprintf(time_file, "time %d = %d us\n", instance_number, DEADLINE_TIME - delay_time + exec_timing());
+        delay_time = exec_timing();
+        fprintf(time_file, "actually delayed by %d us\n", delay_time); //[DEBUG]
+        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time + delay_time);
     }else
-        fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
-#else
-    //print_timing();
-    fprintf(time_file, "time %d = %d us\n", instance_number, exec_timing());
+        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
+#else //!DELAY_EN
+    #if !GET_PREDICT //!DELAY_EN & !GET_PREDICT
+    fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
+    #else //!DELAY_EN & GET_PREDICT
+    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
+    #endif
 #endif
+    moment_timing();
+    fprintf(time_file, "moment_end : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
     instance_number++;
     fclose(time_file);
-    print_power();//TJSong
     fclose_all();//TJSong
 //---------------------modified by TJSong----------------------//
-
 
 #ifdef ENABLE_PLUGIN
     plugin_exec_process_result(recog);

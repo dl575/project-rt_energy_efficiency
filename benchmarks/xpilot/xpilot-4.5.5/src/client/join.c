@@ -59,6 +59,7 @@
 #include "portability.h"
 
 #include "timing.h"
+struct timeval start, end, moment;//TJsong
 
 char join_version[] = VERSION;
 

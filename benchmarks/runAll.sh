@@ -4,13 +4,15 @@
 xdotool type odroid
 xdotool key KP_Enter
 
-BENCHMARKS=("mibench/office/stringsearch"
-            "mibench/security/sha")
-#BENCHMARKS=("mibench/security/sha"
-#            "mibench/security/rijndael"
-#            "mibench/office/stringsearch"
-#            "xpilot/xpilot-4.5.5"
-#            "julius/julius-3.5.2-quickstart-linux")
+BENCHMARKS=(
+"mibench/office/stringsearch"
+"mibench/security/sha"
+"mibench/security/rijndael"
+"xpilot/xpilot-4.5.5"
+"julius/julius-3.5.2-quickstart-linux"
+"2048.c"
+"curseofwar"
+)
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
 
 if [[ $# < 1 ]] ; then
@@ -18,12 +20,8 @@ if [[ $# < 1 ]] ; then
     exit 1
 fi
 
-if [ $2 != "big_with_overhead" -a $2 != "big_wo_overhead" ] ; then
-    echo 'USAGE : only big_with_overhead or big_wo_overhead'
-    exit 1
-fi
-if [ $2 != "little_with_overhead" -a $2 = "little_wo_overhead" ] ; then
-    echo 'USAGE : only little_with_overhead or little_wo_overhead'
+if [ $2 != "big" -a $2 != "little" ] ; then
+    echo 'USAGE : only big or little'
     exit 1
 fi
 

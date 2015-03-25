@@ -33,6 +33,7 @@ void    cleanup_framebuffer(void);
 #include <lualib.h>
 
 #include "timing.h"
+struct timeval start, end, moment;
 
 int     eapi_index;     /* "eapi" namespace table stack location. */
 int     errfunc_index;  /* Error handler stack location. */

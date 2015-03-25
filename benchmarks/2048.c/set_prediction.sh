@@ -4,10 +4,12 @@
 xdotool type odroid
 xdotool key KP_Enter
 
-DATA_ODROID_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/data_odroid/
+
+DVFS_SIM_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/
+DATA_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/data/
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-SOURCE_FILES=("mibench/security/sha/sha_driver.c")
-SOURCE_PATH=("mibench/security/sha") 
+SOURCE_FILES=("2048.c/2048.c")
+SOURCE_PATH=("2048.c") 
 
 PREDICT_ENABLED="PREDICT_EN 1"
 PREDICT_DISABLED="PREDICT_EN 0"
@@ -34,45 +36,33 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
 sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
-# ALL disable, run performance
+# get_predict enable, predict/delay/overhead disable
+sed -i -e 's/'"$GET_PREDICT_DISABLED"'/'"$GET_PREDICT_ENABLED"'/g' $BENCH_PATH/$SOURCE_FILES
 sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
 sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
 sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
 sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
 find . -type f | xargs -n 5 touch
 taskset 0xff make clean
-taskset 0xff make -j16
+taskset 0xff make -j16 
 
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M0.txt
-
-# prediction/get_predict enable, others disable, run prediction
-sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-sed -i -e 's/'"$GET_OVERHEAD_DISABLED"'/'"$GET_OVERHEAD_ENABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$SOURCE_FILES
-find . -type f | xargs -n 5 touch
-taskset 0xff make clean
-taskset 0xff make -j16
+rm -rf times.txt
+taskset $TASKSET_FLAG ./2048
+mv times.txt $DATA_PATH/2048_slice/2048_slice0.txt
 
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M1M2.txt
-
-echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+cd $DVFS_SIM_PATH
+taskset 0xff $DVFS_SIM_PATH/predict_times.py 
 sleep 3
-
-taskset 0xff $DATA_ODROID_PATH/find_deadline.py M0.txt M1M2.txt
+cd $DVFS_SIM_PATH/lps
+taskset 0xff $DVFS_SIM_PATH/lps/gen_predictor.py
 
 exit 0
 

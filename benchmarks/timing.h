@@ -165,4 +165,15 @@ void init_time_file() {
   fclose(time_file);
 }
 
+void my_usleep(unsigned long us)
+{
+    struct timespec req={0};
+    time_t sec=(int)(us/1000000);
+    us=us-(sec*1000000);
+    req.tv_sec=sec;
+    req.tv_nsec=us*1000L;
+    while(nanosleep(&req,&req)==-1)
+        continue;
+}
+
 #endif

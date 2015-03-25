@@ -6,8 +6,8 @@ xdotool key KP_Enter
 
 DATA_ODROID_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/data_odroid/
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-SOURCE_FILES=("mibench/security/sha/sha_driver.c")
-SOURCE_PATH=("mibench/security/sha") 
+SOURCE_FILES=("2048.c/2048.c")
+SOURCE_PATH=("2048.c") 
 
 PREDICT_ENABLED="PREDICT_EN 1"
 PREDICT_DISABLED="PREDICT_EN 0"
@@ -48,8 +48,9 @@ echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M0.txt
+rm -rf times.txt
+taskset $TASKSET_FLAG ./2048
+mv times.txt $BENCH_PATH/$SOURCE_PATH/M0.txt
 
 # prediction/get_predict enable, others disable, run prediction
 sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$SOURCE_FILES
@@ -65,8 +66,9 @@ echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 sleep 3
 
-taskset $TASKSET_FLAG ./runme_slice.sh
-mv output_slice.txt $BENCH_PATH/$SOURCE_PATH/M1M2.txt
+rm -rf times.txt
+taskset $TASKSET_FLAG ./2048
+mv times.txt $BENCH_PATH/$SOURCE_PATH/M1M2.txt
 
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
