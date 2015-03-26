@@ -10,6 +10,7 @@ SOURCE_FILES=(
 "julius/julius-4.3.1/libjulius/src/recogmain.c"
 "2048.c/2048.c"
 "curseofwar/main.c"
+"uzbl/src/commands.c"
 )
 SOURCE_PATH=(
 "mibench/office/stringsearch"
@@ -19,6 +20,7 @@ SOURCE_PATH=(
 "julius/julius-4.3.1"
 "2048.c"
 "curseofwar"
+"uzbl"
 )
 
 PREDICT_ENABLED="PREDICT_EN 1"
@@ -95,9 +97,21 @@ elif [ $2 == "predict_dis" ] ; then
     taskset 0xff make -j16
 fi
 
-#Doing extra jobs (such as coyping binaries)
-rm -rf $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
-cp $BENCH_PATH/julius/julius-4.3.1/julius/julius $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+#Doing extra jobs (such as coyping binaries, fix_addresses)
+if [ ${SOURCE_FILES[$i]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
+    echo "[julius] copy binary"
+    rm -rf $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+    cp $BENCH_PATH/julius/julius-4.3.1/julius/julius $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+fi
+
+#fix address for uzbl benchmarks
+if [ ${SOURCE_FILES[$i]} == "uzbl/src/commands.c" ] ; then
+    echo "[uzbl] ./fix_addresses.py"
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+    taskset 0xff ./fix_addresses.py 
+    taskset 0xff make -j16 
+    taskset 0xff sudo make install 
+fi
 
 echo '[ build done ]'
 exit 1

@@ -12,6 +12,7 @@ BENCHMARKS=(
 "julius/julius-3.5.2-quickstart-linux"
 "2048.c"
 "curseofwar"
+"uzbl"
 )
 BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
 
