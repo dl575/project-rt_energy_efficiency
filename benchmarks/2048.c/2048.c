@@ -33,7 +33,7 @@ struct timeval start, end, moment;
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 0 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
-#define DVFS_EN 0 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
 
 #define OVERHEAD_TIME 4752 //overhead deadline
 #define AVG_OVERHEAD_TIME 4091 //avg overhead deadline
