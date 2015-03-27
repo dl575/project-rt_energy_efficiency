@@ -1,18 +1,14 @@
 /******************************************************************************
-
   Curse of War -- Real Time Strategy Game for Linux.
   Copyright (C) 2013 Alexey Nikolaev.
-
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
@@ -40,6 +36,81 @@
 
 #include "timing.h"
 #include <stdlib.h>
+
+//---------------------modified by TJSong----------------------//
+struct timeval start, end, moment;
+
+#define MILLION 1000000L
+//manually set below
+#define CORE 1 //0:LITTLE, 1:big
+
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define DELAY_EN 0 //0:delay off, 1:delay on
+#define OVERHEAD_EN 0 //1:measure dvfs, slice timing
+
+#define OVERHEAD_TIME 27550 //overhead deadline
+#define AVG_OVERHEAD_TIME 3709 //avg overhead deadline
+#define DEADLINE_TIME 459 + AVG_OVERHEAD_TIME //avg deadline
+#define MAX_DVFS_TIME 2811 //max dvfs time
+#define AVG_DVFS_TIME 449 //average dvfs time
+#define GET_PREDICT 0 //to get prediction equation
+#define GET_OVERHEAD 0 //to get overhead deadline
+
+#define DEBUG_EN 1 //debug information print on/off
+//automatically set
+#define MAX_FREQ ((CORE)?(2000000):(1400000))
+
+FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
+FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+float watt; //Value (Watt) at start point.
+int khz; //Value (khz) at start point.
+
+FILE *fp_max_freq; //File pointer scaling_max_freq
+int predicted_freq = MAX_FREQ;
+
+int slice_time = 0;
+int dvfs_time = 0;
+
+void fopen_all(void){
+    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    return;
+}
+
+void fclose_all(void){
+   fclose(fp_max_freq);
+    return;
+}
+
+void print_freq(void){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+        printf("ERROR : FILE READ FAILED\n");
+        return;
+    }
+    fscanf(fp_freq, "%d", &khz);
+    fprintf(time_file, "big core freq : %dkhz\n", khz);  
+    fclose(fp_freq);
+    fclose(time_file); 
+    return;
+}
+
+void set_freq(float exec_time, int slice_time){
+    //calculate predicted freq and round up by adding 99999
+    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - AVG_DVFS_TIME) + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    fflush(fp_max_freq);
+    return;
+}
+
+//---------------------modified by TJSong----------------------//
+
 
 /*****************************************************************************/
 /*                           Global Constants                                */
@@ -73,6 +144,9 @@ void win_or_lose_message(struct state *st, int k) {
 
 void run_loop_slice(struct state *st, struct ui *ui, int k)
 {
+//---------------------modified by TJSong----------------------//
+    start_timing();
+//---------------------modified by TJSong----------------------//
   int loop_counter[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   if (time_to_redraw)
   {
@@ -178,22 +252,45 @@ void run_loop_slice(struct state *st, struct ui *ui, int k)
     print_loop_counter:
     /*
     printf("loop counter = (");
-
     int i;
     for (i = 0; i < 13; i++)
       printf("%d, ", loop_counter[i]);
-
     printf(")\n");
     */
     write_array(loop_counter, 13);
   }
 
+//---------------------modified by TJSong----------------------//
   float exec_time;
-  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
-  FILE *time_file;
-  time_file = fopen("times.txt", "a");
-  fprintf(time_file, "predicted time = %f\n", exec_time);
-  fclose(time_file);
+//  exec_time = 2373.000000*loop_counter[0] + 1010.000000*loop_counter[2] + 1987.000000*loop_counter[4] + -195.000000*loop_counter[10] + 0.000000;
+
+exec_time = 1150.000000*loop_counter[0] + -3.000000*loop_counter[1] + 3112.000000*loop_counter[2] + 2224.000000*loop_counter[4] + -147.000000*loop_counter[10] + 0.000000;
+
+
+    end_timing();
+    slice_time = fprint_slice_timing();
+
+#if DEBUG_EN
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "predicted time = %f\n", exec_time);
+    fclose(time_file);
+#endif
+
+#if GET_OVERHEAD
+    start_timing();
+#endif
+
+#if !GET_PREDICT
+    set_freq(exec_time, slice_time); //do dvfs
+#endif
+
+#if GET_OVERHEAD
+    end_timing();
+    dvfs_time = fprint_dvfs_timing();
+#endif
+//---------------------modified by TJSong----------------------//
+
 }
 
 int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
@@ -308,7 +405,6 @@ int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
     int i;
     for (i = 0; i < 13; i++)
       printf("%d, ", loop_counter[i]);
-
     printf(")\n");
     */
     write_array(loop_counter, 13);
@@ -351,28 +447,114 @@ void run (struct state *st, struct ui *ui) {
   init_time_file();
 
   while( !finished ) {
-    
-    start_timing();
+    static int cnt = 0;
+//---------------------modified by TJSong----------------------//
+    fopen_all();//TJSong 
+
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
+    fclose(time_file);
+//---------------------modified by TJSong----------------------//
+    //start_timing();
 
     //k = run_loop_loop_counters(st, ui, k);
     // Fork a new process to run slice
     pid_t pid = fork();
     if (pid == 0) {
-      run_loop_slice(st, ui, k);
+//---------------------modified by TJSong----------------------//
+    FILE *time_file;
+    #if !PREDICT_EN //!PREDICT_EN
+        #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
+        moment_timing();
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+        fclose(time_file);
+        //start_timing();
+        #else //!PREDICT_EN & GET_PREDICT
+        moment_timing();
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+        fclose(time_file);
+        run_loop_slice(st, ui, k);//slice
+        //start_timing(); //overwrite start timing
+        #endif
+    #elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
+        #if OVERHEAD_EN //prediction with overhead
+        moment_timing();
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+        fclose(time_file);
+        run_loop_slice(st, ui, k);//slice
+        //start_timing();
+        #else //prediction without overhead
+        run_loop_slice(st, ui, k);//slice
+        moment_timing();
+        time_file = fopen("times.txt", "a");
+        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+        fclose(time_file);
+        //start_timing();
+        #endif
+    #else //PREDICT_EN & GET_OVERHEAD
+        run_loop_slice(st, ui, k);//slice
+        //start_timing(); //overwrite start #endif
+    #endif
+
+    #if DEBUG_EN
+        print_freq(); //[DEBUG] check frequency 
+    #endif
+//---------------------modified by TJSong----------------------//
       _Exit(0);
     } else {
       int status;
       waitpid(pid, &status, 0);
     }
+
+    start_timing();
+
     k = run_loop(st, ui, k);
 
     finished = update_from_input(st, ui);
-    if (!finished) {
+
+ if (!finished) {
       end_timing();
-      write_timing();
+//---------------------modified by TJSong----------------------//
+    time_file = fopen("times.txt", "a");
+    int exec_time = exec_timing();
+    int delay_time = 0;
+    static int instance_number = 0;
+#if DELAY_EN //DELAY_EN 
+    fprintf(time_file, "exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
+    if( (delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0 ){
+        fprintf(time_file, "calculated delay is %d us\n", delay_time); //[DEBUG]
+        start_timing();  
+        my_usleep(delay_time);
+        //usleep(delay_time);
+        end_timing();
+        delay_time = exec_timing();
+        fprintf(time_file, "actually delayed by %d us\n", delay_time); //[DEBUG]
+        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time + delay_time);
+    }else
+        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
+#else //!DELAY_EN
+    #if !GET_PREDICT //!DELAY_EN & !GET_PREDICT
+    fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
+    #else //!DELAY_EN & GET_PREDICT
+    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
+    #endif
+#endif
+    moment_timing();
+    fprintf(time_file, "moment_end : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
+    instance_number++;
+    fclose(time_file);
+    fclose_all();//TJSong
+    if(cnt++ > 2000)//TJSong
+        break;
+//---------------------modified by TJSong----------------------//
+//      write_timing();
     }
 
-    pause(); // sleep until woken up by SIGALRM
+   pause(); // sleep until woken up by SIGALRM
   }
 }
 

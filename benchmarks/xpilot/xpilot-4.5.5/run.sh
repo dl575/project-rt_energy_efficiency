@@ -19,11 +19,13 @@ if [ $1 != "big" -a $1 != "little" ] ; then
 fi
 
 if [ $1 == "big" ] ; then
+    SAVED_FOLDER="big"
     WHICH_CPU="cpu4"
     TASKSET_FLAG="0xf0"
     MAX_FREQ=2000000
     SENSOR_ID="3-0040"
 elif [ $1 == "little" ] ; then
+    SAVED_FOLDER="little"
     WHICH_CPU="cpu0"
     TASKSET_FLAG="0x0f"
     MAX_FREQ=1400000

@@ -19,11 +19,13 @@ if [ $1 != "big" -a $1 != "little" ] ; then
 fi
 
 if [ $1 == "big" ] ; then
+    SAVED_FOLDER="big"
     WHICH_CPU="cpu4"
     TASKSET_FLAG="0xf0"
     MAX_FREQ=2000000
     SENSOR_ID="3-0040"
 elif [ $1 == "little" ] ; then
+    SAVED_FOLDER="little"
     WHICH_CPU="cpu0"
     TASKSET_FLAG="0x0f"
     MAX_FREQ=1400000
@@ -37,14 +39,13 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
 echo $BENCHMARK">>>"
 
-#if [[ $2 && $2 == "prediction" ]] ; then
 if [[ $2 ]] ; then
     echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $2"..."
-    sudo nice --19 taskset $TASKSET_FLAG ./runme_slice.sh > $2
-    mv $2 $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
+    taskset $TASKSET_FLAG ./runme_slice.sh > $2
+    mv $2 $PROJECT_PATH/dvfs_sim/data_odroid/$SAVED_FOLDER/$BENCHMARK/$2
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     echo [ done ]
     exit 1
@@ -56,8 +57,8 @@ do
     echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     sleep 1;
     echo $i"..."
-    sudo nice --19 taskset $TASKSET_FLAG ./runme_slice.sh > $i
-    mv $i $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
+    taskset $TASKSET_FLAG ./runme_slice.sh > $i
+    mv $i $PROJECT_PATH/dvfs_sim/data_odroid/$SAVED_FOLDER/$BENCHMARK/$i
 done
 
 #SET TO PERFORMANCE AFTER RUN ALL
