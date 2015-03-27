@@ -16,3 +16,7 @@ make
 make install
 cd ..
 
+## Running
+cd test
+./run.sh
+

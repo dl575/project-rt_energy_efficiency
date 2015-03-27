@@ -35,6 +35,9 @@
  *
  */
 
+struct timeval start, end, moment;
+#include "timing.h"
+
 /* System headers. */
 #include <stdio.h>
 
@@ -790,6 +793,8 @@ done:
 int
 main(int32 argc, char *argv[])
 {
+    init_time_file();
+
     ps_decoder_t *ps;
     cmd_ln_t *config;
     char const *ctl;

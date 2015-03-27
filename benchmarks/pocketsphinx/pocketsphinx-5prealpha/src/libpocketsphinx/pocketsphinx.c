@@ -877,7 +877,14 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 
         data = ckd_calloc(maxsamps, sizeof(*data));
         total = fread(data, sizeof(*data), maxsamps, rawfh);
+
+        start_timing();
+
         ps_process_raw(ps, data, total, FALSE, TRUE);
+        
+        end_timing();
+        write_timing();
+
         ckd_free(data);
     } else {
         /* Otherwise decode it in a stream. */
