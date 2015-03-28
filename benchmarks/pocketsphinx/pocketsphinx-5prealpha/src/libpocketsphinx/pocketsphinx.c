@@ -64,6 +64,9 @@
 #include "ngram_search_fwdflat.h"
 #include "allphone_search.h"
 
+// Flags for experiments
+#define DEBUG_EN 1 //debug information print on/off
+
 static const arg_t ps_args_def[] = {
     POCKETSPHINX_OPTIONS,
     CMDLN_EMPTY_OPTION
@@ -852,6 +855,128 @@ ps_lookup_word(ps_decoder_t *ps, const char *word)
     return phones;
 }
 
+float ps_process_raw_slice(ps_decoder_t *ps, const int16 *data, size_t n_samples, int no_search, int full_utt)
+{
+  int loop_counter[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  {}
+  if (ps->acmod->state == ACMOD_IDLE)
+  {
+    {}
+    {}
+    {
+      goto print_loop_counter;
+    }
+  }
+
+  while (n_samples)
+  {
+    {}
+    int nfr;
+    {
+      int acmod_process_raw_result0;
+      acmod_process_raw_result0 = acmod_process_raw(ps->acmod, &data, &n_samples, full_utt);
+      if ((nfr = acmod_process_raw_result0) < 0)
+      {
+        {}
+        {
+          goto print_loop_counter;
+        }
+      }
+
+    }
+    if (no_search)
+    {
+      {}
+      continue;
+    }
+
+    {
+      int ps_search_forward_result0;
+      {
+        int return_value;
+        int nfr_rename0;
+        nfr_rename0 = 0;
+        while (ps->acmod->n_feat_frame > 0)
+        {
+          loop_counter[5]++;
+          /*
+          int k_rename0;
+          if (ps->pl_window > 0)
+          {
+            {}
+            int step_result0_rename0;
+            step_result0_rename0 = (*((ps_search_t *) ps->phone_loop)->vt->step)(ps->phone_loop, ps->acmod->output_frame);
+            if ((k_rename0 = step_result0_rename0) < 0)
+            {
+              {}
+              return_value = k_rename0;
+              goto return0;
+            }
+
+          }
+
+          if (ps->acmod->output_frame >= ps->pl_window)
+          {
+            {}
+            int step_result0_rename0;
+            step_result0_rename0 = (*((ps_search_t *) ps->search)->vt->step)(ps->search, ps->acmod->output_frame - ps->pl_window);
+            if ((k_rename0 = step_result0_rename0) < 0)
+            {
+              {}
+              return_value = k_rename0;
+              goto return0;
+            }
+
+          }
+
+          {}
+          {}
+          */
+          acmod_advance(ps->acmod);
+          ++nfr_rename0;
+        }
+
+        {
+          return_value = nfr_rename0;
+          goto return0;
+        }
+        return0:
+        ;
+
+        ps_search_forward_result0 = return_value;
+      }
+      if ((nfr = ps_search_forward_result0) < 0)
+      {
+        {}
+        {
+          goto print_loop_counter;
+        }
+      }
+
+    }
+    {}
+  }
+
+  {
+    goto print_loop_counter;
+  }
+  {
+    print_loop_counter:
+    if (DEBUG_EN)
+      write_array(loop_counter, 11);
+
+
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
+  }
+}
+
 long
 ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
               long maxsamps)
@@ -877,6 +1002,28 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 
         data = ckd_calloc(maxsamps, sizeof(*data));
         total = fread(data, sizeof(*data), maxsamps, rawfh);
+
+        start_timing();
+        pid_t pid = fork();
+        if (pid == 0) {
+          FILE * time_file;
+          float exec_time;
+          exec_time = ps_process_raw_slice(ps, data, total, FALSE, TRUE);
+
+          #if DEBUG_EN
+              time_file = fopen("times.txt", "a");
+              fprintf(time_file, "predicted time = %f\n", exec_time);
+              fclose(time_file);
+          #endif
+
+          _Exit(0);
+        } else {
+          int status;
+          waitpid(pid, &status, 0);
+        }
+        end_timing();
+        write_string("slice ");
+        write_timing();
 
         start_timing();
 

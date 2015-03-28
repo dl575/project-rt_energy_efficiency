@@ -20,3 +20,5 @@ cd ..
 cd test
 ./run.sh
 
+Program output is in out.txt. Execution time prediction output is in times.txt
+
