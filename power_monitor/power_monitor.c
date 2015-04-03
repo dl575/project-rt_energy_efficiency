@@ -2,9 +2,10 @@
 #include <stdint.h> /* for uint64 definition */
 #include <stdlib.h> /* for exit() definition */
 #include <time.h>   /* for clock_gettime */
+#include <limits.h>   /* for INT_MAX */
 
 //manually set below
-#define CORE 1 //0:LITTLE, 1:big
+#define CORE 0 //0:LITTLE, 1:big
 
 #define BILLION 1000000000L
 #define MILLION 1000000L
@@ -20,7 +21,7 @@ int main(void)
     struct timeval now;
     struct timeval s;
     int rc;
-
+    
 #if CORE //big
     if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
@@ -52,12 +53,12 @@ int main(void)
         fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r");
         fscanf(fp_power, "%f", &watt);
         fclose(fp_power);
-        printf("moment : %lu us, big core power : %fW\n", s.tv_sec * MILLION + s.tv_usec, watt);
+        printf("moment : %llu us, big core power : %fW\n", (unsigned long long int)s.tv_sec * MILLION + (unsigned long long int)s.tv_usec, watt);
 #else //LITTLE    
         fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r");
         fscanf(fp_power, "%f", &watt);
         fclose(fp_power);
-        printf("moment : %lu us, LITTLE core power : %fW\n", s.tv_sec * MILLION + s.tv_usec, watt);
+        printf("moment : %llu us, little core power : %fW\n", (unsigned long long int)s.tv_sec * MILLION + (unsigned long long int)s.tv_usec, watt);
 #endif
 
         usleep(UPDATED_PERIOD); //4705us is updated_frequency
