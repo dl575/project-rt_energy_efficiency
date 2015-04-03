@@ -24,8 +24,10 @@ for i in xrange(0, len(time)):
         max_time = time[i]
 avg_time = avg_time / len(time)
 
-print "deadline : "
+print "Max_deadline : ",
 print max_time
+print "Avg_deadline : ",
+print avg_time
 
 max_slice_time = 0;
 avg_slice_time = 0;
@@ -37,8 +39,10 @@ for i in xrange(0, len(time_slice)):
         max_slice_time = time_slice[i]
 avg_slice_time = avg_slice_time / len(time_slice)
 
-print "deadline_slice : "
+print "max_slice_time : ",
 print max_slice_time
+print "avg_slice_time : ",
+print avg_slice_time
 
 max_dvfs_time = 0;
 avg_dvfs_time = 0;
@@ -50,48 +54,38 @@ for i in xrange(0, len(time_dvfs)):
         max_dvfs_time = time_dvfs[i]
 avg_dvfs_time = avg_dvfs_time / len(time_dvfs)
 
-print "deadline_dvfs : "
+print "max_dvfs_time : ",
 print max_dvfs_time
+print "avg_dvfs_time : ",
+print avg_dvfs_time
 
-max_overhead_time = 0;
+#max_overhead_time = 0;
 
-for i in xrange(0, len(time_dvfs)):
-    if( (time_slice[i]+time_dvfs[i]) > max_overhead_time):
-        max_overhead_time = time_slice[i] + time_dvfs[i]
+#for i in xrange(0, len(time_dvfs)):
+#    if( (time_slice[i]+time_dvfs[i]) > max_overhead_time):
+#        max_overhead_time = time_slice[i] + time_dvfs[i]
+#print "deadline_overhead(dvfs+slice) : "
+#print max_overhead_time
 
-print "deadline_overhead(dvfs+slice) : "
-print max_overhead_time
-
+#print "--------------------"
+#print "#define OVERHEAD_TIME "+str(max_slice_time+max_dvfs_time)+" //overhead deadline"
+#print "#define AVG_OVERHEAD_TIME "+str(avg_slice_time+avg_dvfs_time)+" //avg overhead deadline"
+#print "#define DEADLINE_TIME "+str(avg_time)+" + AVG_OVERHEAD_TIME //avg_exec + avg_overhead"
+#print "#define MAX_DVFS_TIME "+str(max_dvfs_time)+" //max dvfs time"
+#print "#define AVG_DVFS_TIME "+str(avg_dvfs_time)+" //average dvfs time"
+ 
 print "--------------------"
-
 print "#define OVERHEAD_TIME "+str(max_slice_time+max_dvfs_time)+" //overhead deadline"
-print "#define DEADLINE_TIME "+str(max_time)+" + OVERHEAD_TIME //deadline"
-print "#define MAX_DVFS_TIME "+str(max_dvfs_time)+" //max dvfs time"
-print "#define GET_PREDICT 0 //to get prediction equation"
-print "#define GET_OVERHEAD 0 //to get overhead deadline"
-
-print "--------------------"
-
-print "#define OVERHEAD_TIME "+str(max_overhead_time)+" //overhead deadline"
-print "#define DEADLINE_TIME "+str(max_time)+" + OVERHEAD_TIME //deadline"
-print "#define MAX_DVFS_TIME "+str(max_dvfs_time)+" //max dvfs time"
-print "#define AVG_DVFS_TIME "+str(avg_dvfs_time)+" //average dvfs time"
-print "#define GET_PREDICT 0 //to get prediction equation"
-print "#define GET_OVERHEAD 0 //to get overhead deadline"
-
-print "--------------------"
-
-print "#define OVERHEAD_TIME "+str(max_overhead_time)+" //overhead deadline"
 print "#define AVG_OVERHEAD_TIME "+str(avg_slice_time+avg_dvfs_time)+" //avg overhead deadline"
-print "#define DEADLINE_TIME "+str(avg_time)+" + AVG_OVERHEAD_TIME //avg deadline"
+print "#define DEADLINE_TIME "+str(max_time)+" + OVERHEAD_TIME //max_exec + max_overhead"
 print "#define MAX_DVFS_TIME "+str(max_dvfs_time)+" //max dvfs time"
 print "#define AVG_DVFS_TIME "+str(avg_dvfs_time)+" //average dvfs time"
-print "#define GET_PREDICT 0 //to get prediction equation"
-print "#define GET_OVERHEAD 0 //to get overhead deadline"
- #define OVERHEAD_TIME 43925 //overhead deadline
- #if OVERHEAD_EN
- #define DEADLINE_TIME 52905 + OVERHEAD_TIME //big with overhead
- #else
- #define DEADLINE_TIME 52905 //big without overhead 
- #endif
+ 
+#print "--------------------"
+#print "#define OVERHEAD_TIME "+str(max_slice_time+max_dvfs_time)+" //overhead deadline"
+#print "#define AVG_OVERHEAD_TIME "+str(avg_slice_time+avg_dvfs_time)+" //avg overhead deadline"
+#print "#define DEADLINE_TIME "+str(avg_time)+" + OVERHEAD_TIME //avg_exec + max_overhead"
+#print "#define MAX_DVFS_TIME "+str(max_dvfs_time)+" //max dvfs time"
+#print "#define AVG_DVFS_TIME "+str(avg_dvfs_time)+" //average dvfs time"
+ 
 

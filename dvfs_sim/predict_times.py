@@ -53,7 +53,8 @@ def run_prediction(train_filename, test_filename, policy):
     test_metrics = map(lambda x, y: x+y, test_metrics, fp)
 
   # Predict times using the passed policy
-  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
+  #predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
+  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=None, test_metrics=None)
 
   s = 0
   for i in range(1, len(predict_times)):
@@ -67,10 +68,10 @@ output_dir = "predict_times/"
 if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
 policies = [
-    policy_tuned_pid,
-    policy_data_dependent_oracle, 
+#    policy_tuned_pid,
+#    policy_data_dependent_oracle, 
     policy_data_dependent_lp, 
-    policy_oracle
+#    policy_oracle
     ]
 
 # For each DVFS policy
