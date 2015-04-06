@@ -1,3 +1,15 @@
+enum ObjType {
+        OBJTYPE_TILE         = 115870,
+        OBJTYPE_BODY,
+        OBJTYPE_SHAPE,
+        OBJTYPE_SPRITELIST,
+        OBJTYPE_CAMERA,
+        OBJTYPE_WORLD,
+        OBJTYPE_TIMER_LUA,
+        OBJTYPE_TIMER_C,
+        OBJTYPE_TIMERPTR
+};
+
 //#include "camera.h"
 //#include "config.h"
 //#include "world.h"
@@ -5,8 +17,9 @@
 //#include "gameloop.h"
 //#include "audio.h"
 
-Camera  *cam_list;      /* List of all cameras (sorted by "sort" value). */
-Camera  *debug_cam;     /* Camera rendering debugging visuals. */
+struct config_t config;
+struct Camera  *cam_list;      /* List of all cameras (sorted by "sort" value). */
+struct Camera  *debug_cam;     /* Camera rendering debugging visuals. */
 
 /* Keep track of last frame time. */
 static uint32_t before;
@@ -24,7 +37,8 @@ static float frames_per_second;
 uint64_t game_time;
 
 void
-run_game(lua_State *L)
+//run_game(lua_State *L)
+run_game(struct lua_State *L)
 {
         uint32_t now = SDL_GetTicks();   /* Current real time. */
         

@@ -156,7 +156,7 @@
  * 
  */
 
-int call_adin_go(Recog * recog) {
+int call_adin_go(struct Recog * recog) {
   int ret;
 	ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
   return ret;
@@ -851,7 +851,9 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
       /* ÁëÆâ¤Î²»À¼ÇÈ·Á¤«¤éÆÃÄ§ÎÌ¤ò·×»»¤·¤Æ r->tmpmfcc ¤Ë³ÊÇ¼  */
       /* calculate a parameter vector from current waveform windows
 	 and store to r->tmpmfcc */
-      if ((*(recog->calc_vector))(mfcc, r->window, r->windowlen)) {
+      boolean calc_vector_result = ((*(recog->calc_vector))(mfcc, r->window, r->windowlen)); 
+      //if ((*(recog->calc_vector))(mfcc, r->window, r->windowlen)) {
+			if (calc_vector_result) {
 #ifdef ENABLE_PLUGIN
 	/* call post-process plugin if exist */
 	plugin_exec_vector_postprocess(mfcc->tmpmfcc, mfcc->param->veclen, mfcc->f);
