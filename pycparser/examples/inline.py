@@ -17,6 +17,7 @@ Classes:
 Functions:
 	replace_node
 	print_node
+  get_function_name
 """
 
 import copy
@@ -56,6 +57,21 @@ def print_node(node):
   """
   generator = c_generator.CGenerator()
   print generator.visit(node)
+
+def get_function_name(node):
+  """
+  Recursively process node to find name of function being called.
+  """
+  if isinstance(node, c_ast.ID):
+    return node.name
+  elif isinstance(node, c_ast.FuncCall):
+    return get_function_name(node.name)
+  elif isinstance(node, c_ast.UnaryOp):
+    return get_function_name(node.expr)
+  elif isinstance(node, c_ast.StructRef):
+    return get_function_name(node.field)
+  else:
+    raise Exception("Unimplemented type %s. Please implement" % (type(node)))
 
 class GetFuncCallVisitor(c_ast.NodeVisitor):
   """
@@ -127,7 +143,7 @@ class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
           stmts = []
           for (fi, func_call) in enumerate(self.visitor.function_call):
             # Extract information about function call
-            func_name = func_call.name.name
+            func_name = get_function_name(func_call)
             result_name = func_name + "_result%d" % fi
             # Declare result variable
             td = copy.deepcopy(self.get_function_type(func_call))
@@ -155,7 +171,7 @@ class RemoveIfFunctionVisitor(c_ast.NodeVisitor):
     assert(isinstance(node, c_ast.FuncCall))
 
     # Find function definition
-    func_name = node.name.name
+    func_name = get_function_name(node)
     for function in self.func_decls:
       if self.get_decl_name(function) == func_name:
         # Return type 
@@ -244,6 +260,8 @@ class RenameVisitor(c_ast.NodeVisitor):
     """
     if isinstance(node, c_ast.ID):
       return node.name
+    elif isinstance(node, c_ast.Cast):
+      return self.get_base_StructRef(node.expr)
     else:
       return self.get_base_StructRef(node.name)
   def set_base_StructRef(self, node, new_name):
@@ -252,6 +270,8 @@ class RenameVisitor(c_ast.NodeVisitor):
     """
     if isinstance(node, c_ast.ID):
       node.name = new_name
+    elif isinstance(node, c_ast.Cast):
+      self.set_base_StructRef(node.expr, new_name)
     else:
       self.set_base_StructRef(node.name, new_name)
 
@@ -311,10 +331,11 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
       # Assignment with function call as rvalue
       ##########################################
       if isinstance(c, c_ast.Assignment) and isinstance(c.rvalue, c_ast.FuncCall):
-        
+
         # Find matching function body
         for function in self.functions:
-          if c.rvalue.name.name == function.decl.name:
+          name = get_function_name(c.rvalue)
+          if name == function.decl.name:
             # Create the inline version of the function body
             inline_function = self.create_inline_function(function, c.rvalue)
             # Set assignment lvalue to return value
@@ -381,8 +402,6 @@ class ExpandFunctionVisitor(c_ast.NodeVisitor):
           elif isinstance(init, c_ast.ArrayRef):
             ptr_args.append((self.get_Decl_name(arg), init))
           else: 
-            arg.show(nodenames=True, showcoord=True)
-            init.show(nodenames=True, showcoord=True)
             raise Exception("Unsupported init type %s" % (type(init)))
         # Arrays also get renamed, no re-declare
         elif isinstance(arg.type, c_ast.ArrayDecl):
