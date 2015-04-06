@@ -18,98 +18,32 @@
 #include <signal.h>
 
 #include "../timing.h"
+#include "../common.h"
 
 #define SIZE 4
 uint32_t score=0;
 uint8_t scheme=0;
 
 //---------------------modified by TJSong----------------------//
+//set global variables
 struct timeval start, end, moment;
-
-#define MILLION 1000000L
-//manually set below
-#define CORE 1 //0:LITTLE, 1:big
-
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 1 //0:delay off, 1:delay on
-#define OVERHEAD_EN 0 //1:measure dvfs, slice timing
-#define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
-
-#define OVERHEAD_TIME 4752 //overhead deadline
-#define AVG_OVERHEAD_TIME 4091 //avg overhead deadline
-#define DEADLINE_TIME 2906 + AVG_OVERHEAD_TIME //avg deadline
-#define MAX_DVFS_TIME 2361 //max dvfs time
-#define AVG_DVFS_TIME 543 //average dvfs time
-#define GET_PREDICT 0 //to get prediction equation
-#define GET_OVERHEAD 0 //to get overhead deadline
-
-#define DEBUG_EN 0 //debug information print on/off
-//automatically set
-#define MAX_FREQ ((CORE)?(2000000):(1400000))
-
-FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
-FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
-float watt; //Value (Watt) at start point.
-int khz; //Value (khz) at start point.
-
-FILE *fp_max_freq; //File pointer scaling_max_freq
-int predicted_freq = MAX_FREQ;
-
 int slice_time = 0;
 int dvfs_time = 0;
 
-void fopen_all(void){
-#if DVFS_EN
-    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
+//define benchmarks-depenent varaibles & constants
+#if CORE //big
+#define OVERHEAD_TIME 4473 //overhead deadline
+#define AVG_OVERHEAD_TIME 1580 //avg overhead deadline
+#define DEADLINE_TIME 3712 + AVG_OVERHEAD_TIME //avg_exec + avg_overhead
+#define MAX_DVFS_TIME 2730 //max dvfs time
+#define AVG_DVFS_TIME 340 //average dvfs time
+#else //LITTLE
+#define OVERHEAD_TIME 4473 //overhead deadline
+#define AVG_OVERHEAD_TIME 1580 //avg overhead deadline
+#define DEADLINE_TIME 3712 + AVG_OVERHEAD_TIME //avg_exec + avg_overhead
+#define MAX_DVFS_TIME 2730 //max dvfs time
+#define AVG_DVFS_TIME 340 //average dvfs time
 #endif
-    return;
-}
-
-void fclose_all(void){
-#if DVFS_EN
-   fclose(fp_max_freq);
-#endif
-    return;
-}
-
-void print_freq(void){
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-        printf("ERROR : FILE READ FAILED\n");
-        return;
-    }
-    fscanf(fp_freq, "%d", &khz);
-    fprintf(time_file, "big core freq : %dkhz\n", khz);  
-    fclose(fp_freq);
-    fclose(time_file); 
-    return;
-}
-
-void set_freq(float exec_time, int slice_time){
-    #if GET_OVERHEAD
-        start_timing();
-    #endif
-        
-    //calculate predicted freq and round up by adding 99999
-    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - AVG_DVFS_TIME) + 99999;
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-
-    #if GET_OVERHEAD
-        end_timing();
-        dvfs_time = fprint_dvfs_timing();
-    #endif
-
-    return;
-}
-
 //---------------------modified by TJSong----------------------//
 
 void getColor(uint8_t value, char *color, size_t length) {
@@ -1453,7 +1387,7 @@ float main_loop_slice(char c, uint8_t board[4][4])
   }
   {
     print_loop_counter:
-    if (DEBUG_EN)
+    if (GET_PREDICT | DEBUG_EN)
       write_array(loop_counter, 95);
 
 
@@ -1463,7 +1397,11 @@ float main_loop_slice(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = 1415.160000*loop_counter[2] + 31.556500*loop_counter[8] + -3.638930*loop_counter[9] + -8.215710*loop_counter[10] + 4.912260*loop_counter[12] + 19.333600*loop_counter[14] + -34.146700*loop_counter[15] + 1391.430000*loop_counter[24] + -2.000190*loop_counter[34] + 0.369481*loop_counter[35] + 0.118066*loop_counter[37] + 24.903500*loop_counter[38] + -4.508230*loop_counter[40] + -5.520420*loop_counter[41] + 1533.570000*loop_counter[46] + -22.735400*loop_counter[50] + -13.192900*loop_counter[51] + 8.771390*loop_counter[53] + -29.973200*loop_counter[54] + 20.277400*loop_counter[55] + 23.387600*loop_counter[57] + 1492.380000*loop_counter[60] + -30.965000*loop_counter[68] + 23.820000*loop_counter[69] + -24.250000*loop_counter[71] + -111.350000*loop_counter[72] + 7.765000*loop_counter[74] + 41.035000*loop_counter[75] + 0.605000*loop_counter[83] + 0.000000;
+#if CORE //big
+    exec_time = 1315.600000*loop_counter[2] + 21.085700*loop_counter[8] + 23.628600*loop_counter[9] + -29.657100*loop_counter[10] + -82.257100*loop_counter[12] + 10.742900*loop_counter[14] + 27.542900*loop_counter[15] + 1311.930000*loop_counter[24] + 35.809100*loop_counter[34] + 11.469700*loop_counter[35] + -20.100000*loop_counter[36] + -40.954500*loop_counter[38] + 4.806060*loop_counter[40] + 14.848500*loop_counter[41] + 1153.560000*loop_counter[46] + 75.091600*loop_counter[50] + 43.063600*loop_counter[51] + -52.476600*loop_counter[53] + 75.106500*loop_counter[54] + -47.530800*loop_counter[56] + -134.849000*loop_counter[57] + 1492.870000*loop_counter[60] + -3.000000*loop_counter[68] + -6.266670*loop_counter[69] + -5.422220*loop_counter[70] + -39.155600*loop_counter[72] + 18.822200*loop_counter[74] + 31.822200*loop_counter[75] + 0.800000*loop_counter[84] + 0.000000;
+#else //LITTLE
+    exec_time = 23902.200000*loop_counter[2] + 5032.610000*loop_counter[8] + -4265.260000*loop_counter[9] + 4787.560000*loop_counter[11] + 5613.910000*loop_counter[12] + 1095.900000*loop_counter[14] + 5096.860000*loop_counter[15] + -21153.800000*loop_counter[24] + 6624.550000*loop_counter[34] + 4508.050000*loop_counter[35] + -1453.240000*loop_counter[36] + 5630.150000*loop_counter[38] + -4470.560000*loop_counter[40] + -7863.490000*loop_counter[41] + 31479.900000*loop_counter[46] + -4925.650000*loop_counter[50] + -1450.150000*loop_counter[51] + 2819.850000*loop_counter[53] + -1919.750000*loop_counter[54] + -248.450000*loop_counter[56] + 6072.700000*loop_counter[57] + -4359.020000*loop_counter[60] + -6486.160000*loop_counter[68] + 5563.720000*loop_counter[69] + -603.713000*loop_counter[71] + -11633.900000*loop_counter[72] + -2483.070000*loop_counter[73] + 5600.850000*loop_counter[75] + -424.300000*loop_counter[84] + 0.000000;
+#endif
     return exec_time;
   }
 }
@@ -2560,50 +2498,86 @@ int main(int argc, char *argv[]) {
 	setBufferedInput(false);
 	while (true) {
 //---------------------modified by TJSong----------------------//
-        // c=getchar();
+        // c=getchar(); //to input automatically
         static int i=0;
 		c=65+(i++)%4;
-/*		case 97:	// 'a' key
-			case 104:	// 'h' key
-			case 68:	// left arrow
-				success = moveLeft(board);  break;
-			case 100:	// 'd' key
-			case 108:	// 'l' key
-			case 67:	// right arrow
-				success = moveRight(board); break;
-			case 119:	// 'w' key
-			case 107:	// 'k' key
-			case 65:	// up arrow
-				success = moveUp(board);    break;
-			case 115:	// 's' key
-			case 106:	// 'j' key
-			case 66:	// down arrow
-*/		
 //---------------------modified by TJSong----------------------//
 
 
 //---------------------modified by TJSong----------------------//
-    fopen_all();//TJSong 
-
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
-    fclose(time_file);
+    fopen_all(); //fopen for frequnecy file
+    fprint_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//
     // Perform slicing and prediction
-    float predicted_exec_time;
+    float predicted_exec_time = 0.0;
+    /*
+        CASE 0 = to get prediction equation
+        CASE 1 = to get execution deadline
+        CASE 2 = to get overhead deadline
+        CASE 3 = running on default linux governors
+        CASE 4 = running on our prediction with overhead 
+        CASE 5 = running on our prediction without overhead 
+    */
+    #if GET_PREDICT /* CASE 0 */
+        predicted_exec_time = main_loop_slice(c, board); //slice
+    #endif
+    #if GET_DEADLINE /* CASE 1 */
+        //nothing
+    #endif
+    #if GET_OVERHEAD /* CASE 2 */
+        start_timing();
+        predicted_exec_time = main_loop_slice(c, board); //slice
+        end_timing();
+        slice_time = fprint_slice_timing();
+
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+    #if !PREDICT_EN /* CASE 3 */
+        //slice_time=0; dvfs_time=0;
+        moment_timing_fprint(0); //moment_start
+    #endif
+    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+        moment_timing_fprint(0); //moment_start
+        
+        start_timing();
+        predicted_exec_time = main_loop_slice(c, board); //slice
+        end_timing();
+        slice_time = fprint_slice_timing();
+
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
+        start_timing();
+        predicted_exec_time = main_loop_slice(c, board); //slice
+        end_timing();
+        slice_time = fprint_slice_timing();
+        
+        moment_timing_fprint(0); //moment_start
+
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+
+
+/*
     #if !PREDICT_EN //!PREDICT_EN
-        moment_timing();
-        time_file = fopen("times.txt", "a");
-        fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-        fclose(time_file);
-        #if GET_PREDICT //!PREDICT_EN & GET_PREDICT
-            start_timing();
+        #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
+            moment_timing_fprint(0);
+        #else //!PREDICT_EN & GET_PREDICT
+            //start_timing();
             predicted_exec_time = main_loop_slice(c, board);//slice
-            end_timing();
-            slice_time = fprint_slice_timing();
+            //end_timing();
+            //slice_time = fprint_slice_timing();
         #endif
     #elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
         #if !OVERHEAD_EN // prediction without overhead
@@ -2629,22 +2603,21 @@ int main(int argc, char *argv[]) {
         slice_time = fprint_slice_timing();
     #endif
 
-
+*/
     // Write out predicted time
     #if DEBUG_EN
-        time_file = fopen("times.txt", "a");
-        fprintf(time_file, "predicted time = %f\n", predicted_exec_time);
-        fclose(time_file);
+        fprint_predicted_time(predicted_exec_time);
     #endif
 
+/*
     // Set frequency based on predicted time
     #if !GET_PREDICT && DVFS_EN
-        set_freq(predicted_exec_time, slice_time); //do dvfs
+        //dvfs_time = set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs, return timing for dvfs
     #endif
-
+*/
     // Print out frequency used
     #if DEBUG_EN && DVFS_EN
-        print_freq(); //[DEBUG] check frequency 
+        fprint_freq(); //[DEBUG] check frequency 
     #endif
 //---------------------modified by TJSong----------------------//
 
@@ -2655,19 +2628,48 @@ int main(int argc, char *argv[]) {
 
     end_timing();
 //---------------------modified by TJSong----------------------//
-    time_file = fopen("times.txt", "a");
+    //time_file = fopen("times.txt", "a");
     int exec_time = exec_timing();
     int delay_time = 0;
     static int instance_number = 0;
+
+    #if GET_PREDICT /* CASE 0 */
+        fprint_exec_time(exec_time);
+    #endif
+    #if GET_DEADLINE /* CASE 1 */
+        fprint_exec_time(exec_time);
+    #endif
+    #if GET_OVERHEAD /* CASE 2 */
+        //nothing
+    #endif
+    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+        if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            start_timing();
+            usleep(delay_time);
+            end_timing();
+            delay_time = exec_timing();
+        }else
+            delay_time = 0;
+        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
+        moment_timing_fprint(1); //moment_end
+    #endif
+    fclose_all();//TJSong
+/*
 #if DELAY_EN //DELAY_EN 
-    fprintf(time_file, "exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
+    #if DEBUG_EN
+        fprintf(time_file, "exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
+    #endif
     if( (delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0 ){
-        fprintf(time_file, "calculated delay is %d us\n", delay_time); //[DEBUG]
+        #if DEBUG_EN
+            fprintf(time_file, "calculated delay is %d us\n", delay_time); //[DEBUG]
+        #endif
         start_timing();  
         usleep(delay_time);
         end_timing();
         delay_time = exec_timing();
-        fprintf(time_file, "actually delayed by %d us\n", delay_time); //[DEBUG]
+        #if DEBUG_EN
+            fprintf(time_file, "actually delayed by %d us\n", delay_time); //[DEBUG]
+        #endif
         fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time + delay_time);
     }else
         fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
@@ -2679,10 +2681,16 @@ int main(int argc, char *argv[]) {
     #endif
 #endif
     moment_timing();
+#if !GET_PREDICT //!GET_PREDICT
     fprintf(time_file, "moment_end : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    instance_number++;
+#endif
+   
     fclose(time_file);
+    instance_number++;
+
     fclose_all();//TJSong
+*/
+
 //---------------------modified by TJSong----------------------//
 
 		if (success) {

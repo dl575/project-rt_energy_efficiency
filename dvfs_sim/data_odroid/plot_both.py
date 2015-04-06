@@ -8,24 +8,20 @@ sys.path.extend(['/home/odroid/project-rt_energy_efficiency/lib'])
 import parse_lib
 import matplotlib.pyplot as plt
 
-#manually set below
-#if(len(sys.argv)!=2):
-#    print "argument is needed"
-#    exit(0)
-#if((sys.argv[1] != "big_with_overhead") & (sys.argv[1] != "big_wo_overhead")):
-#    print "argument big_with_overhead or big_wo_overhead"
-#    exit(0)
+if(len(sys.argv)!=2):
+    print "argument is needed"
+    exit(0)
+if((sys.argv[1] != "big") & (sys.argv[1] != "little")):
+    print "argument should be big or little"
+    exit(0)
 
-big_little="big"
+big_little=sys.argv[1]
 
-#benchmarks = ["stringsearch", "xpilot_slice", "sha", "rijndael", "julius_slice", "2048_slice", "curseofwar_slice"]#, "average"]
-#sample_frame=[1300          , 2260          , 100  , 200       , 50            , 50          , 2000]
-#benchmarks =   ["sha", "rijndael", "stringsearch", "xpilot_slice", "julius_slice"]
-benchmarks =   ["stringsearch", "sha", "rijndael", "xpilot_slice", "julius_slice", "2049_slice", "curseofwar_slice" "uzbl"]
-#benchmarks =   ["stringsearch", "sha", "rijndael", "xpilot_slice",  "2048_slice", "curseofwar_slice"]
-#sample_frame = [100]
+if(big_little == "big"):
+    benchmarks = ["stringsearch", "sha", "rijndael", "xpilot_slice", "julius_slice", "2048_slice", "curseofwar_slice", "uzbl"]
+elif(big_little == "little"):
+    benchmarks = ["stringsearch", "sha", "rijndael", "2048_slice", "curseofwar_slice", "uzbl"]
 
-#governor_files = ["performance", "prediction_with_overhead", "prediction_wo_overhead", "powersave", "conservative", "interactive", "ondemand"]
 #IMPORTANT : THIS SHOULD BE IN ORDER...
 governor_files = ["performance", "interactive", "conservative", "ondemand", "powersave", "prediction_with_overhead", "prediction_wo_overhead"]
 
@@ -71,7 +67,7 @@ for kk in range(0, 2):
         #get global_moment and global_power
         global_moment = parse_lib.parse(cur_path+"/"+big_little+"/"+bench+"/output_power.txt", "moment : ([0-9\.]+) us")
         global_moment = [int(x) for x in global_moment]
-        global_power = parse_lib.parse(cur_path+"/"+big_little+"/"+bench+"/output_power.txt", "big core power : ([0-9\.]+)W")
+        global_power = parse_lib.parse(cur_path+"/"+big_little+"/"+bench+"/output_power.txt", big_little+" core power : ([0-9\.]+)W")
         global_power = [float(x) for x in global_power]
         saved_end_index=0
         cnt_performance=0
@@ -129,7 +125,6 @@ for kk in range(0, 2):
                 if (k > len(global_moment)-1):
                     print "index error"
                     exit(0)
-
                 #power calculation (start_index <= i < end_index)
                 for i in range(start_index, end_index):
                     #unit = W * us = uJ
@@ -178,7 +173,7 @@ for kk in range(0, 2):
     else :
         opts.ylabel = "deadline_misses [%]"
         opts.legend_enabled = False
-        opts.file_name = "governors_both.pdf"
+        opts.file_name = "governors_"+big_little+".pdf"
     opts.data = data
     opts.labels = [cat, subcat]
     for name, value in attribute_dict.iteritems():

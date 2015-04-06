@@ -53,7 +53,8 @@ def run_prediction(train_filename, test_filename, policy):
     test_metrics = map(lambda x, y: x+y, test_metrics, fp)
 
   # Predict times using the passed policy
-  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
+  #predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
+  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=None, test_metrics=None)
 
   s = 0
   for i in range(1, len(predict_times)):

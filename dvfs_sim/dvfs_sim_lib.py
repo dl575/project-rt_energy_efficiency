@@ -45,7 +45,7 @@ import os
 import cvxpy
 import sklearn.linear_model
 
-benchmarks = ["rijndael", "sha", "stringsearch", "julius_slice", "2048_slice",
+benchmarks = ["rijndael", "sha", "stringsearch", "julius_slice", "2048_slice", "xpilot_slice",
   "curseofwar_slice", "uzbl"]
 
 default_dvfs_levels = [.1*x for x in range(1, 11)]

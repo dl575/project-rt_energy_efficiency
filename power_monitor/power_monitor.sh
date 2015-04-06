@@ -36,6 +36,7 @@ if [ $1 == "big" ] ; then
 elif [ $1 == "little" ] ; then
     sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' power_monitor.c
 fi
+find . -type f | xargs -n 5 touch
 taskset 0xff make clean
 taskset 0xff make -j16
 
