@@ -3,12 +3,13 @@ DIRNAME=curseofwar
 FILENAME=$(DIRNAME)/main
 FUNCNAME=run_loop
 LOOP_COUNT_FLAGS=--write_to_file
+GLOBALS_IGNORE=DEBUG_EN
 
 slice: preprocess
 	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
 	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
-	$(PYTHON) globals.py $(FILENAME)_slice.c run_loop_slice > $(FILENAME)_globals.c
+	$(PYTHON) globals.py $(FILENAME)_slice.c run_loop_slice $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
 	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
 
 td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c

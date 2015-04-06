@@ -1,5 +1,17 @@
 #!/usr/bin/python
 
+"""
+insert_loop_counts.py
+
+Classes:
+  LoopCountVisitor
+  LoopCountInitPrintVisitor
+  PredictionStubVisitor
+
+Functions:
+  print_node
+"""
+
 import sys
 
 # This is not required if you've installed pycparser into
@@ -110,7 +122,9 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
 
     # Write to file
     if self.write_to_file:
-      stmt = c_ast.ID("write_array(loop_counter, %d);\n" % (self.loop_counter_size))
+      stmt = c_ast.ID("write_array(loop_counter, %d)\n" % (self.loop_counter_size))
+      # Wrap in conditional to only write to file if DEBUG_EN
+      stmt = c_ast.If(c_ast.ID("DEBUG_EN"), stmt, None)
       compound = c_ast.Compound([label, stmt])
     # Print to stdout
     else:
@@ -140,6 +154,21 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
       compound = c_ast.Compound([label, stmt_start, for_decl, stmt_for, stmt_end])
     node.body.block_items.append(compound)
 
+"""
+Add stub for execution time prediction.
+"""
+class PredictionStubVisitor(c_ast.NodeVisitor):
+  def __init__(self):
+    pass
+  def visit_FuncDef(self, node):
+    label = c_ast.Label("predict_exec_time", c_ast.EmptyStatement())
+    decl = c_ast.Decl("exec_time", None, None, None,
+        c_ast.TypeDecl("exec_time", None, c_ast.IdentifierType(["float"])), 
+        None, None)
+    assignment = c_ast.Assignment('=', c_ast.ID("exec_time"), c_ast.Constant("int", 0))
+    ret = c_ast.Return(c_ast.ID("exec_time"))
+    compound = c_ast.Compound([label, decl, assignment, ret])
+    node.body.block_items.append(compound)
 
 """
 Pretty print the passed AST/node.
@@ -168,7 +197,9 @@ if __name__ == "__main__":
   # Insert init/print
   v = LoopCountInitPrintVisitor(v.loop_counter_index, write_to_file)
   v.visit(ast)
+  # Insert stub for prediction
+  v = PredictionStubVisitor()
+  v.visit(ast)
   # Print out result
   print_node(ast)
-
 
