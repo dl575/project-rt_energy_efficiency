@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from parse_lib import *
 from dvfs_sim_lib import *
@@ -25,22 +25,19 @@ def run_dvfs(predict_times, times, deadline=None, dvfs_levels=None, margin=1.1):
 
   return (result_times, frequencies, deadline)
 
-def read_predict_file(filename):
-  f = open(filename, 'r')
-  data = []
-  for line in f:
-    data.append(float(line))
-  f.close()
-  return data
-
-
 policies = [
   #"policy_pid_timeliness",
   "policy_tuned_pid",
-  "policy_data_dependent_oracle", 
-  "policy_data_dependent_lp", 
-  "policy_lasso",
-  "policy_oracle"]
+  "policy_least_squares", 
+  "policy_conservative", 
+  "policy_oracle",
+  
+  "policy_cvx_conservative_lasso_1",
+  "policy_cvx_conservative_lasso_2",
+  "policy_cvx_conservative_lasso_5",
+  "policy_cvx_conservative_lasso_10",
+  "policy_cvx_conservative_lasso_100",
+  ]
 input_dir = "data"
 output_dir = "predict_times"
 
@@ -57,7 +54,6 @@ for metric in [deadline_misses, energy]:
       predict_times = read_predict_file("%s/%s-%s.txt" % (output_dir, policy, benchmark))
 
       # Perform DVFS
-      #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
       deadline = None
       # Custom deadlines
       if "freeciv" in benchmark:

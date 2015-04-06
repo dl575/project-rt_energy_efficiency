@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 from pylab import *
@@ -43,8 +43,8 @@ for name, value in attribute_dict.iteritems():
 def policy_to_label(policy):
   d = {
       "policy_tuned_pid" : "PID Controller",
-      "policy_data_dependent_oracle" : "Least-Squares",
-      "policy_data_dependent_lp" : "Conservative",
+      "policy_least_squares" : "Least-Squares",
+      "policy_conservative" : "Conservative",
       "policy_oracle" : "Oracle"
       }
   policy = policy.strip()

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
@@ -68,9 +68,10 @@ if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
 policies = [
     policy_tuned_pid,
-    policy_data_dependent_oracle, 
-    policy_data_dependent_lp, 
-    policy_oracle
+    policy_least_squares,
+    policy_conservative,
+    #policy_cvx_conservative_lasso,
+    policy_oracle,
     ]
 
 # For each DVFS policy
@@ -83,9 +84,9 @@ for policy in policies:
     print "  " + train_filename
     (predict_times, times) = run_prediction(train_filename, test_filename, policy)
     # Save lp solve output
-    if policy == policy_data_dependent_lp:
+    if policy == policy_conservative:
       os.system("cp temp.lps lps/%s.lps" % benchmark)
-    elif policy == policy_data_dependent_oracle:
+    elif policy == policy_least_squares:
       os.system("cp temp.lps regression_coeffs/%s.lps" % benchmark)
     elif policy == policy_lasso:
       os.system("cp temp.lps lasso/%s.lps" % benchmark)
