@@ -5,9 +5,11 @@ Iteratively runs make adding custom type declarations to the Makefile until no
 errors are found.
 """
 
+import sys
 import os
 
 ret = 1
+last_err_type = None
 # While make fails
 while ret != 0:
   # Run make
@@ -19,6 +21,8 @@ while ret != 0:
       print line,
       filename = line.split(' ')[1].split(':')[0]
       line_number = int(line.split(' ')[1].split(':')[1])
+      col_number = int(line.split(' ')[1].split(':')[2])
+      break
   f.close()
 
   # Find the line that failed
@@ -36,6 +40,11 @@ while ret != 0:
       err_type = word
       break
   print err_type
+  if err_type == last_err_type:
+    print
+    print "Repeated errror detected. Fix manually"
+    sys.exit()
+  last_err_type = err_type
   # Add to Makefile
   fin = open("Makefile", 'r')
   fout = open("Makefile.tmp", 'w')
