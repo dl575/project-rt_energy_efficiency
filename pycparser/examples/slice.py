@@ -316,6 +316,11 @@ class PrintSliceVisitor(c_generator.CGenerator):
     Always print out typedefs for syntactic reasons in case of more passes.
     """
     return str_node(node)
+  def visit_Struct(self, node):
+    """
+    Always print out struct declarations for syntactic reasons in case of more passes.
+    """
+    return str_node(node)
   def _generate_stmt(self, n, add_indent=False):
     """ Generation from a statement node. This method exists as a wrapper
             for individual visit_* methods to handle different treatment of
