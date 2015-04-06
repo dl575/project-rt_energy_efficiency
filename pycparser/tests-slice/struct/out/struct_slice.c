@@ -1,4 +1,4 @@
-void main_slice()
+float main_slice()
 {
   {}
   {}
@@ -36,6 +36,14 @@ void main_slice()
     return1:
     ;
 
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
   }
 }
 
