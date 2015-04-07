@@ -240,24 +240,42 @@ def rename_array_args(funcdef):
     elif isinstance(param.type, c_ast.TypeDecl):
       # Simple variable passing, don't need to handle
       pass
-    elif isinstance(param.type, c_ast.PtrDecl) and isinstance(param.type.type.type, c_ast.Struct):
-      # Handle struct passed by pointer
+    elif isinstance(param.type, c_ast.PtrDecl):
+      """
+      Param of form: type *var
+      is copied in the function body using:
+        type var_rename _temp = *var;
+        type *var_rename = &var_rename_temp;
+      """
+      # General pointer arguments
       old_name = get_decl_name(param)
       new_name = old_name + "_rename"
-      struct_type = param.type.type.type.name
-      # Rename struct
+      temp_name = new_name + "_temp"
+      # Rename variable use in function body
       v = inline.RenameVisitor()
       v.new_visit(old_name, new_name, funcdef.body)
-      # Add declaration
-      decl = c_ast.Decl(new_name, None, None, None,
-        c_ast.PtrDecl([],
-          c_ast.TypeDecl(new_name, None, param.type.type.type),
-        ),
-        c_ast.ID(old_name),
-        None 
+
+      # type var_rename_temp = *var;
+      decl1 = c_ast.Decl(temp_name, None, None, None,
+        c_ast.TypeDecl(temp_name, None, param.type.type.type),
+        c_ast.UnaryOp('*', c_ast.ID(old_name)),
+        None
         )
-      funcdef.body.block_items.insert(0, decl)
+
+      # type *var_rename = &var_rename_temp;
+      decl2 = c_ast.Decl(new_name, None, None, None,
+        c_ast.PtrDecl([],
+          c_ast.TypeDecl(new_name, None, param.type.type.type)
+        ),
+        c_ast.UnaryOp('&', c_ast.ID(temp_name)),
+        None
+        )
+
+      # Insert into function body
+      funcdef.body.block_items.insert(0, decl2)
+      funcdef.body.block_items.insert(0, decl1)
     else:
+      print_node(param)
       param.show(nodenames=True, showcoord=True)
       raise Exception("Unhandled argument type %s. Implement or verify that it can be ignored." % (type(param.type)))
 
