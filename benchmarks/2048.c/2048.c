@@ -18,7 +18,7 @@
 #include <signal.h>
 
 #include "../timing.h"
-#include "../common.h"
+#include "../my_common.h"
 
 #define SIZE 4
 uint32_t score=0;
@@ -1406,7 +1406,1739 @@ float main_loop_slice(char c, uint8_t board[4][4])
   }
 }
 
+#if CORE //big
+float main_loop_slice_reduced(char c, uint8_t board[4][4])
+{
+  uint8_t board_rename[4][4];
+  int board_i0;
+  for (board_i0 = 0; board_i0 < 4; board_i0++)
+  {
+    int board_i1;
+    for (board_i1 = 0; board_i1 < 4; board_i1++)
+    {
+      board_rename[board_i0][board_i1] = board[board_i0][board_i1];
+    }
 
+  }
+
+  int loop_counter[95] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  switch (c)
+  {
+    case 68:
+      loop_counter[2]++;
+    {
+      bool return_value;
+      bool success_rename0;
+      {
+        uint8_t i_rename5;
+        uint8_t j_rename5;
+        uint8_t n_rename5 = 4;
+        uint8_t tmp_rename5;
+        for (i_rename5 = 0; i_rename5 < (n_rename5 / 2); i_rename5++)
+        {
+          for (j_rename5 = i_rename5; j_rename5 < ((n_rename5 - i_rename5) - 1); j_rename5++)
+          {
+            tmp_rename5 = board_rename[i_rename5][j_rename5];
+            board_rename[i_rename5][j_rename5] = board_rename[j_rename5][(n_rename5 - i_rename5) - 1];
+            board_rename[j_rename5][(n_rename5 - i_rename5) - 1] = board_rename[(n_rename5 - i_rename5) - 1][(n_rename5 - j_rename5) - 1];
+            board_rename[(n_rename5 - i_rename5) - 1][(n_rename5 - j_rename5) - 1] = board_rename[(n_rename5 - j_rename5) - 1][i_rename5];
+            board_rename[(n_rename5 - j_rename5) - 1][i_rename5] = tmp_rename5;
+          }
+
+        }
+
+        return5:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename6 = false;
+        uint8_t x_rename6;
+        for (x_rename6 = 0; x_rename6 < 4; x_rename6++)
+        {
+          {
+            bool return_value;
+            bool success_rename24 = false;
+            uint8_t x_rename24;
+            uint8_t t_rename24;
+            uint8_t stop_rename24 = 0;
+            for (x_rename24 = 0; x_rename24 < 4; x_rename24++)
+            {
+              if (board_rename[x_rename6][x_rename24] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename28 = stop_rename24;
+                  uint8_t x_rename28 = x_rename24;
+                  uint8_t t_rename28;
+                  if (x_rename28 == 0)
+                  {
+                    loop_counter[8]++;
+                    {
+                      return_value = x_rename28;
+                      goto return28;
+                    }
+                  }
+
+                  for (t_rename28 = x_rename28 - 1; t_rename28 >= 0; t_rename28--)
+                  {
+                    loop_counter[9]++;
+                    if (board_rename[x_rename6][t_rename28] != 0)
+                    {
+                      loop_counter[10]++;
+                      if (board_rename[x_rename6][t_rename28] != board_rename[x_rename6][x_rename28])
+                      {
+                        {
+                          return_value = t_rename28 + 1;
+                          goto return28;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename28;
+                        goto return28;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename28 == stop_rename28)
+                      {
+                        loop_counter[12]++;
+                        {
+                          return_value = t_rename28;
+                          goto return28;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename28;
+                    goto return28;
+                  }
+                  return28:
+                  ;
+
+                  t_rename24 = return_value;
+                }
+                if (t_rename24 != x_rename24)
+                {
+                  if (board_rename[x_rename6][t_rename24] == 0)
+                  {
+                    loop_counter[14]++;
+                    board_rename[x_rename6][t_rename24] = board_rename[x_rename6][x_rename24];
+                  }
+                  else
+                    if (board_rename[x_rename6][t_rename24] == board_rename[x_rename6][x_rename24])
+                  {
+                    loop_counter[15]++;
+                    board_rename[x_rename6][t_rename24]++;
+                    stop_rename24 = t_rename24 + 1;
+                  }
+
+
+                  board_rename[x_rename6][x_rename24] = 0;
+                  success_rename24 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename24;
+              goto return24;
+            }
+            return24:
+            ;
+
+            success_rename6 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename6;
+          goto return6;
+        }
+        return6:
+        ;
+
+        success_rename0 = return_value;
+      }
+      {
+        uint8_t i_rename7;
+        uint8_t j_rename7;
+        uint8_t n_rename7 = 4;
+        uint8_t tmp_rename7;
+        for (i_rename7 = 0; i_rename7 < (n_rename7 / 2); i_rename7++)
+        {
+          for (j_rename7 = i_rename7; j_rename7 < ((n_rename7 - i_rename7) - 1); j_rename7++)
+          {
+            tmp_rename7 = board_rename[i_rename7][j_rename7];
+            board_rename[i_rename7][j_rename7] = board_rename[j_rename7][(n_rename7 - i_rename7) - 1];
+            board_rename[j_rename7][(n_rename7 - i_rename7) - 1] = board_rename[(n_rename7 - i_rename7) - 1][(n_rename7 - j_rename7) - 1];
+            board_rename[(n_rename7 - i_rename7) - 1][(n_rename7 - j_rename7) - 1] = board_rename[(n_rename7 - j_rename7) - 1][i_rename7];
+            board_rename[(n_rename7 - j_rename7) - 1][i_rename7] = tmp_rename7;
+          }
+
+        }
+
+        return7:
+        ;
+
+      }
+      {
+        uint8_t i_rename8;
+        uint8_t j_rename8;
+        uint8_t n_rename8 = 4;
+        uint8_t tmp_rename8;
+        for (i_rename8 = 0; i_rename8 < (n_rename8 / 2); i_rename8++)
+        {
+          for (j_rename8 = i_rename8; j_rename8 < ((n_rename8 - i_rename8) - 1); j_rename8++)
+          {
+            tmp_rename8 = board_rename[i_rename8][j_rename8];
+            board_rename[i_rename8][j_rename8] = board_rename[j_rename8][(n_rename8 - i_rename8) - 1];
+            board_rename[j_rename8][(n_rename8 - i_rename8) - 1] = board_rename[(n_rename8 - i_rename8) - 1][(n_rename8 - j_rename8) - 1];
+            board_rename[(n_rename8 - i_rename8) - 1][(n_rename8 - j_rename8) - 1] = board_rename[(n_rename8 - j_rename8) - 1][i_rename8];
+            board_rename[(n_rename8 - j_rename8) - 1][i_rename8] = tmp_rename8;
+          }
+
+        }
+
+        return8:
+        ;
+
+      }
+      {
+        uint8_t i_rename9;
+        uint8_t j_rename9;
+        uint8_t n_rename9 = 4;
+        uint8_t tmp_rename9;
+        for (i_rename9 = 0; i_rename9 < (n_rename9 / 2); i_rename9++)
+        {
+          for (j_rename9 = i_rename9; j_rename9 < ((n_rename9 - i_rename9) - 1); j_rename9++)
+          {
+            tmp_rename9 = board_rename[i_rename9][j_rename9];
+            board_rename[i_rename9][j_rename9] = board_rename[j_rename9][(n_rename9 - i_rename9) - 1];
+            board_rename[j_rename9][(n_rename9 - i_rename9) - 1] = board_rename[(n_rename9 - i_rename9) - 1][(n_rename9 - j_rename9) - 1];
+            board_rename[(n_rename9 - i_rename9) - 1][(n_rename9 - j_rename9) - 1] = board_rename[(n_rename9 - j_rename9) - 1][i_rename9];
+            board_rename[(n_rename9 - j_rename9) - 1][i_rename9] = tmp_rename9;
+          }
+
+        }
+
+        return9:
+        ;
+
+      }
+      {
+        return_value = success_rename0;
+        goto return0;
+      }
+      return0:
+      ;
+
+    }
+      break;
+
+    case 67:
+      loop_counter[24]++;
+    {
+      bool return_value;
+      bool success_rename1;
+      {
+        uint8_t i_rename10;
+        uint8_t j_rename10;
+        uint8_t n_rename10 = 4;
+        uint8_t tmp_rename10;
+        for (i_rename10 = 0; i_rename10 < (n_rename10 / 2); i_rename10++)
+        {
+          for (j_rename10 = i_rename10; j_rename10 < ((n_rename10 - i_rename10) - 1); j_rename10++)
+          {
+            tmp_rename10 = board_rename[i_rename10][j_rename10];
+            board_rename[i_rename10][j_rename10] = board_rename[j_rename10][(n_rename10 - i_rename10) - 1];
+            board_rename[j_rename10][(n_rename10 - i_rename10) - 1] = board_rename[(n_rename10 - i_rename10) - 1][(n_rename10 - j_rename10) - 1];
+            board_rename[(n_rename10 - i_rename10) - 1][(n_rename10 - j_rename10) - 1] = board_rename[(n_rename10 - j_rename10) - 1][i_rename10];
+            board_rename[(n_rename10 - j_rename10) - 1][i_rename10] = tmp_rename10;
+          }
+
+        }
+
+        return10:
+        ;
+
+      }
+      {
+        uint8_t i_rename11;
+        uint8_t j_rename11;
+        uint8_t n_rename11 = 4;
+        uint8_t tmp_rename11;
+        for (i_rename11 = 0; i_rename11 < (n_rename11 / 2); i_rename11++)
+        {
+          for (j_rename11 = i_rename11; j_rename11 < ((n_rename11 - i_rename11) - 1); j_rename11++)
+          {
+            tmp_rename11 = board_rename[i_rename11][j_rename11];
+            board_rename[i_rename11][j_rename11] = board_rename[j_rename11][(n_rename11 - i_rename11) - 1];
+            board_rename[j_rename11][(n_rename11 - i_rename11) - 1] = board_rename[(n_rename11 - i_rename11) - 1][(n_rename11 - j_rename11) - 1];
+            board_rename[(n_rename11 - i_rename11) - 1][(n_rename11 - j_rename11) - 1] = board_rename[(n_rename11 - j_rename11) - 1][i_rename11];
+            board_rename[(n_rename11 - j_rename11) - 1][i_rename11] = tmp_rename11;
+          }
+
+        }
+
+        return11:
+        ;
+
+      }
+      {
+        uint8_t i_rename12;
+        uint8_t j_rename12;
+        uint8_t n_rename12 = 4;
+        uint8_t tmp_rename12;
+        for (i_rename12 = 0; i_rename12 < (n_rename12 / 2); i_rename12++)
+        {
+          for (j_rename12 = i_rename12; j_rename12 < ((n_rename12 - i_rename12) - 1); j_rename12++)
+          {
+            tmp_rename12 = board_rename[i_rename12][j_rename12];
+            board_rename[i_rename12][j_rename12] = board_rename[j_rename12][(n_rename12 - i_rename12) - 1];
+            board_rename[j_rename12][(n_rename12 - i_rename12) - 1] = board_rename[(n_rename12 - i_rename12) - 1][(n_rename12 - j_rename12) - 1];
+            board_rename[(n_rename12 - i_rename12) - 1][(n_rename12 - j_rename12) - 1] = board_rename[(n_rename12 - j_rename12) - 1][i_rename12];
+            board_rename[(n_rename12 - j_rename12) - 1][i_rename12] = tmp_rename12;
+          }
+
+        }
+
+        return12:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename13 = false;
+        uint8_t x_rename13;
+        for (x_rename13 = 0; x_rename13 < 4; x_rename13++)
+        {
+          {
+            bool return_value;
+            bool success_rename25 = false;
+            uint8_t x_rename25;
+            uint8_t t_rename25;
+            uint8_t stop_rename25 = 0;
+            for (x_rename25 = 0; x_rename25 < 4; x_rename25++)
+            {
+              if (board_rename[x_rename13][x_rename25] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename29 = stop_rename25;
+                  uint8_t x_rename29 = x_rename25;
+                  uint8_t t_rename29;
+                  if (x_rename29 == 0)
+                  {
+                    loop_counter[34]++;
+                    {
+                      return_value = x_rename29;
+                      goto return29;
+                    }
+                  }
+
+                  for (t_rename29 = x_rename29 - 1; t_rename29 >= 0; t_rename29--)
+                  {
+                    loop_counter[35]++;
+                    if (board_rename[x_rename13][t_rename29] != 0)
+                    {
+                      loop_counter[36]++;
+                      if (board_rename[x_rename13][t_rename29] != board_rename[x_rename13][x_rename29])
+                      {
+                        {
+                          return_value = t_rename29 + 1;
+                          goto return29;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename29;
+                        goto return29;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename29 == stop_rename29)
+                      {
+                        loop_counter[38]++;
+                        {
+                          return_value = t_rename29;
+                          goto return29;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename29;
+                    goto return29;
+                  }
+                  return29:
+                  ;
+
+                  t_rename25 = return_value;
+                }
+                if (t_rename25 != x_rename25)
+                {
+                  if (board_rename[x_rename13][t_rename25] == 0)
+                  {
+                    loop_counter[40]++;
+                    board_rename[x_rename13][t_rename25] = board_rename[x_rename13][x_rename25];
+                  }
+                  else
+                    if (board_rename[x_rename13][t_rename25] == board_rename[x_rename13][x_rename25])
+                  {
+                    loop_counter[41]++;
+                    board_rename[x_rename13][t_rename25]++;
+                    stop_rename25 = t_rename25 + 1;
+                  }
+
+
+                  board_rename[x_rename13][x_rename25] = 0;
+                  success_rename25 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename25;
+              goto return25;
+            }
+            return25:
+            ;
+
+            success_rename13 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename13;
+          goto return13;
+        }
+        return13:
+        ;
+
+        success_rename1 = return_value;
+      }
+      {
+        uint8_t i_rename14;
+        uint8_t j_rename14;
+        uint8_t n_rename14 = 4;
+        uint8_t tmp_rename14;
+        for (i_rename14 = 0; i_rename14 < (n_rename14 / 2); i_rename14++)
+        {
+          for (j_rename14 = i_rename14; j_rename14 < ((n_rename14 - i_rename14) - 1); j_rename14++)
+          {
+            tmp_rename14 = board_rename[i_rename14][j_rename14];
+            board_rename[i_rename14][j_rename14] = board_rename[j_rename14][(n_rename14 - i_rename14) - 1];
+            board_rename[j_rename14][(n_rename14 - i_rename14) - 1] = board_rename[(n_rename14 - i_rename14) - 1][(n_rename14 - j_rename14) - 1];
+            board_rename[(n_rename14 - i_rename14) - 1][(n_rename14 - j_rename14) - 1] = board_rename[(n_rename14 - j_rename14) - 1][i_rename14];
+            board_rename[(n_rename14 - j_rename14) - 1][i_rename14] = tmp_rename14;
+          }
+
+        }
+
+        return14:
+        ;
+
+      }
+      {
+        return_value = success_rename1;
+        goto return1;
+      }
+      return1:
+      ;
+
+    }
+      break;
+
+    case 65:
+      loop_counter[46]++;
+    {
+      bool return_value;
+      bool success_rename2 = false;
+      uint8_t x_rename2;
+      for (x_rename2 = 0; x_rename2 < 4; x_rename2++)
+      {
+        {
+          bool return_value;
+          bool success_rename15 = false;
+          uint8_t x_rename15;
+          uint8_t t_rename15;
+          uint8_t stop_rename15 = 0;
+          for (x_rename15 = 0; x_rename15 < 4; x_rename15++)
+          {
+            if (board_rename[x_rename2][x_rename15] != 0)
+            {
+              {
+                uint8_t return_value;
+                uint8_t stop_rename26 = stop_rename15;
+                uint8_t x_rename26 = x_rename15;
+                uint8_t t_rename26;
+                if (x_rename26 == 0)
+                {
+                  loop_counter[50]++;
+                  {
+                    return_value = x_rename26;
+                    goto return26;
+                  }
+                }
+
+                for (t_rename26 = x_rename26 - 1; t_rename26 >= 0; t_rename26--)
+                {
+                  loop_counter[51]++;
+                  if (board_rename[x_rename2][t_rename26] != 0)
+                  {
+                    if (board_rename[x_rename2][t_rename26] != board_rename[x_rename2][x_rename26])
+                    {
+                      loop_counter[53]++;
+                      {
+                        return_value = t_rename26 + 1;
+                        goto return26;
+                      }
+                    }
+
+                    {
+                      return_value = t_rename26;
+                      goto return26;
+                    }
+                  }
+                  else
+                  {
+                    if (t_rename26 == stop_rename26)
+                    {
+                      loop_counter[54]++;
+                      {
+                        return_value = t_rename26;
+                        goto return26;
+                      }
+                    }
+
+                  }
+
+                }
+
+                {
+                  return_value = x_rename26;
+                  goto return26;
+                }
+                return26:
+                ;
+
+                t_rename15 = return_value;
+              }
+              if (t_rename15 != x_rename15)
+              {
+                if (board_rename[x_rename2][t_rename15] == 0)
+                {
+                  loop_counter[56]++;
+                  board_rename[x_rename2][t_rename15] = board_rename[x_rename2][x_rename15];
+                }
+                else
+                  if (board_rename[x_rename2][t_rename15] == board_rename[x_rename2][x_rename15])
+                {
+                  loop_counter[57]++;
+                  board_rename[x_rename2][t_rename15]++;
+                  stop_rename15 = t_rename15 + 1;
+                }
+
+
+                board_rename[x_rename2][x_rename15] = 0;
+                success_rename15 = true;
+              }
+
+            }
+
+          }
+
+          {
+            return_value = success_rename15;
+            goto return15;
+          }
+          return15:
+          ;
+
+          success_rename2 = return_value;
+        }
+      }
+
+      {
+        return_value = success_rename2;
+        goto return2;
+      }
+      return2:
+      ;
+
+    }
+      break;
+
+    case 66:
+      loop_counter[60]++;
+    {
+      bool return_value;
+      bool success_rename3;
+      {
+        uint8_t i_rename16;
+        uint8_t j_rename16;
+        uint8_t n_rename16 = 4;
+        uint8_t tmp_rename16;
+        for (i_rename16 = 0; i_rename16 < (n_rename16 / 2); i_rename16++)
+        {
+          for (j_rename16 = i_rename16; j_rename16 < ((n_rename16 - i_rename16) - 1); j_rename16++)
+          {
+            tmp_rename16 = board_rename[i_rename16][j_rename16];
+            board_rename[i_rename16][j_rename16] = board_rename[j_rename16][(n_rename16 - i_rename16) - 1];
+            board_rename[j_rename16][(n_rename16 - i_rename16) - 1] = board_rename[(n_rename16 - i_rename16) - 1][(n_rename16 - j_rename16) - 1];
+            board_rename[(n_rename16 - i_rename16) - 1][(n_rename16 - j_rename16) - 1] = board_rename[(n_rename16 - j_rename16) - 1][i_rename16];
+            board_rename[(n_rename16 - j_rename16) - 1][i_rename16] = tmp_rename16;
+          }
+
+        }
+
+        return16:
+        ;
+
+      }
+      {
+        uint8_t i_rename17;
+        uint8_t j_rename17;
+        uint8_t n_rename17 = 4;
+        uint8_t tmp_rename17;
+        for (i_rename17 = 0; i_rename17 < (n_rename17 / 2); i_rename17++)
+        {
+          for (j_rename17 = i_rename17; j_rename17 < ((n_rename17 - i_rename17) - 1); j_rename17++)
+          {
+            tmp_rename17 = board_rename[i_rename17][j_rename17];
+            board_rename[i_rename17][j_rename17] = board_rename[j_rename17][(n_rename17 - i_rename17) - 1];
+            board_rename[j_rename17][(n_rename17 - i_rename17) - 1] = board_rename[(n_rename17 - i_rename17) - 1][(n_rename17 - j_rename17) - 1];
+            board_rename[(n_rename17 - i_rename17) - 1][(n_rename17 - j_rename17) - 1] = board_rename[(n_rename17 - j_rename17) - 1][i_rename17];
+            board_rename[(n_rename17 - j_rename17) - 1][i_rename17] = tmp_rename17;
+          }
+
+        }
+
+        return17:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename18 = false;
+        uint8_t x_rename18;
+        for (x_rename18 = 0; x_rename18 < 4; x_rename18++)
+        {
+          {
+            bool return_value;
+            bool success_rename27 = false;
+            uint8_t x_rename27;
+            uint8_t t_rename27;
+            uint8_t stop_rename27 = 0;
+            for (x_rename27 = 0; x_rename27 < 4; x_rename27++)
+            {
+              if (board_rename[x_rename18][x_rename27] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename30 = stop_rename27;
+                  uint8_t x_rename30 = x_rename27;
+                  uint8_t t_rename30;
+                  if (x_rename30 == 0)
+                  {
+                    loop_counter[68]++;
+                    {
+                      return_value = x_rename30;
+                      goto return30;
+                    }
+                  }
+
+                  for (t_rename30 = x_rename30 - 1; t_rename30 >= 0; t_rename30--)
+                  {
+                    loop_counter[69]++;
+                    if (board_rename[x_rename18][t_rename30] != 0)
+                    {
+                      loop_counter[70]++;
+                      if (board_rename[x_rename18][t_rename30] != board_rename[x_rename18][x_rename30])
+                      {
+                        {
+                          return_value = t_rename30 + 1;
+                          goto return30;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename30;
+                        goto return30;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename30 == stop_rename30)
+                      {
+                        loop_counter[72]++;
+                        {
+                          return_value = t_rename30;
+                          goto return30;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename30;
+                    goto return30;
+                  }
+                  return30:
+                  ;
+
+                  t_rename27 = return_value;
+                }
+                if (t_rename27 != x_rename27)
+                {
+                  if (board_rename[x_rename18][t_rename27] == 0)
+                  {
+                    loop_counter[74]++;
+                    board_rename[x_rename18][t_rename27] = board_rename[x_rename18][x_rename27];
+                  }
+                  else
+                    if (board_rename[x_rename18][t_rename27] == board_rename[x_rename18][x_rename27])
+                  {
+                    loop_counter[75]++;
+                    board_rename[x_rename18][t_rename27]++;
+                    stop_rename27 = t_rename27 + 1;
+                  }
+
+
+                  board_rename[x_rename18][x_rename27] = 0;
+                  success_rename27 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename27;
+              goto return27;
+            }
+            return27:
+            ;
+
+            success_rename18 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename18;
+          goto return18;
+        }
+        return18:
+        ;
+
+        success_rename3 = return_value;
+      }
+      {
+        uint8_t i_rename19;
+        uint8_t j_rename19;
+        uint8_t n_rename19 = 4;
+        uint8_t tmp_rename19;
+        for (i_rename19 = 0; i_rename19 < (n_rename19 / 2); i_rename19++)
+        {
+          for (j_rename19 = i_rename19; j_rename19 < ((n_rename19 - i_rename19) - 1); j_rename19++)
+          {
+            tmp_rename19 = board_rename[i_rename19][j_rename19];
+            board_rename[i_rename19][j_rename19] = board_rename[j_rename19][(n_rename19 - i_rename19) - 1];
+            board_rename[j_rename19][(n_rename19 - i_rename19) - 1] = board_rename[(n_rename19 - i_rename19) - 1][(n_rename19 - j_rename19) - 1];
+            board_rename[(n_rename19 - i_rename19) - 1][(n_rename19 - j_rename19) - 1] = board_rename[(n_rename19 - j_rename19) - 1][i_rename19];
+            board_rename[(n_rename19 - j_rename19) - 1][i_rename19] = tmp_rename19;
+          }
+
+        }
+
+        return19:
+        ;
+
+      }
+      {
+        uint8_t i_rename20;
+        uint8_t j_rename20;
+        uint8_t n_rename20 = 4;
+        uint8_t tmp_rename20;
+        for (i_rename20 = 0; i_rename20 < (n_rename20 / 2); i_rename20++)
+        {
+          for (j_rename20 = i_rename20; j_rename20 < ((n_rename20 - i_rename20) - 1); j_rename20++)
+          {
+            tmp_rename20 = board_rename[i_rename20][j_rename20];
+            board_rename[i_rename20][j_rename20] = board_rename[j_rename20][(n_rename20 - i_rename20) - 1];
+            board_rename[j_rename20][(n_rename20 - i_rename20) - 1] = board_rename[(n_rename20 - i_rename20) - 1][(n_rename20 - j_rename20) - 1];
+            board_rename[(n_rename20 - i_rename20) - 1][(n_rename20 - j_rename20) - 1] = board_rename[(n_rename20 - j_rename20) - 1][i_rename20];
+            board_rename[(n_rename20 - j_rename20) - 1][i_rename20] = tmp_rename20;
+          }
+
+        }
+
+        return20:
+        ;
+
+      }
+      {
+        return_value = success_rename3;
+        goto return3;
+      }
+      return3:
+      ;
+
+    }
+      break;
+
+  }
+
+  {
+    uint8_t x_rename4;
+    uint8_t y_rename4;
+    for (y_rename4 = 0; y_rename4 < 4; y_rename4++)
+    {
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          uint8_t value_rename21 = board_rename[x_rename4][y_rename4];
+          if (value_rename21 > 0)
+          {
+            while (value_rename21--)
+            {
+              loop_counter[84]++;
+            }
+
+          }
+
+          return21:
+          ;
+
+        }
+      }
+
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          return22:
+          ;
+
+        }
+      }
+
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          return23:
+          ;
+
+        }
+      }
+
+    }
+
+    return4:
+    ;
+
+  }
+  {
+    goto print_loop_counter;
+  }
+  {
+    print_loop_counter:
+    if (DEBUG_EN)
+      write_array(loop_counter, 95);
+
+
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 1315.600000*loop_counter[2] + 21.085700*loop_counter[8] + 23.628600*loop_counter[9] + -29.657100*loop_counter[10] + -82.257100*loop_counter[12] + 10.742900*loop_counter[14] + 27.542900*loop_counter[15] + 1311.930000*loop_counter[24] + 35.809100*loop_counter[34] + 11.469700*loop_counter[35] + -20.100000*loop_counter[36] + -40.954500*loop_counter[38] + 4.806060*loop_counter[40] + 14.848500*loop_counter[41] + 1153.560000*loop_counter[46] + 75.091600*loop_counter[50] + 43.063600*loop_counter[51] + -52.476600*loop_counter[53] + 75.106500*loop_counter[54] + -47.530800*loop_counter[56] + -134.849000*loop_counter[57] + 1492.870000*loop_counter[60] + -3.000000*loop_counter[68] + -6.266670*loop_counter[69] + -5.422220*loop_counter[70] + -39.155600*loop_counter[72] + 18.822200*loop_counter[74] + 31.822200*loop_counter[75] + 0.800000*loop_counter[84] + 0.000000;
+    return exec_time;
+  }
+}
+#else // LITTLE
+float main_loop_slice_reduced(char c, uint8_t board[4][4])
+{
+  uint8_t board_rename[4][4];
+  int board_i0;
+  for (board_i0 = 0; board_i0 < 4; board_i0++)
+  {
+    int board_i1;
+    for (board_i1 = 0; board_i1 < 4; board_i1++)
+    {
+      board_rename[board_i0][board_i1] = board[board_i0][board_i1];
+    }
+
+  }
+
+  int loop_counter[95] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  switch (c)
+  {
+    case 68:
+      loop_counter[2]++;
+    {
+      bool return_value;
+      bool success_rename0;
+      {
+        uint8_t i_rename5;
+        uint8_t j_rename5;
+        uint8_t n_rename5 = 4;
+        uint8_t tmp_rename5;
+        for (i_rename5 = 0; i_rename5 < (n_rename5 / 2); i_rename5++)
+        {
+          for (j_rename5 = i_rename5; j_rename5 < ((n_rename5 - i_rename5) - 1); j_rename5++)
+          {
+            tmp_rename5 = board_rename[i_rename5][j_rename5];
+            board_rename[i_rename5][j_rename5] = board_rename[j_rename5][(n_rename5 - i_rename5) - 1];
+            board_rename[j_rename5][(n_rename5 - i_rename5) - 1] = board_rename[(n_rename5 - i_rename5) - 1][(n_rename5 - j_rename5) - 1];
+            board_rename[(n_rename5 - i_rename5) - 1][(n_rename5 - j_rename5) - 1] = board_rename[(n_rename5 - j_rename5) - 1][i_rename5];
+            board_rename[(n_rename5 - j_rename5) - 1][i_rename5] = tmp_rename5;
+          }
+
+        }
+
+        return5:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename6 = false;
+        uint8_t x_rename6;
+        for (x_rename6 = 0; x_rename6 < 4; x_rename6++)
+        {
+          {
+            bool return_value;
+            bool success_rename24 = false;
+            uint8_t x_rename24;
+            uint8_t t_rename24;
+            uint8_t stop_rename24 = 0;
+            for (x_rename24 = 0; x_rename24 < 4; x_rename24++)
+            {
+              if (board_rename[x_rename6][x_rename24] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename28 = stop_rename24;
+                  uint8_t x_rename28 = x_rename24;
+                  uint8_t t_rename28;
+                  if (x_rename28 == 0)
+                  {
+                    loop_counter[8]++;
+                    {
+                      return_value = x_rename28;
+                      goto return28;
+                    }
+                  }
+
+                  for (t_rename28 = x_rename28 - 1; t_rename28 >= 0; t_rename28--)
+                  {
+                    loop_counter[9]++;
+                    if (board_rename[x_rename6][t_rename28] != 0)
+                    {
+                      if (board_rename[x_rename6][t_rename28] != board_rename[x_rename6][x_rename28])
+                      {
+                        loop_counter[11]++;
+                        {
+                          return_value = t_rename28 + 1;
+                          goto return28;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename28;
+                        goto return28;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename28 == stop_rename28)
+                      {
+                        loop_counter[12]++;
+                        {
+                          return_value = t_rename28;
+                          goto return28;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename28;
+                    goto return28;
+                  }
+                  return28:
+                  ;
+
+                  t_rename24 = return_value;
+                }
+                if (t_rename24 != x_rename24)
+                {
+                  if (board_rename[x_rename6][t_rename24] == 0)
+                  {
+                    loop_counter[14]++;
+                    board_rename[x_rename6][t_rename24] = board_rename[x_rename6][x_rename24];
+                  }
+                  else
+                    if (board_rename[x_rename6][t_rename24] == board_rename[x_rename6][x_rename24])
+                  {
+                    loop_counter[15]++;
+                    board_rename[x_rename6][t_rename24]++;
+                    stop_rename24 = t_rename24 + 1;
+                  }
+
+
+                  board_rename[x_rename6][x_rename24] = 0;
+                  success_rename24 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename24;
+              goto return24;
+            }
+            return24:
+            ;
+
+            success_rename6 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename6;
+          goto return6;
+        }
+        return6:
+        ;
+
+        success_rename0 = return_value;
+      }
+      {
+        uint8_t i_rename7;
+        uint8_t j_rename7;
+        uint8_t n_rename7 = 4;
+        uint8_t tmp_rename7;
+        for (i_rename7 = 0; i_rename7 < (n_rename7 / 2); i_rename7++)
+        {
+          for (j_rename7 = i_rename7; j_rename7 < ((n_rename7 - i_rename7) - 1); j_rename7++)
+          {
+            tmp_rename7 = board_rename[i_rename7][j_rename7];
+            board_rename[i_rename7][j_rename7] = board_rename[j_rename7][(n_rename7 - i_rename7) - 1];
+            board_rename[j_rename7][(n_rename7 - i_rename7) - 1] = board_rename[(n_rename7 - i_rename7) - 1][(n_rename7 - j_rename7) - 1];
+            board_rename[(n_rename7 - i_rename7) - 1][(n_rename7 - j_rename7) - 1] = board_rename[(n_rename7 - j_rename7) - 1][i_rename7];
+            board_rename[(n_rename7 - j_rename7) - 1][i_rename7] = tmp_rename7;
+          }
+
+        }
+
+        return7:
+        ;
+
+      }
+      {
+        uint8_t i_rename8;
+        uint8_t j_rename8;
+        uint8_t n_rename8 = 4;
+        uint8_t tmp_rename8;
+        for (i_rename8 = 0; i_rename8 < (n_rename8 / 2); i_rename8++)
+        {
+          for (j_rename8 = i_rename8; j_rename8 < ((n_rename8 - i_rename8) - 1); j_rename8++)
+          {
+            tmp_rename8 = board_rename[i_rename8][j_rename8];
+            board_rename[i_rename8][j_rename8] = board_rename[j_rename8][(n_rename8 - i_rename8) - 1];
+            board_rename[j_rename8][(n_rename8 - i_rename8) - 1] = board_rename[(n_rename8 - i_rename8) - 1][(n_rename8 - j_rename8) - 1];
+            board_rename[(n_rename8 - i_rename8) - 1][(n_rename8 - j_rename8) - 1] = board_rename[(n_rename8 - j_rename8) - 1][i_rename8];
+            board_rename[(n_rename8 - j_rename8) - 1][i_rename8] = tmp_rename8;
+          }
+
+        }
+
+        return8:
+        ;
+
+      }
+      {
+        uint8_t i_rename9;
+        uint8_t j_rename9;
+        uint8_t n_rename9 = 4;
+        uint8_t tmp_rename9;
+        for (i_rename9 = 0; i_rename9 < (n_rename9 / 2); i_rename9++)
+        {
+          for (j_rename9 = i_rename9; j_rename9 < ((n_rename9 - i_rename9) - 1); j_rename9++)
+          {
+            tmp_rename9 = board_rename[i_rename9][j_rename9];
+            board_rename[i_rename9][j_rename9] = board_rename[j_rename9][(n_rename9 - i_rename9) - 1];
+            board_rename[j_rename9][(n_rename9 - i_rename9) - 1] = board_rename[(n_rename9 - i_rename9) - 1][(n_rename9 - j_rename9) - 1];
+            board_rename[(n_rename9 - i_rename9) - 1][(n_rename9 - j_rename9) - 1] = board_rename[(n_rename9 - j_rename9) - 1][i_rename9];
+            board_rename[(n_rename9 - j_rename9) - 1][i_rename9] = tmp_rename9;
+          }
+
+        }
+
+        return9:
+        ;
+
+      }
+      {
+        return_value = success_rename0;
+        goto return0;
+      }
+      return0:
+      ;
+
+    }
+      break;
+
+    case 67:
+      loop_counter[24]++;
+    {
+      bool return_value;
+      bool success_rename1;
+      {
+        uint8_t i_rename10;
+        uint8_t j_rename10;
+        uint8_t n_rename10 = 4;
+        uint8_t tmp_rename10;
+        for (i_rename10 = 0; i_rename10 < (n_rename10 / 2); i_rename10++)
+        {
+          for (j_rename10 = i_rename10; j_rename10 < ((n_rename10 - i_rename10) - 1); j_rename10++)
+          {
+            tmp_rename10 = board_rename[i_rename10][j_rename10];
+            board_rename[i_rename10][j_rename10] = board_rename[j_rename10][(n_rename10 - i_rename10) - 1];
+            board_rename[j_rename10][(n_rename10 - i_rename10) - 1] = board_rename[(n_rename10 - i_rename10) - 1][(n_rename10 - j_rename10) - 1];
+            board_rename[(n_rename10 - i_rename10) - 1][(n_rename10 - j_rename10) - 1] = board_rename[(n_rename10 - j_rename10) - 1][i_rename10];
+            board_rename[(n_rename10 - j_rename10) - 1][i_rename10] = tmp_rename10;
+          }
+
+        }
+
+        return10:
+        ;
+
+      }
+      {
+        uint8_t i_rename11;
+        uint8_t j_rename11;
+        uint8_t n_rename11 = 4;
+        uint8_t tmp_rename11;
+        for (i_rename11 = 0; i_rename11 < (n_rename11 / 2); i_rename11++)
+        {
+          for (j_rename11 = i_rename11; j_rename11 < ((n_rename11 - i_rename11) - 1); j_rename11++)
+          {
+            tmp_rename11 = board_rename[i_rename11][j_rename11];
+            board_rename[i_rename11][j_rename11] = board_rename[j_rename11][(n_rename11 - i_rename11) - 1];
+            board_rename[j_rename11][(n_rename11 - i_rename11) - 1] = board_rename[(n_rename11 - i_rename11) - 1][(n_rename11 - j_rename11) - 1];
+            board_rename[(n_rename11 - i_rename11) - 1][(n_rename11 - j_rename11) - 1] = board_rename[(n_rename11 - j_rename11) - 1][i_rename11];
+            board_rename[(n_rename11 - j_rename11) - 1][i_rename11] = tmp_rename11;
+          }
+
+        }
+
+        return11:
+        ;
+
+      }
+      {
+        uint8_t i_rename12;
+        uint8_t j_rename12;
+        uint8_t n_rename12 = 4;
+        uint8_t tmp_rename12;
+        for (i_rename12 = 0; i_rename12 < (n_rename12 / 2); i_rename12++)
+        {
+          for (j_rename12 = i_rename12; j_rename12 < ((n_rename12 - i_rename12) - 1); j_rename12++)
+          {
+            tmp_rename12 = board_rename[i_rename12][j_rename12];
+            board_rename[i_rename12][j_rename12] = board_rename[j_rename12][(n_rename12 - i_rename12) - 1];
+            board_rename[j_rename12][(n_rename12 - i_rename12) - 1] = board_rename[(n_rename12 - i_rename12) - 1][(n_rename12 - j_rename12) - 1];
+            board_rename[(n_rename12 - i_rename12) - 1][(n_rename12 - j_rename12) - 1] = board_rename[(n_rename12 - j_rename12) - 1][i_rename12];
+            board_rename[(n_rename12 - j_rename12) - 1][i_rename12] = tmp_rename12;
+          }
+
+        }
+
+        return12:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename13 = false;
+        uint8_t x_rename13;
+        for (x_rename13 = 0; x_rename13 < 4; x_rename13++)
+        {
+          {
+            bool return_value;
+            bool success_rename25 = false;
+            uint8_t x_rename25;
+            uint8_t t_rename25;
+            uint8_t stop_rename25 = 0;
+            for (x_rename25 = 0; x_rename25 < 4; x_rename25++)
+            {
+              if (board_rename[x_rename13][x_rename25] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename29 = stop_rename25;
+                  uint8_t x_rename29 = x_rename25;
+                  uint8_t t_rename29;
+                  if (x_rename29 == 0)
+                  {
+                    loop_counter[34]++;
+                    {
+                      return_value = x_rename29;
+                      goto return29;
+                    }
+                  }
+
+                  for (t_rename29 = x_rename29 - 1; t_rename29 >= 0; t_rename29--)
+                  {
+                    loop_counter[35]++;
+                    if (board_rename[x_rename13][t_rename29] != 0)
+                    {
+                      loop_counter[36]++;
+                      if (board_rename[x_rename13][t_rename29] != board_rename[x_rename13][x_rename29])
+                      {
+                        {
+                          return_value = t_rename29 + 1;
+                          goto return29;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename29;
+                        goto return29;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename29 == stop_rename29)
+                      {
+                        loop_counter[38]++;
+                        {
+                          return_value = t_rename29;
+                          goto return29;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename29;
+                    goto return29;
+                  }
+                  return29:
+                  ;
+
+                  t_rename25 = return_value;
+                }
+                if (t_rename25 != x_rename25)
+                {
+                  if (board_rename[x_rename13][t_rename25] == 0)
+                  {
+                    loop_counter[40]++;
+                    board_rename[x_rename13][t_rename25] = board_rename[x_rename13][x_rename25];
+                  }
+                  else
+                    if (board_rename[x_rename13][t_rename25] == board_rename[x_rename13][x_rename25])
+                  {
+                    loop_counter[41]++;
+                    board_rename[x_rename13][t_rename25]++;
+                    stop_rename25 = t_rename25 + 1;
+                  }
+
+
+                  board_rename[x_rename13][x_rename25] = 0;
+                  success_rename25 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename25;
+              goto return25;
+            }
+            return25:
+            ;
+
+            success_rename13 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename13;
+          goto return13;
+        }
+        return13:
+        ;
+
+        success_rename1 = return_value;
+      }
+      {
+        uint8_t i_rename14;
+        uint8_t j_rename14;
+        uint8_t n_rename14 = 4;
+        uint8_t tmp_rename14;
+        for (i_rename14 = 0; i_rename14 < (n_rename14 / 2); i_rename14++)
+        {
+          for (j_rename14 = i_rename14; j_rename14 < ((n_rename14 - i_rename14) - 1); j_rename14++)
+          {
+            tmp_rename14 = board_rename[i_rename14][j_rename14];
+            board_rename[i_rename14][j_rename14] = board_rename[j_rename14][(n_rename14 - i_rename14) - 1];
+            board_rename[j_rename14][(n_rename14 - i_rename14) - 1] = board_rename[(n_rename14 - i_rename14) - 1][(n_rename14 - j_rename14) - 1];
+            board_rename[(n_rename14 - i_rename14) - 1][(n_rename14 - j_rename14) - 1] = board_rename[(n_rename14 - j_rename14) - 1][i_rename14];
+            board_rename[(n_rename14 - j_rename14) - 1][i_rename14] = tmp_rename14;
+          }
+
+        }
+
+        return14:
+        ;
+
+      }
+      {
+        return_value = success_rename1;
+        goto return1;
+      }
+      return1:
+      ;
+
+    }
+      break;
+
+    case 65:
+      loop_counter[46]++;
+    {
+      bool return_value;
+      bool success_rename2 = false;
+      uint8_t x_rename2;
+      for (x_rename2 = 0; x_rename2 < 4; x_rename2++)
+      {
+        {
+          bool return_value;
+          bool success_rename15 = false;
+          uint8_t x_rename15;
+          uint8_t t_rename15;
+          uint8_t stop_rename15 = 0;
+          for (x_rename15 = 0; x_rename15 < 4; x_rename15++)
+          {
+            if (board_rename[x_rename2][x_rename15] != 0)
+            {
+              {
+                uint8_t return_value;
+                uint8_t stop_rename26 = stop_rename15;
+                uint8_t x_rename26 = x_rename15;
+                uint8_t t_rename26;
+                if (x_rename26 == 0)
+                {
+                  loop_counter[50]++;
+                  {
+                    return_value = x_rename26;
+                    goto return26;
+                  }
+                }
+
+                for (t_rename26 = x_rename26 - 1; t_rename26 >= 0; t_rename26--)
+                {
+                  loop_counter[51]++;
+                  if (board_rename[x_rename2][t_rename26] != 0)
+                  {
+                    if (board_rename[x_rename2][t_rename26] != board_rename[x_rename2][x_rename26])
+                    {
+                      loop_counter[53]++;
+                      {
+                        return_value = t_rename26 + 1;
+                        goto return26;
+                      }
+                    }
+
+                    {
+                      return_value = t_rename26;
+                      goto return26;
+                    }
+                  }
+                  else
+                  {
+                    if (t_rename26 == stop_rename26)
+                    {
+                      loop_counter[54]++;
+                      {
+                        return_value = t_rename26;
+                        goto return26;
+                      }
+                    }
+
+                  }
+
+                }
+
+                {
+                  return_value = x_rename26;
+                  goto return26;
+                }
+                return26:
+                ;
+
+                t_rename15 = return_value;
+              }
+              if (t_rename15 != x_rename15)
+              {
+                if (board_rename[x_rename2][t_rename15] == 0)
+                {
+                  loop_counter[56]++;
+                  board_rename[x_rename2][t_rename15] = board_rename[x_rename2][x_rename15];
+                }
+                else
+                  if (board_rename[x_rename2][t_rename15] == board_rename[x_rename2][x_rename15])
+                {
+                  board_rename[x_rename2][t_rename15]++;
+                  stop_rename15 = t_rename15 + 1;
+                }
+
+
+                board_rename[x_rename2][x_rename15] = 0;
+                success_rename15 = true;
+              }
+
+            }
+
+          }
+
+          {
+            return_value = success_rename15;
+            goto return15;
+          }
+          return15:
+          ;
+
+          success_rename2 = return_value;
+        }
+      }
+
+      {
+        return_value = success_rename2;
+        goto return2;
+      }
+      return2:
+      ;
+
+    }
+      break;
+
+    case 66:
+      loop_counter[60]++;
+    {
+      bool return_value;
+      bool success_rename3;
+      {
+        uint8_t i_rename16;
+        uint8_t j_rename16;
+        uint8_t n_rename16 = 4;
+        uint8_t tmp_rename16;
+        for (i_rename16 = 0; i_rename16 < (n_rename16 / 2); i_rename16++)
+        {
+          for (j_rename16 = i_rename16; j_rename16 < ((n_rename16 - i_rename16) - 1); j_rename16++)
+          {
+            tmp_rename16 = board_rename[i_rename16][j_rename16];
+            board_rename[i_rename16][j_rename16] = board_rename[j_rename16][(n_rename16 - i_rename16) - 1];
+            board_rename[j_rename16][(n_rename16 - i_rename16) - 1] = board_rename[(n_rename16 - i_rename16) - 1][(n_rename16 - j_rename16) - 1];
+            board_rename[(n_rename16 - i_rename16) - 1][(n_rename16 - j_rename16) - 1] = board_rename[(n_rename16 - j_rename16) - 1][i_rename16];
+            board_rename[(n_rename16 - j_rename16) - 1][i_rename16] = tmp_rename16;
+          }
+
+        }
+
+        return16:
+        ;
+
+      }
+      {
+        uint8_t i_rename17;
+        uint8_t j_rename17;
+        uint8_t n_rename17 = 4;
+        uint8_t tmp_rename17;
+        for (i_rename17 = 0; i_rename17 < (n_rename17 / 2); i_rename17++)
+        {
+          for (j_rename17 = i_rename17; j_rename17 < ((n_rename17 - i_rename17) - 1); j_rename17++)
+          {
+            tmp_rename17 = board_rename[i_rename17][j_rename17];
+            board_rename[i_rename17][j_rename17] = board_rename[j_rename17][(n_rename17 - i_rename17) - 1];
+            board_rename[j_rename17][(n_rename17 - i_rename17) - 1] = board_rename[(n_rename17 - i_rename17) - 1][(n_rename17 - j_rename17) - 1];
+            board_rename[(n_rename17 - i_rename17) - 1][(n_rename17 - j_rename17) - 1] = board_rename[(n_rename17 - j_rename17) - 1][i_rename17];
+            board_rename[(n_rename17 - j_rename17) - 1][i_rename17] = tmp_rename17;
+          }
+
+        }
+
+        return17:
+        ;
+
+      }
+      {
+        bool return_value;
+        bool success_rename18 = false;
+        uint8_t x_rename18;
+        for (x_rename18 = 0; x_rename18 < 4; x_rename18++)
+        {
+          {
+            bool return_value;
+            bool success_rename27 = false;
+            uint8_t x_rename27;
+            uint8_t t_rename27;
+            uint8_t stop_rename27 = 0;
+            for (x_rename27 = 0; x_rename27 < 4; x_rename27++)
+            {
+              if (board_rename[x_rename18][x_rename27] != 0)
+              {
+                {
+                  uint8_t return_value;
+                  uint8_t stop_rename30 = stop_rename27;
+                  uint8_t x_rename30 = x_rename27;
+                  uint8_t t_rename30;
+                  if (x_rename30 == 0)
+                  {
+                    loop_counter[68]++;
+                    {
+                      return_value = x_rename30;
+                      goto return30;
+                    }
+                  }
+
+                  for (t_rename30 = x_rename30 - 1; t_rename30 >= 0; t_rename30--)
+                  {
+                    loop_counter[69]++;
+                    if (board_rename[x_rename18][t_rename30] != 0)
+                    {
+                      if (board_rename[x_rename18][t_rename30] != board_rename[x_rename18][x_rename30])
+                      {
+                        loop_counter[71]++;
+                        {
+                          return_value = t_rename30 + 1;
+                          goto return30;
+                        }
+                      }
+
+                      {
+                        return_value = t_rename30;
+                        goto return30;
+                      }
+                    }
+                    else
+                    {
+                      if (t_rename30 == stop_rename30)
+                      {
+                        {
+                          return_value = t_rename30;
+                          goto return30;
+                        }
+                      }
+
+                    }
+
+                  }
+
+                  {
+                    return_value = x_rename30;
+                    goto return30;
+                  }
+                  return30:
+                  ;
+
+                  t_rename27 = return_value;
+                }
+                if (t_rename27 != x_rename27)
+                {
+                  loop_counter[73]++;
+                  if (board_rename[x_rename18][t_rename27] == 0)
+                  {
+                    board_rename[x_rename18][t_rename27] = board_rename[x_rename18][x_rename27];
+                  }
+                  else
+                    if (board_rename[x_rename18][t_rename27] == board_rename[x_rename18][x_rename27])
+                  {
+                    loop_counter[75]++;
+                    board_rename[x_rename18][t_rename27]++;
+                    stop_rename27 = t_rename27 + 1;
+                  }
+
+
+                  board_rename[x_rename18][x_rename27] = 0;
+                  success_rename27 = true;
+                }
+
+              }
+
+            }
+
+            {
+              return_value = success_rename27;
+              goto return27;
+            }
+            return27:
+            ;
+
+            success_rename18 = return_value;
+          }
+        }
+
+        {
+          return_value = success_rename18;
+          goto return18;
+        }
+        return18:
+        ;
+
+        success_rename3 = return_value;
+      }
+      {
+        uint8_t i_rename19;
+        uint8_t j_rename19;
+        uint8_t n_rename19 = 4;
+        uint8_t tmp_rename19;
+        for (i_rename19 = 0; i_rename19 < (n_rename19 / 2); i_rename19++)
+        {
+          for (j_rename19 = i_rename19; j_rename19 < ((n_rename19 - i_rename19) - 1); j_rename19++)
+          {
+            tmp_rename19 = board_rename[i_rename19][j_rename19];
+            board_rename[i_rename19][j_rename19] = board_rename[j_rename19][(n_rename19 - i_rename19) - 1];
+            board_rename[j_rename19][(n_rename19 - i_rename19) - 1] = board_rename[(n_rename19 - i_rename19) - 1][(n_rename19 - j_rename19) - 1];
+            board_rename[(n_rename19 - i_rename19) - 1][(n_rename19 - j_rename19) - 1] = board_rename[(n_rename19 - j_rename19) - 1][i_rename19];
+            board_rename[(n_rename19 - j_rename19) - 1][i_rename19] = tmp_rename19;
+          }
+
+        }
+
+        return19:
+        ;
+
+      }
+      {
+        uint8_t i_rename20;
+        uint8_t j_rename20;
+        uint8_t n_rename20 = 4;
+        uint8_t tmp_rename20;
+        for (i_rename20 = 0; i_rename20 < (n_rename20 / 2); i_rename20++)
+        {
+          for (j_rename20 = i_rename20; j_rename20 < ((n_rename20 - i_rename20) - 1); j_rename20++)
+          {
+            tmp_rename20 = board_rename[i_rename20][j_rename20];
+            board_rename[i_rename20][j_rename20] = board_rename[j_rename20][(n_rename20 - i_rename20) - 1];
+            board_rename[j_rename20][(n_rename20 - i_rename20) - 1] = board_rename[(n_rename20 - i_rename20) - 1][(n_rename20 - j_rename20) - 1];
+            board_rename[(n_rename20 - i_rename20) - 1][(n_rename20 - j_rename20) - 1] = board_rename[(n_rename20 - j_rename20) - 1][i_rename20];
+            board_rename[(n_rename20 - j_rename20) - 1][i_rename20] = tmp_rename20;
+          }
+
+        }
+
+        return20:
+        ;
+
+      }
+      {
+        return_value = success_rename3;
+        goto return3;
+      }
+      return3:
+      ;
+
+    }
+      break;
+
+  }
+
+  {
+    uint8_t x_rename4;
+    uint8_t y_rename4;
+    for (y_rename4 = 0; y_rename4 < 4; y_rename4++)
+    {
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          uint8_t value_rename21 = board_rename[x_rename4][y_rename4];
+          if (value_rename21 > 0)
+          {
+            while (value_rename21--)
+            {
+              loop_counter[84]++;
+            }
+
+          }
+
+          return21:
+          ;
+
+        }
+      }
+
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          return22:
+          ;
+
+        }
+      }
+
+      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      {
+        {
+          return23:
+          ;
+
+        }
+      }
+
+    }
+
+    return4:
+    ;
+
+  }
+  {
+    goto print_loop_counter;
+  }
+  {
+    print_loop_counter:
+    if (DEBUG_EN)
+      write_array(loop_counter, 95);
+
+
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 23902.200000*loop_counter[2] + 5032.610000*loop_counter[8] + -4265.260000*loop_counter[9] + 4787.560000*loop_counter[11] + 5613.910000*loop_counter[12] + 1095.900000*loop_counter[14] + 5096.860000*loop_counter[15] + -21153.800000*loop_counter[24] + 6624.550000*loop_counter[34] + 4508.050000*loop_counter[35] + -1453.240000*loop_counter[36] + 5630.150000*loop_counter[38] + -4470.560000*loop_counter[40] + -7863.490000*loop_counter[41] + 31479.900000*loop_counter[46] + -4925.650000*loop_counter[50] + -1450.150000*loop_counter[51] + 2819.850000*loop_counter[53] + -1919.750000*loop_counter[54] + -248.450000*loop_counter[56] + 6072.700000*loop_counter[57] + -4359.020000*loop_counter[60] + -6486.160000*loop_counter[68] + 5563.720000*loop_counter[69] + -603.713000*loop_counter[71] + -11633.900000*loop_counter[72] + -2483.070000*loop_counter[73] + 5600.850000*loop_counter[75] + -424.300000*loop_counter[84] + 0.000000;
+    return exec_time;
+  }
+}
+#endif
 
 bool main_loop_loop_counters(char c, uint8_t board[4][4])
 {
@@ -2521,14 +4253,14 @@ int main(int argc, char *argv[]) {
         CASE 5 = running on our prediction without overhead 
     */
     #if GET_PREDICT /* CASE 0 */
-        predicted_exec_time = main_loop_slice(c, board); //slice
+        predicted_exec_time = main_loop_slice_reduced(c, board); //slice
     #endif
     #if GET_DEADLINE /* CASE 1 */
         //nothing
     #endif
     #if GET_OVERHEAD /* CASE 2 */
         start_timing();
-        predicted_exec_time = main_loop_slice(c, board); //slice
+        predicted_exec_time = main_loop_slice_reduced(c, board); //slice
         end_timing();
         slice_time = fprint_slice_timing();
 
@@ -2545,7 +4277,7 @@ int main(int argc, char *argv[]) {
         moment_timing_fprint(0); //moment_start
         
         start_timing();
-        predicted_exec_time = main_loop_slice(c, board); //slice
+        predicted_exec_time = main_loop_slice_reduced(c, board); //slice
         end_timing();
         slice_time = fprint_slice_timing();
 
@@ -2556,7 +4288,7 @@ int main(int argc, char *argv[]) {
     #endif
     #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
         start_timing();
-        predicted_exec_time = main_loop_slice(c, board); //slice
+        predicted_exec_time = main_loop_slice_reduced(c, board); //slice
         end_timing();
         slice_time = fprint_slice_timing();
         

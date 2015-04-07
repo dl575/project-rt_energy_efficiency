@@ -56,6 +56,7 @@ void fclose_all(void){
 }
 
 void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
+#if DVFS_EN
     int predicted_freq = MAX_FREQ;
        
     //calculate predicted freq and round up by adding 99999
@@ -65,6 +66,7 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
     fflush(fp_max_freq);
+#endif
 
     return;
 }

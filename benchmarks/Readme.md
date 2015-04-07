@@ -28,3 +28,11 @@ Terminal-based strategy game. To build, run `make`.
 Web browser. Run `make` to build. May need to run `make install` to set up config, but can run `make uninstall` and still run binary. Also, run `source setup.sh` to setup paths needed.
 
 Source: https://github.com/uzbl/uzbl
+
+## pocketsphinx
+
+Voice recognition program.
+
+Source: http://cmusphinx.sourceforge.net/
+
+Some tutorial information: http://www.eecis.udel.edu/~bohacek/MobileComputing/Android/pocketSphinx.pptx
