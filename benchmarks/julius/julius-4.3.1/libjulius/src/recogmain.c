@@ -190,78 +190,28 @@ print_mem()
 #endif
 
 #include "timing.h"
+#include "my_common.h"
 
 //---------------------modified by TJSong----------------------//
+//set global variables
 struct timeval start, end, moment;
-
-#define MILLION 1000000L
-//manually set below
-#define CORE 1 //0:LITTLE, 1:big
-
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 0 //0:delay off, 1:delay on
-#define OVERHEAD_EN 0//1:measure dvfs, slice timing
-
-#define OVERHEAD_TIME 919920 //overhead deadline
-#define AVG_OVERHEAD_TIME 431075 //avg overhead deadline
-#define DEADLINE_TIME 463 + OVERHEAD_TIME //deadline
-#define MAX_DVFS_TIME 2458 //max dvfs time
-#define AVG_DVFS_TIME 900 //average dvfs time
-#define GET_PREDICT 0 //to get prediction equation
-#define GET_OVERHEAD 0 //to get overhead deadline
-
-#define DEBUG_EN 1 //debug information print on/off
-//automatically set
-#define MAX_FREQ ((CORE)?(2000000):(1400000))
-
-FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
-FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
-float watt; //Value (Watt) at start point.
-int khz; //Value (khz) at start point.
-
-FILE *fp_max_freq; //File pointer scaling_max_freq
-int predicted_freq = MAX_FREQ;
-
 int slice_time = 0;
 int dvfs_time = 0;
 
-void fopen_all(void){
-    if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
-    return;
-}
-
-void fclose_all(void){
-   fclose(fp_max_freq);
-    return;
-}
-
-void print_freq(void){
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-        printf("ERROR : FILE READ FAILED\n");
-        return;
-    }
-    fscanf(fp_freq, "%d", &khz);
-    fprintf(time_file, "big core freq : %dkhz\n", khz);  
-    fclose(fp_freq);
-    fclose(time_file); 
-    return;
-}
-
-inline void set_freq(float exec_time, int slice_time){
-    //calculate predicted freq and round up by adding 99999
-    predicted_freq = exec_time * MAX_FREQ / (DEADLINE_TIME - slice_time - AVG_DVFS_TIME) + 99999;
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < 200000)?(200000):(predicted_freq);
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-    return;
-}
+//define benchmarks-depenent varaibles & constants
+#if CORE //big
+#define OVERHEAD_TIME 922080 //overhead deadline
+#define AVG_OVERHEAD_TIME 435589 //avg overhead deadline
+#define DEADLINE_TIME 266 + OVERHEAD_TIME //max_exec + max_overhead
+#define MAX_DVFS_TIME 2455 //max dvfs time
+#define AVG_DVFS_TIME 833 //average dvfs time
+#else //LITTLE
+#define OVERHEAD_TIME 2106705 //overhead deadline
+#define AVG_OVERHEAD_TIME 1138242 //avg overhead deadline
+#define DEADLINE_TIME 16356 + OVERHEAD_TIME //max_exec + max_overhead
+#define MAX_DVFS_TIME 2149 //max dvfs time
+#define AVG_DVFS_TIME 542 //average dvfs time
+#endif
 //---------------------modified by TJSong----------------------//
 
 
@@ -750,11 +700,8 @@ result_error(Recog *recog, int status)
   }
 }
 
-int call_adin_go(Recog *recog)
+float call_adin_go(Recog *recog)
 {
-//---------------------modified by TJSong----------------------//
-    start_timing();
-//---------------------modified by TJSong----------------------//
   int loop_counter[188] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int ret;
   {
@@ -2231,46 +2178,23 @@ int call_adin_go(Recog *recog)
   }
   {
     print_loop_counter:
-    
-/*
-    printf("loop counter = (");
-    int i;
-    for (i = 0; i < 188; i++)
-      printf("%d, ", loop_counter[i]);
-
-    printf(")\n");
-*/
+    ;
+#if PREDICT_EN || DEBUG_EN 
     write_array(loop_counter, 188);  
+#endif
   }
-//---------------------modified by TJSong----------------------//
-float exec_time;
-exec_time = 18685.500000*loop_counter[0] + -4633.150000*loop_counter[4] + 26144.000000*loop_counter[27] + -68.212000*loop_counter[140] + 11764.000000*loop_counter[147] + 0.000000;
+  {
+    predict_exec_time:
+    ;
 
-    end_timing();
-    slice_time = fprint_slice_timing();
-
-#if DEBUG_EN
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "predicted time = %f\n", exec_time);
-    fclose(time_file);
-#endif
-
-#if GET_OVERHEAD
-    start_timing();
-#endif
-
-#if !GET_PREDICT
-    set_freq(exec_time, slice_time); //do dvfs
-#endif
-
-#if GET_OVERHEAD
-    end_timing();
-    dvfs_time = fprint_dvfs_timing();
-#endif
-//---------------------modified by TJSong----------------------//
- 
-  return ret;
+    float exec_time;
+#if CORE //big
+    exec_time = 18685.500000*loop_counter[0] + -4633.150000*loop_counter[4] + 26144.000000*loop_counter[27] + -68.212000*loop_counter[140] + 11764.000000*loop_counter[147] + 0.000000;
+#else //LITTLE
+    exec_time = 117845.000000*loop_counter[0] + -19199.000000*loop_counter[4] + 75781.600000*loop_counter[27] + -290.941000*loop_counter[140] + 50041.600000*loop_counter[147] + 0.000000;
+#endif 
+  return exec_time;
+  }
 }
 
 
@@ -2547,63 +2471,82 @@ j_recognize_stream_core(Recog *recog)
         /* get speech and process it on real-time */
         //ret = adin_go(RealTimePipeLine, callback_check_in_adin, recog);
 //---------------------modified by TJSong----------------------//
-    fopen_all();//TJSong 
-
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-    
-    fprintf(time_file, "============ deadline time : %d us ===========\n", DEADLINE_TIME);//TJSong
-    fclose(time_file);
+    fopen_all(); //fopen for frequnecy file
+    fprint_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
       // Run adin_go with loop counts
 //---------------------modified by TJSong----------------------//
-#if !PREDICT_EN //!PREDICT_EN
-    #if !GET_PREDICT //!PREDICT_EN & !GET_PREDICT
-    moment_timing();
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    fclose(time_file);
-    start_timing();
-    #else //!PREDICT_EN & GET_PREDICT
-    moment_timing();
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    fclose(time_file);
-    call_adin_go(recog);//slice
-    start_timing(); //overwrite start timing
+    // Perform slicing and prediction
+    float predicted_exec_time = 0.0;
+    /*
+        CASE 0 = to get prediction equation
+        CASE 1 = to get execution deadline
+        CASE 2 = to get overhead deadline
+        CASE 3 = running on default linux governors
+        CASE 4 = running on our prediction with overhead 
+        CASE 5 = running on our prediction without overhead 
+    */
+    #if GET_PREDICT /* CASE 0 */
+        predicted_exec_time = call_adin_go(recog);//slice
     #endif
-#elif !GET_OVERHEAD //PREDICT_EN & !GET_OVERHEAD
-    #if OVERHEAD_EN //prediction with overhead
-    moment_timing();
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    fclose(time_file);
-    call_adin_go(recog);//slice
-    start_timing();
-    #else //prediction without overhead
-    call_adin_go(recog);//slice
-    moment_timing();
-    time_file = fopen("times.txt", "a");
-    fprintf(time_file, "moment_start : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    fclose(time_file);
-    start_timing();
+    #if GET_DEADLINE /* CASE 1 */
+        //nothing
     #endif
-#else //PREDICT_EN & GET_OVERHEAD
-    call_adin_go(recog);//slice
-    start_timing(); //overwrite start #endif
-#endif
+    #if GET_OVERHEAD /* CASE 2 */
+        start_timing();
+        predicted_exec_time = call_adin_go(recog);//slice
+        end_timing();
+        slice_time = fprint_slice_timing();
 
-#if DEBUG_EN
-    print_freq(); //[DEBUG] check frequency 
-#endif
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+    #if !PREDICT_EN /* CASE 3 */
+        //slice_time=0; dvfs_time=0;
+        moment_timing_fprint(0); //moment_start
+    #endif
+    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+        moment_timing_fprint(0); //moment_start
+        
+        start_timing();
+        predicted_exec_time = call_adin_go(recog);//slice
+        end_timing();
+        slice_time = fprint_slice_timing();
+
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
+        start_timing();
+        predicted_exec_time = call_adin_go(recog);//slice
+        end_timing();
+        slice_time = fprint_slice_timing();
+        
+        moment_timing_fprint(0); //moment_start
+
+        start_timing();
+        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+        end_timing();
+        dvfs_time = fprint_dvfs_timing();
+    #endif
+    
+    // Write out predicted time & print out frequency used
+    #if DEBUG_EN
+        fprint_predicted_time(predicted_exec_time);
+        fprint_freq(); //[DEBUG] check frequency 
+    #endif
 //---------------------modified by TJSong----------------------//
 	} else {
 	  /* get feature vector and process it */
 	  ret = mfcc_go(recog, callback_check_in_adin);
 	}
 
-//  start_timing();
+    start_timing();
 	
 	if (ret < 0) {		/* error end in adin_go */
 	  if (ret == -2 || recog->process_want_terminate) {	
@@ -3015,34 +2958,29 @@ j_recognize_stream_core(Recog *recog)
 
     end_timing();
 //---------------------modified by TJSong----------------------//
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
     int exec_time = exec_timing();
     int delay_time = 0;
-    static int instance_number = 0;
-#if DELAY_EN //DELAY_EN 
-    fprintf(time_file, "exec_time_before_delay %d = %d us\n", instance_number, exec_time); //[DEBUG]
-    if( (delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0 ){
-        fprintf(time_file, "calculated delay is %d us\n", delay_time); //[DEBUG]
-        start_timing();  
-        usleep(delay_time);
-        end_timing();
-        delay_time = exec_timing();
-        fprintf(time_file, "actually delayed by %d us\n", delay_time); //[DEBUG]
-        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time + delay_time);
-    }else
-        fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
-#else //!DELAY_EN
-    #if !GET_PREDICT //!DELAY_EN & !GET_PREDICT
-    fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time + slice_time + dvfs_time);
-    #else //!DELAY_EN & GET_PREDICT
-    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
+
+    #if GET_PREDICT /* CASE 0 */
+        fprint_exec_time(exec_time);
     #endif
-#endif
-    moment_timing();
-    fprintf(time_file, "moment_end : %lu us\n", moment.tv_sec * MILLION + moment.tv_usec);
-    instance_number++;
-    fclose(time_file);
+    #if GET_DEADLINE /* CASE 1 */
+        fprint_exec_time(exec_time);
+    #endif
+    #if GET_OVERHEAD /* CASE 2 */
+        //nothing
+    #endif
+    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+        if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            start_timing();
+            usleep(delay_time);
+            end_timing();
+            delay_time = exec_timing();
+        }else
+            delay_time = 0;
+        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
+        moment_timing_fprint(1); //moment_end
+    #endif
     fclose_all();//TJSong
 //---------------------modified by TJSong----------------------//
 
