@@ -42,11 +42,11 @@ int dvfs_time = 0;
 #define MAX_DVFS_TIME 2943 //max dvfs time
 #define AVG_DVFS_TIME 419 //average dvfs time
 #else //LITTLE
-#define OVERHEAD_TIME 5036 //overhead deadline
-#define AVG_OVERHEAD_TIME 1224 //avg overhead deadline
-#define DEADLINE_TIME 46943 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 3411 //max dvfs time
-#define AVG_DVFS_TIME 654 //average dvfs time
+#define OVERHEAD_TIME 4697 //overhead deadline
+#define AVG_OVERHEAD_TIME 1450 //avg overhead deadline
+#define DEADLINE_TIME 67812 + OVERHEAD_TIME //max_exec + max_overhead
+#define MAX_DVFS_TIME 4231 //max dvfs time
+#define AVG_DVFS_TIME 1407 //average dvfs time
 #endif
 //---------------------modified by TJSong----------------------//
 
@@ -2263,9 +2263,10 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
   }
   {
     print_loop_counter:
-    if (DEBUG_EN)
+    ;
+#if GET_PREDICT || DEBUG_EN
       write_array(loop_counter, 95);
-
+#endif
 
   }
   {
@@ -3128,9 +3129,10 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
   }
   {
     print_loop_counter:
-    if (DEBUG_EN)
+    ;
+#if GET_PREDICT || DEBUG_EN
       write_array(loop_counter, 95);
-
+#endif
 
   }
   {
