@@ -37,6 +37,14 @@ int main()
     ;
 
   }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
+  }
 }
 
 

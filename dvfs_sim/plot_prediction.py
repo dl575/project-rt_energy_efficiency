@@ -29,7 +29,7 @@ plot(times, 'k', linewidth=2)
 
 # Predicted times
 predict_dir = "predict_times/"
-policies = ["policy_tuned_pid", "policy_data_dependent_oracle", "policy_data_dependent_lp", "policy_lasso"]
+policies = ["policy_tuned_pid", "policy_least_squares", "policy_conservative"]
 for (i, policy) in enumerate(policies):
   filename = predict_dir + "%s-%s.txt" % (policy, benchmark)
   predict_times = read_predict_file(filename)
@@ -37,7 +37,7 @@ for (i, policy) in enumerate(policies):
   plot(predict_times, '.', color=colors[i], linewidth=1)
 plot([max(times)]*len(times))
 #legend(["original"] + policies, loc="upper center", ncol=2)
-legend(["Execution Time", "PID", "Least-Squares Prediction", "Conservative Prediction", "Lasso", "Max Time"])
+legend(["Execution Time", "PID", "Least-Squares Prediction", "Conservative Prediction", "Max Time"])
 ylim([0, 3*max(times)])
 #ylim([0, 1000])
 

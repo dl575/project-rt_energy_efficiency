@@ -20,11 +20,11 @@ Functions:
   policy_pid(times, P, I, D, metrics)
   policy_pid_timeliness(train_times, train_metrics, test_times, test_metrics)
   policy_pid_energy(train_times, train_metrics, test_times, test_metrics)
-  policy_data_dependent(train_times, train_metrics, test_times, test_metrics)
-  policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
-  policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times, test_metrics)
-  policy_data_dependent_oracle(train_times, train_metrics, test_times, test_metrics)
+  policy_least_squares(train_times, train_metrics, test_times, test_metrics)
+  policy_conservative(train_times, train_metrics, test_times, test_metrics)
   policy_lasso(train_times, train_metrics, test_times, test_metrics);
+  policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constraints):
+  policy_cvx_conservative_lasso(train_times, train_metrics, test_times, test_metrics, underpredict_penalty, lasso_weight):
   policy_oracle(train_times, train_metrics, test_times, test_metrics)
 
   deadline_misses(times, frequencies, deadline)
@@ -48,8 +48,6 @@ import sklearn.linear_model
 benchmarks = ["rijndael", "sha", "stringsearch", "julius_slice", "2048_slice", "xpilot_slice",
   "curseofwar_slice", "uzbl"]
 
-#default_dvfs_levels = [0.25, 0.50, 0.75, 1.00]
-#default_dvfs_levels = [0.05, 0.1, 0.15, 0.2, 0.25, 0.50, 0.75, 1.00]
 default_dvfs_levels = [.1*x for x in range(1, 11)]
 
 def average(l):
@@ -251,39 +249,29 @@ def policy_pid_energy(train_times, train_metrics=None, test_times=None, test_met
   #default_dvfs_levels = [.1*x for x in range(1, 11)]
   #return policy_pid(times, P=0.20, I=0.00, D=0.35)
 
-def policy_data_dependent(train_times, train_metrics, test_times=None, test_metrics=None):
+def policy_least_squares(train_times, train_metrics, test_times=None, test_metrics=None):
   """
-  Data dependent execution time predictor. For frame n, it uses frames 1 to n-1
-  to construct a linear regression model for prediction.
+  Prediction based on linear least-squares regression.
   """
-  # Training is done online with test set
-  if test_times:
-    times = test_times
-    metrics = test_metrics
-  else:
-    times = train_times
-    metrics = train_metrics
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
 
-  # Initialize predicted times
-  predicted_times = [0]*len(times)
+  y = numpy.array([train_times])
+  x = numpy.array(train_metrics)
+  coeffs = regression(y, x)
 
-  # For each task,
-  for i in range(1, len(times)):
-    # Perform regression using passed metrics
-    y = numpy.array([times[:i]])
-    x = numpy.array(metrics[:i])
-    coeffs = regression(y, x)
-    # Use regression coefficients to predict next frame
-    x = [1] + metrics[i]
+  f = open("temp.lps", 'w')
+  f.write(', '.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
     predicted_times[i] = numpy.dot(x, coeffs)[0]
-    if predicted_times[i] > 2*max(times):
-      predicted_times[i] = 2*max(times)
-    elif predicted_times[i] < 0:
-      predicted_times[i] = -1 
-
   return predicted_times
 
-def policy_data_dependent_lp(train_times, train_metrics, test_times=None, test_metrics=None):
+def policy_conservative(train_times, train_metrics, test_times=None, test_metrics=None):
   """
   This predictor constructs a LP problem to solve for a linear model mapping
   metrics to execution times. The LP problem includes constraints so that the
@@ -343,233 +331,6 @@ def policy_data_dependent_lp(train_times, train_metrics, test_times=None, test_m
     predicted_times[i] = numpy.dot(x, coeffs)
   return predicted_times
 
-def policy_data_dependent_lp_quadratic(train_times, train_metrics, test_times=None, test_metrics=None):
-  """
-  Constructs a LP problem to come up with a predictor that is conservative
-  (i.e., predicted times >= observed times). The constructed model includes
-  both linear and squared terms of metrics (i.e., y = b_0x_0 + b_1x_1 + ... +
-  c_0x_0^2 + c_1x_1^2 + ...). It does not include cross terms (e.g., x_0*x_0).
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-    
-  # Add squared version of metrics
-  for metric in train_metrics:
-    metric += [m*m for m in metric]
-  for metric in test_metrics:
-    metric += [m*m for m in metric]
-  return policy_data_dependent_lp(train_times, train_metrics, test_times, test_metrics)
-
-def policy_data_dependent_oracle(train_times, train_metrics, test_times=None, test_metrics=None):
-  """
-  Use all times and metrics to perform regression first. Then, use complete model
-  to predict times.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  y = numpy.array([train_times])
-  x = numpy.array(train_metrics)
-  coeffs = regression(y, x)
-
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_cvx_least_squares(train_times, train_metrics, test_times=None, test_metrics=None):
-  """
-  Linear least squares regression using CVXPY.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  # Problem data
-  # Add constant term
-  train_metrics = [[1] + x for x in train_metrics]
-  X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
-
-  # Construct the problem
-  b = cvxpy.Variable(X.shape[1])
-  obj = cvxpy.Minimize(cvxpy.norm(y - X*b))
-  prob = cvxpy.Problem(obj)
-
-  # Solve
-  prob.solve()
-  if prob.status != cvxpy.OPTIMAL:
-    print "Problem not solved optimally: ", prob.status
-  # Write out results
-  coeffs = numpy.array(b.value)
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  # Perform prediction
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_cvx_lasso(train_times, train_metrics, test_times=None, test_metrics=None, lasso_weight=10):
-  """
-  LASSO implemented using CVXPY.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  # Problem data
-  # Add constant term
-  train_metrics = [[1] + x for x in train_metrics]
-  X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
-
-  # Construct the problem
-  b = cvxpy.Variable(X.shape[1])
-  obj = cvxpy.Minimize(cvxpy.norm(y - X*b, 2) + lasso_weight*cvxpy.norm(b, 1))
-  prob = cvxpy.Problem(obj)
-
-  # Solve
-  prob.solve()
-  if prob.status != cvxpy.OPTIMAL:
-    print "Problem not solved optimally: ", prob.status
-  # Write out results
-  coeffs = numpy.array(b.value)
-  print sum(map(lambda x: x > 1e-6, coeffs))
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  # Perform prediction
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_cvx_conservative(train_times, train_metrics, test_times=None, test_metrics=None):
-  """
-  Linear least squares regression using CVXPY.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  # Problem data
-  # Add constant term
-  train_metrics = [[1] + x for x in train_metrics]
-  X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
-
-  # Construct the problem
-  b = cvxpy.Variable(X.shape[1])
-  constraints = []
-  for i in range(len(y)):
-    constraints.append((X*b - y)[i] >= 0)
-  obj = cvxpy.Minimize(cvxpy.norm(y - X*b, 2))
-  prob = cvxpy.Problem(obj, constraints)
-
-  # Solve
-  prob.solve()
-  if prob.status != cvxpy.OPTIMAL:
-    print "Problem not solved optimally: ", prob.status
-  # Write out results
-  coeffs = numpy.array(b.value)
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  # Perform prediction
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_cvx_conservative_penalty(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100):
-  """
-  Linear least squares regression using CVXPY.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  # Problem data
-  # Add constant term
-  train_metrics = [[1] + x for x in train_metrics]
-  X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
-
-  # Construct the problem
-  b = cvxpy.Variable(X.shape[1])
-  constraints = []
-  obj = cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, underpredict_penalty)))
-  prob = cvxpy.Problem(obj, constraints)
-
-  # Solve
-  prob.solve()
-  if prob.status != cvxpy.OPTIMAL:
-    print "Problem not solved optimally: ", prob.status
-  # Write out results
-  coeffs = numpy.array(b.value)
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  # Perform prediction
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
-def policy_cvx_conservative_lasso(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100, lasso_weight=10):
-  """
-  Linear least squares regression using CVXPY.
-  """
-  if not test_times:
-    test_times = train_times
-    test_metrics = train_metrics
-
-  # Problem data
-  # Add constant term
-  train_metrics = [[1] + x for x in train_metrics]
-  X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
-
-  # Construct the problem
-  b = cvxpy.Variable(X.shape[1])
-  constraints = []
-  obj = cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, underpredict_penalty)) + lasso_weight*cvxpy.norm(b, 1))
-  prob = cvxpy.Problem(obj, constraints)
-
-  # Solve
-  prob.solve()
-  if prob.status != cvxpy.OPTIMAL:
-    print "Problem not solved optimally: ", prob.status
-  # Write out results
-  coeffs = numpy.array(b.value)
-  f = open("temp.lps", 'w')
-  f.write(', '.join([str(x[0]) for x in coeffs]))
-  f.close()
-
-  # Perform prediction
-  predicted_times = [0]*len(test_times)
-  for i in range(len(test_times)):
-    x = [1] + test_metrics[i]
-    predicted_times[i] = numpy.dot(x, coeffs)[0]
-  return predicted_times
-
 def policy_lasso(train_times, train_metrics, test_times=None, test_metrics=None):
   """
   LASSO-based regression.
@@ -590,6 +351,65 @@ def policy_lasso(train_times, train_metrics, test_times=None, test_metrics=None)
   # Apply prediction to test set
   predicted_times = clf.predict(test_metrics)
   return predicted_times
+
+def policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constraints=[]):
+  """
+  Core for doing CVX optimization. obj and constraints are strings defining the
+  optimization objective and constraints to be used. y are the execution times,
+  X is the matrix of features, and b is the coefficients.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  # Problem data
+  # Add constant term
+  train_metrics = [[1] + x for x in train_metrics]
+  X = numpy.array(train_metrics)
+  y = numpy.array(map(float, train_times))
+
+  # Construct the problem
+  b = cvxpy.Variable(X.shape[1])
+  for i in range(len(constraints)):
+    constraints[i] = eval(constraints[i])
+  obj = eval(obj)
+  prob = cvxpy.Problem(obj, constraints)
+
+  # Solve
+  prob.solve()
+  if prob.status != cvxpy.OPTIMAL:
+    print "Problem not solved optimally: ", prob.status
+  # Write out results
+  coeffs = numpy.array(b.value)
+  f = open("temp.lps", 'w')
+  f.write("b\t\t" + str(coeffs[0][0]) + "\n")
+  f.write('\n'.join(["b%d\t\t" % (i) + str(x[0]) for (i, x) in enumerate(coeffs[1:])]))
+  #f.write('\n'.join([str(x[0]) for x in coeffs]))
+  f.close()
+
+  # Perform prediction
+  predicted_times = [0]*len(test_times)
+  for i in range(len(test_times)):
+    x = [1] + test_metrics[i]
+    predicted_times[i] = numpy.dot(x, coeffs)[0]
+  return predicted_times
+
+def policy_cvx_conservative_lasso(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100, lasso_weight=0):
+  """
+  Penalty function is sum of underpredict difference, overpredict difference,
+  and L1-norm of coefficients. underpredict_penalty gives a weight to
+  underprediction penalty and lasso_weight gives a weight to L1-norm of
+  coefficients (excluding b[0] which is the constant offset).
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  constraints = []
+  #for i in range(len(train_times)):
+  #  constraints.append("(X*b - y)[%d] >=0" % (i))
+  obj = "cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, %d)) + %d*cvxpy.norm(b[1:], 1))" % (underpredict_penalty, lasso_weight)
+  return policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constraints)
 
 def policy_oracle(train_times, train_metrics=None, test_times=None, test_metrics=None):
   """

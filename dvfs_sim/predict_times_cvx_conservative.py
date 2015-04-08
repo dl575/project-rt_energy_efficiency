@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
@@ -28,7 +28,7 @@ def function_pointers(filename):
     vectors.append(vector)
   return vectors
 
-def run_prediction(train_filename, test_filename, policy, underpredict_penalty):
+def run_prediction(train_filename, test_filename, policy, underpredict_penalty, lasso_weight):
   """
   Runs [policy] on the data in [filename] in order to predict the execution
   time of tasks.  Returns the predicted times and the original observed
@@ -53,7 +53,7 @@ def run_prediction(train_filename, test_filename, policy, underpredict_penalty):
     test_metrics = map(lambda x, y: x+y, test_metrics, fp)
 
   # Predict times using the passed policy
-  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics, underpredict_penalty=underpredict_penalty)
+  predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics, underpredict_penalty=underpredict_penalty, lasso_weight=lasso_weight)
 
   s = 0
   for i in range(1, len(predict_times)):
@@ -63,6 +63,7 @@ def run_prediction(train_filename, test_filename, policy, underpredict_penalty):
 
 input_data_dir = "data/"
 output_dir = "predict_times/"
+predictor_dir = "predictors/"
 # Create output directory if it does not exist
 if not os.path.isdir(output_dir):
   os.system("mkdir " + output_dir)
@@ -71,24 +72,28 @@ policies = [
     #policy_data_dependent_oracle, 
     #policy_data_dependent_lp, 
     #policy_cvx_least_squares,
-    policy_cvx_conservative_penalty,
     #policy_oracle,
     ]
 
 # For each DVFS policy
 #for policy in policies:
-policy = policy_cvx_conservative_penalty
-for underpredict_penalty in [1, 2, 5, 10, 100]:
-  print policy.__name__ + "_%d" % (underpredict_penalty)
-  for benchmark in benchmarks:
-    # Predict execution times
-    train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
-    test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
-    print "  " + train_filename
-    (predict_times, times) = run_prediction(train_filename, test_filename, policy, underpredict_penalty=underpredict_penalty)
-    # Write prediction out to file
-    out_file = open("%s/%s_%s-%s.txt" % (output_dir, policy.__name__, underpredict_penalty, benchmark), 'w')
-    out_file.write("\n".join([str(x) for x in predict_times]))
-    out_file.close()
-
+policy = policy_cvx_conservative_lasso
+underpredict_penalties = [100]
+lasso_weights = [0, .1, 1, 10, 100, 1000]
+for underpredict_penalty in underpredict_penalties:
+  for lasso_weight in lasso_weights:
+    policy_name = "%s_%d_%.3f" % (policy.__name__, underpredict_penalty, lasso_weight)
+    print policy_name
+    for benchmark in benchmarks:
+      # Predict execution times
+      train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
+      test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
+      print "  " + train_filename
+      (predict_times, times) = run_prediction(train_filename, test_filename, policy, underpredict_penalty, lasso_weight)
+      # Save predictor
+      os.system("cp temp.lps %s/%s-%s.lps" % (predictor_dir, policy_name, benchmark))
+      # Write prediction out to file
+      out_file = open("%s/%s-%s.txt" % (output_dir, policy_name, benchmark), 'w')
+      out_file.write("\n".join([str(x) for x in predict_times]))
+      out_file.close()
 

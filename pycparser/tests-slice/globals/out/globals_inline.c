@@ -25,7 +25,9 @@ struct struct_t
   int a;
 }
 ;
-int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct)
+typedef struct struct_t struct2_t
+;
+int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct, int *arg_int_ptr, struct2_t *arg_struct2)
 {
   int a;
   int b = a;
@@ -41,6 +43,8 @@ int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct)
   declared_global++;
   arg3[1][2][3]++;
   arg_struct->a = 1;
+  arg_struct2->a = 1;
+  (*arg_int_ptr)++;
   enum custom_enum e;
   e = one;
   a = global_var0 + global_var1;

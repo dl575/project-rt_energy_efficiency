@@ -1,0 +1,103 @@
+PYTHON=/usr/bin/python
+DIRNAME=pocketsphinx
+FILENAME=$(DIRNAME)/pocketsphinx
+FUNCNAME=ps_process_raw
+LOOP_COUNT_FLAGS=--write_to_file
+GLOBALS_IGNORE=DEBUG_EN ACMOD_IDLE
+
+slice: preprocess
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	$(PYTHON) globals.py $(FILENAME)_slice.c $(FUNCNAME)_slice $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
+	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
+
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+preprocess:
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
+
+	$(call fd, "char const \* cmd_ln_str_r")
+	$(call fd, "float64 logmath_get_base")
+	$(call fd, "double cmd_ln_float_r")
+	$(call fd, "boolean cmd_ln_boolean_r")
+	$(call fd, "long cmd_ln_int_r")
+	$(call fd, "acmod_t \* acmod_init")
+	$(call fd, "ps_search_t \* phone_loop_search_init")
+	$(call fd, "dict_t \* dict_init")
+	$(call fd, "dict2pid_t \* dict2pid_build")
+	$(call fd, "ngram_model_t \* ngram_model_set_read")
+	$(call fd, "int strcmp")
+	$(call fd, "s3wid_t dict_add_word")
+	$(call fd, "int32 ngram_model_add_word")
+	$(call fd, "long int ftell")
+	$(call fd, "int acmod_start_utt")
+	$(call fd, "FILE \* fopen")
+	$(call fd, "int acmod_process_raw")
+	$(call fd, "int acmod_process_cep")
+
+  # Define custom types
+	$(call td, "boolean")
+	$(call td, "uint8")
+	$(call td, "ps_nbest_t")
+	$(call td, "mfcc_t")
+	$(call td, "size_t")
+	$(call td, "int16")
+	$(call td, "FILE")
+	$(call td, "s3wid_t")
+	$(call td, "jsgf_t")
+	$(call td, "fsg_search_t")
+	$(call td, "ngram_search_t")
+	$(call td, "ps_search_iter_t")
+	$(call td, "ps_mllr_t")
+	$(call td, "feat_t")
+	$(call td, "fe_t")
+	$(call td, "ngram_model_t")
+	$(call td, "fsg_model_t")
+	$(call td, "float64")
+	$(call td, "float32")
+	$(call td, "arg_t")
+	$(call td, "hash_iter_t")
+	$(call td, "ptmr_t")
+	$(call td, "uint32")
+	$(call td, "hash_table_t")
+	$(call td, "logmath_t")
+	$(call td, "float32")
+	$(call td, "frame_idx_t")
+	$(call td, "ps_latlink_t")
+	$(call td, "acmod_t")
+	$(call td, "cmd_ln_t")
+	$(call td, "ps_seg_t")
+	$(call td, "int32")
+	$(call td, "ps_lattice_t")
+	$(call td, "ps_decoder_t")
+	$(call td, "dict_t")
+	$(call td, "dict2pid_t")
+	$(call td, "ps_search_t")
+
+
+	#$(call fd, "int client_init_session")
+	#$(call fd, "int server_init")
+	#$(call fd, "int server_get_msg")
+	#$(call fd, "int sa_match")
+	#$(call fd, "int get_options")
+	#$(call fd, "int sigaction")
+	#$(call fd, "size_t fread")
+	#$(call td, "size_t")
+
+	#$(call td, "sigset_t")
+	#$(call td, "uint8_t")
+	#$(call td, "ssize_t")
+	#$(call td, "socklen_t")
+	#$(call td, "sig_atomic_t")
+	#$(call td, "arg_t")
+
+clean:
+	rm -f $(FILENAME)2.c
+	rm -f $(FILENAME)3.c
+	rm -f $(FILENAME)_inline.c
+	rm -f $(FILENAME)_loop_counts.c
+	rm -f $(FILENAME)_slice.c
+	rm -f $(FILENAME)_globals.c
+	rm -f $(FILENAME)_cleanup.c

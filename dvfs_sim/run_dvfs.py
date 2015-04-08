@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
+import sys
 from parse_lib import *
 from dvfs_sim_lib import *
 
@@ -25,51 +26,64 @@ def run_dvfs(predict_times, times, deadline=None, dvfs_levels=None, margin=1.1):
 
   return (result_times, frequencies, deadline)
 
-def read_predict_file(filename):
-  f = open(filename, 'r')
-  data = []
-  for line in f:
-    data.append(float(line))
-  f.close()
-  return data
+if __name__ == "__main__":
 
+  run_all = False
+  if len(sys.argv) > 1:
+    flags = sys.argv[1:]
+    # Run DVFS for all found prediction files
+    if "--all" in flags:
+      run_all = True
 
-policies = [
-  #"policy_pid_timeliness",
-  "policy_tuned_pid",
-  "policy_data_dependent_oracle", 
-  "policy_data_dependent_lp", 
-  "policy_lasso",
-  "policy_oracle"]
-input_dir = "data"
-output_dir = "predict_times"
+  input_dir = "data"
+  output_dir = "predict_times"
+  if run_all:
+    # Find all policies that were run
+    policies = []
+    for root, dirname, filenames in os.walk(output_dir):
+      for filename in filenames:
+        policy = filename.split("-")[0]
+        if not policy in policies:
+          policies.append(policy)
+  else:
+    policies = [
+      "policy_tuned_pid",
+      "policy_least_squares", 
+      "policy_conservative", 
+      "policy_oracle",
+      
+      "policy_cvx_conservative_lasso_1",
+      "policy_cvx_conservative_lasso_2",
+      "policy_cvx_conservative_lasso_5",
+      "policy_cvx_conservative_lasso_10",
+      "policy_cvx_conservative_lasso_100",
+      ]
 
-#for metric in [deadline_misses, avg_normalized_tardiness, energy]:
-for metric in [deadline_misses, energy]:
-  print metric.__name__
-  print list_to_csv([""] + benchmarks + ["average"])
-  for policy in policies:
-    print policy, ",", 
-    sum_metric = 0
-    for benchmark in benchmarks:
-      # Read in execution times and predicted times
-      times = parse_execution_times("%s/%s/%s1.txt" % (input_dir, benchmark, benchmark))
-      predict_times = read_predict_file("%s/%s-%s.txt" % (output_dir, policy, benchmark))
+  #for metric in [deadline_misses, avg_normalized_tardiness, energy]:
+  for metric in [deadline_misses, energy]:
+    print metric.__name__
+    print list_to_csv([""] + benchmarks + ["average"])
+    for policy in policies:
+      print policy, ",", 
+      sum_metric = 0
+      for benchmark in benchmarks:
+        # Read in execution times and predicted times
+        times = parse_execution_times("%s/%s/%s1.txt" % (input_dir, benchmark, benchmark))
+        predict_times = read_predict_file("%s/%s-%s.txt" % (output_dir, policy, benchmark))
 
-      # Perform DVFS
-      #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=default_dvfs_levels, deadline=None) # Discrete
-      deadline = None
-      # Custom deadlines
-      if "freeciv" in benchmark:
-        deadline = 30000
-      elif "shmupacabra" in benchmark:
-        deadline = 1000000./60 # 60fps
-      (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=deadline) # Continuous
+        # Perform DVFS
+        deadline = None
+        # Custom deadlines
+        if "freeciv" in benchmark:
+          deadline = 30000
+        elif "shmupacabra" in benchmark:
+          deadline = 1000000./60 # 60fps
+        (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=deadline) # Continuous
 
-      # Calculate metric of interest
-      metric_result = metric(result_times, frequencies, deadline)
-      sum_metric += metric_result
-      print metric_result, ",",
-    # Output average
-    print sum_metric/len(benchmarks)
-  print
+        # Calculate metric of interest
+        metric_result = metric(result_times, frequencies, deadline)
+        sum_metric += metric_result
+        print metric_result, ",",
+      # Output average
+      print sum_metric/len(benchmarks)
+    print

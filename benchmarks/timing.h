@@ -95,8 +95,9 @@ int print_dvfs_timing() {
   instance_number++;
   return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
 }
+
 /*
- * Print timing information to stdout.
+ * Write timing information to times.txt.
  */
 int fprint_slice_timing() {
   static int instance_number = 0;
@@ -110,7 +111,7 @@ int fprint_slice_timing() {
 }
 
 /*
- * Print timing information to stdout.
+ * Write timing information to times.txt.
  */
 int fprint_dvfs_timing() {
   static int instance_number = 0;
@@ -122,7 +123,6 @@ int fprint_dvfs_timing() {
   fclose(time_file);
   return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
 }
-
 
 /*
  * Print timing information to stdout.
@@ -153,6 +153,20 @@ void write_timing() {
   fprintf(time_file, "time %d = %d us\n", instance_number, time);
   instance_number++;
 
+  fclose(time_file);
+}
+
+/*
+ * Write the passed string to times.txt.
+ */
+void write_string(char *string) {
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+  if (time_file == NULL) {
+    printf("Error opening times.txt!\n");
+    exit(1);
+  }
+  fprintf(time_file, "%s", string);
   fclose(time_file);
 }
 

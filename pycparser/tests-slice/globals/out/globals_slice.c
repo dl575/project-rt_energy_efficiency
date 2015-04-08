@@ -13,7 +13,8 @@ struct struct_t
 {
   int a;
 };
-int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct)
+typedef struct struct_t struct2_t;
+int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct, int *arg_int_ptr, struct2_t *arg_struct2)
 {
   int global_array_rename[4];
   int global_array_i0;
@@ -45,7 +46,12 @@ int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct)
 
   }
 
-  struct struct_t *arg_struct_rename = arg_struct;
+  struct2_t arg_struct2_rename_temp = *arg_struct2;
+  struct2_t *arg_struct2_rename = &arg_struct2_rename_temp;
+  int arg_int_ptr_rename_temp = *arg_int_ptr;
+  int *arg_int_ptr_rename = &arg_int_ptr_rename_temp;
+  struct struct_t arg_struct_rename_temp = *arg_struct;
+  struct struct_t *arg_struct_rename = &arg_struct_rename_temp;
   int arg3_rename[3][4][5];
   int arg3_i0;
   for (arg3_i0 = 0; arg3_i0 < 3; arg3_i0++)
@@ -84,6 +90,8 @@ int func(int arg1, int arg2[4], int arg3[3][4][5], struct struct_t *arg_struct)
   declared_global_rename++;
   arg3_rename[1][2][3]++;
   arg_struct_rename->a = 1;
+  arg_struct2_rename->a = 1;
+  (*arg_int_ptr_rename)++;
   enum custom_enum e;
   e = one;
   a = global_var0_rename + global_var1_rename;

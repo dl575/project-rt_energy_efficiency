@@ -11,11 +11,12 @@ os.chdir("..")
 benchmarks = []
 for line in coeffs.split('\n'):
   if ".lps" in line:
-    benchmarks.append(line.strip().strip(".lps"))
+    benchmarks.append(line.strip().rstrip(".lps"))
 print list_to_csv([""] + benchmarks)
 
 # Get number of coefficients
-for d in ["lps", "regression_coeffs", "lasso"]:
+#for d in ["lps", "regression_coeffs", "lasso"]:
+for d in ["predictors"]:
   os.chdir(d)
   coeffs = subprocess.check_output(["./gen_predictor.py"])
   os.chdir("..")

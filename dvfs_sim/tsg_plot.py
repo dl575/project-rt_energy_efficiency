@@ -8,6 +8,7 @@ Classes:
 
 Functions:
   add_plot( opt )
+  add_line_plot( ax, opt )
   add_scatter_plot( ax, opt )
   add_bar_plot( ax, opt )
   set_legend( ax, opt, legend, legend_labels )
@@ -32,7 +33,7 @@ class PlotOptions:
     self.xlabel = None
     self.bar_width = 0.70
 
-    self.valid_plot_types = ["bar", "stacked_bar", "scatter_bar", "scatter"]
+    self.valid_plot_types = ["bar", "stacked_bar", "scatter_bar", "scatter", "line"]
     self.plot_type = "bar"
 
     # Error bars, lists of 2 lists. The first contains the minimums to draw and the second contains the maximums to draw.
@@ -107,7 +108,7 @@ class PlotOptions:
     #self.colors = [ 'r', 'b', 'g', 'y', 'c', 'm', 'k', 'w' ]
     # Selected from colobrewer2.org for 9 categories, qualitative, print friendly
     self.colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']
-    self.hatch = None
+    self.hatch = []
     self.symbols = [ 'o', 'd', '^', 's', 'p', '*', 'x' ]
 
     random.seed( 0xdeadbeef )
@@ -119,6 +120,18 @@ class PlotOptions:
       return self.colors[idx]
     else:
       return "#{:06x}".format( random.randint( 0, 0xffffff ) )
+  def get_hatch( self, idx ):
+    # get a hatch from hatch array if idx is small, otherwise, gets no hatch
+    if idx < len( self.hatch ):
+      return self.hatch[idx]
+    else:
+      return ''
+  def get_symbol( self, idx) :
+    # get a symbol from symbol array if idx is small, otherwise, default is 'o'
+    if idx < len( self.symbols ):
+      return self.symbols[idx]
+    else:
+      return 'o'
 
 
 def add_plot( opt ):
@@ -149,7 +162,9 @@ def add_plot( opt ):
   else:
     ax = opt.fig.add_subplot( opt.num_rows, opt.num_cols, opt.plot_idx )
 
-  if opt.plot_type == "scatter":
+  if opt.plot_type == "line":
+    add_line_plot( ax, opt )
+  elif opt.plot_type == "scatter":
     add_scatter_plot( ax, opt )
   else:
     add_bar_plot( ax, opt )
@@ -172,6 +187,47 @@ def add_plot( opt ):
         plt.savefig( file )
   elif opt.show:
     plt.show()
+
+
+def add_line_plot( ax, opt ):
+
+  lines = []
+  for i in xrange( len( opt.data ) ):
+    c = list(opt.data[ i ])
+    if len(c) == 2:
+      line, = ( ax.plot( c[0], c[1], \
+                       marker=opt.get_symbol(i), \
+                       color=opt.get_color(i), \
+                       zorder=5+i ) )
+    else:
+      line, = ( ax.plot( c, \
+                       marker=opt.get_symbol(i), \
+                       color=opt.get_color(i), \
+                       zorder=5+i ) )
+    lines.append(line)
+
+  if opt.yrange is not None:
+    ax.set_ylim( opt.yrange )
+  if opt.xrange is not None:
+    ax.set_xlim( opt.xrange )
+
+  legend = []
+  legend_labels = []
+
+  # if no labels specified, create blank entries to generate legend
+  if not opt.labels:
+    opt.labels = [" "]*len(lines)
+  for i in xrange( len( lines ) ):
+    if opt.labels[i] is not None and opt.labels[i] != "":
+      legend.append( lines[i] )
+      legend_labels.append( opt.labels[i] )
+
+  set_legend( ax, opt, legend, legend_labels )
+  set_common( ax, opt )
+
+  ax.xaxis.grid(True)
+  ax.yaxis.grid(True)
+
 
 def add_scatter_plot( ax, opt ):
 
@@ -198,7 +254,7 @@ def add_scatter_plot( ax, opt ):
     # zorder specifies the ordering of elements, the higher the more
     # visible
     scatters.append( ax.scatter( x, y, \
-                               marker=opt.symbols[i], \
+                               marker=opt.get_symbol(i), \
                                color=opt.get_color(i), \
                                zorder=5+i ) )
 
@@ -302,7 +358,7 @@ def add_bar_plot( ax, opt ):
     if opt.plot_type == "scatter_bar":
       # bars are actually scatters
       bars.append( ax.scatter( indexes[i], bar_data[i], \
-                               marker=opt.symbols[i], \
+                               marker=opt.get_symbol(i), \
                                color=opt.get_color(i), \
                                s=40, zorder=i+5 ) )
       # we draw to this if arrows are allowed and the index is larger than
@@ -332,19 +388,12 @@ def add_bar_plot( ax, opt ):
                     color='k')
 
     else:
-      if opt.hatch:
-        bars.append( ax.bar( indexes[i], bar_data[i], width, \
-                             color=opt.get_color(i), \
-                             linewidth=bar_linewidth, \
-                             bottom=bottom,
-                             hatch = opt.hatch[i]
-                            ) )
-      else:
-        bars.append( ax.bar( indexes[i], bar_data[i], width, \
-                             color=opt.get_color(i), \
-                             linewidth=bar_linewidth, \
-                             bottom=bottom
-                            ) )
+      bars.append( ax.bar( indexes[i], bar_data[i], width, \
+                           color=opt.get_color(i), \
+                           linewidth=bar_linewidth, \
+                           bottom=bottom,
+                           hatch = opt.get_hatch(i)
+                          ) )
 
     if opt.plot_type == "stacked_bar":
       bottom += bar_data[i]
@@ -436,12 +485,15 @@ def set_legend( ax, opt, legend, legend_labels ):
 def set_common( ax, opt ):
   # Title and Legend stuff.
   if not opt.paper_mode:
-    ax.set_title( opt.title )
+    ax.set_title( opt.title, fontsize=opt.fontsize )
 
+  # Set labels for axes
   if opt.xlabel:
     ax.set_xlabel( opt.xlabel, fontsize=opt.fontsize )
   if opt.ylabel:
     ax.set_ylabel( opt.ylabel, fontsize=opt.fontsize )
+  # Set font size for axes
+  ax.tick_params( labelsize=opt.fontsize )
 
   if opt.paper_mode:
     # enable grid

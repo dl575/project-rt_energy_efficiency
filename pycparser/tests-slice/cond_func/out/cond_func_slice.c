@@ -1,7 +1,7 @@
 typedef int FILE;
 FILE *fopen();
 int global;
-void main_slice(int argc, char *argv[])
+float main_slice(int argc, char *argv[])
 {
   int loop_counter[4] = {0, 0, 0, 0};
   {}
@@ -103,6 +103,14 @@ void main_slice(int argc, char *argv[])
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
   }
 }
 

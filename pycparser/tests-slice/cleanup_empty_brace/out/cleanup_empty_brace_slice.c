@@ -1,4 +1,4 @@
-void main_slice()
+float main_slice()
 {
   int loop_counter[4] = {0, 0, 0, 0};
   int a;
@@ -30,6 +30,14 @@ void main_slice()
       printf("%d, ", loop_counter[i]);
 
     printf(")\n");
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
   }
 }
 

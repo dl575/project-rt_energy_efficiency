@@ -10,6 +10,8 @@ tests = [x.split(".")[1] for x in makefiles]
 
 test_results = []
 
+os.system("mv Makefile Makefile_tmp")
+
 for test in tests:
   print test
   # Copy Makefile
@@ -33,3 +35,5 @@ for test in tests:
 
 print
 print '\n'.join(test_results)
+
+os.system("mv Makefile_tmp Makefile")

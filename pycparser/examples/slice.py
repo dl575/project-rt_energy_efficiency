@@ -57,7 +57,7 @@ class FuncDefRenameVisitor(c_ast.NodeVisitor):
     pass
   def visit_FuncDef(self, node):
     # Change slice to void function
-    node.decl.type.type.type.names = ["void"]
+    node.decl.type.type.type.names = ["float"]
     if node.decl.type.type.declname.split('_')[-1] != "slice":
       node.decl.type.type.declname += "_slice"
 
@@ -86,7 +86,10 @@ class IDVisitor(c_ast.NodeVisitor):
     while not isinstance(node, str):
       struct_name = self.cgenerator.visit(node)
       self.IDs.append(struct_name)
-      node = node.name
+      if isinstance(node, c_ast.Cast):
+        node = node.expr
+      else:
+        node = node.name
 
 """
 Identify all data dependencies of the passed variable var.
@@ -289,8 +292,8 @@ class DataDependencyVisitor(c_ast.NodeVisitor):
   def visit_Goto(self, node):
     node.sliced = True
   def visit_Compound(self, node):
-    # Mark entire print_loop_counter block as part of slice
-    if node.block_items and isinstance(node.block_items[0], c_ast.Label) and node.block_items[0].name == "print_loop_counter":
+    # Mark entire print_loop_counter and predict_exec_time block as part of slice
+    if node.block_items and isinstance(node.block_items[0], c_ast.Label) and (node.block_items[0].name == "print_loop_counter" or node.block_items[0].name == "predict_exec_time"):
       v = MarkSlicedVisitor()
       v.visit(node)
     else:
@@ -311,6 +314,11 @@ class PrintSliceVisitor(c_generator.CGenerator):
   def visit_Typedef(self, node):
     """
     Always print out typedefs for syntactic reasons in case of more passes.
+    """
+    return str_node(node)
+  def visit_Struct(self, node):
+    """
+    Always print out struct declarations for syntactic reasons in case of more passes.
     """
     return str_node(node)
   def _generate_stmt(self, n, add_indent=False):
