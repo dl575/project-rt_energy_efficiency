@@ -8,7 +8,14 @@ slice: preprocess
 	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
 	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
-	$(PYTHON) globals.py $(FILENAME)_slice.c main_loop_slice true false > $(FILENAME)_slice_nofork.c
+
+	# Big core
+	#time $(PYTHON) slice.py $(FILENAME)_slice.c loop_counter[2] loop_counter[8] loop_counter[9] loop_counter[10] loop_counter[12] loop_counter[14] loop_counter[15] loop_counter[24] loop_counter[34] loop_counter[35] loop_counter[36] loop_counter[38] loop_counter[40] loop_counter[41] loop_counter[46] loop_counter[50] loop_counter[51] loop_counter[53] loop_counter[54] loop_counter[56] loop_counter[57] loop_counter[60] loop_counter[68] loop_counter[69] loop_counter[70] loop_counter[72] loop_counter[74] loop_counter[75] loop_counter[84] > $(FILENAME)_slice_reduced.c
+	# Little core
+	time $(PYTHON) slice.py $(FILENAME)_slice.c loop_counter[2] loop_counter[8] loop_counter[9] loop_counter[11] loop_counter[12] loop_counter[13] loop_counter[15] loop_counter[24] loop_counter[34] loop_counter[35] loop_counter[37] loop_counter[38] loop_counter[40] loop_counter[41] loop_counter[46] loop_counter[50] loop_counter[51] loop_counter[53] loop_counter[54] loop_counter[56] loop_counter[57] loop_counter[60] loop_counter[68] loop_counter[69] loop_counter[71] loop_counter[72] loop_counter[74] loop_counter[75] loop_counter[84] > $(FILENAME)_slice_reduced.c
+
+	$(PYTHON) globals.py $(FILENAME)_slice_reduced.c main_loop_slice true false > $(FILENAME)_globals.c
+	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
 
 td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
@@ -30,3 +37,6 @@ clean:
 	rm -f $(FILENAME)_inline.c
 	rm -f $(FILENAME)_loop_counts.c
 	rm -f $(FILENAME)_slice.c
+	rm -f $(FILENAME)_slice_reduced.c
+	rm -f $(FILENAME)_globals.c
+	rm -f $(FILENAME)_cleanup.c

@@ -8,9 +8,12 @@ GLOBALS_IGNORE=DEBUG_EN
 slice: preprocess
 	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
-	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	#time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter[0] loop_counter[1] loop_counter[2] loop_counter[4] loop_counter[10] > $(FILENAME)_slice.c
 	$(PYTHON) globals.py $(FILENAME)_slice.c run_loop_slice $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
 	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
+	#$(PYTHON) slice.py $(FILENAME)_cleanup.c loop_counter[0] loop_counter[1] loop_counter[2] loop_counter[4] loop_counter[10] > $(FILENAME)_reduced.c
+	#$(PYTHON) cleanup.py $(FILENAME)_reduced.c > $(FILENAME)_reduced_cleanup.c
 
 td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
@@ -41,3 +44,5 @@ clean:
 	rm -f $(FILENAME)_slice.c
 	rm -f $(FILENAME)_globals.c
 	rm -f $(FILENAME)_cleanup.c
+	rm -f $(FILENAME)_reduced.c
+	rm -f $(FILENAME)_reduced_cleanup.c
