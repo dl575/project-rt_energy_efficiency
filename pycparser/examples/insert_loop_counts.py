@@ -118,14 +118,14 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
     node.body.block_items.insert(0, decl)
 
     # Label for return values to goto
-    label = c_ast.Label("print_loop_counter", None)
+    start_label = c_ast.Label("print_loop_counter", c_ast.EmptyStatement())
+    # Start and end labels used for inserting preprocessor commands for #if DEBUG_EN
+    end_label = c_ast.Label("print_loop_counter_end", c_ast.EmptyStatement())
 
     # Write to file
     if self.write_to_file:
       stmt = c_ast.ID("write_array(loop_counter, %d)\n" % (self.loop_counter_size))
-      # Wrap in conditional to only write to file if DEBUG_EN
-      stmt = c_ast.If(c_ast.ID("DEBUG_EN"), stmt, None)
-      compound = c_ast.Compound([label, stmt])
+      compound = c_ast.Compound([start_label, stmt, end_label])
     # Print to stdout
     else:
       # Add printf to the end of function
@@ -151,7 +151,10 @@ class LoopCountInitPrintVisitor(c_ast.NodeVisitor):
       # End of printing
       stmt_end = c_ast.ID("printf(\")\\n\")")
       
-      compound = c_ast.Compound([label, stmt_start, for_decl, stmt_for, stmt_end])
+      # Put it all together
+      body = c_ast.Compound([stmt_start, for_decl, stmt_for, stmt_end])
+      # Surround with labels
+      compound = c_ast.Compound([start_label, body, end_label])
     node.body.block_items.append(compound)
 
 """

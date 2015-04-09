@@ -11,6 +11,7 @@ slice: preprocess
 	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
 	$(PYTHON) globals.py $(FILENAME)_slice.c $(FUNCNAME)_slice $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
 	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
+	./insert_preprocessor.sh $(FILENAME)_cleanup.c > $(FILENAME)_debugflag.c
 
 td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
@@ -101,3 +102,4 @@ clean:
 	rm -f $(FILENAME)_slice.c
 	rm -f $(FILENAME)_globals.c
 	rm -f $(FILENAME)_cleanup.c
+	rm -f $(FILENAME)_debugflag.c

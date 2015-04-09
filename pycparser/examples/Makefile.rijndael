@@ -12,7 +12,8 @@ slice: preprocess
 	time $(PYTHON) slice.py rijndael/aes_slice.c loop_counter[24] > rijndael/aes_slice_reduced.c
 	# No terms
 	#time $(PYTHON) slice_array_index.py rijndael/aes_slice.c loop_counter[999] > rijndael/aes_slice_reduced.c
-	$(PYTHON) cleanup.py rijndael/aes_slice_reduced.c > rijndael/aes_slice_reduced_cleanup.c
+	$(PYTHON) cleanup.py rijndael/aes_slice_reduced.c > rijndael/aes_slice_cleanup.c
+	./insert_preprocessor.sh rijndael/aes_cleanup.c > rijndael/aes_debugflag.c
 
 td = echo "typedef int $1;" | cat - rijndael/aes3.c > temp && mv temp rijndael/aes3.c
 fd = echo "$1 ();" | cat - rijndael/aes3.c > temp && mv temp rijndael/aes3.c
@@ -30,4 +31,5 @@ preprocess:
 	$(call td, "fpos_t")
 
 clean:
-	rm -f rijndael/aes2.c rijndael/aes3.c rijndael/aes_inline.c rijndael/aes_loop_counts.c rijndael/aes_slice.c rijndael/aes_slice_reduced.c rijndael/aes_slice_reduced_cleanup.c
+	rm -f rijndael/aes2.c rijndael/aes3.c rijndael/aes_inline.c rijndael/aes_loop_counts.c rijndael/aes_slice.c rijndael/aes_slice_reduced.c rijndael/aes_slice_cleanup.c
+	rm -f rijndael/aes_debugflag.c

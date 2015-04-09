@@ -9,7 +9,8 @@ slice: preprocess
 	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS)> $(FILENAME)_loop_counts.c
 	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
 	time $(PYTHON) slice.py $(FILENAME)_slice.c loop_counter[0] loop_counter[1] loop_counter[2] loop_counter[3] loop_counter[4] > $(FILENAME)_slice_reduced.c
-	./cleanup.py $(FILENAME)_slice_reduced.c > $(FILENAME)_slice_reduced_cleanup.c
+	./cleanup.py $(FILENAME)_slice_reduced.c > $(FILENAME)_cleanup.c
+	./insert_preprocessor.sh $(FILENAME)_cleanup.c > $(FILENAME)_debugflag.c
 
 td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
 preprocess:
@@ -31,4 +32,5 @@ clean:
 	rm -f $(FILENAME)_loop_counts.c
 	rm -f $(FILENAME)_slice.c
 	rm -f $(FILENAME)_slice_reduced.c
-	rm -f $(FILENAME)_slice_reduced_cleanup.c
+	rm -f $(FILENAME)_cleanup.c
+	rm -f $(FILENAME)_debugflag.c
