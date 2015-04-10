@@ -63,7 +63,6 @@ class FuncDefRenameVisitor(c_ast.NodeVisitor):
 
 """
 Identify all IDs in tree. 
-Arrays should be identified by base name. (e.g., a[b] is identified by a).
 Struct accesses are saved as all sub-portions. (e.g., a->b->c will save a->b->c, a->b, and a.)
 """
 class IDVisitor(c_ast.NodeVisitor):
@@ -83,13 +82,12 @@ class IDVisitor(c_ast.NodeVisitor):
       self.IDs.append(node.name)
   def visit_StructRef(self, node):
     # Recursively add struct reference and its base components
-    while not isinstance(node, str):
-      struct_name = self.cgenerator.visit(node)
-      self.IDs.append(struct_name)
-      if isinstance(node, c_ast.Cast):
-        node = node.expr
-      else:
-        node = node.name
+    struct_name = self.cgenerator.visit(node)
+    self.IDs.append(struct_name)
+    if isinstance(node, c_ast.Cast):
+      self.visit(node.expr)
+    else:
+      self.visit(node.name)
 
 """
 Identify all data dependencies of the passed variable var.
@@ -363,7 +361,7 @@ def slice_ast(ast, slice_vars):
   # Set all nodes to sliced=False
   v = InitializeSlicedVisitor()
   v.visit(ast)
-  # Rename function
+  # Rename function to add "_slice"
   v = FuncDefRenameVisitor()
   v.visit(ast)
 

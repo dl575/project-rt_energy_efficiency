@@ -1,5 +1,6 @@
 int main()
 {
+  int loop_counter[1] = {0};
   int a0;
   int x0;
   int t0;
@@ -34,6 +35,34 @@ int main()
     x_rename1->x->x[x_rename1][x_rename1->x->x]->x->x[x_rename1->x][x_rename1->x->x]->x;
     x_rename1->x->x[x_rename1][x_rename1->x->x]->x->x[x_rename1->x][x_rename1->x->x]->x[x_rename1];
     return1:
+    ;
+
+  }
+  {
+    int index_rename2;
+    if (s->array[index_rename2].member)
+    {
+      loop_counter[0]++;
+      array[index_rename2]++;
+    }
+
+    return2:
+    ;
+
+  }
+  {
+    print_loop_counter:
+    ;
+
+    {
+      printf("loop counter = (");
+      int i;
+      for (i = 0; i < 1; i++)
+        printf("%d, ", loop_counter[i]);
+
+      printf(")\n");
+    }
+    print_loop_counter_end:
     ;
 
   }

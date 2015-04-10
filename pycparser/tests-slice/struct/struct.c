@@ -25,6 +25,12 @@ int func2(int x, int t) {
   int j;
   t->z->b[j][x];
 }
+void array_access() {
+  int index;
+  if (s->array[index].member) {
+    array[index]++;
+  }
+}
 
 int main() {
   int a0;
@@ -32,4 +38,5 @@ int main() {
   int t0;
   func2(x0, t0);
   func(a0, x0, t0);
+  array_access();
 }

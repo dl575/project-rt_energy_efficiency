@@ -41,6 +41,19 @@ int main()
     ;
 
   }
+  {
+    // Inline function: array_access;
+    // End of arguments;
+    int index_rename2;
+    if (s->array[index_rename2].member)
+    {
+      array[index_rename2]++;
+    }
+
+    return2:
+    ;
+
+  }
 }
 
 

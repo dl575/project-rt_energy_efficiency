@@ -1,5 +1,6 @@
 float main_slice()
 {
+  int loop_counter[1] = {0};
   {}
   {}
   {}
@@ -34,6 +35,34 @@ float main_slice()
     {}
     {}
     return1:
+    ;
+
+  }
+  {
+    int index_rename2;
+    if (s->array[index_rename2].member)
+    {
+      loop_counter[0]++;
+      {}
+    }
+
+    return2:
+    ;
+
+  }
+  {
+    print_loop_counter:
+    ;
+
+    {
+      printf("loop counter = (");
+      int i;
+      for (i = 0; i < 1; i++)
+        printf("%d, ", loop_counter[i]);
+
+      printf(")\n");
+    }
+    print_loop_counter_end:
     ;
 
   }
