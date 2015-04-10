@@ -53,7 +53,13 @@ int dvfs_time = 0;
 #else //LITTLE
 #define OVERHEAD_TIME 44291 //overhead deadline
 #define AVG_OVERHEAD_TIME 896 //avg overhead deadline
-#define DEADLINE_TIME 11969 + OVERHEAD_TIME //max_exec + max_overhead
+    #if DEADLINE_DEFAULT
+    #define DEADLINE_TIME 11969 //max_exec + max_overhead
+    #elif DEADLINE_17MS
+    #define DEADLINE_TIME 17000 //17ms
+    #elif DEADLINE_33MS
+    #define DEADLINE_TIME 33000 //33ms
+    #endif
 #define MAX_DVFS_TIME 2371 //max dvfs time
 #define AVG_DVFS_TIME 388 //average dvfs time
 #endif
@@ -630,7 +636,7 @@ void run_server (struct state *st, int cl_num_need, char *s_server_port) {
 /*****************************************************************************/
 int main(int argc, char* argv[]){
   /* Initialize pseudo random number generator */
-  srand(time(NULL));
+  //srand(time(NULL));
 
   /* Read command line arguments */
   struct basic_options op;

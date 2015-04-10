@@ -10,16 +10,20 @@ some of all benchmarks use.
 #define MILLION 1000000L
 
 //manually set below
-#define CORE 1 //0:LITTLE, 1:big
+#define CORE 0 //0:LITTLE, 1:big
 
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define OVERHEAD_EN 0 //1:measure dvfs, slice timing
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_OVERHEAD 0 //to get overhead deadline
 #define DEBUG_EN 0 //debug information print on/off
+
+#define DEADLINE_DEFAULT 1 //max_exec + max_overhead
+#define DEADLINE_17MS 0 //17ms
+#define DEADLINE_33MS 0 //33ms
 
 //always set this as 1 on ODROID
 #define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
@@ -130,7 +134,6 @@ void fprint_freq(void){
 }
 
 void print_freq(void){
-    FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
 

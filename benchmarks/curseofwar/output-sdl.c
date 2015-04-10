@@ -278,7 +278,8 @@ void output_sdl (SDL_Surface *tileset, SDL_Surface *typeface, SDL_Surface *uisur
                   srci = 0 + pop_to_symbol(pop);
                   srcj = 8 + 3*(owner);
                   blit_subpic_noise (tileset, screen, srci, srcj, POSX(ui, i), POSY(j), pop_variant[i][j]);
-                  if (rand()%20 == 0) {
+                  //if (rand()%20 == 0) {
+                  if (1234%20 == 0) {
                     int d = 1;
                     if (owner != s->controlled) d = 11;
                     pop_variant[i][j] = (pop_variant[i][j] + d) % 10000;

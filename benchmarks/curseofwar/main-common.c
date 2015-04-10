@@ -143,7 +143,8 @@ int get_options(int argc, char *argv[], struct basic_options *op, struct multi_o
   op->w = 21; // width
   op->h = 21; // height
   op->loc_num = 0;  // the number of starting locations
-  op->map_seed = rand();
+  //op->map_seed = rand();
+  op->map_seed = 1234;
   op->conditions = 0;
   op->timeline_flag = 0;
 

@@ -44,7 +44,13 @@ int dvfs_time = 0;
 #else //LITTLE
 #define OVERHEAD_TIME 4697 //overhead deadline
 #define AVG_OVERHEAD_TIME 1450 //avg overhead deadline
-#define DEADLINE_TIME 67812 + OVERHEAD_TIME //max_exec + max_overhead
+    #if DEADLINE_DEFAULT
+    #define DEADLINE_TIME 67812 //max_exec + max_overhead
+    #elif DEADLINE_17MS
+    #define DEADLINE_TIME 17000 //17ms
+    #elif DEADLINE_33MS
+    #define DEADLINE_TIME 33000 //33ms
+    #endif
 #define MAX_DVFS_TIME 4231 //max dvfs time
 #define AVG_DVFS_TIME 1407 //average dvfs time
 #endif
@@ -257,7 +263,7 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
 	uint8_t n,list[SIZE*SIZE][2];
 
 	if (!initialized) {
-		srand(time(NULL));
+		//srand(time(NULL));
 		initialized = true;
 	}
 
@@ -272,10 +278,12 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
 	}
 
 	if (len>0) {
-		r = rand()%len;
+		//r = rand()%len;
+		r = 1234%len;
 		x = list[r][0];
 		y = list[r][1];
-		n = (rand()%10)/9+1;
+		//n = (rand()%10)/9+1;
+		n = (1234%10)/9+1;
 		board[x][y]=n;
 	}
 }
@@ -3140,7 +3148,7 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = 23902.200000*loop_counter[2] + 5032.610000*loop_counter[8] + -4265.260000*loop_counter[9] + 4787.560000*loop_counter[11] + 5613.910000*loop_counter[12] + 1095.900000*loop_counter[14] + 5096.860000*loop_counter[15] + -21153.800000*loop_counter[24] + 6624.550000*loop_counter[34] + 4508.050000*loop_counter[35] + -1453.240000*loop_counter[36] + 5630.150000*loop_counter[38] + -4470.560000*loop_counter[40] + -7863.490000*loop_counter[41] + 31479.900000*loop_counter[46] + -4925.650000*loop_counter[50] + -1450.150000*loop_counter[51] + 2819.850000*loop_counter[53] + -1919.750000*loop_counter[54] + -248.450000*loop_counter[56] + 6072.700000*loop_counter[57] + -4359.020000*loop_counter[60] + -6486.160000*loop_counter[68] + 5563.720000*loop_counter[69] + -603.713000*loop_counter[71] + -11633.900000*loop_counter[72] + -2483.070000*loop_counter[73] + 5600.850000*loop_counter[75] + -424.300000*loop_counter[84] + 0.000000;
+    exec_time = 4314.490000*loop_counter[2] + 13812.400000*loop_counter[8] + 3464.910000*loop_counter[9] + -4159.670000*loop_counter[11] + -5768.880000*loop_counter[12] + 239.250000*loop_counter[13] + -12578.100000*loop_counter[15] + 14341.700000*loop_counter[24] + 5533.050000*loop_counter[34] + 1348.190000*loop_counter[35] + -1739.640000*loop_counter[37] + 1275.160000*loop_counter[38] + -1607.140000*loop_counter[40] + -6649.560000*loop_counter[41] + -16940.800000*loop_counter[46] + 3487.560000*loop_counter[50] + -2591.630000*loop_counter[51] + 4831.360000*loop_counter[53] + 11882.400000*loop_counter[54] + 3175.150000*loop_counter[56] + -534.276000*loop_counter[57] + -5471.110000*loop_counter[60] + 11195.600000*loop_counter[68] + -2123.810000*loop_counter[69] + 1049.940000*loop_counter[71] + 7005.980000*loop_counter[72] + 2622.110000*loop_counter[74] + 4091.390000*loop_counter[75] + -460.395000*loop_counter[84] + 0.000000;
     return exec_time;
   }
 }
