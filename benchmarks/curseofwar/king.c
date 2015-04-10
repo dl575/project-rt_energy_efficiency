@@ -112,14 +112,12 @@ void king_evaluate_map (struct king *k, struct grid *g, enum config_dif dif) {
       switch(dif) {
         case dif_easiest: 
           x = k->value[i][j] / 4;
-          //x = x + rand()%7 - 3;
-          x = x + 1234%7 - 3;
+          x = x + rand()%7 - 3;
           k->value[i][j] = MAX(0, x);
           break;
         case dif_easy: 
           x = k->value[i][j] / 2;
-          //x = x + rand()%3 - 1;
-          x = x + 1234%3 - 1;
+          x = x + rand()%3 - 1;
           k->value[i][j] = MAX(0, x);
           break;
         default: ;

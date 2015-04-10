@@ -52,10 +52,8 @@ void run(struct state *st, struct ui *ui,
   int i, j;
   for (i=0; i<MAX_WIDTH; ++i)
     for (j=0; j<MAX_HEIGHT; ++j) {
-      //tile_variant[i][j] = rand();
-      tile_variant[i][j] = 1234;
-      //pop_variant[i][j] = rand();
-      pop_variant[i][j] = 1234;
+      tile_variant[i][j] = rand();
+      pop_variant[i][j] = rand();
     }
 
   int finished = 0;
@@ -123,10 +121,8 @@ void run_client(struct state *st, struct ui *ui,
   int i, j;
   for (i=0; i<MAX_WIDTH; ++i)
     for (j=0; j<MAX_HEIGHT; ++j) {
-      //tile_variant[i][j] = rand();
-      tile_variant[i][j] = 1234;
-      //pop_variant[i][j] = rand();
-      pop_variant[i][j] = 1234;
+      tile_variant[i][j] = rand();
+      pop_variant[i][j] = rand();
     }
 
   /* Init Networking */
@@ -233,6 +229,7 @@ void run_client(struct state *st, struct ui *ui,
 int main(int argc, char *argv[]) {
 
   //srand(time(NULL));
+  srand(0);
 
   /* Read command line arguments */
   struct basic_options op;

@@ -637,6 +637,7 @@ void run_server (struct state *st, int cl_num_need, char *s_server_port) {
 int main(int argc, char* argv[]){
   /* Initialize pseudo random number generator */
   //srand(time(NULL));
+  srand(0);
 
   /* Read command line arguments */
   struct basic_options op;

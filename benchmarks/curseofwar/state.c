@@ -53,8 +53,7 @@ void state_init(struct state *s, struct basic_options *op, struct multi_options 
   s->map_seed = op->map_seed;
   s->conditions = op->conditions;
   s->inequality = op->inequality;
-  //s->time = (1850 + rand()%100) * 360 + rand()%360;
-  s->time = (1850 + 1234%100) * 360 + 1234%360;
+  s->time = (1850 + rand()%100) * 360 + rand()%360;
 
   /* player controlled from the keyboard */
   s->controlled = 1;
@@ -100,6 +99,7 @@ void state_init(struct state *s, struct basic_options *op, struct multi_options 
 
   /* Initialize map generation with the map_seed */
   //srand(s->map_seed);
+  srand(0);
 
   /* Map generation starts */
   {
@@ -222,8 +222,7 @@ float growth(enum tile_class t) {
 
 int rnd_round(float x) {
   int i = (int) x;
-  //if ( (float)rand() / (float)RAND_MAX < (x - i) ) i++;
-  if ( (float)1234 / (float)RAND_MAX < (x - i) ) i++;
+  if ( (float)rand() / (float)RAND_MAX < (x - i) ) i++;
   return i;
 }
 
@@ -303,8 +302,7 @@ void simulate(struct state *s) {
 
       /* burning cities */
       if (defender_dmg > 2.0 * MAX_POP * ATTACK && is_a_city(t[i][j].cl)) {
-        //if (rand() % 1 == 0){
-        if (1234 % 1 == 0){
+        if (rand() % 1 == 0){
           need_to_reeval = 1;
           degrade (&s->grid, i, j);
         }
@@ -341,12 +339,10 @@ void simulate(struct state *s) {
   int i_start, i_end, i_inc;
   int j_start, j_end, j_inc;
 
-  //if(rand()%2 == 0) { i_start = 0; i_end = s->grid.width; i_inc = 1; }
-  if(1234%2 == 0) { i_start = 0; i_end = s->grid.width; i_inc = 1; }
+  if(rand()%2 == 0) { i_start = 0; i_end = s->grid.width; i_inc = 1; }
   else { i_start = s->grid.width-1; i_end = -1; i_inc = -1; }
   
-  //if(rand()%2 == 0) { j_start = 0; j_end = s->grid.height; j_inc = 1; }
-  if(1234%2 == 0) { j_start = 0; j_end = s->grid.height; j_inc = 1; }
+  if(rand()%2 == 0) { j_start = 0; j_end = s->grid.height; j_inc = 1; }
   else { j_start = s->grid.height-1; j_end = -1; j_inc = -1; }
 
   for(i=i_start; i!=i_end; i+=i_inc) {
@@ -354,8 +350,7 @@ void simulate(struct state *s) {
       for(p=0; p<MAX_PLAYER; ++p){
         int initial_pop = t[i][j].units[p][citizen];
 
-        //int k_shift = rand() % DIRECTIONS;
-        int k_shift = 1234 % DIRECTIONS;
+        int k_shift = rand() % DIRECTIONS;
         for(k=0; k<DIRECTIONS; ++k) {
           di = dirs[(k + k_shift) % DIRECTIONS].i;
           dj = dirs[(k + k_shift) % DIRECTIONS].j;

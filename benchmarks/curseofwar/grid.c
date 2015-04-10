@@ -53,11 +53,9 @@ void grid_init(struct grid *g, int w, int h){
   for(i=0; i<g->width; ++i) {
     for(j=0; j<g->height; ++j) {
       g->tiles[i][j].cl = grassland;
-      //int x = rand() % 20;
-      int x = 1234 % 20;
+      int x = rand() % 20;
       if(0 == x) { 
-        //int y = rand() % 6;
-        int y = 1234 % 6;
+        int y = rand() % 6;
         switch (y){
           case 0: 
             g->tiles[i][j].cl = castle; break;
@@ -69,16 +67,14 @@ void grid_init(struct grid *g, int w, int h){
       }
       if(x > 0 && x < 5) {
         // mountains and mineis
-        //if (rand() % 10 == 0)
-        if (1234 % 10 == 0)
+        if (rand() % 10 == 0)
           g->tiles[i][j].cl = mine;
         else
           g->tiles[i][j].cl = mountain;
         g->tiles[i][j].pl = NEUTRAL;
       }
       else { 
-        //x = 1 + rand() % (MAX_PLAYER - 1);
-        x = 1 + 1234 % (MAX_PLAYER - 1);
+        x = 1 + rand() % (MAX_PLAYER - 1);
         if (x < MAX_PLAYER) g->tiles[i][j].pl = x;
         else
           g->tiles[i][j].pl = NEUTRAL; 
@@ -289,10 +285,8 @@ void eval_locations (struct grid *g, struct loc loc[], int result[], int len){
 void shuffle (int arr[], int len) {
   int t, i, j, s;
   for(t=0; t<len; ++t){
-    //i = rand() % len;
-    i = 1234 % len;
-    //j = rand() % len;
-    j = 1234 % len;
+    i = rand() % len;
+    j = rand() % len;
     s = arr[i];
     arr[i] = arr[j];
     arr[j] = s;
@@ -339,8 +333,7 @@ int conflict (struct grid *g, struct loc loc_arr[], int available_loc_num,
   int num = MIN(locations_num, players_num + ui_players_num);
 
   /* shift in the positions arrays */
-  //int di = rand() % available_loc_num;
-  int di = 1234 % available_loc_num;
+  int di = rand() % available_loc_num;
 
   struct loc chosen_loc [MAX_AVLBL_LOC];
   
@@ -356,8 +349,7 @@ int conflict (struct grid *g, struct loc loc_arr[], int available_loc_num,
     g->tiles[x][y].cl = castle;
 
     /* place mines nearby */
-    //int dir = rand() % DIRECTIONS;
-    int dir = 1234 % DIRECTIONS;
+    int dir = rand() % DIRECTIONS;
     int ri = dirs[dir].i;
     int rj = dirs[dir].j;
     
@@ -417,15 +409,13 @@ int conflict (struct grid *g, struct loc loc_arr[], int available_loc_num,
   int *sh_players = (int*)malloc(sizeof(int)*num);
   for(i=0; i<ui_players_num; ++i)
     sh_players[i] = ui_players[i];
-  //int dplayer = rand() % players_num;
-  int dplayer = 1234 % players_num;
+  int dplayer = rand() % players_num;
   for(; i<num; ++i)
     sh_players[i] = sh_players_comp[(i-ui_players_num + dplayer) % players_num];
   shuffle(sh_players, num);
   
   /* human player index */
-  //int ihuman = rand() % num;
-  int ihuman = 1234 % num;
+  int ihuman = rand() % num;
   /* choose specific conditions {1,... N}, 1==best, N==worst */
   if (conditions > 0) {
     int select = IN_SEGMENT(num - conditions, 0, num-1);
@@ -575,8 +565,7 @@ void remove_flags_with_prob (struct grid *g, struct flag_grid *fg, float prob) {
   int i, j;
   for (i=0; i<g->width; ++i) {
     for (j=0; j<g->height; ++j) {
-      //if (fg->flag[i][j] && (float)rand() / RAND_MAX <= prob) { 
-      if (fg->flag[i][j] && (float)1234 / RAND_MAX <= prob) { 
+      if (fg->flag[i][j] && (float)rand() / RAND_MAX <= prob) { 
         remove_flag(g, fg, i, j, FLAG_POWER);
       }
     }

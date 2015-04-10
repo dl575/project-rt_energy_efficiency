@@ -264,6 +264,7 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
 
 	if (!initialized) {
 		//srand(time(NULL));
+    srand(0);
 		initialized = true;
 	}
 
@@ -278,12 +279,10 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
 	}
 
 	if (len>0) {
-		//r = rand()%len;
-		r = 1234%len;
+		r = rand()%len;
 		x = list[r][0];
 		y = list[r][1];
-		//n = (rand()%10)/9+1;
-		n = (1234%10)/9+1;
+		n = (rand()%10)/9+1;
 		board[x][y]=n;
 	}
 }
