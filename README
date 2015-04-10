@@ -1,12 +1,13 @@
-This repository contains code related toe experiments for our work on using
+# Execution Time Prediction 
+
+This repository contains code related to experiments for our work on using
 execution time prediction to improve energy efficiency in soft real-time (e.g.,
 interactive) systems.
 
 Directory structure:
-  - atlast-7f660d3: Code from the ATLAS [RTAS 2013] project.
-  - data: Some recorded data (Probably out-dated).
-  - ffmpeg-1.2: ffmpeg media player. Modifications have been made to collect metrics.
-  - mibench: Mibench benchmarks.
-  - parse: Code for automatically getting conditional variables and function arguments from gcc AST.
-  - scripts: Various scripts for running experiments. Primarily deal with running ffmpeg and libsvm.
-  - tar: Original (unmodified) tarballs of code from other projects that were used.
+- benchmarks: Programs that have been modified to perform execution time prediction and instrumented for experiments.
+- dvfs_sim: Code for training prediction model and analytical estimates of DVFS energy savings.
+- lib: Common library code.
+- power_monitor: Utility for measuring power on ODRIOD board.
+- pycparser: Scripts to perform slicing based on pycparser Python library.
+- tar: Original (unmodified) tarballs of code from other projects that were used.
