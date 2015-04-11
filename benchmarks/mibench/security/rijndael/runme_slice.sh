@@ -109,7 +109,7 @@ do
   #key=$(cat /dev/urandom | LC_CTYPE=C tr -dc 'a-f0-9' | fold -w 64 | head -n 1)
   #echo \"$key\" 
   #./input_generator.py > input_slice.asc
-  ./rijndael input_fixed.asc output_large.enc e ${key[i]}
+  ./rijndael input_files/input_random"$i".asc output_large.enc e ${key[i]}
 done
 
 #./rijndael_slice output_large.enc output_large.dec d 1234567890abcdeffedcba09876543211234567890abcdeffedcba0987654321
