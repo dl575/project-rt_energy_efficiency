@@ -388,18 +388,17 @@ void run (struct state *st, struct ui *ui) {
         CASE 1 = to get execution deadline
         CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
-        CASE 4 = running on our prediction with overhead 
-        CASE 5 = running on our prediction without overhead 
+        CASE 4 = running on our prediction 
     */
     #if GET_PREDICT /* CASE 0 */
-        predicted_exec_time = run_loop_slice(st, ui, k); //slice
+        predicted_exec_time = run_loop_slice(st, ui, k); //slice        
     #endif
     #if GET_DEADLINE /* CASE 1 */
         //nothing
     #endif
     #if GET_OVERHEAD /* CASE 2 */
         start_timing();
-        predicted_exec_time = run_loop_slice(st, ui, k); //slice
+        predicted_exec_time = run_loop_slice(st, ui, k); //slice        
         end_timing();
         slice_time = fprint_slice_timing();
 
@@ -408,42 +407,31 @@ void run (struct state *st, struct ui *ui) {
         end_timing();
         dvfs_time = fprint_dvfs_timing();
     #endif
-    #if !PREDICT_EN /* CASE 3 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
         moment_timing_fprint(0); //moment_start
     #endif
-    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
         moment_timing_fprint(0); //moment_start
         
         start_timing();
-        predicted_exec_time = run_loop_slice(st, ui, k); //slice
+        predicted_exec_time = run_loop_slice(st, ui, k); //slice        
         end_timing();
         slice_time = fprint_slice_timing();
+        
+        moment_timing_fprint(1); //moment_start
 
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = fprint_dvfs_timing();
     #endif
-    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
-        start_timing();
-        predicted_exec_time = run_loop_slice(st, ui, k); //slice
-        end_timing();
-        slice_time = fprint_slice_timing();
-        
-        moment_timing_fprint(0); //moment_start
-
-        start_timing();
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = fprint_dvfs_timing();
-    #endif
-
+    
     // Write out predicted time & print out frequency used
     #if DEBUG_EN
         fprint_predicted_time(predicted_exec_time);
         fprint_freq(); //[DEBUG] check frequency 
-    #endif
+    #endif  
 //---------------------modified by TJSong----------------------//
 
     start_timing();
@@ -467,7 +455,7 @@ void run (struct state *st, struct ui *ui) {
     #if GET_OVERHEAD /* CASE 2 */
         //nothing
     #endif
-    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
         if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
             start_timing();
             usleep(delay_time);
@@ -476,7 +464,7 @@ void run (struct state *st, struct ui *ui) {
         }else
             delay_time = 0;
         fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
-        moment_timing_fprint(1); //moment_end
+        moment_timing_fprint(2); //moment_end
     #endif
     fclose_all();//TJSong
     if(cnt++ > 2000)//TJSong

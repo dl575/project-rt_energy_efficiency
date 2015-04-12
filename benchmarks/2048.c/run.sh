@@ -1,15 +1,12 @@
 #!/bin/bash
 
-#enter password
-xdotool type odroid
-xdotool key KP_Enter
-
 PROJECT_PATH=/home/odroid/project-rt_energy_efficiency
-BENCHMARK=2048_slice
-GOVERNORS=( "performance" "interactive" "conservative" "ondemand" "powersave" ) 
+BENCHMARK=2048_slice"-"$3
+#GOVERNORS=( "performance" "interactive" "conservative" "ondemand" "powersave" ) 
+#GOVERNORS=( "performance" "interactive" ) 
 
-if [[ $# < 1 ]] ; then
-    echo 'USAGE : ./run.sh big or ./run.sh little'
+if [[ $# < 3 ]] ; then
+    echo 'USAGE : ./run.sh [big/little] [governors] [sweep]'
     exit 1
 fi
 
@@ -35,36 +32,48 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
 sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
+echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+
 echo $BENCHMARK">>>"
 
 #if [[ $2 && $2 == "prediction" ]] ; then
 if [[ $2 ]] ; then
-    echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+    mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK
+    if [[ $2 == "prediction" ]] ; then 
+        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    else
+        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    fi
     sleep 1;
     echo $2"..."
     rm -rf times.txt
-    taskset $TASKSET_FLAG ./2048
+    for n in {1..1}
+    do
+        taskset $TASKSET_FLAG ./2048
+    done
     mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
-    echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-    echo [ done ]
+else
+    echo "specify governor!"
     exit 1
 fi
 
-for i in "${GOVERNORS[@]}"
-do 
-    echo $i > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-    sleep 1;
-    echo $i"..."
-    rm -rf times.txt
-    taskset $TASKSET_FLAG ./2048
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
-done
+#for i in "${GOVERNORS[@]}"
+#do 
+#    echo $i > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+#    echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+#    sleep 1;
+#    echo $i"..."
+#    rm -rf times.txt
+#    for n in {1..10}
+#    do
+#        taskset $TASKSET_FLAG ./2048
+#    done
+#    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
+#done
 
 #SET TO PERFORMANCE AFTER RUN ALL
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
-echo "[ done ]"
-exit 1
+echo "[ run.sh "$2" done ]"
+exit 0

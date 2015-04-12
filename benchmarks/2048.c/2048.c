@@ -42,17 +42,11 @@ int dvfs_time = 0;
 #define MAX_DVFS_TIME 2943 //max dvfs time
 #define AVG_DVFS_TIME 419 //average dvfs time
 #else //LITTLE
-#define OVERHEAD_TIME 4697 //overhead deadline
-#define AVG_OVERHEAD_TIME 1450 //avg overhead deadline
-    #if DEADLINE_DEFAULT
-    #define DEADLINE_TIME 67812 //max_exec + max_overhead
-    #elif DEADLINE_17MS
-    #define DEADLINE_TIME 17000 //17ms
-    #elif DEADLINE_33MS
-    #define DEADLINE_TIME 33000 //33ms
-    #endif
-#define MAX_DVFS_TIME 4231 //max dvfs time
-#define AVG_DVFS_TIME 1407 //average dvfs time
+#define OVERHEAD_TIME 3651 //overhead deadline
+#define AVG_OVERHEAD_TIME 959 //avg overhead deadline
+#define DEADLINE_TIME (int)((23931*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 3419 //max dvfs time
+#define AVG_DVFS_TIME 908 //average dvfs time
 #endif
 //---------------------modified by TJSong----------------------//
 
@@ -1411,7 +1405,7 @@ float main_loop_slice(char c, uint8_t board[4][4])
 #if CORE //big
     exec_time = 1315.600000*loop_counter[2] + 21.085700*loop_counter[8] + 23.628600*loop_counter[9] + -29.657100*loop_counter[10] + -82.257100*loop_counter[12] + 10.742900*loop_counter[14] + 27.542900*loop_counter[15] + 1311.930000*loop_counter[24] + 35.809100*loop_counter[34] + 11.469700*loop_counter[35] + -20.100000*loop_counter[36] + -40.954500*loop_counter[38] + 4.806060*loop_counter[40] + 14.848500*loop_counter[41] + 1153.560000*loop_counter[46] + 75.091600*loop_counter[50] + 43.063600*loop_counter[51] + -52.476600*loop_counter[53] + 75.106500*loop_counter[54] + -47.530800*loop_counter[56] + -134.849000*loop_counter[57] + 1492.870000*loop_counter[60] + -3.000000*loop_counter[68] + -6.266670*loop_counter[69] + -5.422220*loop_counter[70] + -39.155600*loop_counter[72] + 18.822200*loop_counter[74] + 31.822200*loop_counter[75] + 0.800000*loop_counter[84] + 0.000000;
 #else //LITTLE
-    exec_time = 4314.490000*loop_counter[2] + 13812.400000*loop_counter[8] + 3464.910000*loop_counter[9] + -4159.670000*loop_counter[11] + -5768.880000*loop_counter[12] + 239.250000*loop_counter[13] + -12578.100000*loop_counter[15] + 14341.700000*loop_counter[24] + 5533.050000*loop_counter[34] + 1348.190000*loop_counter[35] + -1739.640000*loop_counter[37] + 1275.160000*loop_counter[38] + -1607.140000*loop_counter[40] + -6649.560000*loop_counter[41] + -16940.800000*loop_counter[46] + 3487.560000*loop_counter[50] + -2591.630000*loop_counter[51] + 4831.360000*loop_counter[53] + 11882.400000*loop_counter[54] + 3175.150000*loop_counter[56] + -534.276000*loop_counter[57] + -5471.110000*loop_counter[60] + 11195.600000*loop_counter[68] + -2123.810000*loop_counter[69] + 1049.940000*loop_counter[71] + 7005.980000*loop_counter[72] + 2622.110000*loop_counter[74] + 4091.390000*loop_counter[75] + -460.395000*loop_counter[84] + 0.000000;
+    exec_time = 15975.600000*loop_counter[2] + -4812.610000*loop_counter[8] + -403.494000*loop_counter[9] + 1905.650000*loop_counter[11] + 4120.520000*loop_counter[12] + -3311.910000*loop_counter[14] + -2053.130000*loop_counter[15] + 13267.000000*loop_counter[24] + -308.201000*loop_counter[34] + -287.788000*loop_counter[35] + 529.847000*loop_counter[36] + -239.121000*loop_counter[38] + 293.302000*loop_counter[40] + -45.485300*loop_counter[41] + 13347.200000*loop_counter[46] + 149.632000*loop_counter[50] + 45.845900*loop_counter[51] + -222.743000*loop_counter[53] + -387.524000*loop_counter[54] + 152.997000*loop_counter[56] + 7162.930000*loop_counter[60] + -4120.070000*loop_counter[68] + -46.884600*loop_counter[69] + 2248.650000*loop_counter[71] + -1662.160000*loop_counter[73] + 5149.290000*loop_counter[75] + 24.212700*loop_counter[84] + 0.000000;
 #endif
     return exec_time;
   }
@@ -3147,7 +3141,7 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = 4314.490000*loop_counter[2] + 13812.400000*loop_counter[8] + 3464.910000*loop_counter[9] + -4159.670000*loop_counter[11] + -5768.880000*loop_counter[12] + 239.250000*loop_counter[13] + -12578.100000*loop_counter[15] + 14341.700000*loop_counter[24] + 5533.050000*loop_counter[34] + 1348.190000*loop_counter[35] + -1739.640000*loop_counter[37] + 1275.160000*loop_counter[38] + -1607.140000*loop_counter[40] + -6649.560000*loop_counter[41] + -16940.800000*loop_counter[46] + 3487.560000*loop_counter[50] + -2591.630000*loop_counter[51] + 4831.360000*loop_counter[53] + 11882.400000*loop_counter[54] + 3175.150000*loop_counter[56] + -534.276000*loop_counter[57] + -5471.110000*loop_counter[60] + 11195.600000*loop_counter[68] + -2123.810000*loop_counter[69] + 1049.940000*loop_counter[71] + 7005.980000*loop_counter[72] + 2622.110000*loop_counter[74] + 4091.390000*loop_counter[75] + -460.395000*loop_counter[84] + 0.000000;
+    exec_time = 15975.600000*loop_counter[2] + -4812.610000*loop_counter[8] + -403.494000*loop_counter[9] + 1905.650000*loop_counter[11] + 4120.520000*loop_counter[12] + -3311.910000*loop_counter[14] + -2053.130000*loop_counter[15] + 13267.000000*loop_counter[24] + -308.201000*loop_counter[34] + -287.788000*loop_counter[35] + 529.847000*loop_counter[36] + -239.121000*loop_counter[38] + 293.302000*loop_counter[40] + -45.485300*loop_counter[41] + 13347.200000*loop_counter[46] + 149.632000*loop_counter[50] + 45.845900*loop_counter[51] + -222.743000*loop_counter[53] + -387.524000*loop_counter[54] + 152.997000*loop_counter[56] + 7162.930000*loop_counter[60] + -4120.070000*loop_counter[68] + -46.884600*loop_counter[69] + 2248.650000*loop_counter[71] + -1662.160000*loop_counter[73] + 5149.290000*loop_counter[75] + 24.212700*loop_counter[84] + 0.000000;
     return exec_time;
   }
 }
@@ -4261,8 +4255,7 @@ int main(int argc, char *argv[]) {
         CASE 1 = to get execution deadline
         CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
-        CASE 4 = running on our prediction with overhead 
-        CASE 5 = running on our prediction without overhead 
+        CASE 4 = running on our prediction 
     */
     #if GET_PREDICT /* CASE 0 */
         predicted_exec_time = main_loop_slice_reduced(c, board); //slice
@@ -4281,30 +4274,19 @@ int main(int argc, char *argv[]) {
         end_timing();
         dvfs_time = fprint_dvfs_timing();
     #endif
-    #if !PREDICT_EN /* CASE 3 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
         moment_timing_fprint(0); //moment_start
     #endif
-    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
         moment_timing_fprint(0); //moment_start
         
         start_timing();
         predicted_exec_time = main_loop_slice_reduced(c, board); //slice
         end_timing();
         slice_time = fprint_slice_timing();
-
-        start_timing();
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = fprint_dvfs_timing();
-    #endif
-    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
-        start_timing();
-        predicted_exec_time = main_loop_slice_reduced(c, board); //slice
-        end_timing();
-        slice_time = fprint_slice_timing();
         
-        moment_timing_fprint(0); //moment_start
+        moment_timing_fprint(1); //moment_start
 
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
@@ -4338,7 +4320,7 @@ int main(int argc, char *argv[]) {
     #if GET_OVERHEAD /* CASE 2 */
         //nothing
     #endif
-    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
         if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
             start_timing();
             usleep(delay_time);
@@ -4347,7 +4329,7 @@ int main(int argc, char *argv[]) {
         }else
             delay_time = 0;
         fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
-        moment_timing_fprint(1); //moment_end
+        moment_timing_fprint(2); //moment_end
     #endif
     fclose_all();//TJSong
 //---------------------modified by TJSong----------------------//
