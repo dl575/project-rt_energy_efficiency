@@ -37,6 +37,7 @@ SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 
 #:53,94s/^/#
 #:53,94s/^#/
+SOURCE_FILES=(
 "mibench/office/stringsearch/pbmsrch_large.c"
 "mibench/security/sha/sha_driver.c"
 "mibench/security/rijndael/aesxam.c"
