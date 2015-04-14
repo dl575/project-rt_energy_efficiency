@@ -4294,11 +4294,6 @@ int main(int argc, char *argv[]) {
         dvfs_time = fprint_dvfs_timing();
     #endif
     
-    // Write out predicted time & print out frequency used
-    #if DEBUG_EN
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); //[DEBUG] check frequency 
-    #endif
 //---------------------modified by TJSong----------------------//
 
     start_timing();
@@ -4332,6 +4327,11 @@ int main(int argc, char *argv[]) {
         moment_timing_fprint(2); //moment_end
     #endif
     fclose_all();//TJSong
+    // Write out predicted time & print out frequency used
+    //#if DEBUG_EN
+        fprint_predicted_time(predicted_exec_time);
+        fprint_freq(); //[DEBUG] check frequency 
+    //#endif
 //---------------------modified by TJSong----------------------//
 
 		if (success) {

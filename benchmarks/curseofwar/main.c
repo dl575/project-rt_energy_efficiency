@@ -51,17 +51,11 @@ int dvfs_time = 0;
 #define MAX_DVFS_TIME 2631 //max dvfs time
 #define AVG_DVFS_TIME 309 //average dvfs time
 #else //LITTLE
-#define OVERHEAD_TIME 44291 //overhead deadline
-#define AVG_OVERHEAD_TIME 896 //avg overhead deadline
-    #if DEADLINE_DEFAULT
-    #define DEADLINE_TIME 11969 //max_exec + max_overhead
-    #elif DEADLINE_17MS
-    #define DEADLINE_TIME 17000 //17ms
-    #elif DEADLINE_33MS
-    #define DEADLINE_TIME 33000 //33ms
-    #endif
-#define MAX_DVFS_TIME 2371 //max dvfs time
-#define AVG_DVFS_TIME 388 //average dvfs time
+#define OVERHEAD_TIME 12907 //overhead deadline
+#define AVG_OVERHEAD_TIME 489 //avg overhead deadline
+#define DEADLINE_TIME (int)((9939*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 1737 //max dvfs time
+#define AVG_DVFS_TIME 312 //average dvfs time
 #endif
 //---------------------modified by TJSong----------------------//
 
@@ -213,7 +207,7 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
 #if CORE //big
     exec_time = 1150.000000*loop_counter[0] + -3.000000*loop_counter[1] + 3112.000000*loop_counter[2] + 2224.000000*loop_counter[4] + -147.000000*loop_counter[10] + 0.000000;
 #else //LITTLE
-    exec_time = 3314.000000*loop_counter[0] + 49.000000*loop_counter[1] + 4646.000000*loop_counter[2] + -153.000000*loop_counter[4] + -248.000000*loop_counter[10] + 0.000000;
+    exec_time = 3250.000000*loop_counter[0] + -224.000000*loop_counter[1] + 4281.000000*loop_counter[2] + -338.000000*loop_counter[4] + 7.000000*loop_counter[10] + 0.000000;
 #endif
     return exec_time;
   }
@@ -427,11 +421,6 @@ void run (struct state *st, struct ui *ui) {
         dvfs_time = fprint_dvfs_timing();
     #endif
     
-    // Write out predicted time & print out frequency used
-    #if DEBUG_EN
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); //[DEBUG] check frequency 
-    #endif  
 //---------------------modified by TJSong----------------------//
 
     start_timing();
@@ -467,6 +456,13 @@ void run (struct state *st, struct ui *ui) {
         moment_timing_fprint(2); //moment_end
     #endif
     fclose_all();//TJSong
+
+    // Write out predicted time & print out frequency used
+    //#if DEBUG_EN
+        fprint_predicted_time(predicted_exec_time);
+        fprint_freq(); //[DEBUG] check frequency 
+    //#endif  
+
     if(cnt++ > 2000)//TJSong
         break;
 //---------------------modified by TJSong----------------------//

@@ -88,11 +88,11 @@ int dvfs_time = 0;
 #define MAX_DVFS_TIME 2668 //max dvfs time
 #define AVG_DVFS_TIME 1246 //average dvfs time
 #else //LITTLE
-#define OVERHEAD_TIME 172788 //overhead deadline
-#define AVG_OVERHEAD_TIME 59919 //avg overhead deadline
-#define DEADLINE_TIME 64686 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2981 //max dvfs time
-#define AVG_DVFS_TIME 1466 //average dvfs time
+#define OVERHEAD_TIME 168542 //overhead deadline
+#define AVG_OVERHEAD_TIME 56606 //avg overhead deadline
+#define DEADLINE_TIME (int)((182846*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2581 //max dvfs time
+#define AVG_DVFS_TIME 1146 //average dvfs time
 #endif
 //---------------------modified by TJSong----------------------//
 
@@ -812,7 +812,7 @@ float slice(int argc, char *argv[])
   print_loop_counter:
   {
 {}
-#if PREDICT_EN || DEBUG_EN
+#if GET_PREDICT || DEBUG_EN
     int i;
     printf("loop counter = (");
     for (i = 0; i < 46; i++)
@@ -829,7 +829,7 @@ float slice(int argc, char *argv[])
 #if CORE //big
 exec_time = 14.840500*loop_counter[2] + 1.129260*loop_counter[3] + 1.104860*loop_counter[19] + 0.000000;
 #else //LITTLE
-exec_time = 13.761800*loop_counter[2] + 1.149090*loop_counter[3] + 2.102240*loop_counter[19] + 0.000000;
+exec_time = 4.947220*loop_counter[1] + 19.778900*loop_counter[3] + 2.126860*loop_counter[19] + 0.000000;
 #endif
     return exec_time;
   }
@@ -852,8 +852,7 @@ int main(int argc, char *argv[])
         CASE 1 = to get execution deadline
         CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
-        CASE 4 = running on our prediction with overhead 
-        CASE 5 = running on our prediction without overhead 
+        CASE 4 = running on our prediction
     */
     #if GET_PREDICT /* CASE 0 */
         predicted_exec_time = slice(argc, argv); //slice
@@ -872,11 +871,11 @@ int main(int argc, char *argv[])
         end_timing();
         dvfs_time = print_dvfs_timing();
     #endif
-    #if !PREDICT_EN /* CASE 3 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
         moment_timing_print(0); //moment_start
     #endif
-    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
         moment_timing_print(0); //moment_start
         
         start_timing();
@@ -884,28 +883,12 @@ int main(int argc, char *argv[])
         end_timing();
         slice_time = print_slice_timing();
 
-        start_timing();
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = print_dvfs_timing();
-    #endif
-    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
-        start_timing();
-        predicted_exec_time = slice(argc, argv); //slice
-        end_timing();
-        slice_time = print_slice_timing();
+        moment_timing_print(1); //moment_start
         
-        moment_timing_print(0); //moment_start
-
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = print_dvfs_timing();
-    #endif
-    // Write out predicted time & print out frequency used
-    #if DEBUG_EN
-        print_predicted_time(predicted_exec_time);
-        print_freq(); 
     #endif
 //---------------------modified by TJSong----------------------//
 
@@ -1001,7 +984,7 @@ exit:
     #if GET_OVERHEAD /* CASE 2 */
         //nothing
     #endif
-    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
         if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
             start_timing();
             usleep(delay_time);
@@ -1010,9 +993,14 @@ exit:
         }else
             delay_time = 0;
         print_total_time(exec_time + slice_time + dvfs_time + delay_time);
-        moment_timing_print(1); //moment_end
+        moment_timing_print(2); //moment_end
     #endif
     fclose_all();//TJSong
+    // Write out predicted time & print out frequency used
+    //#if DEBUG_EN
+        print_predicted_time(predicted_exec_time);
+        print_freq(); 
+    //#endif
 //---------------------modified by TJSong----------------------//
     return err;
 }
