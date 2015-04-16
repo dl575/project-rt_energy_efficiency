@@ -6,6 +6,7 @@
 //automatically set
 #define DVFS_EN 1 //1:change dvfs, 0:don't change dvfs (e.g., not running on ODROID)
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
+#define MAX_CNT 100
 
 FILE *fp_max_freq; //File pointer scaling_max_freq
 
@@ -103,14 +104,31 @@ int main(){
     float a;
     int b;
     time_t t;
+    int i, j, cnt;
+#if CORE
+    int arr[19][19]={0};
+    int avg_arr[19][19]={0};
+#else
+    int arr[13][13]={0};
+    int avg_arr[13][13]={0};
+#endif
+
     fopen_all();
     srand((unsigned)time(&t));
-
+for(cnt=0; cnt<MAX_CNT; cnt++){
+    i=0;
+#if CORE
     for (from = 200; from <= 2000; from+=100)
+#else
+    for (from = 200; from <= 1400; from+=100)
+#endif
     {
-
-        printf("%s","from\tto\texec_time\n");
+        j=0;
+#if CORE
         for(to=200; to <=2000; to+=100){
+#else
+        for(to=200; to <=1400; to+=100){
+#endif
             a = (float)(rand()%10000+1);
             b = rand()%10000+1;
             set_freq(1000*from, a, b, 20000, 2000);
@@ -121,15 +139,17 @@ int main(){
             start_timing();
             set_freq(1000*to, a, b, 20000, 2000);
             end_timing();
-            dvfs_time = exec_timing();
-
+            arr[i][j] += exec_timing();
+            avg_arr[i][j] = arr[i][j]/(cnt+1);
+            
             print_freq();
-            printf("%d\n", dvfs_time);
-
+            printf("%d\n", avg_arr[i][j]);
+            j++;
         }
-        printf("%s","----------------------\n");
-
+        i++;
     }
+
+}
     fclose_all();
     return 0;
 }
