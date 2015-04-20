@@ -75,17 +75,17 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 219936 //overhead deadline
-#define AVG_OVERHEAD_TIME 126526 //avg overhead deadline
-#define DEADLINE_TIME 4444806 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2511 //max dvfs time
-#define AVG_DVFS_TIME 872 //average dvfs time
+#define OVERHEAD_TIME 55811 //overhead deadline
+#define AVG_OVERHEAD_TIME 23420 //avg overhead deadline
+#define DEADLINE_TIME (int)((3770379*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2392 //max dvfs time
+#define AVG_DVFS_TIME 1433 //average dvfs time
 #else //LITTLE
-#define OVERHEAD_TIME 168705 //overhead deadline
-#define AVG_OVERHEAD_TIME 70081 //avg overhead deadline
-#define DEADLINE_TIME 14758002 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2463 //max dvfs time
-#define AVG_DVFS_TIME 1518 //average dvfs time
+#define OVERHEAD_TIME 657768 //overhead deadline
+#define AVG_OVERHEAD_TIME 222165 //avg overhead deadline
+#define DEADLINE_TIME (int)((8565530*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2938 //max dvfs time
+#define AVG_DVFS_TIME 1457 //average dvfs time
 #endif
 //---------------------modified by TJSong----------------------//
 
@@ -996,9 +996,9 @@ float ps_process_raw_slice(ps_decoder_t *ps, const int16 *data, size_t n_samples
     ;
     float exec_time;
 #if CORE //big
-    exec_time = 6756.170000*loop_counter[5] + 630937.000000;
+    exec_time = 6272.170000*loop_counter[5] + 323544.000000;
 #else //LITTLE
-    exec_time = 6756.170000*loop_counter[5] + 630937.000000;
+    exec_time = 15683.200000*loop_counter[5] + 381812.000000;
 #endif
     return exec_time;
   }
@@ -1047,8 +1047,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         CASE 1 = to get execution deadline
         CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
-        CASE 4 = running on our prediction with overhead 
-        CASE 5 = running on our prediction without overhead 
+        CASE 4 = running on our prediction
     */
     #if GET_PREDICT /* CASE 0 */
         predicted_exec_time = ps_process_raw_slice(ps, data, total, FALSE, TRUE); //slice
@@ -1067,11 +1066,11 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         end_timing();
         dvfs_time = fprint_dvfs_timing();
     #endif
-    #if !PREDICT_EN /* CASE 3 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
         moment_timing_fprint(0); //moment_start
     #endif
-    #if PREDICT_EN && OVERHEAD_EN /* CASE 4 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
         moment_timing_fprint(0); //moment_start
         
         start_timing();
@@ -1083,26 +1082,15 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = fprint_dvfs_timing();
-    #endif
-    #if PREDICT_EN && !OVERHEAD_EN /* CASE 5 */
-        start_timing();
-        predicted_exec_time = ps_process_raw_slice(ps, data, total, FALSE, TRUE); //slice
-        end_timing();
-        slice_time = fprint_slice_timing();
         
-        moment_timing_fprint(0); //moment_start
-
-        start_timing();
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = fprint_dvfs_timing();
+        moment_timing_fprint(1); //moment_start
     #endif
     
     // Write out predicted time & print out frequency used
-    #if DEBUG_EN
+    //#if DEBUG_EN
         fprint_predicted_time(predicted_exec_time);
         fprint_freq(); //[DEBUG] check frequency 
-    #endif
+    //#endif
 //---------------------modified by TJSong----------------------//
           _Exit(0);
         } else {
@@ -1132,7 +1120,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     #if GET_OVERHEAD /* CASE 2 */
         //nothing
     #endif
-    #if !PREDICT_EN || (PREDICT_EN && OVERHEAD_EN) || (PREDICT_EN && !OVERHEAD_EN) /* CASE 3, 4, and 5 */
+    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
         if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
             start_timing();
             usleep(delay_time);
@@ -1140,8 +1128,9 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
             delay_time = exec_timing();
         }else
             delay_time = 0;
+        moment_timing_fprint(2); //moment_end
+        fprint_exec_time(exec_time);
         fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
-        moment_timing_fprint(1); //moment_end
     #endif
     fclose_all();//TJSong
 //---------------------modified by TJSong----------------------//

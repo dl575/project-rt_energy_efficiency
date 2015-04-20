@@ -121,11 +121,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 7515 //overhead deadline
-#define AVG_OVERHEAD_TIME 1476 //avg overhead deadline
-#define DEADLINE_TIME 1511 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 3069 //max dvfs time
-#define AVG_DVFS_TIME 528 //average dvfs time
+#define OVERHEAD_TIME 3873 //overhead deadline
+#define AVG_OVERHEAD_TIME 635 //avg overhead deadline
+#define DEADLINE_TIME (int)((1521*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2460 //max dvfs time
+#define AVG_DVFS_TIME 358 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 4424 //overhead deadline
 #define AVG_OVERHEAD_TIME 958 //avg overhead deadline
@@ -2533,7 +2533,7 @@ float Main_loop_slice()
 
     float exec_time;
 #if CORE //big
-exec_time = 75.273200*loop_counter[6] + 276.191000*loop_counter[7] + -265.259000*loop_counter[13] + 151.735000*loop_counter[14] + -3.010970*loop_counter[19] + -218.464000*loop_counter[20] + -38.347800*loop_counter[43] + -45.917600*loop_counter[44] + -152.579000*loop_counter[45] + -57.226100*loop_counter[46] + 27.092500*loop_counter[91] + 171.838000*loop_counter[92] + 40.502200*loop_counter[93] + 32.222900*loop_counter[100] + 47.882100*loop_counter[105] + 11.460300*loop_counter[107] + -137.406000*loop_counter[136] + -48.061000*loop_counter[138] + -145.901000*loop_counter[140] + 40.937700*loop_counter[141] + 1.978060*loop_counter[150] + 1.936640*loop_counter[151] + 0.578305*loop_counter[153] + 7.411550*loop_counter[155] + -0.822326*loop_counter[156] + -1.430020*loop_counter[157] + -1.706400*loop_counter[161] + -0.185821*loop_counter[162] + -1.092070*loop_counter[163] + -36.383400*loop_counter[166] + 21.311900*loop_counter[167] + -7.770980*loop_counter[169] + -33.018500*loop_counter[172] + 34.366100*loop_counter[173] + 35.223400*loop_counter[177] + 22.980800*loop_counter[178] + -33.619300*loop_counter[181] + 39.434600*loop_counter[194] + 13.968900*loop_counter[216] + -44.922500*loop_counter[220] + 271.904000*loop_counter[221] + 990.901000*loop_counter[231] + 82.320500*loop_counter[232] + 1.591080*loop_counter[238] + -15.402500*loop_counter[240] + 5.000000*loop_counter[241] + 93.000000;
+exec_time = -124.523000*loop_counter[6] + -1110.480000*loop_counter[7] + -245.719000*loop_counter[13] + 242.184000*loop_counter[14] + 0.137926*loop_counter[19] + -145.546000*loop_counter[21] + -51.730200*loop_counter[29] + -98.964000*loop_counter[45] + -51.990600*loop_counter[46] + -3.731960*loop_counter[100] + 24.447700*loop_counter[105] + -57.799200*loop_counter[107] + -99.064100*loop_counter[136] + -82.163000*loop_counter[140] + 0.159920*loop_counter[150] + -0.066498*loop_counter[151] + 1.048820*loop_counter[153] + -0.640771*loop_counter[154] + -0.388358*loop_counter[155] + -0.101051*loop_counter[157] + 3.124800*loop_counter[161] + -13.214100*loop_counter[163] + -20.163900*loop_counter[166] + 27.613100*loop_counter[167] + 6.232310*loop_counter[169] + 12.665500*loop_counter[172] + -5.244120*loop_counter[173] + -8.906520*loop_counter[178] + -108.512000*loop_counter[181] + -14.823100*loop_counter[194] + -53.031200*loop_counter[220] + -615.850000*loop_counter[221] + 14.130100*loop_counter[231] + 2.114120*loop_counter[232] + 0.143639*loop_counter[238] + -13.548500*loop_counter[240] + -1426.000000*loop_counter[241] + 1530.000000;
 #else //LITTLE
 exec_time = 302.053000*loop_counter[6] + -2871.050000*loop_counter[7] + 594.898000*loop_counter[13] + 42.021800*loop_counter[14] + 4.132550*loop_counter[19] + -814.465000*loop_counter[21] + 41.948000*loop_counter[45] + 239.753000*loop_counter[46] + 13.838000*loop_counter[100] + 168.829000*loop_counter[101] + 137.893000*loop_counter[105] + 43.514900*loop_counter[107] + 165.882000*loop_counter[136] + 203.610000*loop_counter[138] + 126.680000*loop_counter[140] + -134.051000*loop_counter[150] + -128.095000*loop_counter[151] + 4.310330*loop_counter[153] + 2.162160*loop_counter[155] + -136.195000*loop_counter[156] + -139.723000*loop_counter[157] + -0.855405*loop_counter[161] + -46.407600*loop_counter[163] + -119.431000*loop_counter[166] + 90.408700*loop_counter[167] + -113.065000*loop_counter[169] + -95.277200*loop_counter[172] + -47.137800*loop_counter[173] + -103.199000*loop_counter[178] + -165.834000*loop_counter[181] + -403.315000*loop_counter[194] + 132.710000*loop_counter[201] + -261.092000*loop_counter[216] + -198.519000*loop_counter[220] + -3421.210000*loop_counter[221] + -77.188200*loop_counter[231] + -1.882760*loop_counter[232] + 3.699690*loop_counter[238] + 11.476200*loop_counter[240] + -3078.000000*loop_counter[241] + 3233.000000;
 #endif
@@ -4992,13 +4992,13 @@ void Main_loop(void)
         predicted_exec_time = Main_loop_slice(); //slice
         end_timing();
         slice_time = print_slice_timing();
-
-        moment_timing_print(1); //moment_start
         
-    start_timing();
+        start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = print_dvfs_timing();
+
+        moment_timing_print(1); //moment_start
     #endif
 
 //---------------------modified by TJSong----------------------//
@@ -5087,8 +5087,9 @@ void Main_loop(void)
             printf("actually delayed by %d\n", delay_time);
         }else
             delay_time = 0;
-        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         moment_timing_print(2); //moment_end
+        print_exec_time(exec_time);
+        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
     #endif
     fclose_all();//TJSong
  

@@ -31,11 +31,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 2494 //overhead deadline
-#define AVG_OVERHEAD_TIME 519 //avg overhead deadline
-#define DEADLINE_TIME 3694 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2428 //max dvfs time
-#define AVG_DVFS_TIME 515 //average dvfs time
+#define OVERHEAD_TIME 2430 //overhead deadline
+#define AVG_OVERHEAD_TIME 491 //avg overhead deadline
+#define DEADLINE_TIME (int)((3803*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2427 //max dvfs time
+#define AVG_DVFS_TIME 490 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 2776 //overhead deadline
 #define AVG_OVERHEAD_TIME 454 //avg overhead deadline
@@ -99,7 +99,7 @@ float slice(const char *string)
 
     float exec_time;
 #if CORE //big
-exec_time = 43.000000*loop_counter[0] + 80.333300*loop_counter[1] + 602.000000*loop_counter[3] + 2576.000000;
+exec_time = -696.667000*loop_counter[0] + 56.333300*loop_counter[1] + 713.000000*loop_counter[3] + 3383.670000;
 #else //LITTLE
 exec_time = -752.091000*loop_counter[0] + 90.818200*loop_counter[1] + 1506.910000*loop_counter[3] + 8207.360000;
 #endif
@@ -2876,12 +2876,12 @@ NULL};
         end_timing();
         slice_time = print_slice_timing();
 
-        moment_timing_print(1); //moment_start
-        
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = print_dvfs_timing();
+        
+        moment_timing_print(1); //moment_start
     #endif
     
 //---------------------modified by TJSong----------------------//
@@ -2915,8 +2915,9 @@ NULL};
             delay_time = exec_timing();
         }else
             delay_time = 0;
-        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         moment_timing_print(2); //moment_end
+        print_exec_time(exec_time);
+        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
     #endif
     // Write out predicted time & print out frequency used
     //#if DEBUG_EN

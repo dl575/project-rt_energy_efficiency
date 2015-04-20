@@ -10,16 +10,17 @@ some of all benchmarks use.
 #define MILLION 1000000L
 
 //manually set below
-#define CORE 0 //0:LITTLE, 1:big
+#define CORE 1 //0:LITTLE, 1:big
 
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
-#define DELAY_EN 0 //0:delay off, 1:delay on
-#define OVERHEAD_EN 0 //1:measure dvfs, slice timing
+#define DELAY_EN 1 //0:delay off, 1:delay on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
-#define GET_OVERHEAD 0 //to get overhead deadline
+#define GET_DEADLINE 0 //to get overhead deadline
 #define DEBUG_EN 0 //debug information print on/off
+
+#define SWEEP (180) //sweep deadline (e.g, if 90, deadline*0.9)
 
 #define DEADLINE_DEFAULT 1 //max_exec + max_overhead
 #define DEADLINE_17MS 0 //17ms
@@ -64,7 +65,7 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
     int predicted_freq = MAX_FREQ;
        
     //calculate predicted freq and round up by adding 99999
-    predicted_freq = predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+    predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 0)?(200000):(predicted_freq);
     //set maximum frequency, because performance governor always use maximum freq.
@@ -92,7 +93,7 @@ void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time,
     int predicted_freq = MAX_FREQ;
        
     //calculate predicted freq and round up by adding 99999
-    predicted_freq = predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+    predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 0)?(200000):(predicted_freq);
     //set maximum frequency, because performance governor always use maximum freq.
@@ -106,7 +107,6 @@ void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time,
 
 void fprint_freq(void){
 #if DVFS_EN
-    FILE *fp_power; //File pointer of power of A7 (LITTLE) core or A15 (big) core power sensor file
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
 
@@ -199,14 +199,14 @@ void fprint_total_time(int exec_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "total_time %d = %d us\n", instance_number, exec_time);
+    fprintf(time_file, "time_total %d = %d us\n", instance_number, exec_time);
     instance_number++;
     fclose(time_file);
 }
 
 void print_total_time(int exec_time){
     static int instance_number = 0;
-    printf("total_time %d = %d us\n", instance_number, exec_time);
+    printf("time_total %d = %d us\n", instance_number, exec_time);
     instance_number++;
 }
 
