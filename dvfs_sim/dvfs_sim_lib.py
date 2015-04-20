@@ -316,7 +316,7 @@ def policy_conservative(train_times, train_metrics, test_times=None, test_metric
   out_file = open("temp.lp", 'w')
   out_file.write(lp)
   out_file.close()
-  os.system("lp_solve temp.lp > temp.lps")
+  os.system("lp_solve -s5 temp.lp > temp.lps")
   # Get coefficients
   solve_file = open("temp.lps", 'r')
   coeffs = []
