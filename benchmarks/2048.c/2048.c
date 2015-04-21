@@ -32,15 +32,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 3588 //overhead deadline
-#define AVG_OVERHEAD_TIME 795 //avg overhead deadline
-    #if DEADLINE_DEFAULT
-    #define DEADLINE_TIME 42580 + OVERHEAD_TIME //max_exec + max_overhead
-    #elif DEADLINE_15MS
-    #define DEADLINE_TIME 15000 //15ms
-    #endif
-#define MAX_DVFS_TIME 2943 //max dvfs time
-#define AVG_DVFS_TIME 419 //average dvfs time
+#define OVERHEAD_TIME 2384 //overhead deadline
+#define AVG_OVERHEAD_TIME 365 //avg overhead deadline
+#define DEADLINE_TIME (int)((44755*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2180 //max dvfs time
+#define AVG_DVFS_TIME 327 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 3651 //overhead deadline
 #define AVG_OVERHEAD_TIME 959 //avg overhead deadline
@@ -386,7 +382,7 @@ void signal_callback_handler(int signum) {
 	printf("\e[?25h\e[m");
 	exit(signum);
 }
-
+/*
 float main_loop_slice(char c, uint8_t board[4][4])
 {
   uint8_t scheme_rename = scheme;
@@ -1403,14 +1399,14 @@ float main_loop_slice(char c, uint8_t board[4][4])
 
     float exec_time;
 #if CORE //big
-    exec_time = 1315.600000*loop_counter[2] + 21.085700*loop_counter[8] + 23.628600*loop_counter[9] + -29.657100*loop_counter[10] + -82.257100*loop_counter[12] + 10.742900*loop_counter[14] + 27.542900*loop_counter[15] + 1311.930000*loop_counter[24] + 35.809100*loop_counter[34] + 11.469700*loop_counter[35] + -20.100000*loop_counter[36] + -40.954500*loop_counter[38] + 4.806060*loop_counter[40] + 14.848500*loop_counter[41] + 1153.560000*loop_counter[46] + 75.091600*loop_counter[50] + 43.063600*loop_counter[51] + -52.476600*loop_counter[53] + 75.106500*loop_counter[54] + -47.530800*loop_counter[56] + -134.849000*loop_counter[57] + 1492.870000*loop_counter[60] + -3.000000*loop_counter[68] + -6.266670*loop_counter[69] + -5.422220*loop_counter[70] + -39.155600*loop_counter[72] + 18.822200*loop_counter[74] + 31.822200*loop_counter[75] + 0.800000*loop_counter[84] + 0.000000;
+    exec_time = -1371.720000*loop_counter[2] + 2931.910000*loop_counter[8] + 6420.140000*loop_counter[9] + -3873.560000*loop_counter[10] + -26549.500000*loop_counter[12] + 1673.720000*loop_counter[14] + 8345.780000*loop_counter[15] + 49550.100000*loop_counter[24] + -22842.500000*loop_counter[34] + -6461.250000*loop_counter[35] + 12849.600000*loop_counter[36] + 6284.120000*loop_counter[38] + -2245.090000*loop_counter[40] + 6090.530000*loop_counter[41] + 1847.660000*loop_counter[46] + -141.811000*loop_counter[50] + -46.615400*loop_counter[51] + -13.183400*loop_counter[53] + -148.278000*loop_counter[54] + 57.757400*loop_counter[56] + 129.633000*loop_counter[57] + 79863.400000*loop_counter[60] + 4629.660000*loop_counter[68] + -5964.320000*loop_counter[69] + -2188.260000*loop_counter[70] + 8664.600000*loop_counter[72] + 1920.060000*loop_counter[74] + 3706.720000*loop_counter[75] + 9.420120*loop_counter[84] + 0.000000;
 #else //LITTLE
     exec_time = 15975.600000*loop_counter[2] + -4812.610000*loop_counter[8] + -403.494000*loop_counter[9] + 1905.650000*loop_counter[11] + 4120.520000*loop_counter[12] + -3311.910000*loop_counter[14] + -2053.130000*loop_counter[15] + 13267.000000*loop_counter[24] + -308.201000*loop_counter[34] + -287.788000*loop_counter[35] + 529.847000*loop_counter[36] + -239.121000*loop_counter[38] + 293.302000*loop_counter[40] + -45.485300*loop_counter[41] + 13347.200000*loop_counter[46] + 149.632000*loop_counter[50] + 45.845900*loop_counter[51] + -222.743000*loop_counter[53] + -387.524000*loop_counter[54] + 152.997000*loop_counter[56] + 7162.930000*loop_counter[60] + -4120.070000*loop_counter[68] + -46.884600*loop_counter[69] + 2248.650000*loop_counter[71] + -1662.160000*loop_counter[73] + 5149.290000*loop_counter[75] + 24.212700*loop_counter[84] + 0.000000;
 #endif
     return exec_time;
   }
 }
-
+*/
 #if CORE //big
 float main_loop_slice_reduced(char c, uint8_t board[4][4])
 {
@@ -2275,7 +2271,7 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = 1315.600000*loop_counter[2] + 21.085700*loop_counter[8] + 23.628600*loop_counter[9] + -29.657100*loop_counter[10] + -82.257100*loop_counter[12] + 10.742900*loop_counter[14] + 27.542900*loop_counter[15] + 1311.930000*loop_counter[24] + 35.809100*loop_counter[34] + 11.469700*loop_counter[35] + -20.100000*loop_counter[36] + -40.954500*loop_counter[38] + 4.806060*loop_counter[40] + 14.848500*loop_counter[41] + 1153.560000*loop_counter[46] + 75.091600*loop_counter[50] + 43.063600*loop_counter[51] + -52.476600*loop_counter[53] + 75.106500*loop_counter[54] + -47.530800*loop_counter[56] + -134.849000*loop_counter[57] + 1492.870000*loop_counter[60] + -3.000000*loop_counter[68] + -6.266670*loop_counter[69] + -5.422220*loop_counter[70] + -39.155600*loop_counter[72] + 18.822200*loop_counter[74] + 31.822200*loop_counter[75] + 0.800000*loop_counter[84] + 0.000000;
+    exec_time = 52542.600000*loop_counter[2] + 158.320000*loop_counter[8] + 1058.570000*loop_counter[9] + -2043.490000*loop_counter[10] + -6126.900000*loop_counter[12] + -563.894000*loop_counter[14] + 3121.810000*loop_counter[15] + 48972.800000*loop_counter[24] + -6685.450000*loop_counter[34] + 2431.430000*loop_counter[35] + -3114.890000*loop_counter[36] + -11075.000000*loop_counter[38] + 1288.460000*loop_counter[40] + 11383.700000*loop_counter[41] + 32962.200000*loop_counter[46] + -4376.170000*loop_counter[50] + 1123.960000*loop_counter[51] + 985.732000*loop_counter[53] + -5863.100000*loop_counter[54] + -532.336000*loop_counter[56] + 5207.190000*loop_counter[57] + 88334.200000*loop_counter[60] + -6375.230000*loop_counter[68] + -2211.840000*loop_counter[69] + -270.515000*loop_counter[70] + -6871.010000*loop_counter[72] + 2331.360000*loop_counter[74] + 1558.120000*loop_counter[75] + 138.148000*loop_counter[84] + 0.000000;
     return exec_time;
   }
 }
@@ -3141,7 +3137,7 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = 15975.600000*loop_counter[2] + -4812.610000*loop_counter[8] + -403.494000*loop_counter[9] + 1905.650000*loop_counter[11] + 4120.520000*loop_counter[12] + -3311.910000*loop_counter[14] + -2053.130000*loop_counter[15] + 13267.000000*loop_counter[24] + -308.201000*loop_counter[34] + -287.788000*loop_counter[35] + 529.847000*loop_counter[36] + -239.121000*loop_counter[38] + 293.302000*loop_counter[40] + -45.485300*loop_counter[41] + 13347.200000*loop_counter[46] + 149.632000*loop_counter[50] + 45.845900*loop_counter[51] + -222.743000*loop_counter[53] + -387.524000*loop_counter[54] + 152.997000*loop_counter[56] + 7162.930000*loop_counter[60] + -4120.070000*loop_counter[68] + -46.884600*loop_counter[69] + 2248.650000*loop_counter[71] + -1662.160000*loop_counter[73] + 5149.290000*loop_counter[75] + 24.212700*loop_counter[84] + 0.000000;
+    exec_time = -7620.000000*loop_counter[2] + 8094.830000*loop_counter[8] + -4082.040000*loop_counter[9] + 2352.100000*loop_counter[10] + 6840.610000*loop_counter[12] + 5473.500000*loop_counter[14] + 1331.150000*loop_counter[15] + 21712.900000*loop_counter[24] + -5913.240000*loop_counter[34] + 9622.360000*loop_counter[35] + -9845.030000*loop_counter[36] + -4195.210000*loop_counter[38] + -10079.200000*loop_counter[40] + 4968.480000*loop_counter[41] + 17787.600000*loop_counter[46] + 10671.200000*loop_counter[50] + 5829.060000*loop_counter[51] + -11249.900000*loop_counter[53] + -12884.000000*loop_counter[54] + 1143.250000*loop_counter[56] + -14080.200000*loop_counter[57] + -31723.900000*loop_counter[60] + 17087.400000*loop_counter[68] + -5675.390000*loop_counter[69] + 4797.100000*loop_counter[70] + 23886.600000*loop_counter[72] + 2024.780000*loop_counter[74] + 9333.150000*loop_counter[75] + 133.928000*loop_counter[84] + 0.000000;
     return exec_time;
   }
 }
@@ -4285,13 +4281,13 @@ int main(int argc, char *argv[]) {
         predicted_exec_time = main_loop_slice_reduced(c, board); //slice
         end_timing();
         slice_time = fprint_slice_timing();
-        
-        moment_timing_fprint(1); //moment_start
 
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = fprint_dvfs_timing();
+
+        moment_timing_fprint(1); //moment_start
     #endif
     
 //---------------------modified by TJSong----------------------//
@@ -4323,8 +4319,9 @@ int main(int argc, char *argv[]) {
             delay_time = exec_timing();
         }else
             delay_time = 0;
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
         moment_timing_fprint(2); //moment_end
+        fprint_exec_time(exec_time);
+        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
     #endif
     fclose_all();//TJSong
     // Write out predicted time & print out frequency used

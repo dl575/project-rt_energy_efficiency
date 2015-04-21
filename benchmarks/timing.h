@@ -42,7 +42,9 @@ void moment_timing_print(int start_end) {
     gettimeofday(&moment, NULL);
     
     if(start_end == 0){//moment_start
-        printf("moment_start : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
+        printf("moment_start_0 : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
+    }else if(start_end == 1){//moment_start
+        printf("moment_start_1 : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
     }else{//moment_end
         printf("moment_end : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
     }
@@ -57,7 +59,9 @@ void moment_timing_fprint(int start_end) {
     FILE *time_file;
     time_file = fopen("times.txt", "a");
     if(start_end == 0){//moment_start
-        fprintf(time_file, "moment_start : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
+        fprintf(time_file, "moment_start_0 : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
+    }else if(start_end == 1){//moment_start
+        fprintf(time_file, "moment_start_1 : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
     }else{//moment_end
         fprintf(time_file, "moment_end : %llu us\n", (unsigned long long int)moment.tv_sec * MILLION + (unsigned long long int)moment.tv_usec);
     }

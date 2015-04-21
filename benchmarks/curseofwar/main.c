@@ -45,11 +45,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 8880 //overhead deadline
-#define AVG_OVERHEAD_TIME 588 //avg overhead deadline
-#define DEADLINE_TIME 5063 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2631 //max dvfs time
-#define AVG_DVFS_TIME 309 //average dvfs time
+#define OVERHEAD_TIME 21452 //overhead deadline
+#define AVG_OVERHEAD_TIME 1075 //avg overhead deadline
+#define DEADLINE_TIME (int)((5093*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 4248 //max dvfs time
+#define AVG_DVFS_TIME 852 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 12907 //overhead deadline
 #define AVG_OVERHEAD_TIME 489 //avg overhead deadline
@@ -205,7 +205,7 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
 
     float exec_time;
 #if CORE //big
-    exec_time = 1150.000000*loop_counter[0] + -3.000000*loop_counter[1] + 3112.000000*loop_counter[2] + 2224.000000*loop_counter[4] + -147.000000*loop_counter[10] + 0.000000;
+    exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
 #else //LITTLE
     exec_time = 3250.000000*loop_counter[0] + -224.000000*loop_counter[1] + 4281.000000*loop_counter[2] + -338.000000*loop_counter[4] + 7.000000*loop_counter[10] + 0.000000;
 #endif
@@ -412,13 +412,13 @@ void run (struct state *st, struct ui *ui) {
         predicted_exec_time = run_loop_slice(st, ui, k); //slice        
         end_timing();
         slice_time = fprint_slice_timing();
-        
-        moment_timing_fprint(1); //moment_start
 
         start_timing();
         set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
         end_timing();
         dvfs_time = fprint_dvfs_timing();
+        
+        moment_timing_fprint(1); //moment_start
     #endif
     
 //---------------------modified by TJSong----------------------//
@@ -452,8 +452,9 @@ void run (struct state *st, struct ui *ui) {
             delay_time = exec_timing();
         }else
             delay_time = 0;
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
         moment_timing_fprint(2); //moment_end
+        fprint_exec_time(exec_time);
+        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
     #endif
     fclose_all();//TJSong
 
