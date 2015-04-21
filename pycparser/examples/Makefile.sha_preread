@@ -1,0 +1,25 @@
+PYTHON=/usr/bin/python
+DIRNAME=sha_preread
+FILENAME=$(DIRNAME)/sha
+FUNCNAME=sha_stream
+
+slice: preprocess
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c > $(FILENAME)_loop_counts.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	$(PYTHON) cleanup.py $(FILENAME)_slice.c > $(FILENAME)_cleanup.c
+	./insert_preprocessor.sh $(FILENAME)_cleanup.c > $(FILENAME)_debugflag.c
+
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+preprocess:
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
+
+	$(call td,"SHA_INFO")
+	$(call td,"LONG")
+	$(call td,"BYTE")
+	$(call td,"FILE")
+
+clean:
+	rm -r $(FILENAME)2.c $(FILENAME)3.c $(FILENAME)_*.c
