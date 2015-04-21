@@ -134,26 +134,28 @@ void fprint_freq(void){
 }
 
 void print_freq(void){
+#if DVFS_EN
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
 
-#if CORE //big
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-        printf("ERROR : FILE READ FAILED\n");
-        return;
-    }
-    fscanf(fp_freq, "%d", &khz);
-    printf("big core freq : %dkhz\n", khz);  
-#else //LITTLE
-    if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
-        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
-    fscanf(fp_freq, "%d", &khz);
-    printf("little core freq : %dkhz\n", khz);  
-#endif
+    #if CORE //big
+        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+            printf("ERROR : FILE READ FAILED\n");
+            return;
+        }
+        fscanf(fp_freq, "%d", &khz);
+        printf("big core freq : %dkhz\n", khz);  
+    #else //LITTLE
+        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+            printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+            return;
+        }
+        fscanf(fp_freq, "%d", &khz);
+        printf("little core freq : %dkhz\n", khz);  
+    #endif
     fclose(fp_freq);
     return;
+#endif
 }
 
 
