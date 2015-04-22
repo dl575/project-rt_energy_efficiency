@@ -10,7 +10,7 @@ some of all benchmarks use.
 #define MILLION 1000000L
 
 //manually set below
-#define CORE 0 //0:LITTLE, 1:big
+#define CORE 1 //0:LITTLE, 1:big
 
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define DELAY_EN 1 //0:delay off, 1:delay on

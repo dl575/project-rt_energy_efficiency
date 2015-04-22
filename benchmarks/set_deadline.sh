@@ -4,6 +4,8 @@
 xdotool type odroid
 xdotool key KP_Enter
 
+source global.sh
+
 if [[ $# < 1 ]] ; then
     echo 'USAGE : ./run.sh big or ./run.sh little'
     exit 1
@@ -14,29 +16,6 @@ if [ $1 != "big" -a $1 != "little" ] ; then
     exit 1
 fi
 
-DVFS_SIM_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/
-BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-COMMON_FILE=("common.h")
-SOURCE_FILES=("2048.c/2048.c")
-SOURCE_PATH=("2048.c") 
-BENCH_NAME=("2048_slice")
-
-CORE_BIG="CORE 1"
-CORE_LITTLE="CORE 0"
-PREDICT_ENABLED="PREDICT_EN 1"
-PREDICT_DISABLED="PREDICT_EN 0"
-OVERHEAD_ENABLED="OVERHEAD_EN 1"
-OVERHEAD_DISABLED="OVERHEAD_EN 0"
-GET_PREDICT_ENABLED="GET_PREDICT 1"
-GET_PREDICT_DISABLED="GET_PREDICT 0"
-GET_DEADLINE_ENABLED="GET_DEADLINE 1"
-GET_DEADLINE_DISABLED="GET_DEADLINE 0"
-GET_OVERHEAD_ENABLED="GET_OVERHEAD 1"
-GET_OVERHEAD_DISABLED="GET_OVERHEAD 0"
-DELAY_ENABLED="DELAY_EN 1"
-DELAY_DISABLED="DELAY_EN 0"
-DVFS_ENABLED="DVFS_EN 1"
-DVFS_DISABLED="DVFS_EN 0"
 
 # set core depends on argument 1
 if [ $1 == "big" ] ; then
@@ -45,48 +24,137 @@ elif [ $1 == "little" ] ; then
     sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
+# disable DEBUG_EN
+sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
 # enable DVFS_EN
 sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
-#---------------to get execution deadline--------------
-# GET_DEADLINE enable, others disable, run performance
-sed -i -e 's/'"$GET_DEADLINE_DISABLED"'/'"$GET_DEADLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+do
+    #---------------to get execution deadline--------------
+    # GET_DEADLINE enable, others disable, run performance
+    sed -i -e 's/'"$GET_DEADLINE_DISABLED"'/'"$GET_DEADLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
-sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
-#move to benchamrk folder and build
-cd $BENCH_PATH/$SOURCE_PATH
-find . -type f | xargs -n 5 touch
-taskset 0xff make clean
-taskset 0xff make -j16
+    #move to benchamrk folder and build
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+    find . -type f | xargs -n 5 touch
+    taskset 0xff make clean -j16
+    taskset 0xff make -j16
 
-./run.sh $1 temp_sample
-mv $DVFS_SIM_PATH/data_odroid/$1/$BENCH_NAME/temp_sample $BENCH_PATH/$SOURCE_PATH/M0.txt
+    #Doing extra jobs (such as coyping binaries, fix_addresses)
+    if [ ${SOURCE_FILES[$i]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
+        echo "[julius] copy binary"
+        rm -rf $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+        cp $BENCH_PATH/julius/julius-4.3.1/julius/julius $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+    fi
 
-#---------------to get overhead deadline--------------
-# GET_OVERHEAD enable, others disable, run performance
-sed -i -e 's/'"$GET_OVERHEAD_DISABLED"'/'"$GET_OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    #fix address for uzbl benchmarks
+    if [ ${SOURCE_FILES[$i]} == "uzbl/src/commands.c" ] ; then
+        echo "[uzbl] ./fix_addresses.py & make install"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff ./fix_addresses.py 
+        taskset 0xff make -j16 
+        taskset 0xff sudo make install 
+    elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
+        echo "[pocketsphinx] make install"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff sudo make install 
+    fi
 
-sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    #run bnechmark
+    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    ./run.sh $1 performance temp_sample
+    rm -rf $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
+    cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
+    mv $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/M0.txt
 
-#move to benchamrk folder and build
-cd $BENCH_PATH/$SOURCE_PATH
-find . -type f | xargs -n 5 touch
-taskset 0xff make clean
-taskset 0xff make -j16
+    #filter xpilot_slice and uzbl
+    if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
+        cd $DATA_ODROID_PATH
+        taskset 0xff ./filter_xpilot.py $1 temp_sample M0.txt > temp
+        mv temp $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
+    elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
+        cd $DATA_ODROID_PATH
+        taskset 0xff ./filter_uzbl.py $1 temp_sample M0.txt > temp
+        mv temp $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
+    fi       
+    
+    rm -rf $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample
 
-./run.sh $1 temp_sample
-mv $DVFS_SIM_PATH/data_odroid/$1/$BENCH_NAME/temp_sample $BENCH_PATH/$SOURCE_PATH/M1M2.txt
+    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    cp M0.txt M1M2.txt $DVFS_SIM_PATH/data_odroid/M0M1M2/$1/${BENCH_NAME[$i]} 
 
-#run find_deadline.py script
-taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt M1M2.txt
+    #---------------to get overhead deadline--------------
+    # GET_OVERHEAD enable, others disable, run performance
+    sed -i -e 's/'"$GET_OVERHEAD_DISABLED"'/'"$GET_OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
+    sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
+    #move to benchamrk folder and build
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+    find . -type f | xargs -n 5 touch
+    taskset 0xff make clean -j16
+    taskset 0xff make -j16
+
+    #Doing extra jobs (such as coyping binaries, fix_addresses)
+    if [ ${SOURCE_FILES[$i]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
+        echo "[julius] copy binary"
+        rm -rf $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+        cp $BENCH_PATH/julius/julius-4.3.1/julius/julius $BENCH_PATH/julius/julius-3.5.2-quickstart-linux/julius
+    fi
+
+    #fix address for uzbl benchmarks
+    if [ ${SOURCE_FILES[$i]} == "uzbl/src/commands.c" ] ; then
+        echo "[uzbl] ./fix_addresses.py & make install"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff ./fix_addresses.py 
+        taskset 0xff make -j16 
+        taskset 0xff sudo make install 
+    elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
+        echo "[pocketsphinx] make install"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff sudo make install 
+    fi
+
+    #run bnechmark
+    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    ./run.sh $1 performance temp_sample
+    rm -rf $BENCH_PATH/${SOURCE_PATH[$i]}/M1M2.txt
+    cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $BENCH_PATH/${SOURCE_PATH[$i]}/M1M2.txt
+    mv $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/M1M2.txt
+
+    #filter xpilot_slice and uzbl
+    if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
+        cd $DATA_ODROID_PATH
+        taskset 0xff ./filter_xpilot.py $1 temp_sample M1M2.txt > temp
+        mv temp $BENCH_PATH/${SOURCE_PATH[$i]}/M1M2.txt
+    elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
+        cd $DATA_ODROID_PATH
+        taskset 0xff ./filter_uzbl.py $1 temp_sample M1M2.txt > temp
+        mv temp $BENCH_PATH/${SOURCE_PATH[$i]}/M1M2.txt
+    fi       
+    
+    rm -rf $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample
+    
+    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    cp M0.txt M1M2.txt $DVFS_SIM_PATH/data_odroid/M0M1M2/$1/${BENCH_NAME[$i]} 
+done
+
+for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+do
+    echo "==================${BENCH_NAME[$i]}=================="
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+    #run find_deadline.py script
+    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt M1M2.txt
+done
 
 exit 0

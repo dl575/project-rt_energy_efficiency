@@ -1,53 +1,7 @@
 #!/bin/bash
 
-BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-COMMON_FILE=("common.h")
-SOURCE_FILES=(
-"2048.c/2048.c"
-)
-SOURCE_PATH=(
-"2048.c"
-)
+source global.sh
 
-#SOURCE_FILES=(
-#"mibench/office/stringsearch/pbmsrch_large.c"
-#"mibench/security/sha/sha_driver.c"
-#"mibench/security/rijndael/aesxam.c"
-#"xpilot/xpilot-4.5.5/src/server/server.c"
-#"julius/julius-4.3.1/libjulius/src/recogmain.c"
-#"2048.c/2048.c"
-#"curseofwar/main.c"
-#"uzbl/src/commands.c"
-#)
-#SOURCE_PATH=(
-#"mibench/office/stringsearch"
-#"mibench/security/sha"
-#"mibench/security/rijndael"
-#"xpilot/xpilot-4.5.5"
-#"julius/julius-4.3.1"
-#"2048.c"
-#"curseofwar"
-#"uzbl"
-#)
-
-CORE_BIG="CORE 1"
-CORE_LITTLE="CORE 0"
-PREDICT_ENABLED="PREDICT_EN 1"
-PREDICT_DISABLED="PREDICT_EN 0"
-OVERHEAD_ENABLED="OVERHEAD_EN 1"
-OVERHEAD_DISABLED="OVERHEAD_EN 0"
-GET_PREDICT_ENABLED="GET_PREDICT 1"
-GET_PREDICT_DISABLED="GET_PREDICT 0"
-GET_DEADLINE_ENABLED="GET_DEADLINE 1"
-GET_DEADLINE_DISABLED="GET_DEADLINE 0"
-GET_OVERHEAD_ENABLED="GET_OVERHEAD 1"
-GET_OVERHEAD_DISABLED="GET_OVERHEAD 0"
-DELAY_ENABLED="DELAY_EN 1"
-DELAY_DISABLED="DELAY_EN 0"
-DVFS_ENABLED="DVFS_EN 1"
-DVFS_DISABLED="DVFS_EN 0"
-#BEFORE_MODIFIED="delay_time\*0.95"
-#AFTER_MODIFIED="delay_time\*0.90"
 
 #Check the lengh of two arrays
 if (( ${#SOURCE_FILES[@]} != ${#SOURCE_PATH[@]} )) ; then
@@ -58,7 +12,7 @@ if (( ${#SOURCE_FILES[@]} != ${#SOURCE_PATH[@]} )) ; then
 fi
 
 if [[ $# < 4 ]] ; then
-    echo 'USAGE : ./buildAll.sh predict_en or ./buildAll.sh predict_dis'
+    echo 'The number of arguments is wrong'
     exit 1
 fi
 
@@ -72,17 +26,35 @@ if [ $3 != "predict_en" -a $3 != "predict_dis" ] ; then
     exit 1
 fi
 
-if [ $4 != "overhead_en" -a $4 != "overhead_dis" ] ; then
-    echo 'USAGE : only overhead_en or overhead_dis'
-    exit 1
-fi
+#if [ $4 != "overhead_en" -a $4 != "overhead_dis" ] ; then
+#    echo 'USAGE : only overhead_en or overhead_dis'
+#    exit 1
+#fi
 
-# set core depends on argument 1
+# set deadline depends on argument 1
+#if [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
+#    sed -i -e 's/'"$D0_DISABLED"'/'"$D0_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D17_ENABLED"'/'"$D17_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D33_ENABLED"'/'"$D33_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#elif [ ${BENCH_NAME[$1]} == "2048_slice_17ms" ] ; then
+#    sed -i -e 's/'"$D0_ENABLED"'/'"$D0_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D17_DISABLED"'/'"$D17_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D33_ENABLED"'/'"$D33_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#elif [ ${BENCH_NAME[$1]} == "2048_slice_17ms" ] ; then
+#    sed -i -e 's/'"$D0_ENABLED"'/'"$D0_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D17_ENABLED"'/'"$D17_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    sed -i -e 's/'"$D33_DISABLED"'/'"$D33_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#fi
+
+# set core depends on argument 2
 if [ $2 == "big" ] ; then
     sed -i -e 's/'"$CORE_LITTLE"'/'"$CORE_BIG"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $2 == "little" ] ; then
     sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
 fi
+
+# disable DEBUG_EN
+sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # enable DVFS_EN
 sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -93,34 +65,44 @@ sed -i -e 's/'"$DELAY_DISABLED"'/'"$DELAY_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 # disable GET_PREDICT, GET_OVERHEAD, GET_DEADLINE
 sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
-# set PREDICT_EN, OVERHEAD_EN depends on argument 3, 4
+# set PREDICT_EN depends on argument 3
 if [ $3 == "predict_en" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    if [ $4 == "overhead_en" ] ; then
-        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    elif [ $4 == "overhead_dis" ] ; then
-        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    fi
-    cd $BENCH_PATH/${SOURCE_PATH[$1]}
-    echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
-    find . -type f | xargs -n 5 touch
-    taskset 0xff make clean
-    taskset 0xff make -j16 
+#    if [ $4 == "overhead_en" ] ; then
+#        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    elif [ $4 == "overhead_dis" ] ; then
+#        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    fi
+#    cd $BENCH_PATH/${SOURCE_PATH[$1]}
+#    echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
+#    find . -type f | xargs -n 5 touch
+#    taskset 0xff make clean -j16
+#    taskset 0xff make -j16 
 elif [ $3 == "predict_dis" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    if [ $4 == "overhead_en" ] ; then
-        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    elif [ $4 == "overhead_dis" ] ; then
-        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-    fi
-    cd $BENCH_PATH/${SOURCE_PATH[$1]}
-    echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
-    find . -type f | xargs -n 5 touch
-    taskset 0xff make clean
-    taskset 0xff make -j16
+#    if [ $4 == "overhead_en" ] ; then
+#        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    elif [ $4 == "overhead_dis" ] ; then
+#        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    fi
 fi
+
+function sweep {
+    for (( i=0; i<${#SWEEP[@]}; i++ ));
+    do
+        sed -i -e 's/'"SWEEP (${SWEEP[$i]})"'/'"SWEEP ($1)"'/g' $BENCH_PATH/$COMMON_FILE
+    done
+}
+
+sweep $4
+
+cd $BENCH_PATH/${SOURCE_PATH[$1]}
+echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
+find . -type f | xargs -n 5 touch
+taskset 0xff make clean -j16
+taskset 0xff make -j16
 
 #Doing extra jobs (such as coyping binaries, fix_addresses)
 if [ ${SOURCE_FILES[$1]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
@@ -136,7 +118,14 @@ if [ ${SOURCE_FILES[$1]} == "uzbl/src/commands.c" ] ; then
     taskset 0xff ./fix_addresses.py 
     taskset 0xff make -j16 
     taskset 0xff sudo make install 
+elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
+    echo "[pocketsphinx] make install"
+    cd $BENCH_PATH/${SOURCE_PATH[$1]}
+    taskset 0xff ./autogen.sh
+    taskset 0xff ./configure --prefix=`pwd`/../install
+    taskset 0xff sudo make install 
 fi
+
 
 echo '[ build done ]'
 exit 1
