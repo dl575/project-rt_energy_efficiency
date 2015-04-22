@@ -82,11 +82,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 136457 //overhead deadline
-#define AVG_OVERHEAD_TIME 44710 //avg overhead deadline
-#define DEADLINE_TIME 31323 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2668 //max dvfs time
-#define AVG_DVFS_TIME 1246 //average dvfs time
+#define OVERHEAD_TIME 3126 //overhead deadline
+#define AVG_OVERHEAD_TIME 683 //avg overhead deadline
+#define DEADLINE_TIME (int)((22087*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2482 //max dvfs time
+#define AVG_DVFS_TIME 357 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 168542 //overhead deadline
 #define AVG_OVERHEAD_TIME 56606 //avg overhead deadline
@@ -480,9 +480,9 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
 
     float exec_time;
 #if CORE // big
-exec_time = 0;
+    exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
 #else // LITTLE
-exec_time = 0;
+    exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
 #endif
     return exec_time;
   }
@@ -612,12 +612,12 @@ int main(int argc, char *argv[])
             end_timing();
             slice_time = print_slice_timing();
 
-            moment_timing_print(1); //moment_start
-            
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
             dvfs_time = print_dvfs_timing();
+
+            moment_timing_print(1); //moment_start
         #endif
 //---------------------modified by TJSong----------------------//
 
@@ -647,8 +647,9 @@ int main(int argc, char *argv[])
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
-            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
             moment_timing_print(2); //moment_end
+            print_exec_time(exec_time);
+            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
         fclose_all();//TJSong
         // Write out predicted time & print out frequency used

@@ -16,11 +16,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 47008 //overhead deadline
-#define AVG_OVERHEAD_TIME 25529 //avg overhead deadline
-#define DEADLINE_TIME 51035 + OVERHEAD_TIME //max_exec + max_overhead
-#define MAX_DVFS_TIME 2877 //max dvfs time
-#define AVG_DVFS_TIME 427 //average dvfs time
+#define OVERHEAD_TIME 2579 //overhead deadline
+#define AVG_OVERHEAD_TIME 392 //avg overhead deadline
+#define DEADLINE_TIME (int)((44888*SWEEP)/100) // max_exec * sweep / 100
+#define MAX_DVFS_TIME 2400 //max dvfs time
+#define AVG_DVFS_TIME 368 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 60026 //overhead deadline
 #define AVG_OVERHEAD_TIME 18813 //avg overhead deadline
@@ -221,10 +221,13 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
   {
     predict_exec_time:
     ;
-
     float exec_time;
-    exec_time = 0;
-    return exec_time;
+#if CORE
+    exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+#else
+    exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+#endif 
+   return exec_time;
   }
 }
 
@@ -308,13 +311,13 @@ int main(int argc, char **argv)
               predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
               end_timing();
               slice_time = print_slice_timing();
-
-              moment_timing_print(1); //moment_start
               
               start_timing();
               set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
               end_timing();
               dvfs_time = print_dvfs_timing();
+              
+                moment_timing_print(1); //moment_start
           #endif
 
 //---------------------modified by TJSong----------------------//
@@ -347,8 +350,9 @@ int main(int argc, char **argv)
                   delay_time = exec_timing();
               }else
                   delay_time = 0;
-              print_total_time(exec_time + slice_time + dvfs_time + delay_time);
-              moment_timing_print(2); //moment_end
+            moment_timing_print(2); //moment_end
+            print_exec_time(exec_time);
+            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
           #endif
           fclose_all();//TJSong
 
