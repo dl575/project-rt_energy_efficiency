@@ -1,7 +1,8 @@
 #!/bin/bash
 
 PROJECT_PATH=/home/odroid/project-rt_energy_efficiency
-BENCHMARK=curseofwar_slice"-"$3
+BENCHMARK_FOLDER=curseofwar_slice
+BENCHMARK=$BENCHMARK_FOLDER"-"$3
 
 if [[ $# < 3 ]] ; then
     echo 'USAGE : ./run.sh [big/little] [governors] [sweep]'
@@ -33,7 +34,7 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 echo $BENCHMARK">>>"
 
 if [[ $2 ]] ; then
-    mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK
+    mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     #if [[ $3 ]] ; then
     #    MAX_FREQ=$3
     #fi
@@ -46,7 +47,7 @@ if [[ $2 ]] ; then
     echo $2"..."
     rm -rf times.txt
     taskset $TASKSET_FLAG ./curseofwar
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
+    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
@@ -56,5 +57,5 @@ fi
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
-echo "[ done ]"
-exit 1
+echo "[ run.sh "$2" done ]"
+exit 0

@@ -82,11 +82,11 @@ int dvfs_time = 0;
 
 //define benchmarks-depenent varaibles & constants
 #if CORE //big
-#define OVERHEAD_TIME 135874 //overhead deadline
-#define AVG_OVERHEAD_TIME 48630 //avg overhead deadline
-#define DEADLINE_TIME (int)((138638*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2779 //max dvfs time
-#define AVG_DVFS_TIME 1135 //average dvfs time
+#define OVERHEAD_TIME 136457 //overhead deadline
+#define AVG_OVERHEAD_TIME 44710 //avg overhead deadline
+#define DEADLINE_TIME 31323 + OVERHEAD_TIME //max_exec + max_overhead
+#define MAX_DVFS_TIME 2668 //max dvfs time
+#define AVG_DVFS_TIME 1246 //average dvfs time
 #else //LITTLE
 #define OVERHEAD_TIME 168542 //overhead deadline
 #define AVG_OVERHEAD_TIME 56606 //avg overhead deadline

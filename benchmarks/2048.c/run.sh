@@ -1,9 +1,8 @@
 #!/bin/bash
 
 PROJECT_PATH=/home/odroid/project-rt_energy_efficiency
-BENCHMARK=2048_slice"-"$3
-#GOVERNORS=( "performance" "interactive" "conservative" "ondemand" "powersave" ) 
-#GOVERNORS=( "performance" "interactive" ) 
+BENCHMARK_FOLDER=2048_slice
+BENCHMARK=$BENCHMARK_FOLDER"-"$3
 
 if [[ $# < 3 ]] ; then
     echo 'USAGE : ./run.sh [big/little] [governors] [sweep]'
@@ -36,9 +35,8 @@ echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 
 echo $BENCHMARK">>>"
 
-#if [[ $2 && $2 == "prediction" ]] ; then
 if [[ $2 ]] ; then
-    mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK
+    mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     if [[ $2 == "prediction" ]] ; then 
         echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     else
@@ -51,25 +49,11 @@ if [[ $2 ]] ; then
     do
         taskset $TASKSET_FLAG ./2048
     done
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$2
+    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
 fi
-
-#for i in "${GOVERNORS[@]}"
-#do 
-#    echo $i > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-#    echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-#    sleep 1;
-#    echo $i"..."
-#    rm -rf times.txt
-#    for n in {1..10}
-#    do
-#        taskset $TASKSET_FLAG ./2048
-#    done
-#    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK/$i
-#done
 
 #SET TO PERFORMANCE AFTER RUN ALL
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
