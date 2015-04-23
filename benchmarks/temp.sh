@@ -67,9 +67,9 @@ do
         fi
         # MUST RUN as this order. 
         # 1. LINUX Governor (performance > interactive > conservative > ondemand > powersave )
-        # > 2. Prediction with overhead > 3. Prediction w/o overhead
+        # > 2. Prediction with overhead > 3. Prediction w/o overhead > 4. Oracle
         
-        # ex) ./buildAll.sh [bench_index] [big/little] [predict_dis/en] [sweep]
+        # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
         # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
         
         # 1. LINUX Governor
@@ -79,11 +79,15 @@ do
         ./runAll.sh $i $1 interactive ${SWEEP[$j]}
         #./runAll.sh $i $1 conservative ${SWEEP[$j]}
         #./runAll.sh $i $1 ondemand ${SWEEP[$j]}
-        ./runAll.sh $i $1 powersave ${SWEEP[$j]}
+        #./runAll.sh $i $1 powersave ${SWEEP[$j]}
 
         # 2 and 3. Prediction
         taskset 0xff ./buildAll.sh $i $1 predict_en ${SWEEP[$j]}
         ./runAll.sh $i $1 prediction ${SWEEP[$j]}
+
+        # 4. Oralce
+        taskset 0xff ./buildAll.sh $i $1 oracle_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 oracle ${SWEEP[$j]}
 
         #kill power_monitor process
         sleep 10 

@@ -21,30 +21,10 @@ if [ $2 != "big" -a $2 != "little" ] ; then
     exit 1
 fi
 
-if [ $3 != "predict_en" -a $3 != "predict_dis" ] ; then
-    echo 'USAGE : only predict_en or predict_dis'
+if [ $3 != "predict_en" ] && [ $3 != "predict_dis" ] && [ $3 != "oracle_en" ] && [ $3 != "pid_en" ] ; then
+    echo 'USAGE : only predict_en, predict_dis, oracle_en, or pid_en'
     exit 1
 fi
-
-#if [ $4 != "overhead_en" -a $4 != "overhead_dis" ] ; then
-#    echo 'USAGE : only overhead_en or overhead_dis'
-#    exit 1
-#fi
-
-# set deadline depends on argument 1
-#if [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
-#    sed -i -e 's/'"$D0_DISABLED"'/'"$D0_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D17_ENABLED"'/'"$D17_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D33_ENABLED"'/'"$D33_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#elif [ ${BENCH_NAME[$1]} == "2048_slice_17ms" ] ; then
-#    sed -i -e 's/'"$D0_ENABLED"'/'"$D0_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D17_DISABLED"'/'"$D17_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D33_ENABLED"'/'"$D33_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#elif [ ${BENCH_NAME[$1]} == "2048_slice_17ms" ] ; then
-#    sed -i -e 's/'"$D0_ENABLED"'/'"$D0_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D17_ENABLED"'/'"$D17_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    sed -i -e 's/'"$D33_DISABLED"'/'"$D33_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#fi
 
 # set core depends on argument 2
 if [ $2 == "big" ] ; then
@@ -67,26 +47,20 @@ sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$
 sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
+# disable all flags ralated to predict/oralce/pid
+sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
 # set PREDICT_EN depends on argument 3
 if [ $3 == "predict_en" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    if [ $4 == "overhead_en" ] ; then
-#        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    elif [ $4 == "overhead_dis" ] ; then
-#        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    fi
-#    cd $BENCH_PATH/${SOURCE_PATH[$1]}
-#    echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
-#    find . -type f | xargs -n 5 touch
-#    taskset 0xff make clean -j16
-#    taskset 0xff make -j16 
 elif [ $3 == "predict_dis" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    if [ $4 == "overhead_en" ] ; then
-#        sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    elif [ $4 == "overhead_dis" ] ; then
-#        sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#    fi
+elif [ $3 == "oracle_en" ] ; then
+    sed -i -e 's/'"$ORACLE_DISABLED"'/'"$ORACLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "pid_en" ] ; then
+    sed -i -e 's/'"$PID_DISABLED"'/'"$PID_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 function sweep {
@@ -97,6 +71,17 @@ function sweep {
 }
 
 sweep $4
+
+function bench {
+    for (( i=0; i<${#_ALL_BENCH_[@]}; i++ ));
+    do
+        sed -i -e 's/'"${_ALL_BENCH_[$i]} 1"'/'"${_ALL_BENCH_[$i]} 0"'/g' $BENCH_PATH/$COMMON_FILE
+    done
+    sed -i -e 's/'"$1 0"'/'"$1 1"'/g' $BENCH_PATH/$COMMON_FILE
+}
+
+bench ${_BENCH_FOR_DEFINE_[$1]}
+
 
 cd $BENCH_PATH/${SOURCE_PATH[$1]}
 echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
@@ -128,6 +113,6 @@ fi
 
 
 echo '[ build done ]'
-exit 1
+exit 0
 
 

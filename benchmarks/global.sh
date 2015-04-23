@@ -23,6 +23,11 @@ DVFS_DISABLED="DVFS_EN 0"
 DEBUG_ENABLED="DEBUG_EN 1"
 DEBUG_DISABLED="DEBUG_EN 0"
 
+ORACLE_ENABLED="ORACLE_EN 1"
+ORACLE_DISABLED="ORACLE_EN 0"
+PID_ENABLED="PID_EN 1"
+PID_DISABLED="PID_EN 0"
+
 D0_DISABLED="DEADLINE_DEFAULT 0"
 D0_ENABLED="DEADLINE_DEFAULT 1"
 D0_DISABLED="DEADLINE_DEFAULT 0"
@@ -33,17 +38,47 @@ D33_DISABLED="DEADLINE_33MS 0"
 #BEFORE_MODIFIED="delay_time\*0.95"
 #AFTER_MODIFIED="delay_time\*0.90"
 
-SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
+SWEEP=("60" "80" "100" "120" "140")
+#SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
+#SWEEP=("100")
+
+
+_ALL_BENCH_=(
+"_pocketsphinx_"
+"_stringsearch_"
+"_sha_preread_"
+"_rijndael_preread_"
+"_xpilot_"
+"_2048_"
+"_curseofwar_"
+"_uzbl_"
+)
 
 #:53,94s/^/#
 #:53,94s/^#/
+SOURCE_FILES=(
+"mibench/security/sha_preread/sha_driver.c"
+)
+SOURCE_PATH=(
+"mibench/security/sha_preread"
+)
+BENCHMARKS=(
+"mibench/security/sha_preread"
+)
+BENCH_NAME=(
+"sha_preread"
+)
+_BENCH_FOR_DEFINE_=(
+"_sha_preread_"
+)
+
+
 #SOURCE_FILES=(
 #"pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c"
 #"mibench/office/stringsearch/pbmsrch_large.c"
-#"mibench/security/sha/sha_driver.c"
-#"mibench/security/rijndael/aesxam.c"
+#"mibench/security/sha_preread/sha_driver.c"
+#"mibench/security/rijndael_preread/aesxam.c"
 #"xpilot/xpilot-4.5.5/src/server/server.c"
-#"julius/julius-4.3.1/libjulius/src/recogmain.c"
 #"2048.c/2048.c"
 #"curseofwar/main.c"
 #"uzbl/src/commands.c"
@@ -51,10 +86,9 @@ SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #SOURCE_PATH=(
 #"pocketsphinx/pocketsphinx-5prealpha"
 #"mibench/office/stringsearch"
-#"mibench/security/sha"
-#"mibench/security/rijndael"
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
 #"xpilot/xpilot-4.5.5"
-#"julius/julius-4.3.1"
 #"2048.c"
 #"curseofwar"
 #"uzbl"
@@ -62,10 +96,9 @@ SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #BENCHMARKS=(
 #"pocketsphinx/test"
 #"mibench/office/stringsearch"
-#"mibench/security/sha"
-#"mibench/security/rijndael"
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
 #"xpilot/xpilot-4.5.5"
-#"julius/julius-3.5.2-quickstart-linux"
 #"2048.c"
 #"curseofwar"
 #"uzbl"
@@ -73,29 +106,21 @@ SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #BENCH_NAME=(
 #"pocketsphinx"
 #"stringsearch"
-#"sha"
-#"rijndael"
+#"sha_preread"
+#"rijndael_preread"
 #"xpilot_slice"
-#"julius_slice"
 #"2048_slice"
 #"curseofwar_slice"
 #"uzbl"
 #)
-
-SOURCE_FILES=(
-"mibench/security/sha_preread/sha_driver.c"
-"mibench/security/rijndael_preread/aesxam.c"
-)
-SOURCE_PATH=(
-"mibench/security/sha_preread"
-"mibench/security/rijndael_preread"
-)
-BENCHMARKS=(
-"mibench/security/sha_preread"
-"mibench/security/rijndael_preread"
-)
-BENCH_NAME=(
-"sha_preread"
-"rijndael_preread"
-)
+#_BENCH_FOR_DEFINE_=(
+#"_pocketsphinx_"
+#"_stringsearch_"
+#"_sha_"
+#"_rijndael_"
+#"_xpilot_"
+#"_2048_"
+#"_curseofwar_"
+#"_uzbl_"
+#)
 
