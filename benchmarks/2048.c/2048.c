@@ -4231,6 +4231,7 @@ int main(int argc, char *argv[]) {
 
 	initBoard(board);
 	setBufferedInput(false);
+  int exec_time = 0;
 	while (true) {
 //---------------------modified by TJSong----------------------//
         // c=getchar(); //to input automatically
@@ -4289,6 +4290,9 @@ int main(int argc, char *argv[]) {
 
         moment_timing_fprint(1); //moment_start
     #endif
+    #if PID_EN
+        predicted_exec_time = pid_controller(exec_time);
+    #endif
     
 //---------------------modified by TJSong----------------------//
 
@@ -4299,7 +4303,7 @@ int main(int argc, char *argv[]) {
 
     end_timing();
 //---------------------modified by TJSong----------------------//
-    int exec_time = exec_timing();
+    exec_time = exec_timing();
     int delay_time = 0;
 
     #if GET_PREDICT /* CASE 0 */

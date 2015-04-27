@@ -87,10 +87,10 @@ if __name__ == "__main__":
     os.system("mkdir " + output_dir)
   policies = [
       policy_tuned_pid,
-      policy_least_squares,
-      policy_conservative,
+      #policy_least_squares,
+      #policy_conservative,
       #policy_cvx_conservative_lasso,
-      policy_oracle,
+      #policy_oracle,
       ]
 
   # For each DVFS policy
@@ -112,6 +112,8 @@ if __name__ == "__main__":
         os.system("cp temp.lps regression_coeffs/%s.lps" % benchmark)
       elif policy == policy_lasso:
         os.system("cp temp.lps lasso/%s.lps" % benchmark)
+      elif policy == policy_tuned_pid:
+        os.system("cp temp.lps pid/%s.lps" % benchmark)
       # Write prediction out to file
       out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
       out_file.write("\n".join([str(x) for x in predict_times]))

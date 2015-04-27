@@ -241,6 +241,8 @@ def rename_array_args(funcdef):
       # Simple variable passing, don't need to handle
       pass
     elif isinstance(param.type, c_ast.PtrDecl):
+      # Don't copy pointer arguments
+      return
       """
       Param of form: type *var
       is copied in the function body using:

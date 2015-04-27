@@ -219,6 +219,33 @@ void print_total_time(int exec_time){
     instance_number++;
 }
 
+/*
+ * PID-based prediction of execution time.
+ */
+#define PID_P 0.9 
+#define PID_I 0
+#define PID_D 0.05
+float pid_controller(int last_time) {
+  // Define variables
+  float d_error;
+  static float error = 0; // Absolute error
+  static float i_error = 0; // Integrative error
+  static float predicted_time = 0; // Saved prediction time
+
+  // Calculate errors
+  // Derivative is new error minus old error 
+  d_error = (last_time - predicted_time) - error; 
+  // Update error
+  error = last_time - predicted_time;
+  // Add to integrative error
+  i_error += error;
+
+  // Update prediction
+  predicted_time = predicted_time + PID_P*error + PID_I*i_error + PID_D*d_error;
+
+  return predicted_time;
+}
+
 //define exectuion time array for oracle
 #if CORE //big
     #if _pocketsphinx_

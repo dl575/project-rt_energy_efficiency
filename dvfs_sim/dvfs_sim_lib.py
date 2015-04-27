@@ -190,7 +190,13 @@ def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metr
         best_misses = misses
         best_energy = energy(result_times, frequencies, deadline)
         best_PID = (P, I, D)
-  print best_PID
+
+  # Write PID parameters out to file
+  f = open("temp.lps", 'w')
+  f.write("P = %f\n" % best_PID[0])
+  f.write("I = %f\n" % best_PID[1])
+  f.write("D = %f\n" % best_PID[2])
+  f.close()
 
   # Use parameters to run PID on test set
   return policy_pid(test_times, P=best_PID[0], I=best_PID[1], D=best_PID[2])
