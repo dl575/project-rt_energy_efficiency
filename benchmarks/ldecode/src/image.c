@@ -74,6 +74,9 @@ StorablePicture *dec_picture;
 
 OldSliceParams old_slice;
 
+#include "timing.h"
+struct timeval start, end, moment;
+
 void MbAffPostProc()
 {
   imgpel temp[16][32];
@@ -140,8 +143,12 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   img->num_dec_mb = 0;
   img->newframe = 1;
 
+  init_time_file();
+
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
+    start_timing();
+
     current_header = read_new_slice();
 
     if (current_header == EOS)
@@ -154,6 +161,10 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
     img->newframe = 0;
     img->current_slice_nr++;
+
+    end_timing();
+    int exec_time = exec_timing();
+    fprint_exec_time(exec_time);
   }
 
   exit_picture();
