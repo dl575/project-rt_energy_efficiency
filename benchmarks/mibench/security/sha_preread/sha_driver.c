@@ -246,10 +246,6 @@ int main(int argc, char **argv)
       sha_print(&sha_info);
       */
     } else {
-        if(--argc){
-            exec_time_arr[0] = exec_time_arr[atoi(argv[1])-1];
-            ++argv;
-        }
       while (--argc) {
         fin = fopen(*(++argv), "rb");
         if (fin == NULL) {

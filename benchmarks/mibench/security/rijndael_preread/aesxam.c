@@ -96,27 +96,32 @@ int dvfs_time = 0;
 #endif
 //---------------------modified by TJSong----------------------//
 
-void fillrand(char *buf, int len)
+void fillrand(char *buf, int len, int reset)
 {   static unsigned long a[2], mt = 1, count = 4;
     static char          r[4];
     int                  i;
 
-    if(mt) { 
-	 mt = 0; 
-	 /*cycles(a);*/
-      a[0]=0xeaf3;
-	 a[1]=0x35fe;
-    }
+    if (reset) {
+      mt = 1;
+      count = 4;
+    } else {
+      if(mt) { 
+        mt = 0; 
+        /*cycles(a);*/
+        a[0]=0xeaf3;
+        a[1]=0x35fe;
+      }
 
-    for(i = 0; i < len; ++i)
-    {
+      for(i = 0; i < len; ++i)
+      {
         if(count == 4)
         {
-            *(unsigned long*)r = RAND(a[0], a[1]);
-            count = 0;
+          *(unsigned long*)r = RAND(a[0], a[1]);
+          count = 0;
         }
 
         buf[i] = r[count++];
+      }
     }
 }    
 
@@ -125,12 +130,12 @@ int encfile(FILE *fout, aes *ctx, char* fn, char *file_buffer, int flen)
     //int          flen;
     unsigned long   i=0, l=0;
 
-    fillrand(outbuf, 16);           /* set an IV for CBC mode           */
+    fillrand(outbuf, 16, 0);           /* set an IV for CBC mode           */
     //fseek(fin, 0, SEEK_END);        /* get the length of the file       */
     //fgetpos(fin, &flen);            /* and then reset to start          */
     //fseek(fin, 0, SEEK_SET);        
     fwrite(outbuf, 1, 16, fout);    /* write the IV to the output       */
-    fillrand(inbuf, 1);             /* make top 4 bits of a byte random */
+    fillrand(inbuf, 1, 0);             /* make top 4 bits of a byte random */
     l = 15;                         /* and store the length of the last */
                                     /* block in the lower 4 bits        */
     inbuf[0] = ((char)flen & 15) | (inbuf[0] & ~15);
@@ -274,9 +279,9 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
   unsigned long l = 0;
   {
     int len_rename0 = 16;
-    static unsigned long mt_rename0 = 1;
-    static unsigned long count_rename0 = 4;
-    static char r_rename0[4];
+    unsigned long mt_rename0 = 1;
+    unsigned long count_rename0 = 4;
+    char r_rename0[4];
     int i_rename0;
     if (mt_rename0)
     {
@@ -302,9 +307,9 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
   }
   {
     int len_rename1 = 1;
-    static unsigned long mt_rename1 = 1;
-    static unsigned long count_rename1 = 4;
-    static char r_rename1[4];
+    unsigned long mt_rename1 = 1;
+    unsigned long count_rename1 = 4;
+    char r_rename1[4];
     int i_rename1;
     if (mt_rename1)
     {
@@ -490,187 +495,200 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
 
 int main(int argc, char *argv[])
 {   
+    int err=0;
 
-    FILE    *fin = 0, *fout = 0;
-    char    *cp, ch, key[32];
-    int     i=0, by=0, key_len=0, err = 0;
-    aes     ctx[1];
+    int argv_i;
+#define N_ARGS 4
+    for (argv_i = 0; argv_i + N_ARGS < argc; argv_i += N_ARGS) {
+        // Reset static variables
+        fillrand(NULL, 0, 1);
 
-    if(argc != 5 || (toupper(*argv[3]) != 'D' && toupper(*argv[3]) != 'E'))
-    {
-        printf("usage: rijndael in_filename out_filename [d/e] key_in_hex\n"); 
-        err = -1; goto exit;
-    }
+        FILE    *fin = 0, *fout = 0;
+        char    *cp, ch, key[32];
+        int     i=0, by=0, key_len=0;
+        aes     ctx[1];
 
-    cp = argv[4];   /* this is a pointer to the hexadecimal key digits  */
-    i = 0;          /* this is a count for the input digits processed   */
-    
-    while(i < 64 && *cp)    /* the maximum key length is 32 bytes and   */
-    {                       /* hence at most 64 hexadecimal digits      */
-        ch = toupper(*cp++);            /* process a hexadecimal digit  */
-        if(ch >= '0' && ch <= '9')
-            by = (by << 4) + ch - '0';
-        else if(ch >= 'A' && ch <= 'F')
-            by = (by << 4) + ch - 'A' + 10;
-        else                            /* error if not hexadecimal     */
-        {
-            printf("key must be in hexadecimal notation\n"); 
-            err = -2; goto exit;
-        }
-        
-        /* store a key byte for each pair of hexadecimal digits         */
-        if(i++ & 1) 
-            key[i / 2 - 1] = by & 0xff; 
-    }
-
-    if(*cp)
-    {
-        printf("The key value is too long\n"); 
-        err = -3; goto exit;
-    }
-    else if(i < 32 || (i & 15))
-    {
-        printf("The key length must be 32, 48 or 64 hexadecimal digits\n");
-        err = -4; goto exit;
-    }
-
-    key_len = i / 2;
-
-    if(!(fin = fopen(argv[1], "rb")))   /* try to open the input file */
-    {
-        printf("The input file: %s could not be opened\n", argv[1]); 
-        err = -5; goto exit;
-    }
-
-    if(!(fout = fopen(argv[2], "wb")))  /* try to open the output file */
-    {
-        printf("The output file: %s could not be opened\n", argv[1]); 
-        err = -6; goto exit;
-    }
-
-    if(toupper(*argv[3]) == 'E')
-    {                           /* encryption in Cipher Block Chaining mode */
-        set_key(key, key_len, enc, ctx);
-
-        // Get file length
-        int flen;
-        fseek(fin, 0, SEEK_END);        /* get the length of the file       */
-        fgetpos(fin, &flen);            /* and then reset to start          */
-        fseek(fin, 0, SEEK_SET);        
-        // Allocate buffer
-        char *file_buffer = malloc(sizeof(char) * (flen + 1));
-        // Read file into buffer
-        size_t newLen = fread(file_buffer, sizeof(char), flen, fin);
-        if (newLen == 0) {
-            printf("Error reading file\n");
-            exit(1);
-        } else {
-            file_buffer[++newLen] = '\0';
-        }
-
-//---------------------modified by TJSong----------------------//
-        fopen_all(); //fopen for frequnecy file
-        print_deadline(DEADLINE_TIME); //print deadline 
-//---------------------modified by TJSong----------------------//
-
-//---------------------modified by TJSong----------------------//
-        // Perform slicing and prediction
-        float predicted_exec_time = 0.0;
         /*
-            CASE 0 = to get prediction equation
-            CASE 1 = to get execution deadline
-            CASE 2 = to get overhead deadline
-            CASE 3 = running on default linux governors
-            CASE 4 = running on our prediction
+        if(argc != 5 || (toupper(*argv[3]) != 'D' && toupper(*argv[3]) != 'E'))
+        {
+            printf("usage: rijndael in_filename out_filename [d/e] key_in_hex\n"); 
+            err = -1; goto exit;
+        }
         */
-        #if GET_PREDICT /* CASE 0 */
-            predicted_exec_time = encfile_slice(fout, ctx, argv[1], file_buffer, flen);
-        #endif
-        #if GET_DEADLINE /* CASE 1 */
-            //nothing
-        #endif
-        #if GET_OVERHEAD /* CASE 2 */
-            start_timing();
-            predicted_exec_time = encfile_slice(fout, ctx, argv[1], file_buffer, flen);
-            end_timing();
-            slice_time = print_slice_timing();
 
-            start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
-            //slice_time=0; dvfs_time=0;
-            moment_timing_print(0); //moment_start
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
-            moment_timing_print(0); //moment_start
+        cp = argv[argv_i + 4];   /* this is a pointer to the hexadecimal key digits  */
+        i = 0;          /* this is a count for the input digits processed   */
+        
+        while(i < 64 && *cp)    /* the maximum key length is 32 bytes and   */
+        {                       /* hence at most 64 hexadecimal digits      */
+            ch = toupper(*cp++);            /* process a hexadecimal digit  */
+            if(ch >= '0' && ch <= '9')
+                by = (by << 4) + ch - '0';
+            else if(ch >= 'A' && ch <= 'F')
+                by = (by << 4) + ch - 'A' + 10;
+            else                            /* error if not hexadecimal     */
+            {
+                printf("key must be in hexadecimal notation\n"); 
+                err = -2; goto exit;
+            }
             
-            start_timing();
-            predicted_exec_time = encfile_slice(fout, ctx, argv[1], file_buffer, flen);
-            end_timing();
-            slice_time = print_slice_timing();
+            /* store a key byte for each pair of hexadecimal digits         */
+            if(i++ & 1) 
+                key[i / 2 - 1] = by & 0xff; 
+        }
 
-            start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            end_timing();
-            dvfs_time = print_dvfs_timing();
+        if(*cp)
+        {
+            printf("The key value is too long\n"); 
+            err = -3; goto exit;
+        }
+        else if(i < 32 || (i & 15))
+        {
+            printf("The key length must be 32, 48 or 64 hexadecimal digits\n");
+            err = -4; goto exit;
+        }
 
-            moment_timing_print(1); //moment_start
-        #endif
-//---------------------modified by TJSong----------------------//
+        key_len = i / 2;
 
-        start_timing();
-        // Run encryption
-        err = encfile(fout, ctx, argv[1], file_buffer, flen);
-        end_timing();
+        if(!(fin = fopen(argv[argv_i + 1], "rb")))   /* try to open the input file */
+        {
+            printf("The input file: %s could not be opened\n", argv[argv_i + 1]); 
+            err = -5; goto exit;
+        }
 
-//---------------------modified by TJSong----------------------//
-        int exec_time = exec_timing();
-        int delay_time = 0;
+        if(!(fout = fopen(argv[argv_i + 2], "wb")))  /* try to open the output file */
+        {
+            printf("The output file: %s could not be opened\n", argv[argv_i + 1]); 
+            err = -6; goto exit;
+        }
 
-        #if GET_PREDICT /* CASE 0 */
-            print_exec_time(exec_time);
-        #endif
-        #if GET_DEADLINE /* CASE 1 */
-            print_exec_time(exec_time);
-        #endif
-        #if GET_OVERHEAD /* CASE 2 */
-            //nothing
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+        if(toupper(*argv[argv_i + 3]) == 'E')
+        {                           /* encryption in Cipher Block Chaining mode */
+            set_key(key, key_len, enc, ctx);
+
+            // Get file length
+            int flen;
+            fseek(fin, 0, SEEK_END);        /* get the length of the file       */
+            fgetpos(fin, &flen);            /* and then reset to start          */
+            fseek(fin, 0, SEEK_SET);        
+            // Allocate buffer
+            char *file_buffer = malloc(sizeof(char) * (flen + 1));
+            // Read file into buffer
+            size_t newLen = fread(file_buffer, sizeof(char), flen, fin);
+            if (newLen == 0) {
+                printf("Error reading file\n");
+                exit(1);
+            } else {
+                file_buffer[++newLen] = '\0';
+            }
+
+    //---------------------modified by TJSong----------------------//
+            fopen_all(); //fopen for frequnecy file
+            print_deadline(DEADLINE_TIME); //print deadline 
+    //---------------------modified by TJSong----------------------//
+
+    //---------------------modified by TJSong----------------------//
+            // Perform slicing and prediction
+            float predicted_exec_time = 0.0;
+            /*
+                CASE 0 = to get prediction equation
+                CASE 1 = to get execution deadline
+                CASE 2 = to get overhead deadline
+                CASE 3 = running on default linux governors
+                CASE 4 = running on our prediction
+            */
+            #if GET_PREDICT /* CASE 0 */
+                predicted_exec_time = encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen);
+            #endif
+            #if GET_DEADLINE /* CASE 1 */
+                //nothing
+            #endif
+            #if GET_OVERHEAD /* CASE 2 */
                 start_timing();
-                usleep(delay_time);
+                predicted_exec_time = encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen);
                 end_timing();
-                delay_time = exec_timing();
-            }else
-                delay_time = 0;
-            moment_timing_print(2); //moment_end
-            print_exec_time(exec_time);
-            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
-        #endif
-        fclose_all();//TJSong
-        // Write out predicted time & print out frequency used
-        //#if DEBUG_EN
-            print_predicted_time(predicted_exec_time);
-            print_freq(); 
-        //#endif
-//---------------------modified by TJSong----------------------//
+                slice_time = print_slice_timing();
 
-    }
-    else
-    {                           /* decryption in Cipher Block Chaining mode */
-        set_key(key, key_len, dec, ctx);
-    
-        err = decfile(fin, fout, ctx, argv[1], argv[2]);
-    }
-exit:   
-    if(fout) 
-        fclose(fout);
-    if(fin)
-        fclose(fin);
+                start_timing();
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                end_timing();
+                dvfs_time = print_dvfs_timing();
+            #endif
+            #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
+                //slice_time=0; dvfs_time=0;
+                moment_timing_print(0); //moment_start
+            #endif
+            #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
+                moment_timing_print(0); //moment_start
+                
+                start_timing();
+                predicted_exec_time = encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen);
+                end_timing();
+                slice_time = print_slice_timing();
+
+                start_timing();
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                end_timing();
+                dvfs_time = print_dvfs_timing();
+
+                moment_timing_print(1); //moment_start
+            #endif
+    //---------------------modified by TJSong----------------------//
+
+            start_timing();
+            // Run encryption
+            err = encfile(fout, ctx, argv[argv_i + 1], file_buffer, flen);
+            end_timing();
+
+    //---------------------modified by TJSong----------------------//
+            int exec_time = exec_timing();
+            int delay_time = 0;
+
+            #if GET_PREDICT /* CASE 0 */
+                print_exec_time(exec_time);
+            #endif
+            #if GET_DEADLINE /* CASE 1 */
+                print_exec_time(exec_time);
+            #endif
+            #if GET_OVERHEAD /* CASE 2 */
+                //nothing
+            #endif
+            #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
+                if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+                    start_timing();
+                    usleep(delay_time);
+                    end_timing();
+                    delay_time = exec_timing();
+                }else
+                    delay_time = 0;
+                moment_timing_print(2); //moment_end
+                print_exec_time(exec_time);
+                print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            #endif
+            fclose_all();//TJSong
+            // Write out predicted time & print out frequency used
+            //#if DEBUG_EN
+                print_predicted_time(predicted_exec_time);
+                print_freq(); 
+            //#endif
+    //---------------------modified by TJSong----------------------//
+
+        }
+        else
+        {                           /* decryption in Cipher Block Chaining mode */
+            printf("Slicing not implemented for decryption. Please implement.\n");
+            exit(1);
+
+            set_key(key, key_len, dec, ctx);
+        
+            err = decfile(fin, fout, ctx, argv[argv_i + 1], argv[argv_i + 2]);
+        }
+    exit:   
+        if(fout) 
+            fclose(fout);
+        if(fin)
+            fclose(fin);
+    } // for argv_i
 
     return err;
 }
