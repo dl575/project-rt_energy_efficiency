@@ -70,9 +70,6 @@ extern struct img_par *erc_img;
 extern StorablePicture **listX[6];
 extern ColocatedParams *Co_located;
 
-// loop counters defined in macroblock.c
-extern int loop_counter[652];
-
 StorablePicture *dec_picture;
 
 OldSliceParams old_slice;
@@ -1538,11 +1535,6 @@ int is_new_picture()
  */
 void decode_one_slice(struct img_par *img,struct inp_par *inp)
 {
-  // reset loop counters
-  for (int i = 0; i < sizeof(loop_counter)/sizeof(loop_counter[0]); ++i)
-    loop_counter[i] = 0;
-
-
   Boolean end_of_slice = FALSE;
   int read_flag;
   img->cod_counter=-1;
@@ -1580,28 +1572,6 @@ void decode_one_slice(struct img_par *img,struct inp_par *inp)
 
   exit_slice();
   //reset_ec_flags();
-
-  // print loop counters
-  static int loop_counter_frame;
-  FILE *loop_counter_fp = fopen("loop_counter.csv", loop_counter_frame == 0 ? "w" : "a");
-  if (!loop_counter_fp) {
-    fprintf(stderr, "warn: cannot open loop_counter.csv\n");
-    return;
-  }
-  if (loop_counter_frame == 0) {
-    // print header of csv
-    fprintf(loop_counter_fp, "Frame");
-    for (int i = 0; i < sizeof(loop_counter)/sizeof(loop_counter[0]); ++i)
-      fprintf(loop_counter_fp, ",Counter %d", i);
-    fprintf(loop_counter_fp, "\n");
-  }
-  fprintf(loop_counter_fp, "%d", loop_counter_frame);
-  for (int i = 0; i < sizeof(loop_counter)/sizeof(loop_counter[0]); ++i)
-      fprintf(loop_counter_fp, ",%d", loop_counter[i]);
-  fprintf(loop_counter_fp, "\n");
-  // close file
-  fclose(loop_counter_fp);
-  loop_counter_frame++;
 }
 
 
