@@ -1,0 +1,54 @@
+PYTHON=/usr/bin/python
+DIRNAME=ldecode
+FILENAME=$(DIRNAME)/image
+FUNCNAME=decode_one_slice
+LOOP_COUNT_FLAGS=--write_to_file
+GLOBALS_IGNORE=DEBUG_EN I_SLICE NALU_TYPE_PPS NALU_TYPE_AUD MB_BLOCK_SIZE EOS NOT_EOS PAR_OF_ANNEXB NULL P_SLICE NALU_TYPE_FILL SP_SLICE FRAME IBLOCK MAX_REFERENCE_PICTURES NALU_TYPE_EOSEQ SOP SOS YUV400 I16MB LIST_1 LIST_0 NALU_TYPE_IDR FALSE BOTTOM_FIELD NALU_TYPE_SLICE
+
+slice: preprocess
+	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
+	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
+	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	#$(PYTHON) globals.py $(FILENAME)_slice.c $(FUNCNAME) $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
+	cp $(FILENAME)_slice.c $(FILENAME)_globals.c
+	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
+	./insert_preprocessor.sh $(FILENAME)_cleanup.c > $(FILENAME)_debugflag.c
+
+
+globals:
+	$(PYTHON) globals.py $(FILENAME)_slice.c $(FUNCNAME)_slice $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
+
+td = echo "typedef int $1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+fd = echo "$1 ();" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+gd = echo "$1;" | cat - $(FILENAME)3.c > temp && mv temp $(FILENAME)3.c
+preprocess:
+	gcc -E $(FILENAME).c > $(FILENAME)2.c
+	./cleanup_gccE.py $(FILENAME)2.c > $(FILENAME)3.c
+
+	$(call gd, "struct inp_par *input")
+	$(call fd, "int testEndian")
+
+  # Define custom types
+	$(call td, "objectBuffer_t")
+	$(call td, "Macroblock")
+	$(call td, "NALU_t")
+	$(call td, "Boolean")
+	$(call td, "int64")
+	$(call td, "Slice")
+	$(call td, "imgpel")
+	$(call td, "OldSliceParams")
+	$(call td, "ColocatedParams")
+	$(call td, "StorablePicture")
+	$(call td, "frame")
+	$(call td, "ercVariables_t")
+	$(call td, "objectBuffer_t")
+	
+clean:
+	rm -f $(FILENAME)2.c
+	rm -f $(FILENAME)3.c
+	rm -f $(FILENAME)_inline.c
+	rm -f $(FILENAME)_loop_counts.c
+	rm -f $(FILENAME)_slice.c
+	rm -f $(FILENAME)_globals.c
+	rm -f $(FILENAME)_cleanup.c
+	rm -f $(FILENAME)_debugflag.c

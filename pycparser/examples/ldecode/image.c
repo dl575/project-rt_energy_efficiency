@@ -21,44 +21,44 @@
  ***********************************************************************
  */
 
-#include "contributors.h"
-
-#include <math.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
-#ifdef WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-#include "global.h"
-#include "errorconcealment.h"
-#include "image.h"
-#include "mbuffer.h"
-#include "fmo.h"
-#include "nalu.h"
-#include "parsetcommon.h"
-#include "parset.h"
-#include "header.h"
-#include "rtp.h"
-#include "sei.h"
-#include "output.h"
-#include "biaridecod.h"
-#include "mb_access.h"
-#include "memalloc.h"
-#include "annexb.h"
-
-#include "context_ini.h"
-#include "cabac.h"
-#include "loopfilter.h"
-
-#include "vlc.h"
-
-#include "erc_api.h"
+//#include "contributors.h"
+//
+//#include <math.h>
+//#include <limits.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <assert.h>
+//
+//#ifdef WIN32
+//#include <io.h>
+//#else
+//#include <unistd.h>
+//#endif
+//
+//#include "global.h"
+//#include "errorconcealment.h"
+//#include "image.h"
+//#include "mbuffer.h"
+//#include "fmo.h"
+//#include "nalu.h"
+//#include "parsetcommon.h"
+//#include "parset.h"
+//#include "header.h"
+//#include "rtp.h"
+//#include "sei.h"
+//#include "output.h"
+//#include "biaridecod.h"
+//#include "mb_access.h"
+//#include "memalloc.h"
+//#include "annexb.h"
+//
+//#include "context_ini.h"
+//#include "cabac.h"
+//#include "loopfilter.h"
+//
+//#include "vlc.h"
+//
+//#include "erc_api.h"
 extern objectBuffer_t *erc_object_list;
 extern ercVariables_t *erc_errorVar;
 extern frame erc_recfr;
@@ -74,7 +74,7 @@ StorablePicture *dec_picture;
 
 OldSliceParams old_slice;
 
-#include "timing.h"
+//#include "timing.h"
 struct timeval start, end, moment;
 
 void MbAffPostProc()
@@ -133,8 +133,6 @@ void MbAffPostProc()
  */
 
 #define NOT_EOS 0
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp);
-int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp);
 int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr)
 {
   int current_header;
@@ -150,28 +148,28 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
-
-    // Run slicing
-    float predicted_exec_time;
     start_timing();
-    pid_t pid = fork();
-    if (pid == 0) {
-      predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
-      _Exit(0);
-    } else {
-      int status;
-      waitpid(pid, &status, 0);
+
+    /*
+    current_header = read_new_slice();
+
+    if (current_header == EOS)
+    {
+      exit_picture();
+      return EOS;
     }
-    end_timing();
-    fprint_slice_timing();
 
-    // Run job
-    start_timing();
+    decode_slice(img, inp, current_header);
+
+    img->newframe = 0;
+    img->current_slice_nr++;
+    */
     int ret;
-    ret = decode_one_frame_inner_loop(img, inp);
+    ret = decode_one_frame_inner_loop(img);
     if (ret == EOS) {
       return EOS;
     }
+
     end_timing();
     int exec_time = exec_timing();
     fprint_exec_time(exec_time);
@@ -184,7 +182,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp) 
 {
     int current_header;
-    current_header = read_new_slice();
+		current_header = read_new_slice();
 
     if (current_header == EOS)
     {
@@ -198,158 +196,6 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp)
     img->current_slice_nr++;
 
     return NOT_EOS;
-}
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp)
-{
-  int loop_counter[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  Boolean end_of_slice = FALSE;
-  {
-    int i_rename0;
-    int j_rename0;
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_0]; i_rename0++)
-    {
-      loop_counter[0]++;
-    }
-
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_1]; i_rename0++)
-    {
-      loop_counter[1]++;
-    }
-
-    if (!active_sps->frame_mbs_only_flag)
-    {
-      loop_counter[2]++;
-      if (img->structure == FRAME)
-      {
-        loop_counter[3]++;
-        for (j_rename0 = 2; j_rename0 < 6; j_rename0++)
-        {
-          loop_counter[4]++;
-          for (i_rename0 = 0; i_rename0 < listXsize[j_rename0]; i_rename0++)
-          {
-            loop_counter[5]++;
-          }
-
-        }
-
-      }
-
-    }
-
-    return0:
-    ;
-
-  }
-  if (img->type == B_SLICE)
-  {
-    loop_counter[6]++;
-  }
-
-  while (end_of_slice == FALSE)
-  {
-    loop_counter[7]++;
-    if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
-    {
-      loop_counter[8]++;
-    }
-
-    {
-      int i_rename1;
-      int currMBNum_rename1 = img->current_mb_nr;
-      Macroblock *currMB_rename1 = &img->mb_data[currMBNum_rename1];
-      if (img->type != B_SLICE)
-      {
-        loop_counter[9]++;
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
-        {
-          loop_counter[10]++;
-          if ((currMB_rename1->b8mode[i_rename1] == 0) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
-          {
-            loop_counter[11]++;
-          }
-          else
-          {
-            if ((currMB_rename1->b8mode[i_rename1] >= 5) && (currMB_rename1->b8mode[i_rename1] <= 7))
-            {
-              loop_counter[12]++;
-            }
-            else
-            {
-            }
-
-          }
-
-        }
-
-      }
-      else
-      {
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
-        {
-          loop_counter[13]++;
-          if ((currMB_rename1->mb_type == I16MB) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
-          {
-            loop_counter[14]++;
-          }
-          else
-          {
-          }
-
-        }
-
-      }
-
-      return1:
-      ;
-
-    }
-    end_of_slice = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
-  }
-
-  {
-    if (img->field_pic_flag)
-    {
-      loop_counter[15]++;
-    }
-
-    if (img->idr_flag)
-    {
-      loop_counter[16]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 0)
-    {
-      loop_counter[17]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 1)
-    {
-      loop_counter[18]++;
-    }
-
-    return2:
-    ;
-
-  }
-  {
-    print_loop_counter:
-#if GET_PREDICT || DEBUG_EN
-    ;
-
-    write_array(loop_counter, 19);
-    print_loop_counter_end:
-#endif
-    ;
-
-  }
-  {
-    predict_exec_time:
-    ;
-
-    float exec_time;
-    exec_time = 0;
-    return exec_time;
-  }
 }
 
 
@@ -1801,6 +1647,7 @@ void decode_slice(struct img_par *img,struct inp_par *inp, int current_header)
  */
 void frame_postprocessing(struct img_par *img, struct inp_par *inp)
 {
+	return;
 }
 
 /*!
@@ -1962,3 +1809,4 @@ void fill_wp_params(struct img_par *img)
     }
   }
 }
+
