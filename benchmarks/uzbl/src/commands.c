@@ -25,28 +25,6 @@
 #include "my_common.h"
 #include "function_addresses.h"
 
-//---------------------modified by TJSong----------------------//
-//set global variables
-struct timeval start, end, moment;
-int slice_time = 0;
-int dvfs_time = 0;
-
-//define benchmarks-depenent varaibles & constants
-#if CORE //big
-#define OVERHEAD_TIME 2218 //overhead deadline
-#define AVG_OVERHEAD_TIME 1103 //avg overhead deadline
-#define DEADLINE_TIME (int)((27560*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2207 //max dvfs time
-#define AVG_DVFS_TIME 1095 //average dvfs time
-#else //LITTLE
-#define OVERHEAD_TIME 10844 //overhead deadline
-#define AVG_OVERHEAD_TIME 1644 //avg overhead deadline
-#define DEADLINE_TIME (int)((48176*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 10735 //max dvfs time
-#define AVG_DVFS_TIME 1631 //average dvfs time
-#endif
-//---------------------modified by TJSong----------------------//
-
 /* TODO: (WebKit2)
  *
  *   - Add commands for registering custom schemes.
@@ -388,7 +366,7 @@ print_loop_counter:
 
     float exec_time;
 #if CORE //big
-    exec_time = 57.000000*loop_counter[1] + 64.000000*loop_counter[2] + 288.000000*loop_counter[3] + 2798.000000*loop_counter[4] + 341.000000*loop_counter[5] + 27369.000000*loop_counter[6] + 393.000000*loop_counter[8] + 349.000000*loop_counter[11] + 25819.000000*loop_counter[15] + 1060.000000*loop_counter[16] + 176.000000*loop_counter[18] + 0.000000;
+    exec_time = 48.000000*loop_counter[1] + 74.000000*loop_counter[2] + 285.000000*loop_counter[3] + 824.000000*loop_counter[4] + 345.000000*loop_counter[5] + 27186.000000*loop_counter[6] + 378.000000*loop_counter[8] + 321.000000*loop_counter[11] + 26411.000000*loop_counter[15] + 1123.000000*loop_counter[16] + 171.000000*loop_counter[18] + 0.000000;
 #else //LITTLE
     exec_time = 860.000000*loop_counter[2] + 527.000000*loop_counter[3] + 6040.000000*loop_counter[4] + 94.000000*loop_counter[5] + 49362.000000*loop_counter[6] + 966.000000*loop_counter[7] + 91.000000*loop_counter[8] + 283.000000*loop_counter[10] + 48135.000000*loop_counter[15] + 4274.000000*loop_counter[16] + 1067.000000*loop_counter[18] + 0.000000;
 #endif
@@ -402,6 +380,15 @@ uzbl_commands_run (const gchar *cmd, GString *result)
 {
     GArray *argv = uzbl_commands_args_new ();
     const UzblCommand *info = uzbl_commands_parse (cmd, argv);
+
+//---------------------modified by TJSong----------------------//
+    int exec_time = 0;
+    if(check_define()==ERROR_DEFINE){
+        printf("%s", "DEFINE ERROR!!\n");
+        return ERROR_DEFINE;
+    }
+//---------------------modified by TJSong----------------------//
+
 //---------------------modified by TJSong----------------------//
     //fopen_all(); //fopen for frequnecy file
     print_deadline(DEADLINE_TIME); //print deadline 
@@ -415,52 +402,85 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     //start_timing();
 
 //---------------------modified by TJSong----------------------//
-    // Perform slicing and prediction
-    float predicted_exec_time = 0.0;
-    /*
-        CASE 0 = to get prediction equation
-        CASE 1 = to get execution deadline
-        CASE 2 = to get overhead deadline
-        CASE 3 = running on default linux governors
-        CASE 4 = running on our prediction
-    */
-    #if GET_PREDICT /* CASE 0 */
-        predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
-    #endif
-    #if GET_DEADLINE /* CASE 1 */
-        //nothing
-    #endif
-    #if GET_OVERHEAD /* CASE 2 */
-        start_timing();
-        predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
-        end_timing();
-        slice_time = print_slice_timing();
+        // Perform slicing and prediction
+        float predicted_exec_time = 0.0;
+        /*
+            CASE 0 = to get prediction equation
+            CASE 1 = to get execution deadline
+            CASE 2 = to get overhead deadline
+            CASE 3 = running on default linux governors
+            CASE 4 = running on our prediction
+            CASE 5 = running on oracle
+            CASE 6 = running on pid
+        */
+        #if GET_PREDICT /* CASE 0 */
+            predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
+        #elif GET_DEADLINE /* CASE 1 */
+            //nothing
+        #elif GET_OVERHEAD /* CASE 2 */
+            start_timing();
+            predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
+            end_timing();
+            slice_time = print_slice_timing();
 
-        start_timing();
-        set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = print_dvfs_timing();
-    #endif
-    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
-        //slice_time=0; dvfs_time=0;
-        moment_timing_print(0); //moment_start
-    #endif
-    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
-        moment_timing_print(0); //moment_start
-        
-        start_timing();
-        predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
-        end_timing();
-        slice_time = print_slice_timing();
+            start_timing();
+            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+            //slice_time=0; dvfs_time=0;
+            moment_timing_print(0); //moment_start
+        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+            moment_timing_print(0); //moment_start
+            
+            start_timing();
+            predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
+            end_timing();
+            slice_time = print_slice_timing();
+            
+            start_timing();
+            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = print_dvfs_timing();
 
-        start_timing();
-        set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        end_timing();
-        dvfs_time = print_dvfs_timing();
-        
-        moment_timing_print(1); //moment_start
-    #endif
-
+            moment_timing_print(1); //moment_start
+        #elif ORACLE_EN /* CASE 5 */
+            //slice_time=0;
+            static int job_cnt = 0; //job count
+            static int csl = 1;
+            //Since we filter out initial part
+            if(csl){
+                if( 0 == strcmp(cmd, "set keycmd @[csl]@<span @cursor_style>@[ ]@</span>") ){
+                    csl--;
+                }
+                predicted_exec_time = DEADLINE_TIME;
+            }else{
+                predicted_exec_time = exec_time_arr[job_cnt];
+                job_cnt++;
+            }
+            moment_timing_print(0); //moment_start
+            
+            start_timing();
+            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+        #elif PID_EN /* CASE 6 */
+            moment_timing_print(0); //moment_start
+            
+            start_timing();
+            predicted_exec_time = pid_controller(exec_time); //pid == slice
+            end_timing();
+            slice_time = print_slice_timing();
+            
+            start_timing();
+            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+        #endif
 //---------------------modified by TJSong----------------------//
     start_timing();
 
@@ -470,38 +490,31 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     end_timing();
     //print_timing();
 //---------------------modified by TJSong----------------------//
-    int exec_time = exec_timing();
-    int delay_time = 0;
+        exec_time = exec_timing();
+        int delay_time = 0;
 
-    #if GET_PREDICT /* CASE 0 */
-        print_exec_time(exec_time);
-    #endif
-    #if GET_DEADLINE /* CASE 1 */
-        print_exec_time(exec_time);
-    #endif
-    #if GET_OVERHEAD /* CASE 2 */
-        //nothing
-    #endif
-    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
-        if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
-            printf("expected delay is %dus\n", delay_time);
-            start_timing();
-            usleep(delay_time);
-            end_timing();
-            delay_time = exec_timing();
-        }else
-            delay_time = 0;
+        #if GET_PREDICT /* CASE 0 */
+            print_exec_time(exec_time);
+        #elif GET_DEADLINE /* CASE 1 */
+            print_exec_time(exec_time);
+        #elif GET_OVERHEAD /* CASE 2 */
+            //nothing
+        #else /* CASE 3,4,5 and 6 */
+            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+                start_timing();
+                usleep(delay_time);
+                end_timing();
+                delay_time = exec_timing();
+            }else
+                delay_time = 0;
         moment_timing_print(2); //moment_end
         print_exec_time(exec_time);
         print_total_time(exec_time + slice_time + dvfs_time + delay_time);
-    #endif
-    //fclose_all();//TJSong
-    // Write out predicted time & print out frequency used
-    //#if DEBUG_EN
+        #endif
+
+        // Write out predicted time & print out frequency used
         print_predicted_time(predicted_exec_time);
         print_freq(); 
-        printf("actual delay is %dus\n", delay_time);
-    //#endif
 //---------------------modified by TJSong----------------------//
  
     uzbl_commands_args_free (argv);

@@ -38,9 +38,9 @@ D33_DISABLED="DEADLINE_33MS 0"
 #BEFORE_MODIFIED="delay_time\*0.95"
 #AFTER_MODIFIED="delay_time\*0.90"
 
-SWEEP=("60" "80" "100" "120" "140")
+#SWEEP=("60" "80" "100" "120" "140")
 #SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
-#SWEEP=("100")
+SWEEP=("100")
 
 
 _ALL_BENCH_=(
@@ -48,30 +48,29 @@ _ALL_BENCH_=(
 "_stringsearch_"
 "_sha_preread_"
 "_rijndael_preread_"
-"_xpilot_"
-"_2048_"
-"_curseofwar_"
+"_xpilot_slice_"
+"_2048_slice_"
+"_curseofwar_slice_"
 "_uzbl_"
 )
 
 #:53,94s/^/#
 #:53,94s/^#/
 SOURCE_FILES=(
-"mibench/security/sha_preread/sha_driver.c"
+"uzbl/src/commands.c"
 )
 SOURCE_PATH=(
-"mibench/security/sha_preread"
+"uzbl"
 )
 BENCHMARKS=(
-"mibench/security/sha_preread"
+"uzbl"
 )
 BENCH_NAME=(
-"sha_preread"
+"uzbl"
 )
 _BENCH_FOR_DEFINE_=(
-"_sha_preread_"
+"_uzbl_"
 )
-
 
 #SOURCE_FILES=(
 #"pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c"
@@ -116,11 +115,11 @@ _BENCH_FOR_DEFINE_=(
 #_BENCH_FOR_DEFINE_=(
 #"_pocketsphinx_"
 #"_stringsearch_"
-#"_sha_"
-#"_rijndael_"
-#"_xpilot_"
-#"_2048_"
-#"_curseofwar_"
+#"_sha_preread_"
+#"_rijndael_preread_"
+#"_xpilot_slice_"
+#"_2048_slice_"
+#"_curseofwar_slice_"
 #"_uzbl_"
 #)
 
