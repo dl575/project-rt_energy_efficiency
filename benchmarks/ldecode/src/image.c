@@ -146,8 +146,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   img->num_dec_mb = 0;
   img->newframe = 1;
 
-  init_time_file();
-
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
 
