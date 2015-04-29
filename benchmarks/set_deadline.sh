@@ -35,7 +35,27 @@ sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_F
 sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
+function bench {
+    for (( i=0; i<${#_ALL_BENCH_[@]}; i++ ));
+    do
+        sed -i -e 's/'"${_ALL_BENCH_[$i]} 1"'/'"${_ALL_BENCH_[$i]} 0"'/g' $BENCH_PATH/$COMMON_FILE
+    done
+    sed -i -e 's/'"$1 0"'/'"$1 1"'/g' $BENCH_PATH/$COMMON_FILE
+}
 
+bench ${_BENCH_FOR_DEFINE_[$1]}
+
+
+#for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+#do
+#    echo "#if _"${BENCH_NAME[$i]}"_"
+#    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+#    #run find_deadline.py script
+#    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt M1M2.txt
+#    echo "#endif"
+#done
+
+#exit 0
 for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
 do
     #---------------to get execution deadline--------------
@@ -157,10 +177,11 @@ done
 
 for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
 do
-    echo "==================${BENCH_NAME[$i]}=================="
+    echo "#if _"${BENCH_NAME[$i]}"_"
     cd $BENCH_PATH/${SOURCE_PATH[$i]}
     #run find_deadline.py script
     taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt M1M2.txt
+    echo "#endif"
 done
 
 exit 0

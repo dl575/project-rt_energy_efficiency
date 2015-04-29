@@ -38,7 +38,7 @@ if [[ $2 ]] ; then
     #if [[ $3 ]] ; then
     #    MAX_FREQ=$3
     #fi
-    if [[ $2 == "prediction" ]] ; then 
+    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then    
         echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     else
         echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor

@@ -67,7 +67,7 @@ do
         fi
         # MUST RUN as this order. 
         # 1. LINUX Governor (performance > interactive > conservative > ondemand > powersave )
-        # > 2. Prediction with overhead > 3. Prediction w/o overhead > 4. Oracle
+        # > 2. Prediction with overhead > 3. Prediction w/o overhead > 4. Oracle > 5. PID
         
         # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
         # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
@@ -76,7 +76,7 @@ do
         echo ${SWEEP[$j]}
         taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
         ./runAll.sh $i $1 performance ${SWEEP[$j]}
-        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+        #./runAll.sh $i $1 interactive ${SWEEP[$j]}
         #./runAll.sh $i $1 conservative ${SWEEP[$j]}
         #./runAll.sh $i $1 ondemand ${SWEEP[$j]}
         #./runAll.sh $i $1 powersave ${SWEEP[$j]}
@@ -88,6 +88,10 @@ do
         # 4. Oralce
         taskset 0xff ./buildAll.sh $i $1 oracle_en ${SWEEP[$j]}
         ./runAll.sh $i $1 oracle ${SWEEP[$j]}
+        
+        # 5. PID
+        #taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
+        #./runAll.sh $i $1 pid ${SWEEP[$j]}
 
         #kill power_monitor process
         sleep 10 
@@ -98,7 +102,7 @@ do
         #filter xpilot_slice and uzbl
         if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
             cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction") 
+            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction" "oracle" "pid") 
             for k in "${GOVERNOR_FILES[@]}"
             do 
                 taskset 0xff ./filter_xpilot.py $1 ${SWEEP[$j]} $k > temp_xpilot
@@ -106,7 +110,7 @@ do
             done
         elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
             cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction") 
+            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction" "oracle" "pid") 
             for k in "${GOVERNOR_FILES[@]}"
             do 
                 taskset 0xff ./filter_uzbl.py $1 ${SWEEP[$j]} $k > temp_uzbl
@@ -137,8 +141,10 @@ sudo kill -9 $PID_POWER_MONITOR
 
 #evince plot
 cd $DATA_ODROID_PATH
-evince $1_* &
-
+for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+do
+    evince $1_${BENCH_NAME[$i]}.pdf &
+done
 #restore current time
 #echo "resetting date..."
 #sudo date --set="$CURRENT_TIME"

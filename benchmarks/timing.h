@@ -4,6 +4,8 @@
 
 #ifndef __TIMING_H__
 #define __TIMING_H__
+#include "deadline_big.h"
+#include "deadline_little.h"
 #include "my_common.h"
 
 extern struct timeval start, end, moment;
@@ -216,5 +218,76 @@ void my_usleep(unsigned long us)
     while(nanosleep(&req,&req)==-1)
         continue;
 }
+
+void fprint_deadline(int deadline_time){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "============ deadline time : %d us ===========\n", deadline_time);//TJSong
+    fclose(time_file);
+}
+
+void print_deadline(int deadline_time){
+    printf("============ deadline time : %d us ===========\n", deadline_time);//TJSong
+}
+
+void fprint_predicted_time(float predicted_exec_time){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "predicted time = %f\n", predicted_exec_time);
+    fclose(time_file);
+}
+
+void print_predicted_time(float predicted_exec_time){
+    printf("predicted time = %f\n", predicted_exec_time);
+}
+
+void fprint_exec_time(int exec_time){
+    static int instance_number = 0;
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
+    instance_number++;
+    fclose(time_file);
+}
+
+void print_exec_time(int exec_time){
+    static int instance_number = 0;
+    printf("time %d = %d us\n", instance_number, exec_time);
+    instance_number++;
+}
+
+void fprint_total_time(int exec_time){
+    static int instance_number = 0;
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "time_total %d = %d us\n", instance_number, exec_time);
+    instance_number++;
+    fclose(time_file);
+}
+
+void print_total_time(int exec_time){
+    static int instance_number = 0;
+    printf("time_total %d = %d us\n", instance_number, exec_time);
+    instance_number++;
+}
+
+void fprint_delay_time(int pre_delay_time, int delay_time){
+    static int instance_number = 0;
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "delay should be %d = %d us\n", instance_number, pre_delay_time);
+    fprintf(time_file, "actual dealy is %d = %d us\n", instance_number, delay_time);
+    instance_number++;
+    fclose(time_file);
+}
+
+void print_delay_time(int pre_delay_time, int delay_time){
+    static int instance_number = 0;
+    printf("delay should be %d = %d us\n", instance_number, pre_delay_time);
+    printf("actual dealy is %d = %d us\n", instance_number, delay_time);
+    instance_number++;
+}
+
+
 
 #endif
