@@ -37,7 +37,7 @@ for root, dirname, filenames in os.walk(output_dir):
       policies.append(policy)
 
 #for metric in [deadline_misses, avg_normalized_tardiness, energy]:
-for metric in [deadline_misses, energy]:
+for metric in [energy, deadline_misses]:
   print metric.__name__
   print list_to_csv([""] + benchmarks + ["average"])
   for policy in policies:
@@ -55,6 +55,8 @@ for metric in [deadline_misses, energy]:
         deadline = 30000
       elif "shmupacabra" in benchmark:
         deadline = 1000000./60 # 60fps
+      elif "ldecode" in benchmark:
+        deadline = 1000000./30 # 30fps
       (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=deadline) # Continuous
 
       # Calculate metric of interest

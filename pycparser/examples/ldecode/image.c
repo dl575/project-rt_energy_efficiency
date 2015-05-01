@@ -21,44 +21,44 @@
  ***********************************************************************
  */
 
-#include "contributors.h"
-
-#include <math.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
-#ifdef WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-#include "global.h"
-#include "errorconcealment.h"
-#include "image.h"
-#include "mbuffer.h"
-#include "fmo.h"
-#include "nalu.h"
-#include "parsetcommon.h"
-#include "parset.h"
-#include "header.h"
-#include "rtp.h"
-#include "sei.h"
-#include "output.h"
-#include "biaridecod.h"
-#include "mb_access.h"
-#include "memalloc.h"
-#include "annexb.h"
-
-#include "context_ini.h"
-#include "cabac.h"
-#include "loopfilter.h"
-
-#include "vlc.h"
-
-#include "erc_api.h"
+//#include "contributors.h"
+//
+//#include <math.h>
+//#include <limits.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <assert.h>
+//
+//#ifdef WIN32
+//#include <io.h>
+//#else
+//#include <unistd.h>
+//#endif
+//
+//#include "global.h"
+//#include "errorconcealment.h"
+//#include "image.h"
+//#include "mbuffer.h"
+//#include "fmo.h"
+//#include "nalu.h"
+//#include "parsetcommon.h"
+//#include "parset.h"
+//#include "header.h"
+//#include "rtp.h"
+//#include "sei.h"
+//#include "output.h"
+//#include "biaridecod.h"
+//#include "mb_access.h"
+//#include "memalloc.h"
+//#include "annexb.h"
+//
+//#include "context_ini.h"
+//#include "cabac.h"
+//#include "loopfilter.h"
+//
+//#include "vlc.h"
+//
+//#include "erc_api.h"
 extern objectBuffer_t *erc_object_list;
 extern ercVariables_t *erc_errorVar;
 extern frame erc_recfr;
@@ -74,30 +74,8 @@ StorablePicture *dec_picture;
 
 OldSliceParams old_slice;
 
-//---------------------modified by TJSong----------------------//
-#include "timing.h"
-#include "my_common.h"
-//set global variables
+//#include "timing.h"
 struct timeval start, end, moment;
-int slice_time = 0;
-int dvfs_time = 0;
-
-//define benchmarks-depenent varaibles & constants
-#if CORE //big
-#define OVERHEAD_TIME 3126 //overhead deadline
-#define AVG_OVERHEAD_TIME 683 //avg overhead deadline
-#define DEADLINE_TIME (int)((22087*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2482 //max dvfs time
-#define AVG_DVFS_TIME 357 //average dvfs time
-#else //LITTLE
-#define OVERHEAD_TIME 168542 //overhead deadline
-#define AVG_OVERHEAD_TIME 56606 //avg overhead deadline
-#define DEADLINE_TIME (int)((182846*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2581 //max dvfs time
-#define AVG_DVFS_TIME 1146 //average dvfs time
-#endif
-//---------------------modified by TJSong----------------------//
-
 
 void MbAffPostProc()
 {
@@ -155,8 +133,6 @@ void MbAffPostProc()
  */
 
 #define NOT_EOS 0
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp);
-int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp);
 int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr)
 {
   int current_header;
@@ -168,114 +144,35 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   img->num_dec_mb = 0;
   img->newframe = 1;
 
+  init_time_file();
+
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
-
-
-    //---------------------modified by TJSong----------------------//
-    fopen_all(); //fopen for frequnecy file
-    fprint_deadline(DEADLINE_TIME); //print deadline 
-    //---------------------modified by TJSong----------------------//
-
-    // Run slicing in a forked process
-    float predicted_exec_time;
     start_timing();
-    pid_t pid = fork();
-    if (pid == 0) {
-        /*
-            CASE 0 = to get prediction equation
-            CASE 1 = to get execution deadline
-            CASE 2 = to get overhead deadline
-            CASE 3 = running on default linux governors
-            CASE 4 = running on our prediction
-        */
-        #if GET_PREDICT /* CASE 0 */
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
-        #endif
-        #if GET_DEADLINE /* CASE 1 */
-            //nothing
-        #endif
-        #if GET_OVERHEAD /* CASE 2 */
-            start_timing();
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
-            end_timing();
-            slice_time = print_slice_timing();
 
-            start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
-            //slice_time=0; dvfs_time=0;
-            moment_timing_fprint(0); //moment_start
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
-            moment_timing_fprint(0); //moment_start
-            
-            start_timing();
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
-            end_timing();
-            slice_time = print_slice_timing();
+    /*
+    current_header = read_new_slice();
 
-            start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-
-            moment_timing_fprint(1); //moment_start
-        #endif
-    //---------------------modified by TJSong----------------------//
-      _Exit(0);
-    } else {
-      int status;
-      waitpid(pid, &status, 0);
+    if (current_header == EOS)
+    {
+      exit_picture();
+      return EOS;
     }
-    end_timing();
-    fprint_slice_timing();
 
-    // Run job
-    start_timing();
+    decode_slice(img, inp, current_header);
+
+    img->newframe = 0;
+    img->current_slice_nr++;
+    */
     int ret;
-    ret = decode_one_frame_inner_loop(img, inp);
+    ret = decode_one_frame_inner_loop(img);
     if (ret == EOS) {
       return EOS;
     }
+
     end_timing();
-
-    //---------------------modified by TJSong----------------------//
     int exec_time = exec_timing();
-    int delay_time = 0;
-
-    #if GET_PREDICT /* CASE 0 */
-        fprint_exec_time(exec_time);
-    #endif
-    #if GET_DEADLINE /* CASE 1 */
-        fprint_exec_time(exec_time);
-    #endif
-    #if GET_OVERHEAD /* CASE 2 */
-        //nothing
-    #endif
-    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
-        if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
-            start_timing();
-            usleep(delay_time);
-            end_timing();
-            delay_time = exec_timing();
-        }else
-            delay_time = 0;
-        moment_timing_fprint(2); //moment_end
-        fprint_exec_time(exec_time);
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
-    #endif
-    fclose_all();//TJSong
-    // Write out predicted time & print out frequency used
-    //#if DEBUG_EN
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); 
-    //#endif
-    //---------------------modified by TJSong----------------------//
-
+    fprint_exec_time(exec_time);
   }
 
   exit_picture();
@@ -285,7 +182,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp) 
 {
     int current_header;
-    current_header = read_new_slice();
+		current_header = read_new_slice();
 
     if (current_header == EOS)
     {
@@ -299,158 +196,6 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp)
     img->current_slice_nr++;
 
     return NOT_EOS;
-}
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp)
-{
-  int loop_counter[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  Boolean end_of_slice = FALSE;
-  {
-    int i_rename0;
-    int j_rename0;
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_0]; i_rename0++)
-    {
-      loop_counter[0]++;
-    }
-
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_1]; i_rename0++)
-    {
-      loop_counter[1]++;
-    }
-
-    if (!active_sps->frame_mbs_only_flag)
-    {
-      loop_counter[2]++;
-      if (img->structure == FRAME)
-      {
-        loop_counter[3]++;
-        for (j_rename0 = 2; j_rename0 < 6; j_rename0++)
-        {
-          loop_counter[4]++;
-          for (i_rename0 = 0; i_rename0 < listXsize[j_rename0]; i_rename0++)
-          {
-            loop_counter[5]++;
-          }
-
-        }
-
-      }
-
-    }
-
-    return0:
-    ;
-
-  }
-  if (img->type == B_SLICE)
-  {
-    loop_counter[6]++;
-  }
-
-  while (end_of_slice == FALSE)
-  {
-    loop_counter[7]++;
-    if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
-    {
-      loop_counter[8]++;
-    }
-
-    {
-      int i_rename1;
-      int currMBNum_rename1 = img->current_mb_nr;
-      Macroblock *currMB_rename1 = &img->mb_data[currMBNum_rename1];
-      if (img->type != B_SLICE)
-      {
-        loop_counter[9]++;
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
-        {
-          loop_counter[10]++;
-          if ((currMB_rename1->b8mode[i_rename1] == 0) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
-          {
-            loop_counter[11]++;
-          }
-          else
-          {
-            if ((currMB_rename1->b8mode[i_rename1] >= 5) && (currMB_rename1->b8mode[i_rename1] <= 7))
-            {
-              loop_counter[12]++;
-            }
-            else
-            {
-            }
-
-          }
-
-        }
-
-      }
-      else
-      {
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
-        {
-          loop_counter[13]++;
-          if ((currMB_rename1->mb_type == I16MB) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
-          {
-            loop_counter[14]++;
-          }
-          else
-          {
-          }
-
-        }
-
-      }
-
-      return1:
-      ;
-
-    }
-    end_of_slice = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
-  }
-
-  {
-    if (img->field_pic_flag)
-    {
-      loop_counter[15]++;
-    }
-
-    if (img->idr_flag)
-    {
-      loop_counter[16]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 0)
-    {
-      loop_counter[17]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 1)
-    {
-      loop_counter[18]++;
-    }
-
-    return2:
-    ;
-
-  }
-  {
-    print_loop_counter:
-#if GET_PREDICT || DEBUG_EN
-    ;
-
-    write_array(loop_counter, 19);
-    print_loop_counter_end:
-#endif
-    ;
-
-  }
-  {
-    predict_exec_time:
-    ;
-
-    float exec_time;
-    exec_time = 0;
-    return exec_time;
-  }
 }
 
 
@@ -1902,6 +1647,7 @@ void decode_slice(struct img_par *img,struct inp_par *inp, int current_header)
  */
 void frame_postprocessing(struct img_par *img, struct inp_par *inp)
 {
+	return;
 }
 
 /*!
@@ -2063,3 +1809,4 @@ void fill_wp_params(struct img_par *img)
     }
   }
 }
+
