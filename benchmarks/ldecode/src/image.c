@@ -77,25 +77,6 @@ OldSliceParams old_slice;
 //---------------------modified by TJSong----------------------//
 #include "timing.h"
 #include "my_common.h"
-//set global variables
-struct timeval start, end, moment;
-int slice_time = 0;
-int dvfs_time = 0;
-
-//define benchmarks-depenent varaibles & constants
-#if CORE //big
-#define OVERHEAD_TIME 3126 //overhead deadline
-#define AVG_OVERHEAD_TIME 683 //avg overhead deadline
-#define DEADLINE_TIME (int)((22087*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2482 //max dvfs time
-#define AVG_DVFS_TIME 357 //average dvfs time
-#else //LITTLE
-#define OVERHEAD_TIME 168542 //overhead deadline
-#define AVG_OVERHEAD_TIME 56606 //avg overhead deadline
-#define DEADLINE_TIME (int)((182846*SWEEP)/100) // max_exec * sweep / 100
-#define MAX_DVFS_TIME 2581 //max dvfs time
-#define AVG_DVFS_TIME 1146 //average dvfs time
-#endif
 //---------------------modified by TJSong----------------------//
 
 
@@ -156,8 +137,8 @@ void MbAffPostProc()
 
 #define NOT_EOS 0
 float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp);
-int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp);
-int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr)
+int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr, int video_index);
+int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr, int video_index)
 {
   int current_header;
   Slice *currSlice = img->currentSlice;
@@ -167,73 +148,111 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   currSlice->next_header = -8888; // initialized to an impossible value for debugging -- correct value is taken from slice header
   img->num_dec_mb = 0;
   img->newframe = 1;
+//---------------------modified by TJSong----------------------//
+    int job_cnt = 300 * video_index; //job count
+    printf("job_cnt %d\n", job_cnt); //job count
+    fopen_all(); //fopen for frequnecy file
+//---------------------modified by TJSong----------------------//
+ 
+    if(check_define()==ERROR_DEFINE){
+        printf("%s", "DEFINE ERROR!!\n");
+        return ERROR_DEFINE;
+    }
 
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
 
 
     //---------------------modified by TJSong----------------------//
-    fopen_all(); //fopen for frequnecy file
     fprint_deadline(DEADLINE_TIME); //print deadline 
+    static int exec_time = 0;
     //---------------------modified by TJSong----------------------//
 
     // Run slicing in a forked process
-    float predicted_exec_time;
-    start_timing();
     pid_t pid = fork();
     if (pid == 0) {
+         // Perform slicing and prediction
+        float predicted_exec_time = 0.0;
         /*
             CASE 0 = to get prediction equation
             CASE 1 = to get execution deadline
             CASE 2 = to get overhead deadline
             CASE 3 = running on default linux governors
             CASE 4 = running on our prediction
+            CASE 5 = running on oracle
+            CASE 6 = running on pid
         */
         #if GET_PREDICT /* CASE 0 */
+        printf("forked %d\n", job_cnt);
             predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
-        #endif
-        #if GET_DEADLINE /* CASE 1 */
+        #elif GET_DEADLINE /* CASE 1 */
             //nothing
-        #endif
-        #if GET_OVERHEAD /* CASE 2 */
+        #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
             predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
             end_timing();
-            slice_time = print_slice_timing();
+            slice_time = fprint_slice_timing();
 
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
-            dvfs_time = print_dvfs_timing();
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && !PREDICT_EN /* CASE 3 */
+            dvfs_time = fprint_dvfs_timing();
+        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
             moment_timing_fprint(0); //moment_start
-        #endif
-        #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD && PREDICT_EN /* CASE 4 */
+        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
             moment_timing_fprint(0); //moment_start
             
             start_timing();
             predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
             end_timing();
-            slice_time = print_slice_timing();
-
+            slice_time = fprint_slice_timing();
+            
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
-            dvfs_time = print_dvfs_timing();
+            dvfs_time = fprint_dvfs_timing();
 
             moment_timing_fprint(1); //moment_start
+        #elif ORACLE_EN /* CASE 5 */
+            //slice_time=0;
+            predicted_exec_time  = exec_time_arr[job_cnt];
+            moment_timing_fprint(0); //moment_start
+            
+            start_timing();
+            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = fprint_dvfs_timing();
+            
+            moment_timing_fprint(1); //moment_start
+        #elif PID_EN /* CASE 6 */
+            moment_timing_fprint(0); //moment_start
+            
+            start_timing();
+            predicted_exec_time = pid_controller(exec_time); //pid == slice
+            end_timing();
+            slice_time = fprint_slice_timing();
+            
+            start_timing();
+            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            end_timing();
+            dvfs_time = fprint_dvfs_timing();
+            
+            moment_timing_fprint(1); //moment_start
         #endif
+        // Write out predicted time & print out frequency used
+        fprint_predicted_time(predicted_exec_time);
+        fprint_freq(); 
     //---------------------modified by TJSong----------------------//
       _Exit(0);
     } else {
       int status;
       waitpid(pid, &status, 0);
     }
-    end_timing();
-    fprint_slice_timing();
-
+//---------------------modified by TJSong----------------------//
+        job_cnt++;
+//---------------------modified by TJSong----------------------//
+ 
     // Run job
     start_timing();
     int ret;
@@ -244,19 +263,16 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     end_timing();
 
     //---------------------modified by TJSong----------------------//
-    int exec_time = exec_timing();
+    exec_time = exec_timing();
     int delay_time = 0;
 
     #if GET_PREDICT /* CASE 0 */
         fprint_exec_time(exec_time);
-    #endif
-    #if GET_DEADLINE /* CASE 1 */
+    #elif GET_DEADLINE /* CASE 1 */
         fprint_exec_time(exec_time);
-    #endif
-    #if GET_OVERHEAD /* CASE 2 */
+    #elif GET_OVERHEAD /* CASE 2 */
         //nothing
-    #endif
-    #if !GET_PREDICT && !GET_DEADLINE && !GET_OVERHEAD /* CASE 3 and 4 */
+    #else /* CASE 3,4,5 and 6 */
         if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
             start_timing();
             usleep(delay_time);
@@ -264,20 +280,17 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             delay_time = exec_timing();
         }else
             delay_time = 0;
-        moment_timing_fprint(2); //moment_end
-        fprint_exec_time(exec_time);
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
+    moment_timing_fprint(2); //moment_end
+    fprint_exec_time(exec_time);
+    fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
     #endif
-    fclose_all();//TJSong
-    // Write out predicted time & print out frequency used
-    //#if DEBUG_EN
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); 
-    //#endif
     //---------------------modified by TJSong----------------------//
 
   }
 
+//---------------------modified by TJSong----------------------//
+    fclose_all();//TJSong
+//---------------------modified by TJSong----------------------//
   exit_picture();
 
   return (SOP);
@@ -302,6 +315,8 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp)
 }
 float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp)
 {
+
+    printf("AAA1\n");
   int loop_counter[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   Boolean end_of_slice = FALSE;
   {
@@ -317,6 +332,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
       loop_counter[1]++;
     }
 
+    printf("AAA2\n");
     if (!active_sps->frame_mbs_only_flag)
     {
       loop_counter[2]++;
@@ -336,6 +352,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
       }
 
     }
+    printf("AAA3\n");
 
     return0:
     ;
@@ -436,7 +453,6 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     print_loop_counter:
 #if GET_PREDICT || DEBUG_EN
     ;
-
     write_array(loop_counter, 19);
     print_loop_counter_end:
 #endif
@@ -448,7 +464,11 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
     float exec_time;
-    exec_time = 0;
+#if CORE //big
+    exec_time = 58452.000000*loop_counter[7] + 134546.000000*loop_counter[11] + 549.500000*loop_counter[12] + -555590.000000*loop_counter[16] + 0.000000;
+#else //LITTLE
+    exec_time = 58452.000000*loop_counter[7] + 134546.000000*loop_counter[11] + 549.500000*loop_counter[12] + -555590.000000*loop_counter[16] + 0.000000;
+#endif
     return exec_time;
   }
 }

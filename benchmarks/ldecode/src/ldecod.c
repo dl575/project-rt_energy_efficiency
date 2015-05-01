@@ -134,7 +134,8 @@ void Configure(int ac, char *av[])
   char *config_filename=NULL;
   CLcount = 1;
 
-  
+  ac = 1; 
+ 
   strcpy(input->infile,"test.264");      //! set default bitstream name
   strcpy(input->outfile,"test_dec.yuv"); //! set default output file name
   strcpy(input->reffile,"test_rec.yuv"); //! set default reference file name
@@ -274,6 +275,15 @@ void Configure(int ac, char *av[])
  */
 int main(int argc, char **argv)
 {
+
+//---------------------modified by TJSong----------------------//
+	if (argc != 2) {
+        printf("%s", "[USAGE] ldecod.dbg.exe [Index for videos]\n");
+		return -1;
+	}
+//---------------------modified by TJSong----------------------//
+
+
   // allocate memory for the structures
   if ((input =  (struct inp_par *)calloc(1, sizeof(struct inp_par)))==NULL) no_mem_exit("main: input");
   if ((snr   =  (struct snr_par *)calloc(1, sizeof(struct snr_par)))==NULL) no_mem_exit("main: snr");
@@ -320,7 +330,7 @@ int main(int argc, char **argv)
 
   // time for total decoding session
   tot_time = 0;
-  while (decode_one_frame(img, input, snr) != EOS)
+  while (decode_one_frame(img, input, snr, atoi(argv[1])) != EOS)
     ;
 
   report(input, img, snr);

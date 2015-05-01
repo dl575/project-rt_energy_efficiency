@@ -708,7 +708,7 @@ void init(struct img_par *img);
 void malloc_slice(struct inp_par *inp, struct img_par *img);
 void free_slice(struct inp_par *inp, struct img_par *img);
 
-int  decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr);
+int  decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr, int video_index);
 void init_picture(struct img_par *img, struct inp_par *inp);
 void exit_picture();
 
