@@ -147,6 +147,7 @@
 #include "asteroid.h"
 #include "score.h"
 
+int client_join;//TJSong
 char netserver_version[] = VERSION;
 
 #define MAX_SELECT_FD			(sizeof(int) * 8 - 1)
@@ -838,6 +839,10 @@ static int Handle_listening(int ind)
 	}
     }
 #ifndef SILENT
+    //to know when client join
+    client_join = 1;//TJSong
+    printf("client_join %d \n", client_join);//TJSong
+
     xpprintf("%s Welcome %s=%s@%s|%s (%s/%d)", showtime(), connp->nick,
 	   connp->real, connp->host, connp->dpy, connp->addr, connp->his_port);
     if (connp->version != MY_VERSION) {

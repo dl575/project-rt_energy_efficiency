@@ -57,19 +57,19 @@ _ALL_BENCH_=(
 #:53,94s/^/#
 #:53,94s/^#/
 SOURCE_FILES=(
-"uzbl/src/commands.c"
+"xpilot/xpilot-4.5.5/src/server/server.c"
 )
 SOURCE_PATH=(
-"uzbl"
+"xpilot/xpilot-4.5.5"
 )
 BENCHMARKS=(
-"uzbl"
+"xpilot/xpilot-4.5.5"
 )
 BENCH_NAME=(
-"uzbl"
+"xpilot_slice"
 )
 _BENCH_FOR_DEFINE_=(
-"_uzbl_"
+"_xpilot_slice_"
 )
 
 #SOURCE_FILES=(

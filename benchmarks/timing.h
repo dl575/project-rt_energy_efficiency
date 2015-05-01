@@ -4,11 +4,11 @@
 
 #ifndef __TIMING_H__
 #define __TIMING_H__
-#include "deadline_big.h"
-#include "deadline_little.h"
+#include "deadline.h"
 #include "my_common.h"
 
 extern struct timeval start, end, moment;
+extern int client_join = 0;
 
 void start_timing();
 void end_timing();

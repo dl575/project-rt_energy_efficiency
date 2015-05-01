@@ -117,7 +117,8 @@ char       *argv[];
     dust_d = 2500;		/* 1 dust generator per 2500    */
     wormholes = 4;		/* default 4 wormholes          */
 
-    time(&seed);		/* get a seed for rand */
+    //time(&seed);		/* get a seed for rand */
+    seed = 0xdeadbeef;
     srand((unsigned int)seed);/* initialize rand with the seed */
 
     parse(argc, argv);		/* parse command line options */

@@ -85,6 +85,12 @@ char xpilots_versionid[] = "@(#)$" TITLE " $";
 /*
  * Global variables
  */
+
+//---------------------modified by TJSong----------------------//
+int exec_time = 0;
+int main_job_cnt = 0;
+//---------------------modified by TJSong----------------------//
+
 int			NumPlayers = 0;
 int			NumAlliances = 0;
 player			**Players;
@@ -226,8 +232,14 @@ int main(int argc, char **argv)
     /* Windows returns here, we let the worker thread call sched() */
     install_timer_tick(ServerThreadTimerProc, timer_tick_rate);
 #else
+//---------------------modified by TJSong----------------------//
+    if(check_define()==ERROR_DEFINE){
+        printf("%s", "DEFINE ERROR!!\n");
+        return ERROR_DEFINE;
+    }
+    fopen_all(); //fopen for frequnecy file
     install_timer_tick(Main_loop, timer_tick_rate);
-
+//---------------------modified by TJSong----------------------//
     sched();
     xpprintf("sched returned!?");
     End_game();
@@ -2511,7 +2523,7 @@ float Main_loop_slice()
 
     float exec_time;
 #if CORE //big
-exec_time = -1143.000000*loop_counter[6] + 272.175000*loop_counter[13] + -20.088900*loop_counter[14] + -1.220240*loop_counter[17] + 2.054680*loop_counter[19] + -257.432000*loop_counter[21] + 1237.050000*loop_counter[42] + 81.135500*loop_counter[45] + 46.504700*loop_counter[46] + -79.353900*loop_counter[92] + -10.012600*loop_counter[100] + -11.618800*loop_counter[105] + -9.933900*loop_counter[107] + 52.096400*loop_counter[136] + -2.970480*loop_counter[140] + 0.257106*loop_counter[150] + 0.870305*loop_counter[151] + 0.764341*loop_counter[153] + 0.671369*loop_counter[155] + -0.049449*loop_counter[156] + -12.390800*loop_counter[161] + 1.906390*loop_counter[163] + -7.920260*loop_counter[166] + 19.541100*loop_counter[167] + 25.710300*loop_counter[169] + -72.960400*loop_counter[172] + 72.249500*loop_counter[173] + -17.361000*loop_counter[178] + 112.888000*loop_counter[181] + -65.362200*loop_counter[216] + -15.205200*loop_counter[220] + -1202.760000*loop_counter[221] + 49.651500*loop_counter[225] + 105.420000*loop_counter[231] + 2.082710*loop_counter[232] + -2.339730*loop_counter[238] + -4.767140*loop_counter[240] + -1376.000000*loop_counter[241] + 1493.000000;
+exec_time = -0.792692*loop_counter[0] + 136.000000*loop_counter[6] + -180.559000*loop_counter[13] + 279.303000*loop_counter[14] + -1.180400*loop_counter[19] + -131.053000*loop_counter[21] + 4.111040*loop_counter[29] + 109.490000*loop_counter[45] + -50.738700*loop_counter[46] + -24.496500*loop_counter[92] + 14.053600*loop_counter[100] + 46.640600*loop_counter[105] + -4.908300*loop_counter[107] + 54.722000*loop_counter[136] + -6.665690*loop_counter[138] + 22.704900*loop_counter[140] + 1.094570*loop_counter[150] + 0.795178*loop_counter[151] + 2.224300*loop_counter[153] + -1.043150*loop_counter[155] + 0.567039*loop_counter[156] + -1.697110*loop_counter[157] + 5.659790*loop_counter[161] + -9.906060*loop_counter[163] + -27.518200*loop_counter[166] + 7.058730*loop_counter[167] + 5.562710*loop_counter[169] + -125.348000*loop_counter[172] + 126.160000*loop_counter[173] + -5.452530*loop_counter[178] + -98.991200*loop_counter[181] + 13.441900*loop_counter[194] + -149.893000*loop_counter[216] + -70.357700*loop_counter[220] + 114.584000*loop_counter[221] + 8.291330*loop_counter[231] + 19.624500*loop_counter[232] + 3.040110*loop_counter[238] + 0.766608*loop_counter[240] + 74.000000;
 #else //LITTLE
 exec_time = 302.053000*loop_counter[6] + -2871.050000*loop_counter[7] + 594.898000*loop_counter[13] + 42.021800*loop_counter[14] + 4.132550*loop_counter[19] + -814.465000*loop_counter[21] + 41.948000*loop_counter[45] + 239.753000*loop_counter[46] + 13.838000*loop_counter[100] + 168.829000*loop_counter[101] + 137.893000*loop_counter[105] + 43.514900*loop_counter[107] + 165.882000*loop_counter[136] + 203.610000*loop_counter[138] + 126.680000*loop_counter[140] + -134.051000*loop_counter[150] + -128.095000*loop_counter[151] + 4.310330*loop_counter[153] + 2.162160*loop_counter[155] + -136.195000*loop_counter[156] + -139.723000*loop_counter[157] + -0.855405*loop_counter[161] + -46.407600*loop_counter[163] + -119.431000*loop_counter[166] + 90.408700*loop_counter[167] + -113.065000*loop_counter[169] + -95.277200*loop_counter[172] + -47.137800*loop_counter[173] + -103.199000*loop_counter[178] + -165.834000*loop_counter[181] + -403.315000*loop_counter[194] + 132.710000*loop_counter[201] + -261.092000*loop_counter[216] + -198.519000*loop_counter[220] + -3421.210000*loop_counter[221] + -77.188200*loop_counter[231] + -1.882760*loop_counter[232] + 3.699690*loop_counter[238] + 11.476200*loop_counter[240] + -3078.000000*loop_counter[241] + 3233.000000;
 #endif
@@ -4928,16 +4940,17 @@ void Main_loop_loop_counters(void)
 void Main_loop(void)
 {
 //---------------------modified by TJSong----------------------//
-    int exec_time = 0;
-    if(check_define()==ERROR_DEFINE){
-        printf("%s", "DEFINE ERROR!!\n");
-        return ERROR_DEFINE;
+    if(client_join == 0){
+        goto wait_for_client_join;
+    }else{
+        //after certain jobs, finish the game
+        if(main_job_cnt > 200)
+            End_game();
     }
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//
-    fopen_all(); //fopen for frequnecy file
-    print_deadline(DEADLINE_TIME); //print deadline 
+   print_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//
@@ -5013,70 +5026,76 @@ void Main_loop(void)
         #endif
 
 //---------------------modified by TJSong----------------------//
-    start_timing();
+            start_timing();
 
-    main_loops++;
+            main_job_cnt++;
+wait_for_client_join:
+            ;
+            main_loops++;
 
-    if ((main_loops & 0x3F) == 0) {
-	Meta_update(0);
-    }
+            if ((main_loops & 0x3F) == 0) {
+                Meta_update(0);
+            }
 
-    /*
-     * Check for possible shutdown, the server will
-     * shutdown when ShutdownServer (a counter) reaches 0.
-     * If the counter is < 0 then no shutdown is in progress.
-     */
-    if (ShutdownServer >= 0) {
-	if (ShutdownServer == 0) {
-	    End_game();
-	}
-	else {
-	    ShutdownServer--;
-	}
-    }
+            /*
+             * Check for possible shutdown, the server will
+             * shutdown when ShutdownServer (a counter) reaches 0.
+             * If the counter is < 0 then no shutdown is in progress.
+             */
+            if (ShutdownServer >= 0) {
+                if (ShutdownServer == 0) {
+                    End_game();
+                }
+                else {
+                    ShutdownServer--;
+                }
+            }
 
-    Input();
+            Input();
 
-    if (NumPlayers > NumRobots + NumPseudoPlayers || RawMode) {
+            if (NumPlayers > NumRobots + NumPseudoPlayers || RawMode) {
 
-	if (NoPlayersEnteredYet) {
-	    if (NumPlayers > NumRobots + NumPseudoPlayers) {
-		NoPlayersEnteredYet = false;
-		if (gameDuration > 0.0) {
-		    xpprintf("%s Server will stop in %g minutes.\n", showtime(), gameDuration);
-		    gameOverTime = (time_t)(gameDuration * 60) + time((time_t *)NULL);
-		}
-	    }
-	}
+                if (NoPlayersEnteredYet) {
+                    if (NumPlayers > NumRobots + NumPseudoPlayers) {
+                        NoPlayersEnteredYet = false;
+                        if (gameDuration > 0.0) {
+                            xpprintf("%s Server will stop in %g minutes.\n", showtime(), gameDuration);
+                            gameOverTime = (time_t)(gameDuration * 60) + time((time_t *)NULL);
+                        }
+                    }
+                }
 
-	Update_objects();
+                Update_objects();
 
-	if ((main_loops % UPDATES_PR_FRAME) == 0) {
-	    Frame_update();
-	}
-    }
+                if ((main_loops % UPDATES_PR_FRAME) == 0) {
+                    Frame_update();
+                }
+            }
 
-    if (!NoQuit
-	&& NumPlayers == NumRobots + NumPseudoPlayers
-	&& !login_in_progress
-	&& !NumQueuedPlayers) {
+            if (!NoQuit
+                    && NumPlayers == NumRobots + NumPseudoPlayers
+                    && !login_in_progress
+                    && !NumQueuedPlayers) {
 
-	if (!NoPlayersEnteredYet) {
-	    End_game();
-	}
-	if (serverTime + 5*60 < time(NULL)) {
-	    error("First player has yet to show his butt, I'm bored... Bye!");
-	    Log_game("NOSHOW");
-	    End_game();
-	}
-}
+                if (!NoPlayersEnteredYet) {
+                    End_game();
+                }
+                if (serverTime + 5*60 < time(NULL)) {
+                    error("First player has yet to show his butt, I'm bored... Bye!");
+                    Log_game("NOSHOW");
+                    End_game();
+                }
+            }
 
-    Queue_loop();
+            Queue_loop();
+            if(client_join == 0)
+                return;
 
   // End timing of loop and print out time
   end_timing();
 //---------------------modified by TJSong----------------------//
         exec_time = exec_timing();
+        int pre_delay_time = 0;
         int delay_time = 0;
 
         #if GET_PREDICT /* CASE 0 */
@@ -5086,18 +5105,18 @@ void Main_loop(void)
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            if(DELAY_EN && ((pre_delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
                 start_timing();
-                usleep(delay_time);
+                my_usleep(0.8*pre_delay_time);
                 end_timing();
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
         moment_timing_print(2); //moment_end
         print_exec_time(exec_time);
+        print_delay_time(pre_delay_time, delay_time);
         print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
-        fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
         print_predicted_time(predicted_exec_time);
@@ -5114,6 +5133,10 @@ int End_game(void)
 {
     player		*pl;
     char		msg[MSG_LEN];
+
+//---------------------modified by TJSong----------------------//
+    fclose_all();//TJSong
+//---------------------modified by TJSong----------------------//
 
     if (ShutdownServer == 0) {
 	errno = 0;

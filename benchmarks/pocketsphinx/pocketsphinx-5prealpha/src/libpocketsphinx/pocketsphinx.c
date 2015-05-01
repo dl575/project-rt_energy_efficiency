@@ -1018,6 +1018,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 //---------------------modified by TJSong----------------------//
     fopen_all(); //fopen for frequnecy file
     fprint_deadline(DEADLINE_TIME); //print deadline 
+    static int job_cnt = 0; //job count
 //---------------------modified by TJSong----------------------//
 
 
@@ -1069,7 +1070,6 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
             moment_timing_fprint(1); //moment_start
         #elif ORACLE_EN /* CASE 5 */
             //slice_time=0;
-            static int job_cnt = 0; //job count
             predicted_exec_time  = exec_time_arr[job_cnt];
             moment_timing_fprint(0); //moment_start
             
@@ -1079,7 +1079,6 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
             dvfs_time = fprint_dvfs_timing();
             
             moment_timing_fprint(1); //moment_start
-            job_cnt++;
         #elif PID_EN /* CASE 6 */
             moment_timing_fprint(0); //moment_start
             
@@ -1108,7 +1107,9 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         //end_timing();
         //write_string("slice ");
         //write_timing();
-
+//---------------------modified by TJSong----------------------//
+        job_cnt++;
+//---------------------modified by TJSong----------------------//
         start_timing();
 
         ps_process_raw(ps, data, total, FALSE, TRUE);

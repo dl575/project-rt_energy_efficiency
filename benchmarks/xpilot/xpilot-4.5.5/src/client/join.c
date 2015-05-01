@@ -58,9 +58,9 @@
 #include "protoclient.h"
 #include "portability.h"
 
-#include "timing.h"
-#include "my_common.h"
-struct timeval start, end, moment;//TJsong
+//#include "timing.h"
+//#include "my_common.h"
+//struct timeval start, end, moment;//TJsong
 
 char join_version[] = VERSION;
 
@@ -110,7 +110,7 @@ static void Input_loop(void)
     max = (clientfd > netfd) ? clientfd : netfd;
     for (tfds = rfds; ; rfds = tfds) {
       // Start timing for task
-      start_timing();
+        //start_timing();
 
 	if ((scoresChanged != 0 && ++scoresChanged > SCORE_UPDATE_DELAY)
 	    || result > 1) {
@@ -192,9 +192,9 @@ static void Input_loop(void)
 	}
 
       // Stop timing for task
-      end_timing();
+      //end_timing();
       // Print out time for task
-      print_timing();
+      //print_timing();
     }
 }
 #endif	/* _WINDOWS */

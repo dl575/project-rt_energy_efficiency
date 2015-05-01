@@ -332,8 +332,9 @@ char **argv;
 			default: bad_option( argv[i] );
 		}
 	}
-	if ( seed == -1 )
-		seed = time( (time_t *)0 );
+//	if ( seed == -1 )
+//	    seed = time( (time_t *)0 );
+    seed = 0xdeadbeef;
 	printf( "Random number seed = %d\n", seed );
 	srandom( seed );
 

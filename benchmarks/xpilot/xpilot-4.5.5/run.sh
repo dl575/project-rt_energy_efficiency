@@ -52,6 +52,7 @@ if [[ $2 ]] ; then
     sleep 3;
     taskset $TASKSET_FLAG ./src/client/xpilot &
     
+    PROCESS_CNT_BEFORE=$(pgrep -c 'xpilot')
     #find the window 
     xdotool search --sync --onlyvisible --class "xpilot"  
     #maximize the window
@@ -65,24 +66,28 @@ if [[ $2 ]] ; then
     xdotool click 1
     sleep 3
     #playing
-    for j in {1..1}
+    while true;
     do
-        xdotool keydown Return 
-        xdotool keydown shift+a
-        sleep 15
-        xdotool keyup Return 
-        xdotool keyup shift+a
+        if [[ $PROCESS_CNT_BEFORE > $(pgrep -c 'xpilot') ]] ; then
+            echo "xpilot ends"
+            break
+        fi
+    #    xdotool keydown Return 
+    #    xdotool keydown shift+a
+        sleep 3
+    #    xdotool keyup Return 
+    #    xdotool keyup shift+a
     done
-    sleep 3
+    echo "xdotool done"
     #press QUIT
-    xdotool mousemove 40 300
-    xdotool click 1
-    sleep 3
+    #xdotool mousemove 40 300
+    #xdotool click 1
+    #sleep 3
     
-    PID_FREECIV_SERVER=$(pgrep 'xpilot')
-    kill -9 $PID_FREECIV_SERVER
+#    PID_FREECIV_SERVER=$(pgrep 'xpilot')
+#    kill -9 $PID_FREECIV_SERVER
  
-    mv $2 $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
+    cp $2 $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
