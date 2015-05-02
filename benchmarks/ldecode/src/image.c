@@ -136,7 +136,7 @@ void MbAffPostProc()
  */
 
 #define NOT_EOS 0
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp);
+float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header);
 int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr, int video_index);
 int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *snr, int video_index)
 {
@@ -161,7 +161,14 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
   while ((currSlice->next_header != EOS && currSlice->next_header != SOP))
   {
+    int current_header;
+    current_header = read_new_slice();
 
+    if (current_header == EOS)
+    {
+      exit_picture();
+      return EOS;
+    }
 
     //---------------------modified by TJSong----------------------//
     fprint_deadline(DEADLINE_TIME); //print deadline 
@@ -184,12 +191,12 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
         */
         #if GET_PREDICT /* CASE 0 */
         printf("forked %d\n", job_cnt);
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
+            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp, current_header);
         #elif GET_DEADLINE /* CASE 1 */
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
+            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp, current_header);
             end_timing();
             slice_time = fprint_slice_timing();
 
@@ -204,7 +211,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             moment_timing_fprint(0); //moment_start
             
             start_timing();
-            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp);
+            predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp, current_header);
             end_timing();
             slice_time = fprint_slice_timing();
             
@@ -256,7 +263,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     // Run job
     start_timing();
     int ret;
-    ret = decode_one_frame_inner_loop(img, inp);
+    ret = decode_one_frame_inner_loop(img, inp, current_header);
     if (ret == EOS) {
       return EOS;
     }
@@ -295,17 +302,8 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
   return (SOP);
 }
-int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp) 
+int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp, int current_header) 
 {
-    int current_header;
-    current_header = read_new_slice();
-
-    if (current_header == EOS)
-    {
-      exit_picture();
-      return EOS;
-    }
-
     decode_slice(img, inp, current_header);
 
     img->newframe = 0;
@@ -313,38 +311,81 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp)
 
     return NOT_EOS;
 }
-float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp)
+/*
+float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header)
 {
-
-    printf("AAA1\n");
-  int loop_counter[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  Boolean end_of_slice = FALSE;
+  int loop_counter[42] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Slice *currSlice = img->currentSlice;
+  if (active_pps->entropy_coding_mode_flag)
   {
+    loop_counter[0]++;
+  }
+
+  if (((active_pps->weighted_bipred_idc > 0) && (img->type == B_SLICE)) || (active_pps->weighted_pred_flag && (img->type != I_SLICE)))
+  {
+    loop_counter[1]++;
     int i_rename0;
     int j_rename0;
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_0]; i_rename0++)
-    {
-      loop_counter[0]++;
-    }
-
-    for (i_rename0 = 0; i_rename0 < listXsize[LIST_1]; i_rename0++)
-    {
-      loop_counter[1]++;
-    }
-
-    printf("AAA2\n");
-    if (!active_sps->frame_mbs_only_flag)
+    int k_rename0;
+    int comp_rename0;
+    int td_rename0;
+    int bframe_rename0 = img->type == B_SLICE;
+    int max_bwd_ref_rename0;
+    int max_fwd_ref_rename0;
+    max_fwd_ref_rename0 = img->num_ref_idx_l0_active;
+    max_bwd_ref_rename0 = img->num_ref_idx_l1_active;
+    if ((active_pps->weighted_bipred_idc == 2) && bframe_rename0)
     {
       loop_counter[2]++;
-      if (img->structure == FRAME)
+      for (i_rename0 = 0; i_rename0 < MAX_REFERENCE_PICTURES; i_rename0++)
       {
         loop_counter[3]++;
-        for (j_rename0 = 2; j_rename0 < 6; j_rename0++)
+        for (comp_rename0 = 0; comp_rename0 < 3; comp_rename0++)
         {
           loop_counter[4]++;
-          for (i_rename0 = 0; i_rename0 < listXsize[j_rename0]; i_rename0++)
+        }
+
+      }
+
+    }
+
+    if (bframe_rename0)
+    {
+      loop_counter[5]++;
+      for (i_rename0 = 0; i_rename0 < max_fwd_ref_rename0; i_rename0++)
+      {
+        loop_counter[6]++;
+        for (j_rename0 = 0; j_rename0 < max_bwd_ref_rename0; j_rename0++)
+        {
+          loop_counter[7]++;
+          for (comp_rename0 = 0; comp_rename0 < 3; comp_rename0++)
           {
-            loop_counter[5]++;
+            loop_counter[8]++;
+            if (active_pps->weighted_bipred_idc == 1)
+            {
+              loop_counter[9]++;
+            }
+            else
+              if (active_pps->weighted_bipred_idc == 2)
+            {
+              loop_counter[10]++;
+              td_rename0 = Clip3(-128, 127, listX[LIST_1][j_rename0]->poc - listX[LIST_0][i_rename0]->poc);
+              if (((td_rename0 == 0) || listX[LIST_1][j_rename0]->is_long_term) || listX[LIST_0][i_rename0]->is_long_term)
+              {
+                loop_counter[11]++;
+              }
+              else
+              {
+                if ((img->wbp_weight[1][i_rename0][j_rename0][comp_rename0] < (-64)) || (img->wbp_weight[1][i_rename0][j_rename0][comp_rename0] > 128))
+                {
+                  loop_counter[12]++;
+                }
+
+              }
+
+            }
+
+
           }
 
         }
@@ -352,44 +393,159 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
       }
 
     }
-    printf("AAA3\n");
+
+    if (bframe_rename0 && img->MbaffFrameFlag)
+    {
+      loop_counter[13]++;
+      for (i_rename0 = 0; i_rename0 < (2 * max_fwd_ref_rename0); i_rename0++)
+      {
+        loop_counter[14]++;
+        for (j_rename0 = 0; j_rename0 < (2 * max_bwd_ref_rename0); j_rename0++)
+        {
+          loop_counter[15]++;
+          for (comp_rename0 = 0; comp_rename0 < 3; comp_rename0++)
+          {
+            loop_counter[16]++;
+            for (k_rename0 = 2; k_rename0 < 6; k_rename0 += 2)
+            {
+              loop_counter[17]++;
+              if (active_pps->weighted_bipred_idc == 1)
+              {
+                loop_counter[18]++;
+              }
+              else
+                if (active_pps->weighted_bipred_idc == 2)
+              {
+                loop_counter[19]++;
+                td_rename0 = Clip3(-128, 127, listX[k_rename0 + LIST_1][j_rename0]->poc - listX[k_rename0 + LIST_0][i_rename0]->poc);
+                if (((td_rename0 == 0) || listX[k_rename0 + LIST_1][j_rename0]->is_long_term) || listX[k_rename0 + LIST_0][i_rename0]->is_long_term)
+                {
+                  loop_counter[20]++;
+                }
+                else
+                {
+                  if ((img->wbp_weight[k_rename0 + 1][i_rename0][j_rename0][comp_rename0] < (-64)) || (img->wbp_weight[k_rename0 + 1][i_rename0][j_rename0][comp_rename0] > 128))
+                  {
+                    loop_counter[21]++;
+                  }
+
+                }
+
+              }
+
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
 
     return0:
     ;
 
   }
-  if (img->type == B_SLICE)
-  {
-    loop_counter[6]++;
-  }
 
-  while (end_of_slice == FALSE)
+  if (((current_header == SOP) || (current_header == SOS)) && (currSlice->ei_flag == 0))
   {
-    loop_counter[7]++;
-    if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
+    loop_counter[22]++;
+    Boolean end_of_slice_rename1 = FALSE;
+    int read_flag_rename1;
+    img->cod_counter = -1;
     {
-      loop_counter[8]++;
+      int i_rename2;
+      int j_rename2;
+      for (i_rename2 = 0; i_rename2 < listXsize[LIST_0]; i_rename2++)
+      {
+        loop_counter[23]++;
+      }
+
+      for (i_rename2 = 0; i_rename2 < listXsize[LIST_1]; i_rename2++)
+      {
+        loop_counter[24]++;
+      }
+
+      if (!active_sps->frame_mbs_only_flag)
+      {
+        loop_counter[25]++;
+        if (img->structure == FRAME)
+        {
+          loop_counter[26]++;
+          for (j_rename2 = 2; j_rename2 < 6; j_rename2++)
+          {
+            loop_counter[27]++;
+            for (i_rename2 = 0; i_rename2 < listXsize[j_rename2]; i_rename2++)
+            {
+              loop_counter[28]++;
+            }
+
+          }
+
+        }
+
+      }
+
+      return2:
+      ;
+
+    }
+    if (img->type == B_SLICE)
+    {
+      loop_counter[29]++;
     }
 
+    while (end_of_slice_rename1 == FALSE)
     {
-      int i_rename1;
-      int currMBNum_rename1 = img->current_mb_nr;
-      Macroblock *currMB_rename1 = &img->mb_data[currMBNum_rename1];
-      if (img->type != B_SLICE)
+      loop_counter[30]++;
+      start_macroblock(img, inp, img->current_mb_nr);
+      read_flag_rename1 = read_one_macroblock(img, inp);
+      if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
       {
-        loop_counter[9]++;
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
+        loop_counter[31]++;
+        img->num_ref_idx_l0_active >>= 1;
+        img->num_ref_idx_l1_active >>= 1;
+      }
+
+      {
+        int i_rename3;
+        int currMBNum_rename3 = img->current_mb_nr;
+        Macroblock *currMB_rename3 = &img->mb_data[currMBNum_rename3];
+        if (img->type != B_SLICE)
         {
-          loop_counter[10]++;
-          if ((currMB_rename1->b8mode[i_rename1] == 0) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
+          loop_counter[32]++;
+          for (i_rename3 = 0; i_rename3 < 4; i_rename3++)
           {
-            loop_counter[11]++;
-          }
-          else
-          {
-            if ((currMB_rename1->b8mode[i_rename1] >= 5) && (currMB_rename1->b8mode[i_rename1] <= 7))
+            loop_counter[33]++;
+            if ((currMB_rename3->b8mode[i_rename3] == 0) || (currMB_rename3->b8mode[i_rename3] == IBLOCK))
             {
-              loop_counter[12]++;
+              loop_counter[34]++;
+            }
+            else
+            {
+              if ((currMB_rename3->b8mode[i_rename3] >= 5) && (currMB_rename3->b8mode[i_rename3] <= 7))
+              {
+                loop_counter[35]++;
+              }
+              else
+              {
+              }
+
+            }
+
+          }
+
+        }
+        else
+        {
+          for (i_rename3 = 0; i_rename3 < 4; i_rename3++)
+          {
+            loop_counter[36]++;
+            if ((currMB_rename3->mb_type == I16MB) || (currMB_rename3->b8mode[i_rename3] == IBLOCK))
+            {
+              loop_counter[37]++;
             }
             else
             {
@@ -399,61 +555,141 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
 
         }
 
+        return3:
+        ;
+
       }
-      else
+      end_of_slice_rename1 = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
+    }
+
+    {
+      if (img->field_pic_flag)
       {
-        for (i_rename1 = 0; i_rename1 < 4; i_rename1++)
+        loop_counter[38]++;
+      }
+
+      if (img->idr_flag)
+      {
+        loop_counter[39]++;
+      }
+
+      if (active_sps->pic_order_cnt_type == 0)
+      {
+        loop_counter[40]++;
+      }
+
+      if (active_sps->pic_order_cnt_type == 1)
+      {
+        loop_counter[41]++;
+      }
+
+      return4:
+      ;
+
+    }
+    return1:
+    ;
+
+  }
+
+  {
+    print_loop_counter:
+    ;
+
+    write_array(loop_counter, 42)
+;
+    print_loop_counter_end:
+    ;
+
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
+  }
+}
+*/
+/*
+ * Reduced slice that only slices for loop_counter[34].
+ */
+float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header)
+{
+  int loop_counter[42] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  Slice *currSlice = img->currentSlice;
+  if (((active_pps->weighted_bipred_idc > 0) && (img->type == B_SLICE)) || (active_pps->weighted_pred_flag && (img->type != I_SLICE)))
+  {
+    return0:
+    ;
+
+  }
+
+  if (((current_header == SOP) || (current_header == SOS)) && (currSlice->ei_flag == 0))
+  {
+    Boolean end_of_slice_rename1 = FALSE;
+    int read_flag_rename1;
+    img->cod_counter = -1;
+    {
+      return2:
+      ;
+
+    }
+    while (end_of_slice_rename1 == FALSE)
+    {
+      start_macroblock(img, inp, img->current_mb_nr);
+      read_flag_rename1 = read_one_macroblock(img, inp);
+      {
+        int i_rename3;
+        int currMBNum_rename3 = img->current_mb_nr;
+        Macroblock *currMB_rename3 = &img->mb_data[currMBNum_rename3];
+        if (img->type != B_SLICE)
         {
-          loop_counter[13]++;
-          if ((currMB_rename1->mb_type == I16MB) || (currMB_rename1->b8mode[i_rename1] == IBLOCK))
+          for (i_rename3 = 0; i_rename3 < 4; i_rename3++)
           {
-            loop_counter[14]++;
+            if ((currMB_rename3->b8mode[i_rename3] == 0) || (currMB_rename3->b8mode[i_rename3] == IBLOCK))
+            {
+              loop_counter[34]++;
+            }
+            else
+            {
+            }
+
           }
-          else
+
+        }
+        else
+        {
+          for (i_rename3 = 0; i_rename3 < 4; i_rename3++)
           {
           }
 
         }
 
-      }
+        return3:
+        ;
 
-      return1:
+      }
+      end_of_slice_rename1 = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
+    }
+
+    {
+      return4:
       ;
 
     }
-    end_of_slice = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
-  }
-
-  {
-    if (img->field_pic_flag)
-    {
-      loop_counter[15]++;
-    }
-
-    if (img->idr_flag)
-    {
-      loop_counter[16]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 0)
-    {
-      loop_counter[17]++;
-    }
-
-    if (active_sps->pic_order_cnt_type == 1)
-    {
-      loop_counter[18]++;
-    }
-
-    return2:
+    return1:
     ;
 
   }
+
   {
     print_loop_counter:
 #if GET_PREDICT || DEBUG_EN
     ;
-    write_array(loop_counter, 19);
+
+    write_array(loop_counter, 42);
     print_loop_counter_end:
 #endif
     ;
@@ -464,11 +700,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
     float exec_time;
-#if CORE //big
-    exec_time = 58452.000000*loop_counter[7] + 134546.000000*loop_counter[11] + 549.500000*loop_counter[12] + -555590.000000*loop_counter[16] + 0.000000;
-#else //LITTLE
-    exec_time = 58452.000000*loop_counter[7] + 134546.000000*loop_counter[11] + 549.500000*loop_counter[12] + -555590.000000*loop_counter[16] + 0.000000;
-#endif
+    exec_time = 0;
     return exec_time;
   }
 }
