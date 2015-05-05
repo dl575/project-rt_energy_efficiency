@@ -190,7 +190,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             CASE 6 = running on pid
         */
         #if GET_PREDICT /* CASE 0 */
-        printf("forked %d\n", job_cnt);
             predicted_exec_time = decode_one_frame_inner_loop_slice(img, inp, current_header);
         #elif GET_DEADLINE /* CASE 1 */
             //nothing
@@ -216,7 +215,11 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             slice_time = fprint_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = fprint_dvfs_timing();
 
@@ -311,7 +314,7 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp, int cu
 
     return NOT_EOS;
 }
-/*
+
 float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header)
 {
   int loop_counter[42] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -591,14 +594,14 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
   }
-
   {
     print_loop_counter:
+#if GET_PREDICT || DEBUG_EN
     ;
 
-    write_array(loop_counter, 42)
-;
+    write_array(loop_counter, 42);
     print_loop_counter_end:
+#endif
     ;
 
   }
@@ -607,14 +610,34 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
     float exec_time;
-    exec_time = 0;
+#if CORE
+    /*With all features*/
+    #if !CVX_EN //conservative
+        exec_time = 26028.200000*loop_counter[22] + -23.122500*loop_counter[34] + 32.793500*loop_counter[35] + 19100.300000*loop_counter[39] + 0.000000;
+    #else //cvx
+        exec_time = 2950.717744*loop_counter[22] + 85.887564*loop_counter[30] + 85.887564*loop_counter[32] + 30.560986*loop_counter[33] + 52.210989*loop_counter[35] + 15365.004578*loop_counter[39] + 2959.435179*loop_counter[40] + 2950.411431;
+    #endif
+    /*Without 0th job*/
+    //exec_time = -29.734000*loop_counter[34] + 28238.400000;
+    /*With 0th job*/
+    //exec_time = 38.563300*loop_counter[34] + 20429.900000;
+    /*cvx*/
+    //exec_time = 2762.048938*loop_counter[22] + 88.004560*loop_counter[30] + 88.004560*loop_counter[32] + 31.115936*loop_counter[33] + 58.403778*loop_counter[35] + 15604.967487*loop_counter[39] + 2762.004539*loop_counter[40] + 2762.048532;
+#else
+    #if !CVX_EN //conservative
+        exec_time = 0;
+    #else //cvx
+        exec_time = 0;
+    #endif
+#endif
     return exec_time;
   }
 }
-*/
+
 /*
  * Reduced slice that only slices for loop_counter[34].
  */
+/*
 float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header)
 {
   int loop_counter[42] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -700,11 +723,16 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
     float exec_time;
+#if CORE
+    exec_time = -29.734000*loop_counter[34] + 28238.400000;
+//exec_time = 38.563300*loop_counter[34] + 20429.900000;
+#else
     exec_time = 0;
+#endif
     return exec_time;
   }
 }
-
+*/
 
 /*!
  ************************************************************************
