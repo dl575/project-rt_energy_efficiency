@@ -315,9 +315,216 @@ int decode_one_frame_inner_loop(struct img_par *img, struct inp_par *inp, int cu
     return NOT_EOS;
 }
 
+int read_one_macroblock2(struct img_par *img,struct inp_par *inp)
+{
+  int assignSE2partition[][SE_MAX_ELEMENTS] =
+  {
+    // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19  // elementnumber (no not uncomment)
+    {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },   //!< all elements in one partition no data partitioning
+    {  0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 2, 2, 2, 2, 0, 0, 0, 0 }    //!< three partitions per slice
+  };
+  int i;
+
+  SyntaxElement currSE;
+  Macroblock *currMB = &img->mb_data[img->current_mb_nr];
+
+  Slice *currSlice = img->currentSlice;
+  DataPartition *dP;
+  int *partMap = assignSE2partition[currSlice->dp_mode];
+  int  prevMbSkipped = 0;
+  int  img_block_y;
+  
+  //  read MB mode *****************************************************************
+  dP = &(currSlice->partArr[partMap[currSE.type]]);
+  
+  if (active_pps->entropy_coding_mode_flag == UVLC || dP->bitstream->ei_flag)   currSE.mapping = linfo_ue;
+
+  if(img->type == I_SLICE || img->type == SI_SLICE)
+  {
+    //  read MB type
+    dP->readSyntaxElement(&currSE,img,inp,dP);
+
+    currMB->mb_type = currSE.value1;
+  }
+  // non I/SI-slice CABAC
+  else if (active_pps->entropy_coding_mode_flag == CABAC)
+  {
+    /*
+    // read MB skip_flag
+    if (img->MbaffFrameFlag && (img->current_mb_nr%2 == 0||prevMbSkipped))
+      field_flag_inference();
+    
+    CheckAvailabilityOfNeighborsCABAC();
+    currSE.reading = readMB_skip_flagInfo_CABAC;
+    dP->readSyntaxElement(&currSE,img,inp,dP);
+
+    currMB->mb_type   = currSE.value1;
+    currMB->skip_flag = !(currSE.value1);
+
+    if (img->type==B_SLICE)
+      currMB->cbp = currSE.value2;
+
+    if(!dP->bitstream->ei_flag)
+      currMB->ei_flag = 0;
+    
+    if ((img->type==B_SLICE) && currSE.value1==0 && currSE.value2==0)
+      img->cod_counter=0;
+      
+    // read MB AFF
+    if (img->MbaffFrameFlag) 
+    {
+      check_bottom=read_bottom=read_top=0;
+      if (img->current_mb_nr%2==0)
+      {
+        check_bottom =  currMB->skip_flag;
+        read_top = !check_bottom;
+      }
+      else
+      {
+        read_bottom = (topMB->skip_flag && (!currMB->skip_flag));
+       }
+      
+      if (read_bottom || read_top)
+      {
+        currSE.reading = readFieldModeInfo_CABAC;
+        dP->readSyntaxElement(&currSE,img,inp,dP);
+        currMB->mb_field = currSE.value1;
+      }
+      if (check_bottom)
+        check_next_mb_and_get_field_mode_CABAC(&currSE,img,inp,dP);
+      
+    }
+
+    CheckAvailabilityOfNeighborsCABAC();
+      
+    // read MB type
+    if (currMB->mb_type != 0 )
+    {
+      currSE.reading = readMB_typeInfo_CABAC;
+      dP->readSyntaxElement(&currSE,img,inp,dP);
+      currMB->mb_type = currSE.value1;
+      if(!dP->bitstream->ei_flag)
+        currMB->ei_flag = 0;
+    }
+    */
+  }
+  // VLC Non-Intra
+  else
+  {
+    if(img->cod_counter == -1)
+    {
+      dP->readSyntaxElement(&currSE,img,inp,dP);
+      img->cod_counter = currSE.value1;
+    }
+    if (img->cod_counter==0)
+    {
+      // read MB type
+      dP->readSyntaxElement(&currSE,img,inp,dP);
+      if(img->type == P_SLICE || img->type == SP_SLICE)
+        currSE.value1++;
+      currMB->mb_type = currSE.value1;
+      img->cod_counter--;
+      currMB->skip_flag = 0;
+    } 
+    else
+    {
+      img->cod_counter--;
+      currMB->mb_type = 0;
+      currMB->skip_flag = 1;
+    }
+  }
+
+  if ((img->type==P_SLICE ))    // inter frame
+    interpret_mb_mode_P(img);
+  else if (img->type==I_SLICE)                                  // intra frame
+    interpret_mb_mode_I(img);
+  else if ((img->type==B_SLICE))       // B frame
+    interpret_mb_mode_B(img);
+  else if ((img->type==SP_SLICE))     // SP frame
+    interpret_mb_mode_P(img);
+  else if (img->type==SI_SLICE)     // SI frame
+    interpret_mb_mode_SI(img);
+
+  //====== READ 8x8 SUB-PARTITION MODES (modes of 8x8 blocks) and Intra VBST block modes ======
+  if (IS_P8x8 (currMB))
+  {
+    for (i=0; i<4; i++)
+    {
+      dP->readSyntaxElement (&currSE, img, inp, dP);
+      SetB8Mode (img, currMB, currSE.value1, i);
+    }
+    //--- init macroblock data ---
+    readMotionInfoFromNAL (img, inp);
+  }
+
+  if (IS_COPY (currMB)) //keep last macroblock
+  {
+    reset_coeffs();
+    return DECODE_MB;
+  }
+  if(currMB->mb_type!=IPCM)
+  {
+    
+    // intra prediction modes for a macroblock 4x4 **********************************************
+    read_ipred_modes(img,inp);
+    
+    // read inter frame vector data *********************************************************
+    if (IS_INTERMV (currMB) && (!IS_P8x8(currMB)))
+    {
+      readMotionInfoFromNAL (img, inp);
+    }
+    // read CBP and Coeffs  ***************************************************************
+    readCBPandCoeffsFromNAL (img,inp);
+  }
+  else
+  {
+    //read pcm_alignment_zero_bit and pcm_byte[i] 
+    
+    // here dP is assigned with the same dP as SE_MBTYPE, because IPCM syntax is in the 
+    // same category as MBTYPE
+    //dP = &(currSlice->partArr[partMap[SE_MBTYPE]]);
+    //readIPCMcoeffsFromNAL(img,inp,dP);
+  }
+  return DECODE_MB;
+}
+
+/*!
+ ************************************************************************
+ * \brief
+ *    set coordinates of the next macroblock
+ *    check end_of_slice condition 
+ ************************************************************************
+ */
+int exit_macroblock2(struct img_par *img,struct inp_par *inp,int eos_bit)
+{
+ 
+  if (img->num_dec_mb == img->PicSizeInMbs)
+  {
+    return TRUE;
+  }
+  // ask for last mb in the slice  UVLC
+  else
+  {
+    img->current_mb_nr = FmoGetNextMBNr (img->current_mb_nr);
+
+    if (img->current_mb_nr == -1)     // End of Slice group, MUST be end of slice
+    {
+      return TRUE;
+    }
+
+    if(nal_startcode_follows(img, inp, eos_bit) == FALSE) 
+      return FALSE;
+
+    if(img->type == I_SLICE  || img->type == SI_SLICE || active_pps->entropy_coding_mode_flag == CABAC)
+      return TRUE;
+    if(img->cod_counter<=0)
+      return TRUE;
+    return FALSE;
+  }
+}
 float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp, int current_header)
 {
-  int loop_counter[42] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int loop_counter[47] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   Slice *currSlice = img->currentSlice;
   if (active_pps->entropy_coding_mode_flag)
   {
@@ -503,13 +710,30 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     while (end_of_slice_rename1 == FALSE)
     {
       loop_counter[30]++;
-      start_macroblock(img, inp, img->current_mb_nr);
-      read_flag_rename1 = read_one_macroblock(img, inp);
+      //start_macroblock(img, inp, img->current_mb_nr);
+      {
+        CheckAvailabilityOfNeighbors(img);
+      }
+
+      //read_flag_rename1 = read_one_macroblock(img, inp);
+      if (img->type == I_SLICE || img->type == SI_SLICE) {
+        loop_counter[42]++;
+      } else if (active_pps->entropy_coding_mode_flag == CABAC) {
+        loop_counter[43]++;
+      } else {
+        loop_counter[44]++;
+        if (img->cod_counter == -1) {
+          loop_counter[45]++;
+        }
+        if (img->cod_counter == 0) {
+          loop_counter[46]++;
+        } else {
+        }
+      }
+      read_one_macroblock2(img, inp);
       if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
       {
         loop_counter[31]++;
-        img->num_ref_idx_l0_active >>= 1;
-        img->num_ref_idx_l1_active >>= 1;
       }
 
       {
@@ -562,7 +786,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
         ;
 
       }
-      end_of_slice_rename1 = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
+      end_of_slice_rename1 = exit_macroblock2(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
     }
 
     {
@@ -600,8 +824,8 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     ;
 
     write_array(loop_counter, 42);
-    print_loop_counter_end:
 #endif
+    print_loop_counter_end:
     ;
 
   }
