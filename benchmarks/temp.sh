@@ -68,6 +68,7 @@ do
         # MUST RUN as this order. 
         # 1. LINUX Governor (performance > interactive > conservative > ondemand > powersave )
         # > 2. Prediction with overhead > 3. Prediction w/o overhead > 4. Oracle > 5. PID
+        # ( 2. convex with overhead > 3. convex with overhead)
         
         # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
         # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
@@ -76,22 +77,40 @@ do
         echo ${SWEEP[$j]}
         taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
         ./runAll.sh $i $1 performance ${SWEEP[$j]}
-        #./runAll.sh $i $1 interactive ${SWEEP[$j]}
+        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
         #./runAll.sh $i $1 conservative ${SWEEP[$j]}
         #./runAll.sh $i $1 ondemand ${SWEEP[$j]}
         #./runAll.sh $i $1 powersave ${SWEEP[$j]}
 
-        # 2 and 3. Prediction
-        taskset 0xff ./buildAll.sh $i $1 predict_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 prediction ${SWEEP[$j]}
+        # disable convex
+        sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. Prediction with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 prediction_with_overhead ${SWEEP[$j]}
+
+        # 3. Prediction with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+        ./runAll.sh $i $1 prediction_wo_overhead ${SWEEP[$j]}
+
+        # enable convex
+        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead ${SWEEP[$j]}
+
+        # 3. convex wio overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_wo_overhead ${SWEEP[$j]}
 
         # 4. Oralce
-        taskset 0xff ./buildAll.sh $i $1 oracle_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 oracle ${SWEEP[$j]}
-        
+        if [[ ${BENCH_NAME[$i]} != "uzbl" ]] && [[ ${BENCH_NAME[$i]} != "xpilot_slice" ]] ; then
+            taskset 0xff ./buildAll.sh $i $1 oracle_en ${SWEEP[$j]}
+            ./runAll.sh $i $1 oracle ${SWEEP[$j]}
+        fi
+ 
         # 5. PID
-        #taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
-        #./runAll.sh $i $1 pid ${SWEEP[$j]}
+        taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 pid ${SWEEP[$j]}
 
         #kill power_monitor process
         sleep 10 
@@ -125,11 +144,11 @@ do
    #draw plot
     cd $DATA_ODROID_PATH
     if [ $1 == "big" ] ; then
-        sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both.py
-        taskset 0xff ./plot_both.py big ${BENCH_NAME[$i]}
+        sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both2.py
+        taskset 0xff ./plot_both2.py big ${BENCH_NAME[$i]}
     elif [ $1 == "little" ] ; then
-        sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both.py
-        taskset 0xff ./plot_both.py little ${BENCH_NAME[$i]}
+        sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both2.py
+        taskset 0xff ./plot_both2.py little ${BENCH_NAME[$i]}
     fi
 
 done

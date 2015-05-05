@@ -463,9 +463,17 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
 
     float exec_time;
 #if CORE // big
-    exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
+    #else // cvx
+        exec_time = 207.660696*loop_counter[0] + 25.957591*loop_counter[1] + 73.419124*loop_counter[2] + 207.660784*loop_counter[3] + 207.660784*loop_counter[4] + 207.660784*loop_counter[5] + 0.203004*loop_counter[6] + 29834.897064*loop_counter[7] + 0.008464*loop_counter[8] + 0.067716*loop_counter[10] + 0.067716*loop_counter[11] + 0.067716*loop_counter[12] + 207.660721*loop_counter[15] + 25.957574*loop_counter[17] + 207.660697*loop_counter[19] + 207.660697*loop_counter[20] + 207.660697*loop_counter[21] + 207.660695;
+    #endif
 #else // LITTLE
-    exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = 1867.860000*loop_counter[0] + 19962.400000*loop_counter[7] + 0.036643*loop_counter[8] + -1427.620000*loop_counter[16] + 0.000000;
+    #else // cvx
+        exec_time = 0.110496*loop_counter[6] + 20.642622*loop_counter[7] + 0.013797*loop_counter[8] + 0.110456*loop_counter[10] + 0.110456*loop_counter[11] + 0.110456*loop_counter[12] + 0.162173*loop_counter[16] + -0.902223;
+    #endif 
 #endif
     return exec_time;
   }
@@ -613,7 +621,11 @@ int main(int argc, char *argv[])
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
 

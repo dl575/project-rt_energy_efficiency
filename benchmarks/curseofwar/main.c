@@ -182,9 +182,17 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
 
     float exec_time;
 #if CORE //big
-    exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+    #else //cvx
+        exec_time = 123.000002*loop_counter[0] + 1467.787853*loop_counter[2] + 382.868691*loop_counter[3] + 122.999998;
+    #endif
 #else //LITTLE
-    exec_time = 3250.000000*loop_counter[0] + -224.000000*loop_counter[1] + 4281.000000*loop_counter[2] + -338.000000*loop_counter[4] + 7.000000*loop_counter[10] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = 945.000000*loop_counter[0] + -87.000000*loop_counter[1] + 3109.000000*loop_counter[2] + -210.000000*loop_counter[4] + -37.000000*loop_counter[10] + 0.000000;
+    #else //cvx
+        exec_time = 121.500001*loop_counter[0] + 1451.479096*loop_counter[2] + 378.614599*loop_counter[3] + 15.916656*loop_counter[10] + 15.916656*loop_counter[13] + 121.499999;
+    #endif
 #endif
     return exec_time;
   }
@@ -396,7 +404,11 @@ void run (struct state *st, struct ui *ui) {
             slice_time = fprint_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = fprint_dvfs_timing();
 

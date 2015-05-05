@@ -200,9 +200,17 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
     ;
     float exec_time;
 #if CORE
-    exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+    #else //cvx    
+        exec_time = 25.548670*loop_counter[0] + 25.631142*loop_counter[1] + 0.016066*loop_counter[3] + 0.002005*loop_counter[4] + 0.000708*loop_counter[5] + 0.001698*loop_counter[6] + 0.001698*loop_counter[7] + 0.001698*loop_counter[8] + 0.001698*loop_counter[9] + -0.924449;
+    #endif
 #else
-    exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = 912.947000*loop_counter[1] + -6.522380*loop_counter[3] + -63.643000*loop_counter[10] + 54.994700*loop_counter[17] + 0.000000;
+    #else //cvx    
+        exec_time = 61.178111*loop_counter[0] + 61.347862*loop_counter[1] + 5.112819*loop_counter[10] + 0.638954*loop_counter[11] + 0.225910*loop_counter[12] + 0.540487*loop_counter[13] + 0.540487*loop_counter[14] + 0.540487*loop_counter[15] + 0.540487*loop_counter[16] + 0.551957*loop_counter[17] + 0.195143*loop_counter[18] + 0.466944*loop_counter[19] + 0.466944*loop_counter[20] + 0.466944*loop_counter[21] + 0.466944*loop_counter[22] + 4.416468;
+    #endif
 #endif 
    return exec_time;
   }
@@ -297,7 +305,11 @@ int main(int argc, char **argv)
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
 

@@ -77,9 +77,17 @@ float slice(const char *string)
 
     float exec_time;
 #if CORE //big
-exec_time = -440.000000*loop_counter[0] + 64.000000*loop_counter[1] + 490.000000*loop_counter[3] + 3067.000000;
+    #if !CVX_EN //conservative
+        exec_time = -440.000000*loop_counter[0] + 64.000000*loop_counter[1] + 490.000000*loop_counter[3] + 3067.000000;
+    #else //cvx
+        exec_time = 276.166875*loop_counter[0] + 61.111111*loop_counter[1] + 794.833542*loop_counter[3] + 2360.833125;
+    #endif
 #else //LITTLE
-exec_time = -752.091000*loop_counter[0] + 90.818200*loop_counter[1] + 1506.910000*loop_counter[3] + 8207.360000;
+    #if !CVX_EN //conservative
+        exec_time = -782.857000*loop_counter[0] + 84.857100*loop_counter[1] + 1039.290000*loop_counter[3] + 3136.570000;
+    #else //cvx
+        exec_time = 217.903224*loop_counter[0] + 79.250000*loop_counter[1] + 863.068559*loop_counter[3] + 2109.181441;
+    #endif
 #endif
     return exec_time;
   }
@@ -2860,7 +2868,11 @@ NULL};
               slice_time = print_slice_timing();
               
               start_timing();
-              set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #if OVERHEAD_EN //with overhead
+                    set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #else //without overhead
+                    set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                #endif
               end_timing();
               dvfs_time = print_dvfs_timing();
 

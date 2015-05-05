@@ -849,9 +849,9 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     //exec_time = 2762.048938*loop_counter[22] + 88.004560*loop_counter[30] + 88.004560*loop_counter[32] + 31.115936*loop_counter[33] + 58.403778*loop_counter[35] + 15604.967487*loop_counter[39] + 2762.004539*loop_counter[40] + 2762.048532;
 #else
     #if !CVX_EN //conservative
-        exec_time = 0;
+        exec_time = 26123.900000*loop_counter[22] + -24.133400*loop_counter[34] + 34.821400*loop_counter[35] + 19338.900000*loop_counter[39] + 0.000000;
     #else //cvx
-        exec_time = 0;
+        exec_time = 2452.438106*loop_counter[22] + 78.138646*loop_counter[30] + 78.138646*loop_counter[32] + 27.625931*loop_counter[33] + 48.122677*loop_counter[35] + 15064.777061*loop_counter[39] + 2452.438809*loop_counter[40] + 2452.438058;
     #endif
 #endif
     return exec_time;

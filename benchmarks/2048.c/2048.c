@@ -25,340 +25,340 @@ uint32_t score=0;
 uint8_t scheme=0;
 
 void getColor(uint8_t value, char *color, size_t length) {
-	uint8_t original[] = {8,255,1,255,2,255,3,255,4,255,5,255,6,255,7,255,9,0,10,0,11,0,12,0,13,0,14,0,255,0,255,0};
-	uint8_t blackwhite[] = {232,255,234,255,236,255,238,255,240,255,242,255,244,255,246,0,248,0,249,0,250,0,251,0,252,0,253,0,254,0,255,0};
-	uint8_t bluered[] = {235,255,63,255,57,255,93,255,129,255,165,255,201,255,200,255,199,255,198,255,197,255,196,255,196,255,196,255,196,255,196,255};
-	uint8_t *schemes[] = {original,blackwhite,bluered};
-	uint8_t *background = schemes[scheme]+0;
-	uint8_t *foreground = schemes[scheme]+1;
-	if (value > 0) while (value--) {
-		if (background+2<schemes[scheme]+sizeof(original)) {
-			background+=2;
-			foreground+=2;
-		}
-	}
-	snprintf(color,length,"\e[38;5;%d;48;5;%dm",*foreground,*background);
+    uint8_t original[] = {8,255,1,255,2,255,3,255,4,255,5,255,6,255,7,255,9,0,10,0,11,0,12,0,13,0,14,0,255,0,255,0};
+    uint8_t blackwhite[] = {232,255,234,255,236,255,238,255,240,255,242,255,244,255,246,0,248,0,249,0,250,0,251,0,252,0,253,0,254,0,255,0};
+    uint8_t bluered[] = {235,255,63,255,57,255,93,255,129,255,165,255,201,255,200,255,199,255,198,255,197,255,196,255,196,255,196,255,196,255,196,255};
+    uint8_t *schemes[] = {original,blackwhite,bluered};
+    uint8_t *background = schemes[scheme]+0;
+    uint8_t *foreground = schemes[scheme]+1;
+    if (value > 0) while (value--) {
+        if (background+2<schemes[scheme]+sizeof(original)) {
+            background+=2;
+            foreground+=2;
+        }
+    }
+    snprintf(color,length,"\e[38;5;%d;48;5;%dm",*foreground,*background);
 }
 
 void drawBoard(uint8_t board[SIZE][SIZE]) {
-	uint8_t x,y;
-	char c;
-	char color[40], reset[] = "\e[m";
-	printf("\e[H");
+    uint8_t x,y;
+    char c;
+    char color[40], reset[] = "\e[m";
+    printf("\e[H");
 
-	printf("2048.c %17d pts\n\n",score);
+    printf("2048.c %17d pts\n\n",score);
 
-	for (y=0;y<SIZE;y++) {
-		for (x=0;x<SIZE;x++) {
-			getColor(board[x][y],color,40);
-			printf("%s",color);
-			printf("       ");
-			printf("%s",reset);
-		}
-		printf("\n");
-		for (x=0;x<SIZE;x++) {
-			getColor(board[x][y],color,40);
-			printf("%s",color);
-			if (board[x][y]!=0) {
-				char s[8];
-				snprintf(s,8,"%u",(uint32_t)1<<board[x][y]);
-				uint8_t t = 7-strlen(s);
-				printf("%*s%s%*s",t-t/2,"",s,t/2,"");
-			} else {
-				printf("   ·   ");
-			}
-			printf("%s",reset);
-		}
-		printf("\n");
-		for (x=0;x<SIZE;x++) {
-			getColor(board[x][y],color,40);
-			printf("%s",color);
-			printf("       ");
-			printf("%s",reset);
-		}
-		printf("\n");
-	}
-	printf("\n");
-	printf("        ←,↑,→,↓ or q        \n");
-	printf("\e[A"); // one line up
+    for (y=0;y<SIZE;y++) {
+        for (x=0;x<SIZE;x++) {
+            getColor(board[x][y],color,40);
+            printf("%s",color);
+            printf("       ");
+            printf("%s",reset);
+        }
+        printf("\n");
+        for (x=0;x<SIZE;x++) {
+            getColor(board[x][y],color,40);
+            printf("%s",color);
+            if (board[x][y]!=0) {
+                char s[8];
+                snprintf(s,8,"%u",(uint32_t)1<<board[x][y]);
+                uint8_t t = 7-strlen(s);
+                printf("%*s%s%*s",t-t/2,"",s,t/2,"");
+            } else {
+                printf("   ·   ");
+            }
+            printf("%s",reset);
+        }
+        printf("\n");
+        for (x=0;x<SIZE;x++) {
+            getColor(board[x][y],color,40);
+            printf("%s",color);
+            printf("       ");
+            printf("%s",reset);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    printf("        ←,↑,→,↓ or q        \n");
+    printf("\e[A"); // one line up
 }
 
 uint8_t findTarget(uint8_t array[SIZE],uint8_t x,uint8_t stop) {
-	uint8_t t;
-	// if the position is already on the first, don't evaluate
-	if (x==0) {
-		return x;
-	}
-	for(t=x-1;t>=0;t--) {
-		if (array[t]!=0) {
-			if (array[t]!=array[x]) {
-				// merge is not possible, take next position
-				return t+1;
-			}
-			return t;
-		} else {
-			// we should not slide further, return this one
-			if (t==stop) {
-				return t;
-			}
-		}
-	}
-	// we did not find a
-	return x;
+    uint8_t t;
+    // if the position is already on the first, don't evaluate
+    if (x==0) {
+        return x;
+    }
+    for(t=x-1;t>=0;t--) {
+        if (array[t]!=0) {
+            if (array[t]!=array[x]) {
+                // merge is not possible, take next position
+                return t+1;
+            }
+            return t;
+        } else {
+            // we should not slide further, return this one
+            if (t==stop) {
+                return t;
+            }
+        }
+    }
+    // we did not find a
+    return x;
 }
 
 bool slideArray(uint8_t array[SIZE]) {
-	bool success = false;
-	uint8_t x,t,stop=0;
+    bool success = false;
+    uint8_t x,t,stop=0;
 
-	for (x=0;x<SIZE;x++) {
-		if (array[x]!=0) {
-			t = findTarget(array,x,stop);
-			// if target is not original position, then move or merge
-			if (t!=x) {
-				// if target is zero, this is a move
-				if (array[t]==0) {
-					array[t]=array[x];
-				} else if (array[t]==array[x]) {
-					// merge (increase power of two)
-					array[t]++;
-					// increase score
-					score+=(uint32_t)1<<array[t];
-					// set stop to avoid double merge
-					stop = t+1;
-				}
-				array[x]=0;
-				success = true;
-			}
-		}
-	}
-	return success;
+    for (x=0;x<SIZE;x++) {
+        if (array[x]!=0) {
+            t = findTarget(array,x,stop);
+            // if target is not original position, then move or merge
+            if (t!=x) {
+                // if target is zero, this is a move
+                if (array[t]==0) {
+                    array[t]=array[x];
+                } else if (array[t]==array[x]) {
+                    // merge (increase power of two)
+                    array[t]++;
+                    // increase score
+                    score+=(uint32_t)1<<array[t];
+                    // set stop to avoid double merge
+                    stop = t+1;
+                }
+                array[x]=0;
+                success = true;
+            }
+        }
+    }
+    return success;
 }
 
 void rotateBoard(uint8_t board[SIZE][SIZE]) {
-	uint8_t i,j,n=SIZE;
-	uint8_t tmp;
-	for (i=0; i<n/2; i++) {
-		for (j=i; j<n-i-1; j++) {
-			tmp = board[i][j];
-			board[i][j] = board[j][n-i-1];
-			board[j][n-i-1] = board[n-i-1][n-j-1];
-			board[n-i-1][n-j-1] = board[n-j-1][i];
-			board[n-j-1][i] = tmp;
-		}
-	}
+    uint8_t i,j,n=SIZE;
+    uint8_t tmp;
+    for (i=0; i<n/2; i++) {
+        for (j=i; j<n-i-1; j++) {
+            tmp = board[i][j];
+            board[i][j] = board[j][n-i-1];
+            board[j][n-i-1] = board[n-i-1][n-j-1];
+            board[n-i-1][n-j-1] = board[n-j-1][i];
+            board[n-j-1][i] = tmp;
+        }
+    }
 }
 
 bool moveUp(uint8_t board[SIZE][SIZE]) {
-	bool success = false;
-	uint8_t x;
-	for (x=0;x<SIZE;x++) {
-		success |= slideArray(board[x]);
-	}
-	return success;
+    bool success = false;
+    uint8_t x;
+    for (x=0;x<SIZE;x++) {
+        success |= slideArray(board[x]);
+    }
+    return success;
 }
 
 bool moveLeft(uint8_t board[SIZE][SIZE]) {
-	bool success;
-	rotateBoard(board);
-	success = moveUp(board);
-	rotateBoard(board);
-	rotateBoard(board);
-	rotateBoard(board);
-	return success;
+    bool success;
+    rotateBoard(board);
+    success = moveUp(board);
+    rotateBoard(board);
+    rotateBoard(board);
+    rotateBoard(board);
+    return success;
 }
 
 bool moveDown(uint8_t board[SIZE][SIZE]) {
-	bool success;
-	rotateBoard(board);
-	rotateBoard(board);
-	success = moveUp(board);
-	rotateBoard(board);
-	rotateBoard(board);
-	return success;
+    bool success;
+    rotateBoard(board);
+    rotateBoard(board);
+    success = moveUp(board);
+    rotateBoard(board);
+    rotateBoard(board);
+    return success;
 }
 
 bool moveRight(uint8_t board[SIZE][SIZE]) {
-	bool success;
-	rotateBoard(board);
-	rotateBoard(board);
-	rotateBoard(board);
-	success = moveUp(board);
-	rotateBoard(board);
-	return success;
+    bool success;
+    rotateBoard(board);
+    rotateBoard(board);
+    rotateBoard(board);
+    success = moveUp(board);
+    rotateBoard(board);
+    return success;
 }
 
 bool findPairDown(uint8_t board[SIZE][SIZE]) {
-	bool success = false;
-	uint8_t x,y;
-	for (x=0;x<SIZE;x++) {
-		for (y=0;y<SIZE-1;y++) {
-			if (board[x][y]==board[x][y+1]) return true;
-		}
-	}
-	return success;
+    bool success = false;
+    uint8_t x,y;
+    for (x=0;x<SIZE;x++) {
+        for (y=0;y<SIZE-1;y++) {
+            if (board[x][y]==board[x][y+1]) return true;
+        }
+    }
+    return success;
 }
 
 uint8_t countEmpty(uint8_t board[SIZE][SIZE]) {
-	uint8_t x,y;
-	uint8_t count=0;
-	for (x=0;x<SIZE;x++) {
-		for (y=0;y<SIZE;y++) {
-			if (board[x][y]==0) {
-				count++;
-			}
-		}
-	}
-	return count;
+    uint8_t x,y;
+    uint8_t count=0;
+    for (x=0;x<SIZE;x++) {
+        for (y=0;y<SIZE;y++) {
+            if (board[x][y]==0) {
+                count++;
+            }
+        }
+    }
+    return count;
 }
 
 bool gameEnded(uint8_t board[SIZE][SIZE]) {
-	bool ended = true;
-	if (countEmpty(board)>0) return false;
-	if (findPairDown(board)) return false;
-	rotateBoard(board);
-	if (findPairDown(board)) ended = false;
-	rotateBoard(board);
-	rotateBoard(board);
-	rotateBoard(board);
-	return ended;
+    bool ended = true;
+    if (countEmpty(board)>0) return false;
+    if (findPairDown(board)) return false;
+    rotateBoard(board);
+    if (findPairDown(board)) ended = false;
+    rotateBoard(board);
+    rotateBoard(board);
+    rotateBoard(board);
+    return ended;
 }
 
 void addRandom(uint8_t board[SIZE][SIZE]) {
-	static bool initialized = false;
-	uint8_t x,y;
-	uint8_t r,len=0;
-	uint8_t n,list[SIZE*SIZE][2];
+    static bool initialized = false;
+    uint8_t x,y;
+    uint8_t r,len=0;
+    uint8_t n,list[SIZE*SIZE][2];
 
-	if (!initialized) {
-		//srand(time(NULL));
+    if (!initialized) {
+        //srand(time(NULL));
     srand(0);
-		initialized = true;
-	}
+        initialized = true;
+    }
 
-	for (x=0;x<SIZE;x++) {
-		for (y=0;y<SIZE;y++) {
-			if (board[x][y]==0) {
-				list[len][0]=x;
-				list[len][1]=y;
-				len++;
-			}
-		}
-	}
+    for (x=0;x<SIZE;x++) {
+        for (y=0;y<SIZE;y++) {
+            if (board[x][y]==0) {
+                list[len][0]=x;
+                list[len][1]=y;
+                len++;
+            }
+        }
+    }
 
-	if (len>0) {
-		r = rand()%len;
-		x = list[r][0];
-		y = list[r][1];
-		n = (rand()%10)/9+1;
-		board[x][y]=n;
-	}
+    if (len>0) {
+        r = rand()%len;
+        x = list[r][0];
+        y = list[r][1];
+        n = (rand()%10)/9+1;
+        board[x][y]=n;
+    }
 }
 
 void initBoard(uint8_t board[SIZE][SIZE]) {
-	uint8_t x,y;
-	for (x=0;x<SIZE;x++) {
-		for (y=0;y<SIZE;y++) {
-			board[x][y]=0;
-		}
-	}
-	addRandom(board);
-	addRandom(board);
-	drawBoard(board);
-	score = 0;
+    uint8_t x,y;
+    for (x=0;x<SIZE;x++) {
+        for (y=0;y<SIZE;y++) {
+            board[x][y]=0;
+        }
+    }
+    addRandom(board);
+    addRandom(board);
+    drawBoard(board);
+    score = 0;
 }
 
 void setBufferedInput(bool enable) {
-	static bool enabled = true;
-	static struct termios old;
-	struct termios new;
+    static bool enabled = true;
+    static struct termios old;
+    struct termios new;
 
-	if (enable && !enabled) {
-		// restore the former settings
-		tcsetattr(STDIN_FILENO,TCSANOW,&old);
-		// set the new state
-		enabled = true;
-	} else if (!enable && enabled) {
-		// get the terminal settings for standard input
-		tcgetattr(STDIN_FILENO,&new);
-		// we want to keep the old setting to restore them at the end
-		old = new;
-		// disable canonical mode (buffered i/o) and local echo
-		new.c_lflag &=(~ICANON & ~ECHO);
-		// set the new settings immediately
-		tcsetattr(STDIN_FILENO,TCSANOW,&new);
-		// set the new state
-		enabled = false;
-	}
+    if (enable && !enabled) {
+        // restore the former settings
+        tcsetattr(STDIN_FILENO,TCSANOW,&old);
+        // set the new state
+        enabled = true;
+    } else if (!enable && enabled) {
+        // get the terminal settings for standard input
+        tcgetattr(STDIN_FILENO,&new);
+        // we want to keep the old setting to restore them at the end
+        old = new;
+        // disable canonical mode (buffered i/o) and local echo
+        new.c_lflag &=(~ICANON & ~ECHO);
+        // set the new settings immediately
+        tcsetattr(STDIN_FILENO,TCSANOW,&new);
+        // set the new state
+        enabled = false;
+    }
 }
 
 int test() {
-	uint8_t array[SIZE];
-	// these are exponents with base 2 (1=2 2=4 3=8)
-	uint8_t data[] = {
-		0,0,0,1,	1,0,0,0,
-		0,0,1,1,	2,0,0,0,
-		0,1,0,1,	2,0,0,0,
-		1,0,0,1,	2,0,0,0,
-		1,0,1,0,	2,0,0,0,
-		1,1,1,0,	2,1,0,0,
-		1,0,1,1,	2,1,0,0,
-		1,1,0,1,	2,1,0,0,
-		1,1,1,1,	2,2,0,0,
-		2,2,1,1,	3,2,0,0,
-		1,1,2,2,	2,3,0,0,
-		3,0,1,1,	3,2,0,0,
-		2,0,1,1,	2,2,0,0
-	};
-	uint8_t *in,*out;
-	uint8_t t,tests;
-	uint8_t i;
-	bool success = true;
+    uint8_t array[SIZE];
+    // these are exponents with base 2 (1=2 2=4 3=8)
+    uint8_t data[] = {
+        0,0,0,1,    1,0,0,0,
+        0,0,1,1,    2,0,0,0,
+        0,1,0,1,    2,0,0,0,
+        1,0,0,1,    2,0,0,0,
+        1,0,1,0,    2,0,0,0,
+        1,1,1,0,    2,1,0,0,
+        1,0,1,1,    2,1,0,0,
+        1,1,0,1,    2,1,0,0,
+        1,1,1,1,    2,2,0,0,
+        2,2,1,1,    3,2,0,0,
+        1,1,2,2,    2,3,0,0,
+        3,0,1,1,    3,2,0,0,
+        2,0,1,1,    2,2,0,0
+    };
+    uint8_t *in,*out;
+    uint8_t t,tests;
+    uint8_t i;
+    bool success = true;
 
-	tests = (sizeof(data)/sizeof(data[0]))/(2*SIZE);
-	for (t=0;t<tests;t++) {
-		in = data+t*2*SIZE;
-		out = in + SIZE;
-		for (i=0;i<SIZE;i++) {
-			array[i] = in[i];
-		}
-		slideArray(array);
-		for (i=0;i<SIZE;i++) {
-			if (array[i] != out[i]) {
-				success = false;
-			}
-		}
-		if (success==false) {
-			for (i=0;i<SIZE;i++) {
-				printf("%d ",in[i]);
-			}
-			printf("=> ");
-			for (i=0;i<SIZE;i++) {
-				printf("%d ",array[i]);
-			}
-			printf("expected ");
-			for (i=0;i<SIZE;i++) {
-				printf("%d ",in[i]);
-			}
-			printf("=> ");
-			for (i=0;i<SIZE;i++) {
-				printf("%d ",out[i]);
-			}
-			printf("\n");
-			break;
-		}
-	}
-	if (success) {
-		printf("All %u tests executed successfully\n",tests);
-	}
-	return !success;
+    tests = (sizeof(data)/sizeof(data[0]))/(2*SIZE);
+    for (t=0;t<tests;t++) {
+        in = data+t*2*SIZE;
+        out = in + SIZE;
+        for (i=0;i<SIZE;i++) {
+            array[i] = in[i];
+        }
+        slideArray(array);
+        for (i=0;i<SIZE;i++) {
+            if (array[i] != out[i]) {
+                success = false;
+            }
+        }
+        if (success==false) {
+            for (i=0;i<SIZE;i++) {
+                printf("%d ",in[i]);
+            }
+            printf("=> ");
+            for (i=0;i<SIZE;i++) {
+                printf("%d ",array[i]);
+            }
+            printf("expected ");
+            for (i=0;i<SIZE;i++) {
+                printf("%d ",in[i]);
+            }
+            printf("=> ");
+            for (i=0;i<SIZE;i++) {
+                printf("%d ",out[i]);
+            }
+            printf("\n");
+            break;
+        }
+    }
+    if (success) {
+        printf("All %u tests executed successfully\n",tests);
+    }
+    return !success;
 }
 
 void signal_callback_handler(int signum) {
-	printf("         TERMINATED         \n");
-	setBufferedInput(true);
-	printf("\e[?25h\e[m");
-	exit(signum);
+    printf("         TERMINATED         \n");
+    setBufferedInput(true);
+    printf("\e[?25h\e[m");
+    exit(signum);
 }
 /*
 float main_loop_slice(char c, uint8_t board[4][4])
@@ -2249,7 +2249,11 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-    exec_time = -76786.300000*loop_counter[2] + -44.460900*loop_counter[8] + -4.511170*loop_counter[9] + -24.279300*loop_counter[10] + -31.178800*loop_counter[12] + -7.321230*loop_counter[14] + 21.779300*loop_counter[15] + -38177.500000*loop_counter[24] + -13464.700000*loop_counter[34] + -1478.500000*loop_counter[35] + 3451.870000*loop_counter[36] + -9974.410000*loop_counter[38] + 977.462000*loop_counter[40] + 9969.070000*loop_counter[41] + -20394.900000*loop_counter[50] + 1193.650000*loop_counter[51] + -951.372000*loop_counter[53] + -22817.300000*loop_counter[54] + 3579.100000*loop_counter[56] + 18902.500000*loop_counter[57] + 24793.600000*loop_counter[60] + -1213.300000*loop_counter[68] + -7858.680000*loop_counter[69] + 2494.680000*loop_counter[70] + -2338.470000*loop_counter[72] + 4588.710000*loop_counter[74] + 9281.090000*loop_counter[75] + 8.762570*loop_counter[84] + 77944.600000;
+#if !CVX_EN //conservative
+    exec_time = 356.023000*loop_counter[2] + -56.237500*loop_counter[8] + 38.812900*loop_counter[9] + 2.635460*loop_counter[10] + -28.417700*loop_counter[12] + -43.000100*loop_counter[14] + -25.273100*loop_counter[15] + 860.411000*loop_counter[24] + -41.017100*loop_counter[34] + -59.844200*loop_counter[35] + 40.692400*loop_counter[36] + 43.423300*loop_counter[38] + 43.731600*loop_counter[40] + -1.072690*loop_counter[41] + 153.768000*loop_counter[50] + 33.394800*loop_counter[51] + -41.463000*loop_counter[53] + 103.107000*loop_counter[54] + -22.992200*loop_counter[56] + -133.312000*loop_counter[57] + 279.367000*loop_counter[60] + 26.136500*loop_counter[68] + 15.882400*loop_counter[69] + -2.674460*loop_counter[70] + 28.108400*loop_counter[72] + -11.090700*loop_counter[74] + -31.600400*loop_counter[75] + 1.706180*loop_counter[84] + 901.401000;
+#else //cvx
+    exec_time = 202.903193*loop_counter[2] + 47.233797*loop_counter[8] + 20.183816*loop_counter[10] + 154.381440*loop_counter[12] + 11.222676*loop_counter[14] + 607.944564*loop_counter[24] + 49.754376*loop_counter[34] + 65.408560*loop_counter[36] + 161.385701*loop_counter[38] + 56.137159*loop_counter[40] + 410.481162*loop_counter[46] + 29.719477*loop_counter[53] + 1.444937*loop_counter[56] + 50.876800*loop_counter[57] + 67.365006*loop_counter[68] + 43.988209*loop_counter[69] + 73.613026*loop_counter[72] + 0.431420*loop_counter[84] + 1065.455244;
+#endif
     return exec_time;
   }
 }
@@ -3113,9 +3117,12 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
   {
     predict_exec_time:
     ;
-
     float exec_time;
-    exec_time = -7620.000000*loop_counter[2] + 8094.830000*loop_counter[8] + -4082.040000*loop_counter[9] + 2352.100000*loop_counter[10] + 6840.610000*loop_counter[12] + 5473.500000*loop_counter[14] + 1331.150000*loop_counter[15] + 21712.900000*loop_counter[24] + -5913.240000*loop_counter[34] + 9622.360000*loop_counter[35] + -9845.030000*loop_counter[36] + -4195.210000*loop_counter[38] + -10079.200000*loop_counter[40] + 4968.480000*loop_counter[41] + 17787.600000*loop_counter[46] + 10671.200000*loop_counter[50] + 5829.060000*loop_counter[51] + -11249.900000*loop_counter[53] + -12884.000000*loop_counter[54] + 1143.250000*loop_counter[56] + -14080.200000*loop_counter[57] + -31723.900000*loop_counter[60] + 17087.400000*loop_counter[68] + -5675.390000*loop_counter[69] + 4797.100000*loop_counter[70] + 23886.600000*loop_counter[72] + 2024.780000*loop_counter[74] + 9333.150000*loop_counter[75] + 133.928000*loop_counter[84] + 0.000000;
+#if !CVX_EN //conservative
+    exec_time = 298.240000*loop_counter[2] + -71.137000*loop_counter[8] + 34.323900*loop_counter[9] + 45.845400*loop_counter[10] + 160.022000*loop_counter[12] + -107.165000*loop_counter[14] + -158.704000*loop_counter[15] + 940.607000*loop_counter[24] + 21.608200*loop_counter[34] + -21.272400*loop_counter[35] + -10.501700*loop_counter[36] + -15.329200*loop_counter[38] + 35.635200*loop_counter[40] + 15.693900*loop_counter[41] + 65.000300*loop_counter[50] + 58.847200*loop_counter[51] + -15.288000*loop_counter[53] + 49.249600*loop_counter[54] + -42.014100*loop_counter[56] + -60.143400*loop_counter[57] + 1148.960000*loop_counter[60] + 22.123300*loop_counter[68] + -37.645800*loop_counter[69] + -2.619700*loop_counter[70] + 28.611200*loop_counter[72] + 11.465100*loop_counter[74] + -7.646440*loop_counter[75] + 0.941292*loop_counter[84] + 653.466000;
+#else //cvx
+    exec_time = 157.433741*loop_counter[2] + 25.567682*loop_counter[9] + 40.071512*loop_counter[10] + 113.429903*loop_counter[12] + 657.112561*loop_counter[24] + 26.853147*loop_counter[34] + 38.171328*loop_counter[40] + 18.552447*loop_counter[41] + 59.522047*loop_counter[50] + 54.722532*loop_counter[51] + 56.097443*loop_counter[54] + 882.737415*loop_counter[60] + 25.190732*loop_counter[68] + 30.223131*loop_counter[72] + 12.662706*loop_counter[74] + 0.618881*loop_counter[84] + 922.964361;
+#endif
     return exec_time;
   }
 }
@@ -4160,72 +4167,73 @@ bool main_loop_loop_counters(char c, uint8_t board[4][4])
 bool main_loop(char c, uint8_t board[SIZE][SIZE]) {
     bool success;
 
-		switch(c) {
-			case 97:	// 'a' key
-			case 104:	// 'h' key
-			case 68:	// left arrow
-				success = moveLeft(board);  break;
-			case 100:	// 'd' key
-			case 108:	// 'l' key
-			case 67:	// right arrow
-				success = moveRight(board); break;
-			case 119:	// 'w' key
-			case 107:	// 'k' key
-			case 65:	// up arrow
-				success = moveUp(board);    break;
-			case 115:	// 's' key
-			case 106:	// 'j' key
-			case 66:	// down arrow
-				success = moveDown(board);  break;
-			default: success = false;
-		}
-		drawBoard(board);
+        switch(c) {
+            case 97:    // 'a' key
+            case 104:   // 'h' key
+            case 68:    // left arrow
+                success = moveLeft(board);  break;
+            case 100:   // 'd' key
+            case 108:   // 'l' key
+            case 67:    // right arrow
+                success = moveRight(board); break;
+            case 119:   // 'w' key
+            case 107:   // 'k' key
+            case 65:    // up arrow
+                success = moveUp(board);    break;
+            case 115:   // 's' key
+            case 106:   // 'j' key
+            case 66:    // down arrow
+                success = moveDown(board);  break;
+            default: success = false;
+        }
+        drawBoard(board);
 
     return success;
 
 }
 
 int main(int argc, char *argv[]) {
-	uint8_t board[SIZE][SIZE];
-	char c;
-	bool success;
+    uint8_t board[SIZE][SIZE];
+    char c;
+    bool success;
 
-  //init_time_file();
+    init_time_file();
 //---------------------modified by TJSong----------------------//
     int exec_time = 0;
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
     }
+    fopen_all(); //fopen for frequnecy file
 //---------------------modified by TJSong----------------------//
 
 
-	if (argc == 2 && strcmp(argv[1],"test")==0) {
-		return test();
-	}
-	if (argc == 2 && strcmp(argv[1],"blackwhite")==0) {
-		scheme = 1;
-	}
-	if (argc == 2 && strcmp(argv[1],"bluered")==0) {
-		scheme = 2;
-	}
+    if (argc == 2 && strcmp(argv[1],"test")==0) {
+        return test();
+    }
+    if (argc == 2 && strcmp(argv[1],"blackwhite")==0) {
+        scheme = 1;
+    }
+    if (argc == 2 && strcmp(argv[1],"bluered")==0) {
+        scheme = 2;
+    }
 
-	printf("\e[?25l\e[2J");
+    printf("\e[?25l\e[2J");
 
-	// register signal handler for when ctrl-c is pressed
-	signal(SIGINT, signal_callback_handler);
+    // register signal handler for when ctrl-c is pressed
+    signal(SIGINT, signal_callback_handler);
 
-	initBoard(board);
-	setBufferedInput(false);
-	while (true) {
+    initBoard(board);
+    setBufferedInput(false);
+    while (true) {
 //---------------------modified by TJSong----------------------//
         // c=getchar(); //to input automatically
         static int i=0;
-		c=65+(i++)%4;
+        c=65+(i++)%4;
+        usleep(10000);
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//
-    fopen_all(); //fopen for frequnecy file
     fprint_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
@@ -4267,7 +4275,11 @@ int main(int argc, char *argv[]) {
             slice_time = fprint_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = fprint_dvfs_timing();
 
@@ -4331,7 +4343,6 @@ int main(int argc, char *argv[]) {
         fprint_exec_time(exec_time);
         fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
-        fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
         fprint_predicted_time(predicted_exec_time);
@@ -4339,37 +4350,38 @@ int main(int argc, char *argv[]) {
 
 //---------------------modified by TJSong----------------------//
 
-		if (success) {
-			//drawBoard(board);
+        if (success) {
+            //drawBoard(board);
 
-			//usleep(150000);
-			addRandom(board);
-			drawBoard(board);
-			if (gameEnded(board)) {
-				printf("         GAME OVER          \n");
-				break;
-			}
-		}
-		if (c=='q') {
-			printf("        QUIT? (y/n)         \n");
-			c=getchar();
-			if (c=='y') {
-				break;
-			}
-			drawBoard(board);
-		}
-		if (c=='r') {
-			printf("       RESTART? (y/n)       \n");
-			c=getchar();
-			if (c=='y') {
-				initBoard(board);
-			}
-			drawBoard(board);
-		}
-	}
-	setBufferedInput(true);
+            //usleep(150000);
+            addRandom(board);
+            drawBoard(board);
+            if (gameEnded(board)) {
+                printf("         GAME OVER          \n");
+                break;
+            }
+        }
+        if (c=='q') {
+            printf("        QUIT? (y/n)         \n");
+            c=getchar();
+            if (c=='y') {
+                break;
+            }
+            drawBoard(board);
+        }
+        if (c=='r') {
+            printf("       RESTART? (y/n)       \n");
+            c=getchar();
+            if (c=='y') {
+                initBoard(board);
+            }
+            drawBoard(board);
+        }
+    }
+    fclose_all();//TJSong
+    setBufferedInput(true);
 
-	printf("\e[?25h\e[m");
+    printf("\e[?25h\e[m");
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

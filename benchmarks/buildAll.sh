@@ -21,10 +21,10 @@ if [ $2 != "big" -a $2 != "little" ] ; then
     exit 1
 fi
 
-if [ $3 != "predict_en" ] && [ $3 != "predict_dis" ] && [ $3 != "oracle_en" ] && [ $3 != "pid_en" ] ; then
-    echo 'USAGE : only predict_en, predict_dis, oracle_en, or pid_en'
-    exit 1
-fi
+#if [ $3 != "predict_en" ] && [ $3 != "predict_dis" ] && [ $3 != "oracle_en" ] && [ $3 != "pid_en" ] ; then
+#    echo 'USAGE : only predict_en, predict_dis, oracle_en, or pid_en'
+#    exit 1
+#fi
 
 # set core depends on argument 2
 if [ $2 == "big" ] ; then
@@ -49,14 +49,19 @@ sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH
 
 # disable all flags ralated to predict/oralce/pid
 sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # set PREDICT_EN depends on argument 3
-if [ $3 == "predict_en" ] ; then
-    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-elif [ $3 == "predict_dis" ] ; then
+if [ $3 == "predict_dis" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "overhead_en" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "overhead_dis" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "oracle_en" ] ; then
     sed -i -e 's/'"$ORACLE_DISABLED"'/'"$ORACLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "pid_en" ] ; then
@@ -106,6 +111,7 @@ if [ ${SOURCE_FILES[$1]} == "uzbl/src/commands.c" ] ; then
 elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
     echo "[pocketsphinx] make install"
     cd $BENCH_PATH/${SOURCE_PATH[$1]}
+    rm -rf autom4te.cache/
     taskset 0xff ./autogen.sh
     taskset 0xff ./configure --prefix=`pwd`/../install
     taskset 0xff sudo make install 

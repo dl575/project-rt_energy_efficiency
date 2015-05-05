@@ -366,9 +366,19 @@ print_loop_counter:
 
     float exec_time;
 #if CORE //big
-    exec_time = 48.000000*loop_counter[1] + 74.000000*loop_counter[2] + 285.000000*loop_counter[3] + 824.000000*loop_counter[4] + 345.000000*loop_counter[5] + 27186.000000*loop_counter[6] + 378.000000*loop_counter[8] + 321.000000*loop_counter[11] + 26411.000000*loop_counter[15] + 1123.000000*loop_counter[16] + 171.000000*loop_counter[18] + 0.000000;
+    #if !CVX_EN //conservative
+        exec_time = 48.000000*loop_counter[1] + 74.000000*loop_counter[2] + 285.000000*loop_counter[3] + 824.000000*loop_counter[4] + 345.000000*loop_counter[5] + 27186.000000*loop_counter[6] + 378.000000*loop_counter[8] + 321.000000*loop_counter[11] + 26411.000000*loop_counter[15] + 1123.000000*loop_counter[16] + 171.000000*loop_counter[18] + 0.000000;
+    #else //cvx
+        exec_time = 2919.227729*loop_counter[1] + 3612.118783*loop_counter[2] + 21019.099006*loop_counter[6] + 19981.099006*loop_counter[15] + -313.445518;
+    #endif
 #else //LITTLE
-    exec_time = 860.000000*loop_counter[2] + 527.000000*loop_counter[3] + 6040.000000*loop_counter[4] + 94.000000*loop_counter[5] + 49362.000000*loop_counter[6] + 966.000000*loop_counter[7] + 91.000000*loop_counter[8] + 283.000000*loop_counter[10] + 48135.000000*loop_counter[15] + 4274.000000*loop_counter[16] + 1067.000000*loop_counter[18] + 0.000000;
+    #if !CVX_EN //conservative
+        // loop counters:  loop_counter[1] loop_counter[2] loop_counter[3] loop_counter[4] loop_counter[5] loop_counter[6] loop_counter[7] loop_counter[8] loop_counter[15] loop_counter[16] loop_counter[18]
+        exec_time = 443.000000*loop_counter[1] + 1114.000000*loop_counter[2] + 75.000000*loop_counter[3] + 2455.000000*loop_counter[4] + 115.000000*loop_counter[5] + 60058.000000*loop_counter[6] + 1017.000000*loop_counter[7] + 84.000000*loop_counter[8] + 44148.000000*loop_counter[15] + 7505.000000*loop_counter[16] + 522.000000*loop_counter[18] + 0.000000;
+    #else //cvx
+        // non-zero coeffs =  [1, 2, 6, 15]
+        exec_time = 6138.356436*loop_counter[1] + 7006.099010*loop_counter[2] + 48347.415845*loop_counter[6] + 32437.415845*loop_counter[15] + 123.128709;
+    #endif
 #endif
     return exec_time;
   }
@@ -439,7 +449,11 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
 

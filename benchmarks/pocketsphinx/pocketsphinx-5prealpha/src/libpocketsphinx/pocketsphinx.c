@@ -973,9 +973,17 @@ float ps_process_raw_slice(ps_decoder_t *ps, const int16 *data, size_t n_samples
     ;
     float exec_time;
 #if CORE //big
-    exec_time = 4330.350000*loop_counter[5] + 455403.000000;
+    #if !CVX_EN //conservative
+        exec_time = 4376.170000*loop_counter[5] + 464664.000000;
+    #else //cvx
+        exec_time = 4363.730627*loop_counter[5] + 458490.582995;
+    #endif
 #else //LITTLE
-    exec_time = 15683.200000*loop_counter[5] + 381812.000000;
+    #if !CVX_EN //conservative
+        exec_time = 4389.920000*loop_counter[5] + 470308.000000;
+    #else //cvx
+        exec_time = 4877.340620*loop_counter[5] + 185168.733838;
+    #endif
 #endif
     return exec_time;
   }
@@ -991,7 +999,6 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     ps_start_stream(ps);
     ps_start_utt(ps);
 //---------------------modified by TJSong----------------------//
-    int exec_time = 0;
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
@@ -1019,6 +1026,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     fopen_all(); //fopen for frequnecy file
     fprint_deadline(DEADLINE_TIME); //print deadline 
     static int job_cnt = 0; //job count
+    static int exec_time = 0;
 //---------------------modified by TJSong----------------------//
 
 
@@ -1063,7 +1071,11 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
             slice_time = fprint_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if OVERHEAD_EN //with overhead
+                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else //without overhead
+                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+            #endif
             end_timing();
             dvfs_time = fprint_dvfs_timing();
 
