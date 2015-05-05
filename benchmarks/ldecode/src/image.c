@@ -178,6 +178,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     // Run slicing in a forked process
     pid_t pid = fork();
     if (pid == 0) {
+        printf("forked %d :", job_cnt);
          // Perform slicing and prediction
         float predicted_exec_time = 0.0;
         /*
@@ -710,12 +711,15 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     while (end_of_slice_rename1 == FALSE)
     {
       loop_counter[30]++;
-      //start_macroblock(img, inp, img->current_mb_nr);
+      start_macroblock(img, inp, img->current_mb_nr);
+/*
       {
         CheckAvailabilityOfNeighbors(img);
       }
+*/
 
-      //read_flag_rename1 = read_one_macroblock(img, inp);
+      read_flag_rename1 = read_one_macroblock(img, inp);
+/*
       if (img->type == I_SLICE || img->type == SI_SLICE) {
         loop_counter[42]++;
       } else if (active_pps->entropy_coding_mode_flag == CABAC) {
@@ -731,6 +735,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
         }
       }
       read_one_macroblock2(img, inp);
+*/
       if (img->MbaffFrameFlag && dec_picture->mb_field[img->current_mb_nr])
       {
         loop_counter[31]++;
@@ -786,7 +791,7 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
         ;
 
       }
-      end_of_slice_rename1 = exit_macroblock2(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
+      end_of_slice_rename1 = exit_macroblock(img, inp, (!img->MbaffFrameFlag) || (img->current_mb_nr % 2));
     }
 
     {
