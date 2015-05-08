@@ -44,6 +44,8 @@
 /* delay in milliseconds */
 #define TIME_DELAY 10
 
+#include "timing.h"
+
 void run(struct state *st, struct ui *ui, 
     SDL_Surface *screen, SDL_Surface *tileset, SDL_Surface *typeface, SDL_Surface *uisurf){
   /* tile variation */
@@ -61,6 +63,7 @@ void run(struct state *st, struct ui *ui,
   int previous_time = SDL_GetTicks();
 
   int k = 0;
+  static int cnt = 0;
   while (!finished){
 
     int time = SDL_GetTicks();
@@ -68,6 +71,9 @@ void run(struct state *st, struct ui *ui,
     if (time - previous_time >= TIME_DELAY) {
 
       previous_time = previous_time + TIME_DELAY;
+
+      start_timing();
+
       k++;
       if (k>=1600) k=0;
 
@@ -102,6 +108,14 @@ void run(struct state *st, struct ui *ui,
       if (k % 5 == 0) {
         output_sdl(tileset, typeface, uisurf, screen, st, ui, tile_variant, pop_variant, k);
         SDL_Flip(screen);
+      }
+
+      end_timing();
+      int exec_time = exec_timing();
+      fprint_exec_time(exec_time);
+
+      if (cnt++ > 2000) {
+        break;
       }
     }
     else{
