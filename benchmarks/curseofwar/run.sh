@@ -32,22 +32,19 @@ sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
 sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
 echo $BENCHMARK">>>"
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     #if [[ $3 ]] ; then
     #    MAX_FREQ=$3
     #fi
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then    
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    fi
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     sleep 1;
     echo $2"..."
     rm -rf times.txt
-    taskset $TASKSET_FLAG ./curseofwar
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
+    taskset $TASKSET_FLAG ./curseofwar-sdl
+    cp times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
