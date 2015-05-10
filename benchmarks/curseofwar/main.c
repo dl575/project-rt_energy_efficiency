@@ -189,9 +189,15 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative
-        exec_time = 945.000000*loop_counter[0] + -87.000000*loop_counter[1] + 3109.000000*loop_counter[2] + -210.000000*loop_counter[4] + -37.000000*loop_counter[10] + 0.000000;
+        exec_time = 3208.000000*loop_counter[0] + 3068.000000*loop_counter[2] + -20.000000*loop_counter[10] + 0.000000;
     #else //cvx
-        exec_time = 121.500001*loop_counter[0] + 1451.479096*loop_counter[2] + 378.614599*loop_counter[3] + 15.916656*loop_counter[10] + 15.916656*loop_counter[13] + 121.499999;
+        if(CVX_COEFF == 10)
+            exec_time = 320.500000*loop_counter[0] + 2196.808653*loop_counter[2] + 573.031891*loop_counter[3] + 320.500000;
+        else if(CVX_COEFF == 50)
+            exec_time = 361.500000*loop_counter[0] + 2164.840896*loop_counter[2] + 564.693184*loop_counter[3] + 361.500000;
+        else if(CVX_COEFF == 100)
+            exec_time = 386.499999*loop_counter[0] + 2145.348361*loop_counter[2] + 559.608606*loop_counter[3] + 386.500001;
+
     #endif
 #endif
     return exec_time;
@@ -480,7 +486,7 @@ void run (struct state *st, struct ui *ui) {
         fprint_predicted_time(predicted_exec_time);
         fprint_freq(); 
 
-    if(cnt++ > 2000)//TJSong
+    if(cnt++ > 200)//TJSong
         break;
 //---------------------modified by TJSong----------------------//
     }
