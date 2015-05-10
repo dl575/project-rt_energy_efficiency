@@ -90,6 +90,8 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
       {
         int i_rename0;
         int ev_rename0 = 0;
+        loop_counter[3] += st_rename->kings_num;
+        /*
         for (i_rename0 = 0; i_rename0 < st_rename->kings_num; ++i_rename0)
         {
           loop_counter[3]++;
@@ -98,6 +100,7 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
           int code_rename0 = builder_default(&st_rename->king[i_rename0], &st_rename->country[pl_rename0], &st_rename->grid, &st_rename->fg[pl_rename0]);
           ev_rename0 = ev_rename0 || (code_rename0 == 0);
         }
+        */
 
         if (ev_rename0)
         {
@@ -361,7 +364,8 @@ void run (struct state *st, struct ui *ui) {
     int exec_time = 0;
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
-        return ERROR_DEFINE;
+        //return ERROR_DEFINE;
+        return;
     }
 //---------------------modified by TJSong----------------------//
 
