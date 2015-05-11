@@ -45,8 +45,173 @@
 #define TIME_DELAY 10
 
 #include "timing.h"
-float run_loop_slice(struct state *st, struct ui *ui, int k){
-    return 0;
+
+float run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_Surface *tileset, SDL_Surface *typeface, SDL_Surface *uisurf, int tile_variant[MAX_WIDTH][MAX_HEIGHT], int pop_variant[MAX_WIDTH][MAX_HEIGHT], int k)
+{
+  int loop_counter[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int finished = 0;
+  SDL_Event event;
+  k++;
+  if (k >= 1600)
+  {
+    loop_counter[0]++;
+    k = 0;
+  }
+
+  char c = '\0';
+  /*
+  while ((!finished) && SDL_PollEvent(&event))
+  {
+    loop_counter[1]++;
+    switch (event.type)
+    {
+      case SDL_KEYDOWN:
+        loop_counter[2]++;
+        c = '\0';
+        switch (event.key.keysym.sym)
+      {
+        case SDLK_LEFT:
+          loop_counter[3]++;
+          c = 'h';
+          break;
+
+        case SDLK_RIGHT:
+          loop_counter[4]++;
+          c = 'l';
+          break;
+
+        case SDLK_UP:
+          loop_counter[5]++;
+          c = 'k';
+          break;
+
+        case SDLK_DOWN:
+          loop_counter[6]++;
+          c = 'j';
+          break;
+
+        case SDLK_q:
+          loop_counter[7]++;
+          c = 'q';
+          break;
+
+        case SDLK_SPACE:
+          loop_counter[8]++;
+          c = ' ';
+          break;
+
+        default:
+          loop_counter[9]++;
+          if ((event.key.keysym.unicode & 0xFF80) == 0)
+        {
+          loop_counter[10]++;
+          c = event.key.keysym.unicode & 0x7F;
+        }
+
+
+      }
+
+        finished = singleplayer_process_input(st, ui, c);
+        break;
+
+    }
+
+  }
+  */
+
+  int slowdown = game_slowdown(st->speed);
+  if (((k % slowdown) == 0) && (st->speed != sp_pause))
+  {
+    loop_counter[11]++;
+  }
+
+  if ((k % 5) == 0)
+  {
+    loop_counter[12]++;
+  }
+
+  if (finished)
+  {
+    loop_counter[13]++;
+    {
+      goto print_loop_counter;
+    }
+  }
+  else
+  {
+    {
+      goto print_loop_counter;
+    }
+  }
+
+  {
+    print_loop_counter:
+#if GET_PREDICT || DEBUG_EN
+    ;
+
+    write_array(loop_counter, 14);
+    print_loop_counter_end:
+#endif
+    ;
+
+  }
+  {
+    predict_exec_time:
+    ;
+
+    float exec_time;
+    exec_time = 0;
+    return exec_time;
+  }
+}
+
+int run_loop(struct state *st, struct ui *ui, 
+    SDL_Surface *screen, SDL_Surface *tileset, SDL_Surface *typeface,
+    SDL_Surface *uisurf, int tile_variant[MAX_WIDTH][MAX_HEIGHT], int
+    pop_variant[MAX_WIDTH][MAX_HEIGHT], int k){
+  int finished = 0;
+  SDL_Event event;
+      k++;
+      if (k>=1600) k=0;
+
+      char c = '\0';
+      while (!finished && SDL_PollEvent(&event)){
+        switch (event.type){
+          case SDL_KEYDOWN:
+            c = '\0';
+            switch (event.key.keysym.sym) {
+              case SDLK_LEFT: c = 'h'; break;
+              case SDLK_RIGHT: c = 'l'; break;
+              case SDLK_UP: c = 'k'; break;
+              case SDLK_DOWN: c = 'j'; break;
+              case SDLK_q: c = 'q'; break;
+              case SDLK_SPACE: c = ' '; break;
+              default:
+                if ( (event.key.keysym.unicode & 0xFF80) == 0 ) {
+                  c = event.key.keysym.unicode & 0x7F;
+                }
+            }
+            finished = singleplayer_process_input(st, ui, c);
+            break;
+        }
+      }
+
+      int slowdown = game_slowdown(st->speed);
+      if (k % slowdown == 0 && st->speed != sp_pause) { 
+        kings_move(st);
+        simulate(st);
+      }
+
+      if (k % 5 == 0) {
+        output_sdl(tileset, typeface, uisurf, screen, st, ui, tile_variant, pop_variant, k);
+        SDL_Flip(screen);
+      }
+
+  if (finished) {
+    return -1;
+  } else {
+    return k;
+  }
 }
 
 void run(struct state *st, struct ui *ui, 
@@ -79,7 +244,8 @@ void run(struct state *st, struct ui *ui,
 
 
 
-  while (!finished){
+  //while (!finished){
+  while (k >= 0) {
 
     int time = SDL_GetTicks();
 
@@ -106,12 +272,12 @@ void run(struct state *st, struct ui *ui,
             CASE 6 = running on pid
         */
         #if GET_PREDICT /* CASE 0 */
-            predicted_exec_time = run_loop_slice(st, ui, k); //slice        
+            predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
         #elif GET_DEADLINE /* CASE 1 */
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
-            predicted_exec_time = run_loop_slice(st, ui, k); //slice        
+            predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
             end_timing();
             slice_time = fprint_slice_timing();
 
@@ -126,7 +292,8 @@ void run(struct state *st, struct ui *ui,
             moment_timing_fprint(0); //moment_start
             
             start_timing();
-            predicted_exec_time = run_loop_slice(st, ui, k); //slice        
+            predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
+            end_timing();
             end_timing();
             slice_time = fprint_slice_timing();
             
@@ -175,41 +342,7 @@ void run(struct state *st, struct ui *ui,
 
       start_timing();
 
-      k++;
-      if (k>=1600) k=0;
-
-      char c = '\0';
-      while (!finished && SDL_PollEvent(&event)){
-        switch (event.type){
-          case SDL_KEYDOWN:
-            c = '\0';
-            switch (event.key.keysym.sym) {
-              case SDLK_LEFT: c = 'h'; break;
-              case SDLK_RIGHT: c = 'l'; break;
-              case SDLK_UP: c = 'k'; break;
-              case SDLK_DOWN: c = 'j'; break;
-              case SDLK_q: c = 'q'; break;
-              case SDLK_SPACE: c = ' '; break;
-              default:
-                if ( (event.key.keysym.unicode & 0xFF80) == 0 ) {
-                  c = event.key.keysym.unicode & 0x7F;
-                }
-            }
-            finished = singleplayer_process_input(st, ui, c);
-            break;
-        }
-      }
-
-      int slowdown = game_slowdown(st->speed);
-      if (k % slowdown == 0 && st->speed != sp_pause) { 
-        kings_move(st);
-        simulate(st);
-      }
-
-      if (k % 5 == 0) {
-        output_sdl(tileset, typeface, uisurf, screen, st, ui, tile_variant, pop_variant, k);
-        SDL_Flip(screen);
-      }
+      k = run_loop(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k);
 
       end_timing();
 //---------------------modified by TJSong----------------------//
