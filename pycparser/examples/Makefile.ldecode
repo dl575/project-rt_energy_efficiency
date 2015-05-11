@@ -9,6 +9,7 @@ slice: preprocess
 	$(PYTHON) inline.py $(FILENAME)3.c $(FUNCNAME) > $(FILENAME)_inline.c
 	$(PYTHON) insert_loop_counts.py $(FILENAME)_inline.c $(LOOP_COUNT_FLAGS) > $(FILENAME)_loop_counts.c
 	time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter > $(FILENAME)_slice.c
+	#time $(PYTHON) slice.py $(FILENAME)_loop_counts.c loop_counter[34] > $(FILENAME)_slice.c
 	#$(PYTHON) globals.py $(FILENAME)_slice.c $(FUNCNAME) $(GLOBALS_IGNORE) > $(FILENAME)_globals.c
 	cp $(FILENAME)_slice.c $(FILENAME)_globals.c
 	$(PYTHON) cleanup.py $(FILENAME)_globals.c > $(FILENAME)_cleanup.c
@@ -27,8 +28,12 @@ preprocess:
 
 	$(call gd, "struct inp_par *input")
 	$(call fd, "int testEndian")
+	$(call fd, "int mb_is_available")
+	$(call fd, "int nal_startcode_follows")
 
   # Define custom types
+	$(call td, "PixelPos")
+	$(call td, "SyntaxElement")
 	$(call td, "objectBuffer_t")
 	$(call td, "Macroblock")
 	$(call td, "NALU_t")
