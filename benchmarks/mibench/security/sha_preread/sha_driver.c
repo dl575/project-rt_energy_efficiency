@@ -207,9 +207,14 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
     #endif
 #else
     #if !CVX_EN //conservative
-        exec_time = 912.947000*loop_counter[1] + -6.522380*loop_counter[3] + -63.643000*loop_counter[10] + 54.994700*loop_counter[17] + 0.000000;
+        exec_time = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
     #else //cvx    
-        exec_time = 61.178111*loop_counter[0] + 61.347862*loop_counter[1] + 5.112819*loop_counter[10] + 0.638954*loop_counter[11] + 0.225910*loop_counter[12] + 0.540487*loop_counter[13] + 0.540487*loop_counter[14] + 0.540487*loop_counter[15] + 0.540487*loop_counter[16] + 0.551957*loop_counter[17] + 0.195143*loop_counter[18] + 0.466944*loop_counter[19] + 0.466944*loop_counter[20] + 0.466944*loop_counter[21] + 0.466944*loop_counter[22] + 4.416468;
+        if(CVX_COEFF == 10)
+            exec_time = 0.132241*loop_counter[3] + 0.016516*loop_counter[4] + 0.005840*loop_counter[5] + 0.013962*loop_counter[6] + 0.013962*loop_counter[7] + 0.013962*loop_counter[8] + 0.013962*loop_counter[9] + 23.391490*loop_counter[10] + 2.923825*loop_counter[11] + 1.033574*loop_counter[12] + 2.473365*loop_counter[13] + 2.473365*loop_counter[14] + 2.473365*loop_counter[15] + 2.473365*loop_counter[16] + 0.974851*loop_counter[17] + 0.344855*loop_counter[18] + 0.824862*loop_counter[19] + 0.824862*loop_counter[20] + 0.824862*loop_counter[21] + 0.824862*loop_counter[22] + 7.801028;
+        else if(CVX_COEFF == 50)
+            exec_time = 40.301451*loop_counter[0] + 40.303939*loop_counter[1] + 0.062243*loop_counter[3] + 0.007771*loop_counter[4] + 0.002748*loop_counter[5] + 0.006568*loop_counter[6] + 0.006568*loop_counter[7] + 0.006568*loop_counter[8] + 0.006568*loop_counter[9] + 1.083027*loop_counter[10] + 0.135339*loop_counter[11] + 0.047805*loop_counter[12] + 0.114497*loop_counter[13] + 0.114497*loop_counter[14] + 0.114497*loop_counter[15] + 0.114497*loop_counter[16] + 3.947360*loop_counter[17] + 1.395664*loop_counter[18] + 3.339157*loop_counter[19] + 3.339157*loop_counter[20] + 3.339157*loop_counter[21] + 3.339157*loop_counter[22] + 31.578068;
+        else if(CVX_COEFF == 100)
+            exec_time = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
     #endif
 #endif 
    return exec_time;

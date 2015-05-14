@@ -470,9 +470,15 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
     #endif
 #else // LITTLE
     #if !CVX_EN //conservative
-        exec_time = 1867.860000*loop_counter[0] + 19962.400000*loop_counter[7] + 0.036643*loop_counter[8] + -1427.620000*loop_counter[16] + 0.000000;
+        exec_time = 2739.740000*loop_counter[0] + 14435.700000*loop_counter[7] + 0.089650*loop_counter[8] + -1039.580000*loop_counter[16] + 0.000000;
     #else // cvx
-        exec_time = 0.110496*loop_counter[6] + 20.642622*loop_counter[7] + 0.013797*loop_counter[8] + 0.110456*loop_counter[10] + 0.110456*loop_counter[11] + 0.110456*loop_counter[12] + 0.162173*loop_counter[16] + -0.902223;
+        if(CVX_COEFF == 10)
+            exec_time = 23.450046*loop_counter[0] + 2.931267*loop_counter[1] + 8.290738*loop_counter[2] + 23.450088*loop_counter[3] + 23.450088*loop_counter[4] + 23.450088*loop_counter[5] + 0.256848*loop_counter[6] + 0.032283*loop_counter[8] + 0.258283*loop_counter[10] + 0.258283*loop_counter[11] + 0.258283*loop_counter[12] + 23.449896*loop_counter[15] + 4.579052*loop_counter[16] + 2.931261*loop_counter[17] + 23.449951*loop_counter[19] + 23.449951*loop_counter[20] + 23.449951*loop_counter[21] + 23.449951;
+        else if(CVX_COEFF == 50)
+            exec_time = 26.310817*loop_counter[0] + 3.288876*loop_counter[1] + 9.302208*loop_counter[2] + 26.310776*loop_counter[3] + 26.310776*loop_counter[4] + 26.310776*loop_counter[5] + 0.264986*loop_counter[6] + 1927.342572*loop_counter[7] + 0.032031*loop_counter[8] + 0.256263*loop_counter[10] + 0.256263*loop_counter[11] + 0.256263*loop_counter[12] + 26.310804*loop_counter[15] + 3.288882*loop_counter[17] + 26.310812*loop_counter[19] + 26.310812*loop_counter[20] + 26.310812*loop_counter[21] + 26.310812;
+        else if(CVX_COEFF == 100)
+            exec_time = 190.072036*loop_counter[0] + 23.759134*loop_counter[1] + 67.200776*loop_counter[2] + 190.072065*loop_counter[3] + 190.072065*loop_counter[4] + 190.072065*loop_counter[5] + 0.293611*loop_counter[6] + 14435.412854*loop_counter[7] + 0.028520*loop_counter[8] + 0.228157*loop_counter[10] + 0.228157*loop_counter[11] + 0.228157*loop_counter[12] + 190.072200*loop_counter[15] + 23.759113*loop_counter[17] + 190.072174*loop_counter[19] + 190.072174*loop_counter[20] + 190.072174*loop_counter[21] + 190.072174;
+
     #endif 
 #endif
     return exec_time;

@@ -373,11 +373,14 @@ print_loop_counter:
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative
-        // loop counters:  loop_counter[1] loop_counter[2] loop_counter[3] loop_counter[4] loop_counter[5] loop_counter[6] loop_counter[7] loop_counter[8] loop_counter[15] loop_counter[16] loop_counter[18]
-        exec_time = 443.000000*loop_counter[1] + 1114.000000*loop_counter[2] + 75.000000*loop_counter[3] + 2455.000000*loop_counter[4] + 115.000000*loop_counter[5] + 60058.000000*loop_counter[6] + 1017.000000*loop_counter[7] + 84.000000*loop_counter[8] + 44148.000000*loop_counter[15] + 7505.000000*loop_counter[16] + 522.000000*loop_counter[18] + 0.000000;
+        exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + 36819.485152*loop_counter[6] + 35519.485152*loop_counter[15] + -358.683173;
     #else //cvx
-        // non-zero coeffs =  [1, 2, 6, 15]
-        exec_time = 6138.356436*loop_counter[1] + 7006.099010*loop_counter[2] + 48347.415845*loop_counter[6] + 32437.415845*loop_counter[15] + 123.128709;
+        if(CVX_COEFF == 10)
+            exec_time = 4891.287129*loop_counter[1] + 6689.801979*loop_counter[2] + 36868.168317*loop_counter[6] + 35568.168317*loop_counter[15] + -526.257424;
+        else if(CVX_COEFF == 50)
+            exec_time = 4946.811875*loop_counter[1] + 6582.336644*loop_counter[2] + 36838.613864*loop_counter[6] + 35538.613864*loop_counter[15] + -444.762383;
+        else if(CVX_COEFF == 100) 
+            exec_time = 579.000000*loop_counter[2] + 278.000000*loop_counter[3] + 1448.000000*loop_counter[4] + 272.000000*loop_counter[5] + 47344.000000*loop_counter[6] + 65.000000*loop_counter[7] + 401.000000*loop_counter[8] + 167.000000*loop_counter[10] + 230.000000*loop_counter[11] + 46044.000000*loop_counter[15] + 2998.000000*loop_counter[16] + 0.000000;
     #endif
 #endif
     return exec_time;
@@ -392,7 +395,7 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     const UzblCommand *info = uzbl_commands_parse (cmd, argv);
 
 //---------------------modified by TJSong----------------------//
-    int exec_time = 0;
+    static int exec_time = 0;
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
@@ -450,9 +453,9 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             
             start_timing();
             #if OVERHEAD_EN //with overhead
-                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             #else //without overhead
-                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                set_freq_uzbl(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
             #endif
             end_timing();
             dvfs_time = print_dvfs_timing();

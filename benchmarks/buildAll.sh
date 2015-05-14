@@ -115,6 +115,10 @@ elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocket
     taskset 0xff ./autogen.sh
     taskset 0xff ./configure --prefix=`pwd`/../install
     taskset 0xff sudo make install 
+elif [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
+    echo "[curseofwar] make SDL=yes"
+    cd $BENCH_PATH/${SOURCE_PATH[$1]}
+    taskset 0xff make SDL=yes
 fi
 
 

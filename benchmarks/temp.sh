@@ -94,13 +94,36 @@ do
 
         # enable convex
         sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+        
+        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_with_overhead ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-100 ${SWEEP[$j]}
 
-        # 3. convex wio overhead
+        # 3. convex wo overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_wo_overhead ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_wo_overhead-100 ${SWEEP[$j]}
+
+        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (50)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-50 ${SWEEP[$j]}
+
+        # 3. convex wo overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_wo_overhead-50 ${SWEEP[$j]}
+
+        sed -i -e 's/'"CVX_COEFF (50)"'/'"CVX_COEFF (10)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-10 ${SWEEP[$j]}
+
+        # 3. convex wo overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_wo_overhead-10 ${SWEEP[$j]}
+
+        sed -i -e 's/'"CVX_COEFF (10)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
+
 
         # 4. Oralce
         if [[ ${BENCH_NAME[$i]} != "uzbl" ]] && [[ ${BENCH_NAME[$i]} != "xpilot_slice" ]] ; then
@@ -121,7 +144,8 @@ do
         #filter xpilot_slice and uzbl
         if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
             cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction" "oracle" "pid") 
+            #GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "pid") 
+            GOVERNOR_FILES=( "performance" "interactive" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_overhead-50" "cvx_wo_overhead-50" "cvx_with_overhead-10" "cvx_wo_overhead-10" "pid") 
             for k in "${GOVERNOR_FILES[@]}"
             do 
                 taskset 0xff ./filter_xpilot.py $1 ${SWEEP[$j]} $k > temp_xpilot
@@ -129,7 +153,7 @@ do
             done
         elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
             cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction" "oracle" "pid") 
+            GOVERNOR_FILES=( "performance" "interactive" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_overhead-50" "cvx_wo_overhead-50" "cvx_with_overhead-10" "cvx_wo_overhead-10" "pid") 
             for k in "${GOVERNOR_FILES[@]}"
             do 
                 taskset 0xff ./filter_uzbl.py $1 ${SWEEP[$j]} $k > temp_uzbl
@@ -145,10 +169,10 @@ do
     cd $DATA_ODROID_PATH
     if [ $1 == "big" ] ; then
         sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both2.py
-        taskset 0xff ./plot_both2.py big ${BENCH_NAME[$i]}
+        taskset 0xff ./plot_both.py big ${BENCH_NAME[$i]}
     elif [ $1 == "little" ] ; then
         sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both2.py
-        taskset 0xff ./plot_both2.py little ${BENCH_NAME[$i]}
+        taskset 0xff ./plot_both.py little ${BENCH_NAME[$i]}
     fi
 
 done

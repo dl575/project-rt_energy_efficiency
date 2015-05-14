@@ -84,9 +84,14 @@ float slice(const char *string)
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative
-        exec_time = -782.857000*loop_counter[0] + 84.857100*loop_counter[1] + 1039.290000*loop_counter[3] + 3136.570000;
+        exec_time = -1173.000000*loop_counter[0] + 103.000000*loop_counter[1] + 1842.000000*loop_counter[3] + 8605.000000;
     #else //cvx
-        exec_time = 217.903224*loop_counter[0] + 79.250000*loop_counter[1] + 863.068559*loop_counter[3] + 2109.181441;
+        if(CVX_COEFF == 10)
+            exec_time = 1021.782842*loop_counter[0] + 90.533333*loop_counter[1] + 1996.750479*loop_counter[3] + 6186.617158;
+        else if(CVX_COEFF == 50)
+            exec_time = 742.055547*loop_counter[0] + 98.333333*loop_counter[1] + 2573.388880*loop_counter[3] + 6617.611120;
+        else if(CVX_COEFF == 100)
+            exec_time = 422.874663*loop_counter[0] + 124.250000*loop_counter[1] + 3172.874663*loop_counter[3] + 6775.375337;
     #endif
 #endif
     return exec_time;
