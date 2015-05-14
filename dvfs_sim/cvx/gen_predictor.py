@@ -23,7 +23,7 @@ def gen_predictor(constant, coeffs):
   predictor += "exec_time = "
   non_zero_indices = []
   for (ci, c) in enumerate(coeffs):
-    if c >= min_threshold:
+    if abs(c) >= min_threshold:
       non_zero_indices.append(ci)
       predictor += "%f*loop_counter[%d] + " % (c, ci)
   predictor += "%f;\n" % (constant)
