@@ -108,14 +108,14 @@
         #define MAX_DVFS_TIME 3497 //max dvfs time
         #define AVG_DVFS_TIME 1901 //average dvfs time
     #endif
-    #if _curseofwar_slice_sdl_
+    #if _curseofwar_slice_
         #define OVERHEAD_TIME 2531 //overhead deadline
         #define AVG_OVERHEAD_TIME 409 //avg overhead deadline
         #define DEADLINE_TIME (int)((35909*SWEEP)/100) //max_exec * sweep / 100
         #define MAX_DVFS_TIME 2354 //max dvfs time
         #define AVG_DVFS_TIME 404 //average dvfs time
     #endif
-    #if _curseofwar_slice_
+    #if _curseofwar_slice_no_sdl_
         #define OVERHEAD_TIME 6222 //overhead deadline
         #define AVG_OVERHEAD_TIME 1488 //avg overhead deadline
         #define DEADLINE_TIME (int)((10592*SWEEP)/100) //max_exec * sweep / 100

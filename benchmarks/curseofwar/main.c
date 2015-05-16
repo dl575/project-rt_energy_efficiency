@@ -192,14 +192,17 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative
-        exec_time = 3208.000000*loop_counter[0] + 3068.000000*loop_counter[2] + -20.000000*loop_counter[10] + 0.000000;
+        exec_time = 899.000000*loop_counter[11] + 34990.000000*loop_counter[12] + 159.000000;
+        //exec_time = 3208.000000*loop_counter[0] + 3068.000000*loop_counter[2] + -20.000000*loop_counter[10] + 0.000000;
     #else //cvx
         if(CVX_COEFF == 10)
-            exec_time = 320.500000*loop_counter[0] + 2196.808653*loop_counter[2] + 573.031891*loop_counter[3] + 320.500000;
+            exec_time = 5557.000000*loop_counter[11] + 29892.000000*loop_counter[12] + 35.000000;
+            //exec_time = 320.500000*loop_counter[0] + 2196.808653*loop_counter[2] + 573.031891*loop_counter[3] + 320.500000;
         else if(CVX_COEFF == 50)
-            exec_time = 361.500000*loop_counter[0] + 2164.840896*loop_counter[2] + 564.693184*loop_counter[3] + 361.500000;
+            exec_time = 5847.000000*loop_counter[11] + 30154.000000*loop_counter[12] + 47.000000;
+            //exec_time = 361.500000*loop_counter[0] + 2164.840896*loop_counter[2] + 564.693184*loop_counter[3] + 361.500000;
         else if(CVX_COEFF == 100)
-            exec_time = 386.499999*loop_counter[0] + 2145.348361*loop_counter[2] + 559.608606*loop_counter[3] + 386.500001;
+            exec_time = 5504.000000*loop_counter[11] + 30485.000000*loop_counter[12] + 59.000000;
 
     #endif
 #endif

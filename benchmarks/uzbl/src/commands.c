@@ -376,11 +376,11 @@ print_loop_counter:
         exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + 36819.485152*loop_counter[6] + 35519.485152*loop_counter[15] + -358.683173;
     #else //cvx
         if(CVX_COEFF == 10)
-            exec_time = 4891.287129*loop_counter[1] + 6689.801979*loop_counter[2] + 36868.168317*loop_counter[6] + 35568.168317*loop_counter[15] + -526.257424;
+            exec_time = 4891.287129*loop_counter[1] + 6689.801979*loop_counter[2] + -10197.831683*loop_counter[3] + -9057.831683*loop_counter[4] + -10203.831683*loop_counter[5] + 36868.168317*loop_counter[6] + -4301.029705*loop_counter[7] + -10074.831683*loop_counter[8] + -5417.544555*loop_counter[10] + -10245.831683*loop_counter[11] + 35568.168317*loop_counter[15] + -2915.029705*loop_counter[16] + -10548.831683*loop_counter[18] + -526.257424;
         else if(CVX_COEFF == 50)
-            exec_time = 4946.811875*loop_counter[1] + 6582.336644*loop_counter[2] + 36838.613864*loop_counter[6] + 35538.613864*loop_counter[15] + -444.762383;
+            exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
+            exec_time = 4946.811875*loop_counter[1] + 6582.336644*loop_counter[2] + -10227.386136*loop_counter[3] + -9057.386136*loop_counter[4] + -10233.386136*loop_counter[5] + 36838.613864*loop_counter[6] + -4437.049492*loop_counter[7] + -10104.386136*loop_counter[8] + -5391.574261*loop_counter[10] + -10275.386136*loop_counter[11] + 35538.613864*loop_counter[15] + -2590.049492*loop_counter[16] + -10505.386136*loop_counter[18] + -444.762383;
         else if(CVX_COEFF == 100) 
-            exec_time = 579.000000*loop_counter[2] + 278.000000*loop_counter[3] + 1448.000000*loop_counter[4] + 272.000000*loop_counter[5] + 47344.000000*loop_counter[6] + 65.000000*loop_counter[7] + 401.000000*loop_counter[8] + 167.000000*loop_counter[10] + 230.000000*loop_counter[11] + 46044.000000*loop_counter[15] + 2998.000000*loop_counter[16] + 0.000000;
     #endif
 #endif
     return exec_time;

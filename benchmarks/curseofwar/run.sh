@@ -43,7 +43,7 @@ if [[ $2 ]] ; then
     sleep 1;
     echo $2"..."
     rm -rf times.txt
-    taskset $TASKSET_FLAG ./curseofwar
+    taskset $TASKSET_FLAG ./curseofwar-sdl
     cp times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"

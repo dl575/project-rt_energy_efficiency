@@ -87,11 +87,12 @@ float slice(const char *string)
         exec_time = -1173.000000*loop_counter[0] + 103.000000*loop_counter[1] + 1842.000000*loop_counter[3] + 8605.000000;
     #else //cvx
         if(CVX_COEFF == 10)
-            exec_time = 1021.782842*loop_counter[0] + 90.533333*loop_counter[1] + 1996.750479*loop_counter[3] + 6186.617158;
+            exec_time = 1021.782842*loop_counter[0] + 90.533333*loop_counter[1] + -1073.150479*loop_counter[2] + 1996.750479*loop_counter[3] + 6186.617158;
         else if(CVX_COEFF == 50)
-            exec_time = 742.055547*loop_counter[0] + 98.333333*loop_counter[1] + 2573.388880*loop_counter[3] + 6617.611120;
+            exec_time = 742.055547*loop_counter[0] + 98.333333*loop_counter[1] + -1280.055547*loop_counter[2] + 2573.388880*loop_counter[3] + 6617.611120;
         else if(CVX_COEFF == 100)
-            exec_time = 422.874663*loop_counter[0] + 124.250000*loop_counter[1] + 3172.874663*loop_counter[3] + 6775.375337;
+            exec_time = 422.874663*loop_counter[0] + 124.250000*loop_counter[1] + -1378.374663*loop_counter[2] + 3172.874663*loop_counter[3] + 6775.375337;
+            //exec_time = 422.874663*loop_counter[0] + 124.250000*loop_counter[1] + 3172.874663*loop_counter[3] + 6775.375337;
     #endif
 #endif
     return exec_time;
@@ -2912,7 +2913,7 @@ NULL};
           #endif
 
 //---------------------modified by TJSong----------------------//
-
+            usleep(10000);
             start_timing();
             int k;
             for (k = 0; k < 10000; k++) {
