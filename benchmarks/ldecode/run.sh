@@ -34,15 +34,12 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
 echo $BENCHMARK">>>"
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 videos=("akiyo_qcif" "carphone_qcif" "claire_qcif" "coastguard_qcif" "container_qcif" "foreman_qcif" "hall_qcif" "mother-daughter_qcif" "news_qcif" "silent_qcif")
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    fi
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     sleep 1;
     echo $2"..."
     rm -rf times.txt

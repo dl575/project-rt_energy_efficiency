@@ -35,17 +35,14 @@ PID_FREECIV_SERVER=$(pgrep 'xpilot')
 kill -9 $PID_FREECIV_SERVER
 
 echo $BENCHMARK">>>"
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     #if [[ $3 ]] ; then
     #    MAX_FREQ=$3
     #fi
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    fi
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     sleep 1;
     echo $2"..."
     taskset $TASKSET_FLAG ./src/server/xpilots > $2 &
@@ -72,11 +69,11 @@ if [[ $2 ]] ; then
             echo "xpilot ends"
             break
         fi
-    #    xdotool keydown Return 
-    #    xdotool keydown shift+a
+        xdotool keydown Return 
+        xdotool keydown shift+a
         sleep 3
-    #    xdotool keyup Return 
-    #    xdotool keyup shift+a
+        xdotool keyup Return 
+        xdotool keyup shift+a
     done
     echo "xdotool done"
     #press QUIT

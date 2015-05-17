@@ -2249,11 +2249,10 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
 
     float exec_time;
-#if !CVX_EN //conservative
-    exec_time = 356.023000*loop_counter[2] + -56.237500*loop_counter[8] + 38.812900*loop_counter[9] + 2.635460*loop_counter[10] + -28.417700*loop_counter[12] + -43.000100*loop_counter[14] + -25.273100*loop_counter[15] + 860.411000*loop_counter[24] + -41.017100*loop_counter[34] + -59.844200*loop_counter[35] + 40.692400*loop_counter[36] + 43.423300*loop_counter[38] + 43.731600*loop_counter[40] + -1.072690*loop_counter[41] + 153.768000*loop_counter[50] + 33.394800*loop_counter[51] + -41.463000*loop_counter[53] + 103.107000*loop_counter[54] + -22.992200*loop_counter[56] + -133.312000*loop_counter[57] + 279.367000*loop_counter[60] + 26.136500*loop_counter[68] + 15.882400*loop_counter[69] + -2.674460*loop_counter[70] + 28.108400*loop_counter[72] + -11.090700*loop_counter[74] + -31.600400*loop_counter[75] + 1.706180*loop_counter[84] + 901.401000;
-#else //cvx
-    exec_time = 202.903193*loop_counter[2] + 47.233797*loop_counter[8] + 20.183816*loop_counter[10] + 154.381440*loop_counter[12] + 11.222676*loop_counter[14] + 607.944564*loop_counter[24] + 49.754376*loop_counter[34] + 65.408560*loop_counter[36] + 161.385701*loop_counter[38] + 56.137159*loop_counter[40] + 410.481162*loop_counter[46] + 29.719477*loop_counter[53] + 1.444937*loop_counter[56] + 50.876800*loop_counter[57] + 67.365006*loop_counter[68] + 43.988209*loop_counter[69] + 73.613026*loop_counter[72] + 0.431420*loop_counter[84] + 1065.455244;
-#endif
+    #if !CVX_EN //conservative
+        exec_time = 356.023000*loop_counter[2] + -56.237500*loop_counter[8] + 38.812900*loop_counter[9] + 2.635460*loop_counter[10] + -28.417700*loop_counter[12] + -43.000100*loop_counter[14] + -25.273100*loop_counter[15] + 860.411000*loop_counter[24] + -41.017100*loop_counter[34] + -59.844200*loop_counter[35] + 40.692400*loop_counter[36] + 43.423300*loop_counter[38] + 43.731600*loop_counter[40] + -1.072690*loop_counter[41] + 153.768000*loop_counter[50] + 33.394800*loop_counter[51] + -41.463000*loop_counter[53] + 103.107000*loop_counter[54] + -22.992200*loop_counter[56] + -133.312000*loop_counter[57] + 279.367000*loop_counter[60] + 26.136500*loop_counter[68] + 15.882400*loop_counter[69] + -2.674460*loop_counter[70] + 28.108400*loop_counter[72] + -11.090700*loop_counter[74] + -31.600400*loop_counter[75] + 1.706180*loop_counter[84] + 901.401000;
+    #else //cvx    
+    #endif
     return exec_time;
   }
 }
@@ -3119,9 +3118,14 @@ float main_loop_slice_reduced(char c, uint8_t board[4][4])
     ;
     float exec_time;
 #if !CVX_EN //conservative
-    exec_time = 298.240000*loop_counter[2] + -71.137000*loop_counter[8] + 34.323900*loop_counter[9] + 45.845400*loop_counter[10] + 160.022000*loop_counter[12] + -107.165000*loop_counter[14] + -158.704000*loop_counter[15] + 940.607000*loop_counter[24] + 21.608200*loop_counter[34] + -21.272400*loop_counter[35] + -10.501700*loop_counter[36] + -15.329200*loop_counter[38] + 35.635200*loop_counter[40] + 15.693900*loop_counter[41] + 65.000300*loop_counter[50] + 58.847200*loop_counter[51] + -15.288000*loop_counter[53] + 49.249600*loop_counter[54] + -42.014100*loop_counter[56] + -60.143400*loop_counter[57] + 1148.960000*loop_counter[60] + 22.123300*loop_counter[68] + -37.645800*loop_counter[69] + -2.619700*loop_counter[70] + 28.611200*loop_counter[72] + 11.465100*loop_counter[74] + -7.646440*loop_counter[75] + 0.941292*loop_counter[84] + 653.466000;
+    exec_time = 122.868000*loop_counter[2] + 261.677000*loop_counter[8] + -90.609600*loop_counter[9] + 15.047800*loop_counter[11] + 281.673000*loop_counter[12] + 58.613500*loop_counter[14] + 8.840640*loop_counter[15] + -215.377000*loop_counter[24] + 82.887500*loop_counter[34] + 23.840100*loop_counter[35] + -3.138030*loop_counter[36] + 38.234700*loop_counter[38] + -21.759300*loop_counter[40] + -73.804800*loop_counter[41] + -24.479300*loop_counter[50] + -7.347490*loop_counter[51] + 35.698500*loop_counter[53] + 79.723800*loop_counter[54] + -21.712800*loop_counter[56] + 124.679000*loop_counter[60] + 29.171300*loop_counter[68] + -1.146070*loop_counter[69] + 9.540680*loop_counter[71] + 3.880310*loop_counter[73] + -66.106100*loop_counter[75] + -3.597610*loop_counter[84] + 1909.640000;
 #else //cvx
-    exec_time = 157.433741*loop_counter[2] + 25.567682*loop_counter[9] + 40.071512*loop_counter[10] + 113.429903*loop_counter[12] + 657.112561*loop_counter[24] + 26.853147*loop_counter[34] + 38.171328*loop_counter[40] + 18.552447*loop_counter[41] + 59.522047*loop_counter[50] + 54.722532*loop_counter[51] + 56.097443*loop_counter[54] + 882.737415*loop_counter[60] + 25.190732*loop_counter[68] + 30.223131*loop_counter[72] + 12.662706*loop_counter[74] + 0.618881*loop_counter[84] + 922.964361;
+        if(CVX_COEFF == 10)
+            exec_time = 560.162758*loop_counter[2] + 262.920307*loop_counter[8] + -90.086186*loop_counter[9] + 15.167749*loop_counter[11] + 283.134395*loop_counter[12] + 57.872098*loop_counter[14] + 6.616293*loop_counter[15] + 438.624604*loop_counter[24] + 2.901740*loop_counter[34] + 8.498630*loop_counter[35] + 13.123690*loop_counter[36] + 0.531196*loop_counter[38] + -13.761758*loop_counter[40] + -3.345834*loop_counter[41] + 444.466775*loop_counter[46] + -22.344746*loop_counter[50] + -9.731700*loop_counter[51] + 37.850944*loop_counter[53] + 82.025088*loop_counter[54] + -19.964876*loop_counter[56] + 550.028394*loop_counter[60] + 58.170062*loop_counter[68] + 0.658846*loop_counter[69] + -4.249692*loop_counter[71] + 5.185938*loop_counter[73] + -39.652290*loop_counter[75] + -3.728453*loop_counter[84] + 1466.328384;
+        else if(CVX_COEFF == 50)
+            exec_time = 615.379751*loop_counter[2] + 261.677291*loop_counter[8] + -90.609562*loop_counter[9] + 15.047809*loop_counter[11] + 281.673307*loop_counter[12] + 58.613546*loop_counter[14] + 8.840637*loop_counter[15] + 277.134402*loop_counter[24] + 82.887449*loop_counter[34] + 23.840139*loop_counter[35] + -3.138031*loop_counter[36] + 38.234728*loop_counter[38] + -21.759296*loop_counter[40] + -73.804781*loop_counter[41] + 492.511314*loop_counter[46] + -24.479251*loop_counter[50] + -7.347486*loop_counter[51] + 35.698472*loop_counter[53] + 79.723804*loop_counter[54] + -21.712839*loop_counter[56] + 617.190254*loop_counter[60] + 29.171315*loop_counter[68] + -1.146070*loop_counter[69] + 9.540681*loop_counter[71] + 3.880308*loop_counter[73] + -66.106078*loop_counter[75] + -3.597610*loop_counter[84] + 1417.130208;
+        else if(CVX_COEFF == 100)
+            exec_time = 615.379740*loop_counter[2] + 261.677291*loop_counter[8] + -90.609562*loop_counter[9] + 15.047809*loop_counter[11] + 281.673307*loop_counter[12] + 58.613546*loop_counter[14] + 8.840637*loop_counter[15] + 277.134390*loop_counter[24] + 82.887449*loop_counter[34] + 23.840139*loop_counter[35] + -3.138031*loop_counter[36] + 38.234728*loop_counter[38] + -21.759296*loop_counter[40] + -73.804781*loop_counter[41] + 492.511302*loop_counter[46] + -24.479251*loop_counter[50] + -7.347486*loop_counter[51] + 35.698472*loop_counter[53] + 79.723804*loop_counter[54] + -21.712839*loop_counter[56] + 617.190242*loop_counter[60] + 29.171315*loop_counter[68] + -1.146070*loop_counter[69] + 9.540681*loop_counter[71] + 3.880308*loop_counter[73] + -66.106078*loop_counter[75] + -3.597610*loop_counter[84] + 1417.130220;
 #endif
     return exec_time;
   }
@@ -4230,7 +4234,7 @@ int main(int argc, char *argv[]) {
         // c=getchar(); //to input automatically
         static int i=0;
         c=65+(i++)%4;
-        usleep(10000);
+        usleep(100000);
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//

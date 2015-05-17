@@ -32,25 +32,17 @@ sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # disable all flags ralated to predict/oralce/pid
 sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-
-function bench {
-    for (( i=0; i<${#_ALL_BENCH_[@]}; i++ ));
-    do
-        sed -i -e 's/'"${_ALL_BENCH_[$i]} 1"'/'"${_ALL_BENCH_[$i]} 0"'/g' $BENCH_PATH/$COMMON_FILE
-    done
-    sed -i -e 's/'"$1 0"'/'"$1 1"'/g' $BENCH_PATH/$COMMON_FILE
-}
-
-bench ${_BENCH_FOR_DEFINE_[$1]}
 
 
 #for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
 #do
 #    echo "#if _"${BENCH_NAME[$i]}"_"
 #    cd $BENCH_PATH/${SOURCE_PATH[$i]}
-#    #run find_deadline.py script
+    #run find_deadline.py script
 #    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt M1M2.txt
 #    echo "#endif"
 #done
@@ -58,6 +50,17 @@ bench ${_BENCH_FOR_DEFINE_[$1]}
 #exit 0
 for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
 do
+    function bench {
+        for (( j=0; j<${#_ALL_BENCH_[@]}; j++ ));
+        do
+            sed -i -e 's/'"${_ALL_BENCH_[$j]} 1"'/'"${_ALL_BENCH_[$j]} 0"'/g' $BENCH_PATH/$COMMON_FILE
+        done
+        sed -i -e 's/'"$1 0"'/'"$1 1"'/g' $BENCH_PATH/$COMMON_FILE
+    }
+    bench ${_BENCH_FOR_DEFINE_[$i]}
+
+
+
     #---------------to get execution deadline--------------
     # GET_DEADLINE enable, others disable, run performance
     sed -i -e 's/'"$GET_DEADLINE_DISABLED"'/'"$GET_DEADLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -90,7 +93,14 @@ do
     elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
         echo "[pocketsphinx] make install"
         cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        rm -rf autom4te.cache/
+        ./autogen.sh
+        ./configure --prefix=`pwd`/../install
         taskset 0xff sudo make install 
+    elif [ ${SOURCE_FILES[$i]} == "curseofwar/main.c" ] ; then
+        echo "[curseofwar] make SDL=yes"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff make SDL=yes
     fi
 
     #run bnechmark
@@ -113,7 +123,7 @@ do
     
     rm -rf $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample
 
-    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
     cp M0.txt M1M2.txt $DVFS_SIM_PATH/data_odroid/M0M1M2/$1/${BENCH_NAME[$i]} 
 
     #---------------to get overhead deadline--------------
@@ -148,7 +158,14 @@ do
     elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
         echo "[pocketsphinx] make install"
         cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        rm -rf autom4te.cache/
+        ./autogen.sh
+        ./configure --prefix=`pwd`/../install
         taskset 0xff sudo make install 
+    elif [ ${SOURCE_FILES[$i]} == "curseofwar/main.c" ] ; then
+        echo "[curseofwar] make SDL=yes"
+        cd $BENCH_PATH/${SOURCE_PATH[$i]}
+        taskset 0xff make SDL=yes
     fi
 
     #run bnechmark
@@ -171,7 +188,7 @@ do
     
     rm -rf $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample
     
-    cd $BENCH_PATH/${BENCHMARKS[$i]}
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
     cp M0.txt M1M2.txt $DVFS_SIM_PATH/data_odroid/M0M1M2/$1/${BENCH_NAME[$i]} 
 done
 

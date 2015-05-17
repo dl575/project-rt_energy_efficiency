@@ -158,9 +158,26 @@ float run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_S
   {
     predict_exec_time:
     ;
-
     float exec_time;
-    exec_time = 0;
+#if CORE //big
+    #if !CVX_EN //conservative
+        exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+    #else //cvx
+        exec_time = 123.000002*loop_counter[0] + 1467.787853*loop_counter[2] + 382.868691*loop_counter[3] + 122.999998;
+    #endif
+#else //LITTLE
+    #if !CVX_EN //conservative
+        exec_time = 802.000000*loop_counter[11] + 34871.000000*loop_counter[12] + 163.000000;
+    #else //cvx
+        if(CVX_COEFF == 10)
+            exec_time = 5577.000000*loop_counter[11] + 29843.000000*loop_counter[12] + 36.000000;
+        else if(CVX_COEFF == 50)
+            exec_time = 5484.000000*loop_counter[11] + 30296.000000*loop_counter[12] + 56.000000;
+        else if(CVX_COEFF == 100)
+            exec_time = 5471.000000*loop_counter[11] + 30306.000000*loop_counter[12] + 59.000000;
+
+    #endif
+#endif
     return exec_time;
   }
 }

@@ -35,21 +35,15 @@ echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 
 echo $BENCHMARK">>>"
 
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    fi
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     sleep 1;
     echo $2"..."
     rm -rf times.txt
-    for n in {1..1}
-    do
-        taskset $TASKSET_FLAG ./2048
-    done
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
+    taskset $TASKSET_FLAG ./2048
+    cp times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
