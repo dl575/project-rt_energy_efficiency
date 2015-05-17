@@ -25,6 +25,10 @@ def get_nwords(n):
   return words
 
 if __name__ == "__main__":
+  """
+  Sweep generator.
+  """
+  """
   j = 0
   for nwords in range(1, 10):
     for i in range(10):
@@ -33,4 +37,15 @@ if __name__ == "__main__":
       j += 1
       print cmd
       os.system(cmd)
-    
+  """  
+
+  """
+  Random generator.
+  """
+  nfiles = 50
+  for i in range(nfiles):
+    nwords = random.randint(1,3)
+    words = get_nwords(nwords)
+    cmd = say_cmd(words, "temp%03d.wav" % (i))
+    print cmd
+    os.system(cmd)
