@@ -34,15 +34,17 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 PID_FREECIV_SERVER=$(pgrep 'xpilot')
 kill -9 $PID_FREECIV_SERVER
 
+echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+
 echo $BENCHMARK">>>"
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    #if [[ $3 ]] ; then
-    #    MAX_FREQ=$3
-    #fi
     echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+    fi
     sleep 1;
     echo $2"..."
     taskset $TASKSET_FLAG ./src/server/xpilots > $2 &
@@ -94,5 +96,5 @@ fi
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
-echo "[ done ]"
+echo "[ run.sh "$2" done ]"
 exit 0

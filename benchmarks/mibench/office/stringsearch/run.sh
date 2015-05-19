@@ -31,15 +31,17 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
 sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
+echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+
 echo $BENCHMARK">>>"
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    #if [[ $3 ]] ; then
-    #    MAX_FREQ=$3
-    #fi
     echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+    fi
     sleep 1;
     echo $2"..."
     taskset $TASKSET_FLAG ./runme_large.sh

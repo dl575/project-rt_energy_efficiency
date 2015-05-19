@@ -40,6 +40,9 @@ videos=("akiyo_qcif" "carphone_qcif" "claire_qcif" "coastguard_qcif" "container_
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+    fi
     sleep 1;
     echo $2"..."
     rm -rf times.txt

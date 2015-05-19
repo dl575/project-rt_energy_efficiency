@@ -39,6 +39,9 @@ echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+    fi
     sleep 1;
     echo $2"..."
     taskset $TASKSET_FLAG uzbl-browser > output_slice.txt &
@@ -80,7 +83,13 @@ if [[ $2 ]] ; then
     xdotool key h;                  sleep 1;
     xdotool key h;                  sleep 1;
     #close 1
-    xdotool key alt+F4;             sleep 60;
+    xdotool key alt+F4;             sleep 1;
+    #make sure to close by mouse click
+    xdotool mousemove 1134 2;       sleep 1;
+    xdotool click 1                 sleep 1;
+    xdotool mousemove 788 15;       sleep 1;
+    xdotool click 1                 sleep 1;
+    sleep 60
  
     mv output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
