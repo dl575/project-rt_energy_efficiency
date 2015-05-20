@@ -58,10 +58,12 @@ if [[ $2 ]] ; then
     xdotool key alt+F10
     #press join
     xdotool mousemove 65 95
+    sleep 1
     xdotool click 1
     sleep 3
     #press click
     xdotool mousemove 490 100
+    sleep 1
     xdotool click 1
     sleep 3
     #playing

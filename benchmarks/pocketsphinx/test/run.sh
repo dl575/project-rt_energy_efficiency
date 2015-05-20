@@ -46,7 +46,7 @@ if [[ $2 ]] ; then
     echo $2"..."
     rm -rf times.txt
     #taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir ../../julius/julius-3.5.2-quickstart-linux/wavs/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
-    taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir /home/odroid/project-rt_energy_efficiency/datasets/pocketsphinx/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
+    taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir /home/odroid/project-rt_energy_efficiency/datasets/pocketsphinx_small/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
     mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"

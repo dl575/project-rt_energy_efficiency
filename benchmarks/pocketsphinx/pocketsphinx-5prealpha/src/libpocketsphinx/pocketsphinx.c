@@ -974,20 +974,25 @@ float ps_process_raw_slice(ps_decoder_t *ps, const int16 *data, size_t n_samples
     float exec_time;
 #if CORE //big
     #if !CVX_EN //conservative
-        exec_time = 4376.170000*loop_counter[5] + 464664.000000;
+        exec_time = 3352.810000*loop_counter[5] + 1198010.000000;
     #else //cvx
-        exec_time = 4363.730627*loop_counter[5] + 458490.582995;
+        if(CVX_COEFF == 10)
+            exec_time = 0;
+        else if(CVX_COEFF == 50)
+            exec_time = 0;
+        else if(CVX_COEFF == 100) 
+            exec_time = 3352.807015*loop_counter[5] + 1198013.035480;
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative
-        exec_time = 15783.400000*loop_counter[5] + 1293630.000000;
+        exec_time = 18330.500000*loop_counter[5] + 517172.000000;
     #else //cvx
         if(CVX_COEFF == 10)
-            exec_time = 16360.901962*loop_counter[5] + 863155.509413;
+            exec_time = 0;
         else if(CVX_COEFF == 50)
-            exec_time = 15783.350873*loop_counter[5] + 1293625.754660;
+            exec_time = 0;
         else if(CVX_COEFF == 100) 
-            exec_time = 15783.350875*loop_counter[5] + 1293625.754560;
+            exec_time = 18330.500000*loop_counter[5] + 517172.500031;
     #endif
 #endif
     return exec_time;
