@@ -83,13 +83,13 @@ if [[ $2 ]] ; then
     xdotool key h;                  sleep 1;
     xdotool key h;                  sleep 1;
     #close 1
-    xdotool key alt+F4;             sleep 1;
+    #    xdotool key alt+F4;             sleep 1;
     #make sure to close by mouse click
     xdotool mousemove 1134 2;       sleep 1;
     xdotool click 1                 sleep 1;
     xdotool mousemove 788 15;       sleep 1;
     xdotool click 1                 sleep 1;
-    sleep 60
+    sleep 10
  
     mv output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else

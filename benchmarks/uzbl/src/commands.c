@@ -380,7 +380,7 @@ print_loop_counter:
         else if(CVX_COEFF == 50)
             exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
         else if(CVX_COEFF == 100) 
-            exec_time = 4946.811875*loop_counter[1] + 6582.336644*loop_counter[2] + -10227.386136*loop_counter[3] + -9057.386136*loop_counter[4] + -10233.386136*loop_counter[5] + 36838.613864*loop_counter[6] + -4437.049492*loop_counter[7] + -10104.386136*loop_counter[8] + -5391.574261*loop_counter[10] + -10275.386136*loop_counter[11] + 35538.613864*loop_counter[15] + -2590.049492*loop_counter[16] + -10505.386136*loop_counter[18] + -444.762383;
+            exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
     #endif
 #endif
     return exec_time;
