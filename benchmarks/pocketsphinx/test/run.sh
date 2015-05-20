@@ -34,18 +34,19 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
 echo $BENCHMARK">>>"
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     fi
     sleep 1;
     echo $2"..."
     rm -rf times.txt
-    taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir ../../julius/julius-3.5.2-quickstart-linux/wavs/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
+    #taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir ../../julius/julius-3.5.2-quickstart-linux/wavs/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
+    taskset $TASKSET_FLAG ../install/bin/pocketsphinx_batch -argfile argFile.txt -cepdir /home/odroid/project-rt_energy_efficiency/datasets/pocketsphinx/ -ctl ctlFile.txt -cepext .wav -adcin true -hyp out.txt
     mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"

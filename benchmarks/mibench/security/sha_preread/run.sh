@@ -31,22 +31,22 @@ sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
 sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
 sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
 
+echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+
 echo $BENCHMARK">>>"
+echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
-    #if [[ $3 ]] ; then
-    #    MAX_FREQ=$3
-    #fi
-    if [[ $2 == "prediction" ]] || [[ $2 == "oracle" ]] || [[ $2 == "pid" ]] ; then 
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    else
-        echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+    if [[ $4 ]] ; then
+        echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     fi
     sleep 1;
     echo $2"..."
+#    taskset $TASKSET_FLAG ./runme_sweep.sh
     taskset $TASKSET_FLAG ./runme_slice.sh
-    mv output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
+    cp output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
@@ -56,5 +56,5 @@ fi
 echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
 echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 
-echo "[ done ]"
+echo "[ run.sh "$2" done ]"
 exit 0

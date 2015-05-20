@@ -630,11 +630,11 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
         exec_time = 78408.500000*loop_counter[23] + -104.979000*loop_counter[34] + -14.881800*loop_counter[35] + 111739.000000*loop_counter[39] + 0.000000;
     #else //cvx
         if(CVX_COEFF == 10)
-            exec_time = 5908.997961*loop_counter[22] + 188.273451*loop_counter[30] + 188.273451*loop_counter[32] + 66.564600*loop_counter[33] + 47.457158*loop_counter[35] + 26027.482725*loop_counter[39] + 5909.001039*loop_counter[40] + 5908.997965;
+            exec_time = 5894.931214*loop_counter[22] + -20008.459614*loop_counter[23] + 187.824720*loop_counter[30] + 187.824720*loop_counter[32] + 66.405719*loop_counter[33] + -93.656929*loop_counter[34] + 50.746738*loop_counter[35] + 25903.393035*loop_counter[39] + 5894.929187*loop_counter[40] + 5894.931370;
         else if(CVX_COEFF == 50)
-            exec_time = 6566.360852*loop_counter[22] + 209.206813*loop_counter[30] + 209.207385*loop_counter[32] + 73.966214*loop_counter[33] + 26099.643991*loop_counter[39] + 6566.147648*loop_counter[40] + 6566.360260;
+            exec_time = 6529.724993*loop_counter[22] + -19434.536550*loop_counter[23] + 208.050782*loop_counter[30] + 208.050782*loop_counter[32] + 73.557095*loop_counter[33] + -115.884146*loop_counter[34] + 4.195111*loop_counter[35] + 25964.268319*loop_counter[39] + 6529.739069*loop_counter[40] + 6529.725170;
         else if(CVX_COEFF == 100)
-            exec_time = 6805.527636*loop_counter[22] + 216.829693*loop_counter[30] + 216.829693*loop_counter[32] + 76.662686*loop_counter[33] + 2.986310*loop_counter[35] + 26041.079434*loop_counter[39] + 6805.530257*loop_counter[40] + 6805.528788;
+            exec_time = 6801.962062*loop_counter[22] + -19148.102525*loop_counter[23] + 217.011527*loop_counter[30] + 216.982011*loop_counter[32] + 76.706812*loop_counter[33] + -125.582026*loop_counter[34] + 15.162092*loop_counter[35] + 25962.553685*loop_counter[39] + 6808.737680*loop_counter[40] + 6801.970990;
     #endif
 #endif
     return exec_time;

@@ -37,7 +37,7 @@ for i in range(nfiles):
   filename = "input%d.txt" % (i)
   print "generating %s..." % (filename)
   f = open(filename, 'w')
-  nlines = random.randint(1000, 26000)
+  nlines = random.randint(1000, 6000)
   for j in range(nlines):
     f.write(random_sentence())
   f.close()

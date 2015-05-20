@@ -106,6 +106,7 @@ do
 
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/temp.txt
     
+    cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"0.txt"
     mv $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
 
@@ -113,11 +114,13 @@ do
     if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
         cd $DATA_ODROID_PATH
         taskset 0xff ./filter_xpilot.py $1 temp_sample temp.txt > temp
+        cp temp $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
         cp temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"0.txt"
         mv temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
     elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
         cd $DATA_ODROID_PATH
         taskset 0xff ./filter_uzbl.py $1 temp_sample temp.txt > temp
+        cp temp $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
         cp temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"0.txt"
         mv temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
     fi       
@@ -136,5 +139,14 @@ cd $DVFS_SIM_PATH
 taskset 0xff $DVFS_SIM_PATH/gen_oracle_array.py
 cd $DVFS_SIM_PATH/cvx
 taskset 0xff $DVFS_SIM_PATH/cvx/gen_predictor.py
+
+for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+do
+    echo "#if _"${BENCH_NAME[$i]}"_"
+    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+    #run find_deadline.py script
+    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt
+    echo "#endif"
+done
 
 exit 0
