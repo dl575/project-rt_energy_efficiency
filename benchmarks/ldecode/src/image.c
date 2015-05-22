@@ -627,14 +627,17 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     //exec_time = 2762.048938*loop_counter[22] + 88.004560*loop_counter[30] + 88.004560*loop_counter[32] + 31.115936*loop_counter[33] + 58.403778*loop_counter[35] + 15604.967487*loop_counter[39] + 2762.004539*loop_counter[40] + 2762.048532;
 #else
     #if !CVX_EN //conservative
-        exec_time = -26377.900000*loop_counter[22] + 15470.000000*loop_counter[23] + 401.782000*loop_counter[34] + 40.142900*loop_counter[35] + 8187.000000*loop_counter[39] + 0.000000;
+        exec_time = -4592.000000*loop_counter[22] + 9561.000000*loop_counter[23] + 239.875000*loop_counter[34] + 1238.500000*loop_counter[35] + 4844.000000*loop_counter[39] + 0.000000;
     #else //cvx
+        if(CVX_COEFF == 1)
+            exec_time = 1216.357267*loop_counter[22] + 4330.750014*loop_counter[23] + 94.896073*loop_counter[30] + 94.896073*loop_counter[32] + 33.553183*loop_counter[33] + 47.625000*loop_counter[34] + -29.749993*loop_counter[35] + 7712.942809*loop_counter[39] + 1216.373762*loop_counter[40] + 1216.372606;
         if(CVX_COEFF == 10)
-            exec_time=0;
-        else if(CVX_COEFF == 50)
-            exec_time=0;
+            exec_time = 441.717662*loop_counter[22] + 5474.000003*loop_counter[23] + 34.461465*loop_counter[30] + 34.461465*loop_counter[32] + 12.184553*loop_counter[33] + 161.150000*loop_counter[34] + 29.742856*loop_counter[35] + 4843.999996*loop_counter[39] + 441.723565*loop_counter[40] + 441.724540;
         else if(CVX_COEFF == 100)
-            exec_time = -599.103243*loop_counter[22] + 10612.000000*loop_counter[23] + -46.735611*loop_counter[30] + -46.735611*loop_counter[32] + -16.525921*loop_counter[33] + 236.837963*loop_counter[34] + -68.592593*loop_counter[35] + 8187.000000*loop_counter[39] + -599.101816*loop_counter[40] + -599.103260;
+            exec_time = 103.891702*loop_counter[22] + 8393.000003*loop_counter[23] + 8.104357*loop_counter[30] + 8.104357*loop_counter[32] + 2.866197*loop_counter[33] + 192.092593*loop_counter[34] + -64.333334*loop_counter[35] + 4844.000000*loop_counter[39] + 103.897291*loop_counter[40] + 103.894843;
+        else if(CVX_COEFF == 1000)
+            exec_time = -105.410341*loop_counter[22] + 9102.999999*loop_counter[23] + -8.211934*loop_counter[30] + -8.211934*loop_counter[32] + -2.900484*loop_counter[33] + 211.250000*loop_counter[34] + 1276.666667*loop_counter[35] + 4844.000000*loop_counter[39] + -105.408828*loop_counter[40] + -105.406755;
+
     #endif
 #endif
     return exec_time;
