@@ -367,9 +367,10 @@ print_loop_counter:
     float exec_time;
 #if CORE //big
     #if !CVX_EN //conservative
-        exec_time = 48.000000*loop_counter[1] + 74.000000*loop_counter[2] + 285.000000*loop_counter[3] + 824.000000*loop_counter[4] + 345.000000*loop_counter[5] + 27186.000000*loop_counter[6] + 378.000000*loop_counter[8] + 321.000000*loop_counter[11] + 26411.000000*loop_counter[15] + 1123.000000*loop_counter[16] + 171.000000*loop_counter[18] + 0.000000;
+        exec_time = 0;        
     #else //cvx
-        exec_time = 2919.227729*loop_counter[1] + 3612.118783*loop_counter[2] + 21019.099006*loop_counter[6] + 19981.099006*loop_counter[15] + -313.445518;
+        if(CVX_COEFF == 100) 
+            exec_time = 5517.920799*loop_counter[1] + 6354.089086*loop_counter[2] + -9893.425743*loop_counter[3] + -8198.425745*loop_counter[4] + -10044.425743*loop_counter[5] + 36294.574255*loop_counter[6] + -5087.336658*loop_counter[7] + -9946.425743*loop_counter[8] + -5808.504944*loop_counter[10] + -10294.425743*loop_counter[11] + 34694.574256*loop_counter[15] + -1557.336659*loop_counter[16] + -10449.425745*loop_counter[18] + -290.584141;
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative

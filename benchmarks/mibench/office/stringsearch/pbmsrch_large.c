@@ -78,9 +78,10 @@ float slice(const char *string)
     float exec_time;
 #if CORE //big
     #if !CVX_EN //conservative
-        exec_time = -440.000000*loop_counter[0] + 64.000000*loop_counter[1] + 490.000000*loop_counter[3] + 3067.000000;
+        exec_time = 0;
     #else //cvx
-        exec_time = 276.166875*loop_counter[0] + 61.111111*loop_counter[1] + 794.833542*loop_counter[3] + 2360.833125;
+        if(CVX_COEFF == 100)
+            exec_time = 386.791774*loop_counter[0] + 139.250000*loop_counter[1] + -1269.791774*loop_counter[2] + 3000.291774*loop_counter[3] + 6313.458226;
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative

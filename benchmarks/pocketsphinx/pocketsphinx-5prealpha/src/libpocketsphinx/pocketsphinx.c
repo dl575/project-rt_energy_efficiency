@@ -974,14 +974,14 @@ float ps_process_raw_slice(ps_decoder_t *ps, const int16 *data, size_t n_samples
     float exec_time;
 #if CORE //big
     #if !CVX_EN //conservative
-        exec_time = 3352.810000*loop_counter[5] + 1198010.000000;
+        exec_time = 0;
     #else //cvx
         if(CVX_COEFF == 10)
             exec_time = 0;
         else if(CVX_COEFF == 50)
             exec_time = 0;
         else if(CVX_COEFF == 100) 
-            exec_time = 3352.807015*loop_counter[5] + 1198013.035480;
+            exec_time = 30391.632320*loop_counter[5] + 830039.753320;
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative

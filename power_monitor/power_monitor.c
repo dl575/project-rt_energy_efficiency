@@ -35,7 +35,7 @@ int main(void)
     }
     fclose(fp_power); 
 #endif
-
+/*
     now.tv_sec=0;
     now.tv_usec=0;
     rc = settimeofday(&now, NULL);
@@ -45,7 +45,7 @@ int main(void)
         printf("settimeofday failed\n");
         return -1;
     }
-
+*/
     while(1){
         gettimeofday(&s, NULL);
 

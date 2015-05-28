@@ -464,9 +464,11 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
     float exec_time;
 #if CORE // big
     #if !CVX_EN //conservative
-        exec_time = -295.268000*loop_counter[0] + 318.894000*loop_counter[7] + 0.044093*loop_counter[8] + 1.376700*loop_counter[16] + 0.000000;
+        exec_time = 0;
     #else // cvx
-        exec_time = 207.660696*loop_counter[0] + 25.957591*loop_counter[1] + 73.419124*loop_counter[2] + 207.660784*loop_counter[3] + 207.660784*loop_counter[4] + 207.660784*loop_counter[5] + 0.203004*loop_counter[6] + 29834.897064*loop_counter[7] + 0.008464*loop_counter[8] + 0.067716*loop_counter[10] + 0.067716*loop_counter[11] + 0.067716*loop_counter[12] + 207.660721*loop_counter[15] + 25.957574*loop_counter[17] + 207.660697*loop_counter[19] + 207.660697*loop_counter[20] + 207.660697*loop_counter[21] + 207.660695;
+        if(CVX_COEFF == 100)
+            exec_time = 849.942001*loop_counter[0] + 106.241872*loop_counter[1] + 300.468201*loop_counter[2] + 849.948329*loop_counter[3] + 849.948329*loop_counter[4] + 849.948329*loop_counter[5] + 0.246239*loop_counter[6] + -8439.247166*loop_counter[7] + 0.030829*loop_counter[8] + 0.246639*loop_counter[10] + 0.246639*loop_counter[11] + 0.246639*loop_counter[12] + 849.947168*loop_counter[15] + 880.316443*loop_counter[16] + 106.241208*loop_counter[17] + 849.939052*loop_counter[19] + 849.939052*loop_counter[20] + 849.939052*loop_counter[21] + 849.939058;
+
     #endif
 #else // LITTLE
     #if !CVX_EN //conservative

@@ -50,6 +50,7 @@ sed -i -e 's/'"$GET_DEADLINE_ENABLED"'/'"$GET_DEADLINE_DISABLED"'/g' $BENCH_PATH
 # disable all flags ralated to predict/oralce/pid
 sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$SLICE_OVERHEAD_ONLY_ENABLED"'/'"$SLICE_OVERHEAD_ONLY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
@@ -62,6 +63,10 @@ elif [ $3 == "overhead_en" ] ; then
 elif [ $3 == "overhead_dis" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "slice_overhead_en" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$SLICE_OVERHEAD_ONLY_DISABLED"'/'"$SLICE_OVERHEAD_ONLY_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "oracle_en" ] ; then
     sed -i -e 's/'"$ORACLE_DISABLED"'/'"$ORACLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "pid_en" ] ; then
