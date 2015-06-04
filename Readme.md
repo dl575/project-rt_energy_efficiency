@@ -1,4 +1,4 @@
-# Execution Time Prediction 
+# Prediction-Guided Performance-Energy Trade-offs
 
 This repository contains code related to experiments for our work on using
 execution time prediction to improve energy efficiency in soft real-time (e.g.,
