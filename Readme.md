@@ -6,6 +6,7 @@ interactive) systems.
 
 Directory structure:
 - benchmarks: Programs that have been modified to perform execution time prediction and instrumented for experiments.
+- datasets: Datasets used for benchmark programs, including generation scripts.
 - dvfs_sim: Code for training prediction model and analytical estimates of DVFS energy savings.
 - lib: Common library code.
 - power_monitor: Utility for measuring power on ODRIOD board.
