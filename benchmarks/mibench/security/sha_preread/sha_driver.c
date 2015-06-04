@@ -201,9 +201,10 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
     float exec_time;
 #if CORE
     #if !CVX_EN //conservative
-        exec_time = -24.262800*loop_counter[1] + 0.801681*loop_counter[3] + -21.147600*loop_counter[10] + 6.591040*loop_counter[17] + 0.000000;
+        exec_time = 0;
     #else //cvx    
-        exec_time = 25.548670*loop_counter[0] + 25.631142*loop_counter[1] + 0.016066*loop_counter[3] + 0.002005*loop_counter[4] + 0.000708*loop_counter[5] + 0.001698*loop_counter[6] + 0.001698*loop_counter[7] + 0.001698*loop_counter[8] + 0.001698*loop_counter[9] + -0.924449;
+        if(CVX_COEFF == 100)
+            exec_time = -858.693607*loop_counter[0] + -864.704127*loop_counter[1] + 1.048158*loop_counter[3] + 0.131124*loop_counter[4] + 0.046368*loop_counter[5] + 0.111030*loop_counter[6] + 0.111030*loop_counter[7] + 0.111030*loop_counter[8] + 0.111030*loop_counter[9] + -37.148443*loop_counter[10] + -4.643609*loop_counter[11] + -1.641741*loop_counter[12] + -3.928025*loop_counter[13] + -3.928025*loop_counter[14] + -3.928025*loop_counter[15] + -3.928025*loop_counter[16] + 6.316377*loop_counter[17] + 2.241619*loop_counter[18] + 5.317076*loop_counter[19] + 5.317076*loop_counter[20] + 5.317076*loop_counter[21] + 5.317076*loop_counter[22] + 50.217930;
     #endif
 #else
     #if !CVX_EN //conservative

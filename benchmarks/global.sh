@@ -8,8 +8,12 @@ CORE_BIG="CORE 1"
 CORE_LITTLE="CORE 0"
 PREDICT_ENABLED="PREDICT_EN 1"
 PREDICT_DISABLED="PREDICT_EN 0"
-#OVERHEAD_ENABLED="OVERHEAD_EN 1"
-#OVERHEAD_DISABLED="OVERHEAD_EN 0"
+CVX_ENABLED="CVX_EN 1"
+CVX_DISABLED="CVX_EN 0"
+OVERHEAD_ENABLED="OVERHEAD_EN 1"
+OVERHEAD_DISABLED="OVERHEAD_EN 0"
+SLICE_OVERHEAD_ONLY_ENABLED="SLICE_OVERHEAD_ONLY_EN 1"
+SLICE_OVERHEAD_ONLY_DISABLED="SLICE_OVERHEAD_ONLY_EN 0"
 GET_PREDICT_ENABLED="GET_PREDICT 1"
 GET_PREDICT_DISABLED="GET_PREDICT 0"
 GET_DEADLINE_ENABLED="GET_DEADLINE 1"
@@ -40,86 +44,93 @@ D33_DISABLED="DEADLINE_33MS 0"
 
 #SWEEP=("60" "80" "100" "120" "140")
 #SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
-SWEEP=("100")
-
-
+SWEEP=("cvx_sweep")
+#SWEEP=("1")
+#SWEEP=("4000000")
 _ALL_BENCH_=(
-"_pocketsphinx_"
 "_stringsearch_"
 "_sha_preread_"
 "_rijndael_preread_"
 "_xpilot_slice_"
 "_2048_slice_"
-"_curseofwar_slice_"
+"_curseofwar_slice_sdl_"
+"_ldecode_"
+"_pocketsphinx_"
 "_uzbl_"
 )
 
 #:53,94s/^/#
 #:53,94s/^#/
+
 SOURCE_FILES=(
-"xpilot/xpilot-4.5.5/src/server/server.c"
+"ldecode/src/image.c"
 )
 SOURCE_PATH=(
-"xpilot/xpilot-4.5.5"
+"ldecode"
 )
 BENCHMARKS=(
-"xpilot/xpilot-4.5.5"
+"ldecode"
 )
 BENCH_NAME=(
-"xpilot_slice"
+"ldecode"
 )
 _BENCH_FOR_DEFINE_=(
-"_xpilot_slice_"
+"_ldecode_"
 )
 
 #SOURCE_FILES=(
-#"pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c"
 #"mibench/office/stringsearch/pbmsrch_large.c"
 #"mibench/security/sha_preread/sha_driver.c"
 #"mibench/security/rijndael_preread/aesxam.c"
-#"xpilot/xpilot-4.5.5/src/server/server.c"
 #"2048.c/2048.c"
 #"curseofwar/main.c"
+#"xpilot/xpilot-4.5.5/src/server/server.c"
+#"ldecode/src/image.c"
+#"pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c"
 #"uzbl/src/commands.c"
 #)
 #SOURCE_PATH=(
-#"pocketsphinx/pocketsphinx-5prealpha"
 #"mibench/office/stringsearch"
 #"mibench/security/sha_preread"
 #"mibench/security/rijndael_preread"
-#"xpilot/xpilot-4.5.5"
 #"2048.c"
 #"curseofwar"
+#"xpilot/xpilot-4.5.5"
+#"ldecode"
+#"pocketsphinx/pocketsphinx-5prealpha"
 #"uzbl"
 #)
 #BENCHMARKS=(
-#"pocketsphinx/test"
 #"mibench/office/stringsearch"
 #"mibench/security/sha_preread"
 #"mibench/security/rijndael_preread"
-#"xpilot/xpilot-4.5.5"
 #"2048.c"
 #"curseofwar"
+#"xpilot/xpilot-4.5.5"
+#"ldecode"
+#"pocketsphinx/test"
 #"uzbl"
 #)
 #BENCH_NAME=(
-#"pocketsphinx"
 #"stringsearch"
 #"sha_preread"
 #"rijndael_preread"
-#"xpilot_slice"
 #"2048_slice"
-#"curseofwar_slice"
+#"curseofwar_slice_sdl"
+#"xpilot_slice"
+#"ldecode"
+#"pocketsphinx"
 #"uzbl"
 #)
 #_BENCH_FOR_DEFINE_=(
-#"_pocketsphinx_"
 #"_stringsearch_"
 #"_sha_preread_"
 #"_rijndael_preread_"
-#"_xpilot_slice_"
 #"_2048_slice_"
-#"_curseofwar_slice_"
+#"_curseofwar_slice_sdl_"
+#"_xpilot_slice_"
+#"_ldecode_"
+#"_pocketsphinx_"
 #"_uzbl_"
 #)
-
+#

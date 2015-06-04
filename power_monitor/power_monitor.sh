@@ -42,9 +42,10 @@ taskset 0xff make -j16
 
 rm -rf output_power.txt
 
-if [ $1 == "big" ] ; then
-sudo taskset 0x0f ./power_monitor > output_power.txt
-elif [ $1 == "little" ] ; then
-sudo taskset 0xf0 ./power_monitor > output_power.txt
-fi
+exit 0
+#if [ $1 == "big" ] ; then
+#sudo taskset 0x0f ./power_monitor > output_power.txt
+#elif [ $1 == "little" ] ; then
+#sudo taskset 0xf0 ./power_monitor > output_power.txt
+#fi
 

@@ -615,9 +615,10 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
 #if CORE
     /*With all features*/
     #if !CVX_EN //conservative
-        exec_time = 26028.200000*loop_counter[22] + -23.122500*loop_counter[34] + 32.793500*loop_counter[35] + 19100.300000*loop_counter[39] + 0.000000;
+        exec_time = 0;
     #else //cvx
-        exec_time = 2950.717744*loop_counter[22] + 85.887564*loop_counter[30] + 85.887564*loop_counter[32] + 30.560986*loop_counter[33] + 52.210989*loop_counter[35] + 15365.004578*loop_counter[39] + 2959.435179*loop_counter[40] + 2950.411431;
+        if(CVX_COEFF == 100)
+            exec_time = 512.702659*loop_counter[22] + 11023.000000*loop_counter[23] + 39.996291*loop_counter[30] + 39.996291*loop_counter[32] + 14.142665*loop_counter[33] + 191.650000*loop_counter[34] + -266.325000*loop_counter[35] + 8527.000000*loop_counter[39] + 512.696965*loop_counter[40] + 512.703143;
     #endif
     /*Without 0th job*/
     //exec_time = -29.734000*loop_counter[34] + 28238.400000;
@@ -627,14 +628,21 @@ float decode_one_frame_inner_loop_slice(struct img_par *img, struct inp_par *inp
     //exec_time = 2762.048938*loop_counter[22] + 88.004560*loop_counter[30] + 88.004560*loop_counter[32] + 31.115936*loop_counter[33] + 58.403778*loop_counter[35] + 15604.967487*loop_counter[39] + 2762.004539*loop_counter[40] + 2762.048532;
 #else
     #if !CVX_EN //conservative
-        exec_time = 78408.500000*loop_counter[23] + -104.979000*loop_counter[34] + -14.881800*loop_counter[35] + 111739.000000*loop_counter[39] + 0.000000;
+        exec_time = -4592.000000*loop_counter[22] + 9561.000000*loop_counter[23] + 239.875000*loop_counter[34] + 1238.500000*loop_counter[35] + 4844.000000*loop_counter[39] + 0.000000;
     #else //cvx
-        if(CVX_COEFF == 10)
-            exec_time = 5894.931214*loop_counter[22] + -20008.459614*loop_counter[23] + 187.824720*loop_counter[30] + 187.824720*loop_counter[32] + 66.405719*loop_counter[33] + -93.656929*loop_counter[34] + 50.746738*loop_counter[35] + 25903.393035*loop_counter[39] + 5894.929187*loop_counter[40] + 5894.931370;
-        else if(CVX_COEFF == 50)
-            exec_time = 6529.724993*loop_counter[22] + -19434.536550*loop_counter[23] + 208.050782*loop_counter[30] + 208.050782*loop_counter[32] + 73.557095*loop_counter[33] + -115.884146*loop_counter[34] + 4.195111*loop_counter[35] + 25964.268319*loop_counter[39] + 6529.739069*loop_counter[40] + 6529.725170;
+        if(CVX_COEFF == 1)
+            exec_time = 966.509713*loop_counter[22] + 7271.973596*loop_counter[23] + 75.420060*loop_counter[30] + 75.420060*loop_counter[32] + 26.668309*loop_counter[33] + 68.434206*loop_counter[34] + 49.815775*loop_counter[35] + 14909.508053*loop_counter[39] + 966.503992*loop_counter[40] + 966.507252;
+        else if(CVX_COEFF == 2)
+            exec_time = 1648.196134*loop_counter[22] + 5912.276550*loop_counter[23] + 128.597565*loop_counter[30] + 128.597565*loop_counter[32] + 45.469064*loop_counter[33] + 47.750005*loop_counter[34] + -50.222189*loop_counter[35] + 12550.276586*loop_counter[39] + 1648.191065*loop_counter[40] + 1648.194021;
+        else if(CVX_COEFF == 5)
+            exec_time = 584.636639*loop_counter[22] + 7040.999993*loop_counter[23] + 45.621318*loop_counter[30] + 45.621318*loop_counter[32] + 16.131796*loop_counter[33] + 157.749998*loop_counter[34] + 277.899993*loop_counter[35] + 11278.999999*loop_counter[39] + 584.633765*loop_counter[40] + 584.635190;
+        else if(CVX_COEFF == 10)
+            exec_time = 588.489841*loop_counter[22] + 6880.000011*loop_counter[23] + 45.919743*loop_counter[30] + 45.919743*loop_counter[32] + 16.236245*loop_counter[33] + 169.150000*loop_counter[34] + 539.436366*loop_counter[35] + 12436.999996*loop_counter[39] + 588.487489*loop_counter[40] + 588.488648;
         else if(CVX_COEFF == 100)
-            exec_time = 6801.962062*loop_counter[22] + -19148.102525*loop_counter[23] + 217.011527*loop_counter[30] + 216.982011*loop_counter[32] + 76.706812*loop_counter[33] + -125.582026*loop_counter[34] + 15.162092*loop_counter[35] + 25962.553685*loop_counter[39] + 6808.737680*loop_counter[40] + 6801.970990;
+            exec_time = 1381.236055*loop_counter[22] + 10991.000000*loop_counter[23] + 107.751799*loop_counter[30] + 107.751799*loop_counter[32] + 38.097948*loop_counter[33] + 96.553797*loop_counter[34] + 275.721519*loop_counter[35] + 12437.000000*loop_counter[39] + 1381.210955*loop_counter[40] + 1381.235647;
+        else if(CVX_COEFF == 1000)
+            exec_time = 215.060560*loop_counter[22] + 14365.999999*loop_counter[23] + 16.780752*loop_counter[30] + 16.780752*loop_counter[32] + 5.933844*loop_counter[33] + 203.357595*loop_counter[34] + 318.443038*loop_counter[35] + 12437.000000*loop_counter[39] + 215.061103*loop_counter[40] + 215.060472;
+
     #endif
 #endif
     return exec_time;

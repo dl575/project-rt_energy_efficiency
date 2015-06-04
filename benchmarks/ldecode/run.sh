@@ -51,7 +51,8 @@ if [[ $2 ]] ; then
     for video in "${videos[@]}"
     do
         echo $Index_videos
-        cp -v videos/$video.264 test.264
+        #cp -v videos/$video.264 test.264
+        cp -v /home/odroid/project-rt_energy_efficiency/datasets/videos_88x72/$video.264 test.264
         taskset $TASKSET_FLAG ./bin/ldecod.dbg.exe $Index_videos
         ((++Index_videos))
     done

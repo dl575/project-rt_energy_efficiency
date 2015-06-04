@@ -68,7 +68,6 @@ def parse(kk):
         #get global_moment and global_power
         global_moment = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/output_power.txt", "moment : ([0-9\.]+) us")
         global_power = parse_lib.parse_float(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/output_power.txt", big_little+" core power : ([0-9\.]+)W")
-        overhead_index=0;
         saved_end_index=0
         total_energy_performance = None
         #if "uzbl" in bench:
@@ -91,7 +90,7 @@ def parse(kk):
             if kk == 1:
                 exec_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time [0-9]+ = ([0-9]+) us", start=parse_start)
                 # Linux governors, prediction w/o overhead, cvx w/o overhead
-                if (jj == "performance") | (jj == "interactive") | (jj == "conservative") | (jj == "ondemand") | (jj == "powersave") | (jj == "prediction_wo_overhead") | (jj == "cvx_wo_overhead") :
+                if ("performance" in jj) | ("interactive" in jj) | ("conservative" in jj) | ("ondemand" in jj) | ("powersave" in jj) | ("prediction_wo_overhead" in jj) | ("cvx_wo_overhead" in jj) :
                     #get deadline misses, margin 0%
                     deadline_miss = parse_lib.deadline_misses(exec_time, deadline, margin=1.0)
                 # Prediction with overhead, oracle, pid
@@ -100,18 +99,19 @@ def parse(kk):
                     slice_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_slice [0-9]+ = ([0-9]+) us", start=parse_start)
                     dvfs_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_dvfs [0-9]+ = ([0-9]+) us", start=parse_start)
                     # oracle : no slice time, but include dvfs_time
-                    if (jj == "oracle"):
+                    if ("oracle" in jj):
                         slice_time = dvfs_time
+                    elif ("cvx_with_slice_only" in jj):
+                        dvfs_time = slice_time
                     for n in xrange(0, len(exec_time)):
-                        if (jj == "oracle"):
+                        if ("oracle" in jj):
                             slice_time[n] = 0
+                        elif ("cvx_with_slice_only" in jj):
+                            dvfs_time[n] = 0
                         total_time_before_delay.append(exec_time[n] + slice_time[n] + dvfs_time[n])
                     #get deadline misses, margin 0%
                     deadline_miss = parse_lib.deadline_misses(total_time_before_delay, deadline, margin=1.0)
-                # 0: prediction_with_overhead, 1: predcition_wo_overhead
-                print jj+str(overhead_index)
-                if jj == "prediction":
-                    overhead_index += 1;
+                print jj
                 #write deadline miss rate
                 print deadline_miss
                 f.write(","+"%f"%(deadline_miss))
@@ -120,7 +120,7 @@ def parse(kk):
             elif kk == 2:
                 exec_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time [0-9]+ = ([0-9]+) us", start=parse_start)
                 # Linux governors, prediction w/o overhead, cvx w/o overhead
-                if (jj == "performance") | (jj == "interactive") | (jj == "conservative") | (jj == "ondemand") | (jj == "powersave") | (jj == "prediction_wo_overhead") | (jj == "cvx_wo_overhead") :
+                if ("performance" in jj) | ("interactive" in jj) | ("conservative" in jj) | ("ondemand" in jj) | ("powersave" in jj) | ("prediction_wo_overhead" in jj) | ("cvx_wo_overhead" in jj) :
                     #get tardiness misses, margin 0%
                     tardiness = parse_lib.tardiness(exec_time, deadline, margin=1.0)
                 # Prediction with overhead, oracle, pid
@@ -129,18 +129,19 @@ def parse(kk):
                     slice_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_slice [0-9]+ = ([0-9]+) us", start=parse_start)
                     dvfs_time = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_dvfs [0-9]+ = ([0-9]+) us", start=parse_start)
                     # oracle : no slice time, but include dvfs_time
-                    if (jj == "oracle"):
+                    if ("oracle" in jj):
                         slice_time = dvfs_time
+                    elif ("cvx_with_slice_only" in jj):
+                        dvfs_time = slice_time
                     for n in xrange(0, len(exec_time)):
-                        if (jj == "oracle"):
+                        if ("oracle" in jj):
                             slice_time[n] = 0
+                        elif ("cvx_with_slice_only" in jj):
+                            dvfs_time[n] = 0
                         total_time_before_delay.append(exec_time[n] + slice_time[n] + dvfs_time[n])
                     #get tardiness misses, margin 0%
                     tardiness = parse_lib.tardiness(total_time_before_delay, deadline, margin=1.0)
-                # 0: prediction_with_overhead, 1: predcition_wo_overhead
-                print jj+str(overhead_index)
-                if jj == "prediction":
-                    overhead_index += 1;
+                print jj
                 #write deadline miss rate
                 print tardiness
                 f.write(","+"%f"%(tardiness))
@@ -148,14 +149,18 @@ def parse(kk):
             # Power
             else:
                 # Linux governors, prediction with overhead, cvx with overhead, pid
-                if (jj == "performance") | (jj == "interactive") | (jj == "conservative") | (jj == "ondemand") | (jj == "powersave") | (jj == "prediction_with_overhead") | (jj == "cvx_with_overhead") | (jj == "pid") :
+                if ("performance" in jj) | ("interactive" in jj) | ("conservative" in jj) | ("ondemand" in jj) | ("powersave" in jj) | ("prediction_with_overhead" in jj) | ("cvx_with_overhead" in jj) | ("pid" in jj) :
                   moment_start = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "moment_start_0 : ([0-9\.]+) us", start=parse_start)
+                # cvx with slice overhead only
+                elif ("cvx_with_slice_only" in jj) :
+                  moment_start = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "moment_start_0 : ([0-9\.]+) us", start=parse_start)
+                  slice_end = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_slice [0-9]+ = ([0-9]+) us", start=parse_start)
+                  dvfs_end = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "time_dvfs [0-9]+ = ([0-9]+) us", start=parse_start)
                 # Prediction w/o overhead, oracle
                 else:
                   moment_start = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "moment_start_1 : ([0-9\.]+) us", start=parse_start)
                 #get end
                 moment_end = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "moment_end : ([0-9\.]+) us", start=parse_start)
-
                 #size comparison
                 if (len(moment_start) != len(moment_end)):
                     print "size of moment_start != size of moment_end"
@@ -180,10 +185,11 @@ def parse(kk):
                         print "index error"
                         exit(0)
                     #power calculation (start_index <= i < end_index)
+                    #print "total_energy:"+str(total_energy)
                     for i in range(start_index, end_index):
                         #unit = W * us = uJ
                         if start_index == end_index:
-                            total_energy+=(global_power[i]+global_power[i+1])/2*(moment-end[iii]-moment_start[iii])
+                            total_energy+=(global_power[i]+global_power[i+1])/2*(moment_end[iii]-moment_start[iii])
                             break
                         if i == start_index:
                             total_energy+=(global_power[i]+global_power[i+1])/2*(global_moment[i+1]-moment_start[iii])
@@ -192,11 +198,10 @@ def parse(kk):
                             break
                         else:
                             total_energy+=(global_power[i]+global_power[i+1])/2*(global_moment[i+1]-global_moment[i])
+                        #print "E:"+str(i)+" : "+str((global_power[i]+global_power[i+1])/2*(global_moment[i+1]-global_moment[i]))
+                        #print "total E:"+str(i)+" : "+str(total_energy)
                 ################################ calculate power end ###############################
-                # 0: prediction_with_overhead, 1: predcition_wo_overhead
-                print jj+str(overhead_index)
-                if jj == "prediction":
-                    overhead_index += 1;
+                print jj
 
                 #save total_energy of performance governor 
                 if not total_energy_performance:
@@ -224,12 +229,12 @@ if __name__ == "__main__":
     benchmarks_list=[]
     #sweep_list=[20, 40, 60, 80, 100, 120, 140, 160, 180]
     #sweep_list=[20, 100, 180]
-    sweep_list = [60, 80, 100, 120, 140]
+    #sweep_list = [60, 80, 100, 120, 140]
+    sweep_list = ["cvx_sweep"]
 
     if(big_little == "big"):
         for sweep in sweep_list:
             benchmarks_list.append(benchmarks+"-"+str(sweep))
-        #benchmarks_list = ["stringsearch", "sha", "rijndael", "xpilot_slice", "julius_slice", "pocketsphinx", "2048_slice", "curseofwar_slice", "uzbl"]
     elif(big_little == "little"):
         for sweep in sweep_list:
             benchmarks_list.append(benchmarks+"-"+str(sweep))
@@ -238,13 +243,15 @@ if __name__ == "__main__":
 
     #IMPORTANT : THIS SHOULD BE IN ORDER...
     # Power calculation assumes that experiments were run in this order
-    #governor_files = ["performance", "interactive", "conservative", "ondemand", "powersave", "prediction_with_overhead", "prediction_wo_overhead"]
-    if "uzbl" in benchmarks_list:
-        governor_files = ["performance", "interactive", "prediction_with_overhead", "prediction_wo_overhead", "cvx_with_overhead", "cvx_wo_overhead", "pid"]
-    elif "xpilot_slice" in benchmarks_list:
-        governor_files = ["performance", "interactive", "prediction_with_overhead", "prediction_wo_overhead", "cvx_with_overhead", "cvx_wo_overhead", "pid"]
+    if any("uzbl" in s for s in benchmarks_list):
+        governor_files = ["performance", "interactive", "cvx_with_overhead-100", "cvx_wo_overhead-100", "cvx_with_slice_only-100", "pid"]
+    elif any("xpilot" in s for s in benchmarks_list):
+        governor_files = ["performance", "interactive", "cvx_with_overhead-100", "cvx_wo_overhead-100", "cvx_with_slice_only-100", "pid"]
     else:
-        governor_files = ["performance", "interactive", "prediction_with_overhead", "prediction_wo_overhead", "cvx_with_overhead", "cvx_wo_overhead", "oracle", "pid"]
+        #governor_files = ["performance", "interactive", "cvx_with_overhead-100", "cvx_wo_overhead-100", "oracle", "pid"]
+        governor_files = ["performance", "cvx_with_overhead-1", "cvx_with_overhead-2", "cvx_with_overhead-5", "cvx_with_overhead-10", "cvx_with_overhead-100", "cvx_with_overhead-1000", "oracle", "pid"]
+        #governor_files = ["performance", "interactive", "cvx_with_overhead-100", "cvx_wo_overhead-100", "cvx_with_slice_only-100", "oracle", "pid"]
+        #governor_files = ["performance", "interactive", "cvx_with_overhead-0", "cvx_wo_overhead-0", "cvx_with_slice_only-0", "cvx_with_overhead-1", "cvx_wo_overhead-1", "cvx_with_slice_only-1", "cvx_with_overhead-10", "cvx_wo_overhead-10", "cvx_with_slice_only-10", "cvx_with_overhead-100", "cvx_wo_overhead-100", "cvx_with_slice_only-100", "cvx_with_overhead-1000", "cvx_wo_overhead-1000", "cvx_with_slice_only-1000", "oracle", "pid"]
 
     # For [energy, deadline_misses, tardiness]
     for kk in range(3):

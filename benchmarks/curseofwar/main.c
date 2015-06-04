@@ -186,9 +186,10 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
     float exec_time;
 #if CORE //big
     #if !CVX_EN //conservative
-        exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+        exec_time = 0;
     #else //cvx
-        exec_time = 123.000002*loop_counter[0] + 1467.787853*loop_counter[2] + 382.868691*loop_counter[3] + 122.999998;
+        if(CVX_COEFF == 100)
+            exec_time = 5659.000000*loop_counter[11] + 41198.000000*loop_counter[12] + 130.000000;
     #endif
 #else //LITTLE
     #if !CVX_EN //conservative

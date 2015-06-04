@@ -77,52 +77,75 @@ do
         echo ${SWEEP[$j]}
         taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
         ./runAll.sh $i $1 performance ${SWEEP[$j]}
-        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+#        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
         #./runAll.sh $i $1 conservative ${SWEEP[$j]}
         #./runAll.sh $i $1 ondemand ${SWEEP[$j]}
         #./runAll.sh $i $1 powersave ${SWEEP[$j]}
 
         # disable convex
-        sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+      #  sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. Prediction with overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 prediction_with_overhead ${SWEEP[$j]}
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 prediction_with_overhead ${SWEEP[$j]}
 
         # 3. Prediction with overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 prediction_wo_overhead ${SWEEP[$j]}
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 prediction_wo_overhead ${SWEEP[$j]}
 
         # enable convex
         sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
         
-        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
+        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (1)"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_with_overhead-100 ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-1 ${SWEEP[$j]}
 
-        # 3. convex wo overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_wo_overhead-100 ${SWEEP[$j]}
-
-        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (50)"'/g' $BENCH_PATH/$COMMON_FILE
+        sed -i -e 's/'"CVX_COEFF (1)"'/'"CVX_COEFF (2)"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_with_overhead-50 ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-2 ${SWEEP[$j]}
 
-        # 3. convex wo overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_wo_overhead-50 ${SWEEP[$j]}
+        sed -i -e 's/'"CVX_COEFF (2)"'/'"CVX_COEFF (5)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-5 ${SWEEP[$j]}
 
-        sed -i -e 's/'"CVX_COEFF (50)"'/'"CVX_COEFF (10)"'/g' $BENCH_PATH/$COMMON_FILE
+        sed -i -e 's/'"CVX_COEFF (5)"'/'"CVX_COEFF (10)"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
         ./runAll.sh $i $1 cvx_with_overhead-10 ${SWEEP[$j]}
 
-        # 3. convex wo overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_wo_overhead-10 ${SWEEP[$j]}
-
         sed -i -e 's/'"CVX_COEFF (10)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-100 ${SWEEP[$j]}
+
+        sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (1000)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead-1000 ${SWEEP[$j]}
+
+        sed -i -e 's/'"CVX_COEFF (1000)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
+
+      #  sed -i -e 's/'"CVX_COEFF (100)"'/'"CVX_COEFF (50)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 cvx_with_overhead-50 ${SWEEP[$j]}
+
+        # 3. convex wo overhead
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 cvx_wo_overhead-50 ${SWEEP[$j]}
+
+      #  sed -i -e 's/'"CVX_COEFF (50)"'/'"CVX_COEFF (10)"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 cvx_with_overhead-10 ${SWEEP[$j]}
+
+        # 3. convex wo overhead
+      #  taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+      #  ./runAll.sh $i $1 cvx_wo_overhead-10 ${SWEEP[$j]}
+
+      #  sed -i -e 's/'"CVX_COEFF (10)"'/'"CVX_COEFF (100)"'/g' $BENCH_PATH/$COMMON_FILE
 
 
         # 4. Oralce
@@ -141,19 +164,10 @@ do
         sudo kill -9 $PID_POWER_MONITOR
         cp $POWER_MONITOR_PATH/output_power.txt $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
 
-        #filter xpilot_slice and uzbl
-        if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
+        #filter uzbl
+        if [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
             cd $DATA_ODROID_PATH
-            #GOVERNOR_FILES=( "performance" "interactive" "conservative" "ondemand" "powersave" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "pid") 
-            GOVERNOR_FILES=( "performance" "interactive" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_overhead-50" "cvx_wo_overhead-50" "cvx_with_overhead-10" "cvx_wo_overhead-10" "pid") 
-            for k in "${GOVERNOR_FILES[@]}"
-            do 
-                taskset 0xff ./filter_xpilot.py $1 ${SWEEP[$j]} $k > temp_xpilot
-                mv temp_xpilot $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}/$k
-            done
-        elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
-            cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "prediction_with_overhead" "prediction_wo_overhead" "cvx_with_overhead" "cvx_wo_overhead" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_overhead-50" "cvx_wo_overhead-50" "cvx_with_overhead-10" "cvx_wo_overhead-10" "pid") 
+            GOVERNOR_FILES=( "performance" "interactive" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_slice_only-100" "pid") 
             for k in "${GOVERNOR_FILES[@]}"
             do 
                 taskset 0xff ./filter_uzbl.py $1 ${SWEEP[$j]} $k > temp_uzbl
@@ -162,16 +176,16 @@ do
         fi       
     done
 
-    #set SWEEP as 100
-    sed -i -e 's/'"SWEEP (${SWEEP[$j-1]})"'/'"SWEEP (100)"'/g' $BENCH_PATH/$COMMON_FILE
+    #set SWEEP as 1
+    sed -i -e 's/'"SWEEP (${SWEEP[$j-1]})"'/'"SWEEP (1)"'/g' $BENCH_PATH/$COMMON_FILE
  
    #draw plot
     cd $DATA_ODROID_PATH
     if [ $1 == "big" ] ; then
-        sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both2.py
+        sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both.py
         taskset 0xff ./plot_both.py big ${BENCH_NAME[$i]}
     elif [ $1 == "little" ] ; then
-        sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both2.py
+        sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both.py
         taskset 0xff ./plot_both.py little ${BENCH_NAME[$i]}
     fi
 
