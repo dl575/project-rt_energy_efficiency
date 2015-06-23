@@ -70,8 +70,7 @@ Source: https://github.com/snauts/shmupacabra
 ## uzbl
 
 Web browser. Run `make` to build. May need to run `make install` to set up
-config, but can run `make uninstall` and still run binary. Also, run `source
-setup.sh` to setup paths needed.
+config.
 
 Source: https://github.com/uzbl/uzbl
 
