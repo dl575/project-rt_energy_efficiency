@@ -79,6 +79,10 @@ if __name__ == "__main__":
     # Don't use a test set (test on training set)
     if "--no_test" in flags:
       no_test = True
+    # Specify a specific benchmark
+    for flag in flags:
+      if "--benchmark" in flag:
+        benchmarks = [flag.split('=')[1]]
 
   input_data_dir = "data/"
   output_dir = "predict_times/"
@@ -86,11 +90,10 @@ if __name__ == "__main__":
   if not os.path.isdir(output_dir):
     os.system("mkdir " + output_dir)
   policies = [
-      policy_tuned_pid,
-      policy_least_squares,
+      #policy_tuned_pid,
       policy_conservative,
       policy_cvx_conservative_lasso,
-      policy_oracle,
+      #policy_oracle,
       ]
 
   # For each DVFS policy
