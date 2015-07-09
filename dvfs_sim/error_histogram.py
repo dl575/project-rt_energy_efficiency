@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from pylab import *
 from parse_lib import *
@@ -21,9 +21,9 @@ for benchmark in benchmarks:
 
   # Predicted times
   predict_dir = "predict_times/"
-  policies = ["policy_data_dependent_oracle", "policy_data_dependent_lp"]
-  titles = {"policy_data_dependent_oracle" : "Least-Squares",
-      "policy_data_dependent_lp" : "Conservative"}
+  policies = ["policy_least_squares", "policy_conservative"]
+  titles = {"policy_least_squares" : "Least-Squares",
+      "policy_conservative" : "Conservative"}
   for (i, policy) in enumerate(policies):
     # Read in predicted times
     filename = predict_dir + "%s-%s.txt" % (policy, benchmark)

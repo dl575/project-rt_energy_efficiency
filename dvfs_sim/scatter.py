@@ -61,10 +61,11 @@ def plot(data):
           'paper_mode' : True,
           'figsize' : (7.0, 3.5),
           'legend_ncol' : 3,
-          'xlabel' : 'Deadline Misses [%]',
-          'ylabel' : 'Energy [%]',
+          'ylabel' : 'Deadline Misses [%]',
+          'xlabel' : 'Energy [%]',
           'fontsize' : 8,
           'title' : '',
+          #'yrange' : [0, 3],
 
           'symbols' : ['o']*15
       }

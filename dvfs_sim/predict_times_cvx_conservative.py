@@ -61,6 +61,10 @@ def run_prediction(train_filename, test_filename, policy, underpredict_penalty, 
 
   return (predict_times, test_times)
 
+no_test = False
+if "--no_test" in sys.argv:
+  no_test = True
+
 input_data_dir = "data/"
 output_dir = "predict_times/"
 predictor_dir = "predictors/"
@@ -78,8 +82,9 @@ policies = [
 # For each DVFS policy
 #for policy in policies:
 policy = policy_cvx_conservative_lasso
+underpredict_penalties = [1, 5, 10, 100, 1000]
 underpredict_penalties = [100]
-lasso_weights = [0, .1, 1, 10, 100, 1000]
+lasso_weights = [0, 1, 10, 100, 1000]
 for underpredict_penalty in underpredict_penalties:
   for lasso_weight in lasso_weights:
     policy_name = "%s_%d_%.3f" % (policy.__name__, underpredict_penalty, lasso_weight)
@@ -87,7 +92,10 @@ for underpredict_penalty in underpredict_penalties:
     for benchmark in benchmarks:
       # Predict execution times
       train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
-      test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
+      if no_test:
+        test_filename = train_filename
+      else:
+        test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
       print "  " + train_filename
       (predict_times, times) = run_prediction(train_filename, test_filename, policy, underpredict_penalty, lasso_weight)
       # Save predictor

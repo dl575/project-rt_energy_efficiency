@@ -9,6 +9,9 @@ Classes:
 Functions:
   add_plot( opt )
   add_line_plot( ax, opt )
+  add_histogram_plot( ax, opt )
+  add_boxplot_plot( ax, opt )
+  add_heatmap_plot( ax, opt )
   add_scatter_plot( ax, opt )
   add_bar_plot( ax, opt )
   set_legend( ax, opt, legend, legend_labels )
@@ -23,26 +26,45 @@ import random
 import sys
 
 
+# This defines various color schemes. These are pulled from colorbrewer2.org
+colors = {
+    'blue3' : ['#deebf7', '#9ecae1', '#3182bd'], # 3-class Blues
+    'blue4' : ['#eff3ff', '#bdd7e7', '#6baed6', '#2171b5'], # 4-class Blues
+    'blue5' : ['#eff3ff', '#bdd7e7', '#6baed6', '#3182bd', '#08519c'], # 5-class Blues
+
+    'red3' : ['#fee0d2', '#fc9272', '#de2d26'], # 3-class Reds
+    'red4' : ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d'], # 4-class Reds
+    'red5' : ['#fee5d9', '#fcae91', '#fb6a5a', '#de2d26', '#a50f15'], # 5-class Reds
+
+    'qualitative' : ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#f77f00',
+      '#ffff33', '#a65628', '#f781bf', '#999999'], # 9-class Set 1
+    'qualitative_paired' : ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c',
+      '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a',
+      '#ffff99', '#b15928'] # 12-class Paired
+    }
+
+
 class PlotOptions:
 
   def __init__( self ):
 
     # default values
-    self.title = "test bar plot"
+    self.title = None
     self.ylabel = None
     self.xlabel = None
     self.bar_width = 0.70
 
-    self.valid_plot_types = ["bar", "stacked_bar", "scatter_bar", "scatter", "line"]
-    self.plot_type = "bar"
-
-    # Error bars, lists of 2 lists. The first contains the minimums to draw and the second contains the maximums to draw.
-    self.errorbars = None
-
-    # if true, draws an arrow from the earlier to later
-    self.scatter_bar_arrow = False
-    # only draw arrow head if the length is this long
-    self.scatter_bar_arrow_minlen = 0.2
+    self.valid_plot_types = [
+        'bar', 
+        'stacked_bar', 
+        'scatter_bar', 
+        'scatter', 
+        'line', 
+        'histogram',
+        'boxplot',
+        'heatmap'
+        ]
+    self.plot_type = 'bar'
 
     # Can provide multiple file names seperated by spaces
     self.file_name = ""
@@ -52,9 +74,13 @@ class PlotOptions:
 
     # set the font size for the rest of things
     self.fontsize = 12
-
     # set the font size for the labels
     self.labels_fontsize = 12
+    # Marker size
+    if self.plot_type == 'scatter':
+      self.markersize = 20
+    else:
+      self.markersize = 6
 
     # used to override default y range. you can provide the range in the
     # form of [min, max]
@@ -78,9 +104,6 @@ class PlotOptions:
     # if true, just show the plot, don't save
     self.show = True
 
-    # paper mode squishes everything
-    self.paper_mode = False
-
     self.legend_enabled = True
     # the following are for fine tweaking of legend in paper mode
     self.legend_ncol = 1
@@ -91,7 +114,6 @@ class PlotOptions:
     self.legend_handlelength = None
     self.legend_handletextpad = None
 
-
     self.figsize = (8, 6) # (width, height) in inches
 
     self.data = [ [1,3], [2,2], [3,1], [4,5], [1,3] ]
@@ -101,15 +123,50 @@ class PlotOptions:
     self.labels_enabled = False
     self.labels_x_off = 2
     self.labels_y_off = 2
-    #self.labels = [ ["aa", "ab", "ac", "sfa", "asda"],
-    #                [ "a", "b"] ]
     self.labels = None
 
-    #self.colors = [ 'r', 'b', 'g', 'y', 'c', 'm', 'k', 'w' ]
-    # Selected from colobrewer2.org for 9 categories, qualitative, print friendly
+    # Boxplot-specific options
+    # Colors for parts of boxplot
+    self.boxplot_color_boxes    = 'black'
+    self.boxplot_color_medians  = 'black'
+    self.boxplot_color_whiskers = 'black'
+    self.boxplot_color_caps     = 'black'
+    self.boxplot_color_fliers   = 'black'
+    # Size of fliers
+    self.boxplot_fliers_size = None
+
+    # Histogram-specific options
+    # Number of bins to use for histogram
+    self.histogram_bins = 25
+
+    # Scatter bar-specific options
+    # if true, draws an arrow from the earlier to later
+    self.scatter_bar_arrow = False
+    # only draw arrow head if the length is this long
+    self.scatter_bar_arrow_minlen = 0.2
+
+    # Bar-specific options
+    # Error bars, lists of 2 lists. The first contains the minimums to draw and
+    # the second contains the maximums to draw.
+    self.errorbars = None
+    # Annotate bars that exceed max yrange
+    self.overflow_labels_enabled = False
+
+    # Heatmap-specific options
+    # Colormap
+    self.heatmap_cmap = None
+    # Show color bar
+    self.heatmap_cbar = False
+    # Label for color bar
+    self.heatmap_cbar_label = None
+    # Fraction to shrink color bar height by
+    self.heatmap_cbar_shrink = 1
+
+    # Colors selected from colobrewer2.org for 9 categories, qualitative, print friendly
     self.colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']
     self.hatch = []
     self.symbols = [ 'o', 'd', '^', 's', 'p', '*', 'x' ]
+    self.linestyles = []
 
     random.seed( 0xdeadbeef )
 
@@ -132,6 +189,13 @@ class PlotOptions:
       return self.symbols[idx]
     else:
       return 'o'
+  def get_linestyle( self, idx ):
+    # get a linestyle from linestyle array if idx is mall, otherwise, default is '-'
+    if idx < len( self.linestyles ):
+      return self.linestyles[idx]
+    else:
+      return '-'
+
 
 
 def add_plot( opt ):
@@ -140,13 +204,11 @@ def add_plot( opt ):
   if opt.plot_type not in opt.valid_plot_types:
     print "Unrecognized plot type: %s" % opt.plot_type
     sys.exit(1)
-
-  if opt.paper_mode:
-    # use a sans-serif font
-    #plt.rcParams['pdf.use14corefonts'] = True
-    plt.rcParams['font.size'] = 8
-    plt.rcParams['font.family'] = 'sans-serif'
-    plt.rcParams['font.sans-serif'] = ['Arial']
+  
+  # Set font
+  plt.rcParams['font.size'] = opt.fontsize
+  plt.rcParams['font.family'] = 'sans-serif'
+  plt.rcParams['font.sans-serif'] = ['Arial']
 
   if opt.fig == None:
     opt.fig = plt.figure( figsize=opt.figsize )
@@ -166,6 +228,12 @@ def add_plot( opt ):
     add_line_plot( ax, opt )
   elif opt.plot_type == "scatter":
     add_scatter_plot( ax, opt )
+  elif opt.plot_type == "histogram":
+    add_histogram_plot( ax, opt )
+  elif opt.plot_type == "boxplot":
+    add_boxplot_plot( ax, opt )
+  elif opt.plot_type == "heatmap":
+    add_heatmap_plot( ax, opt )
   else:
     add_bar_plot( ax, opt )
   opt.plot_idx += 1
@@ -175,16 +243,12 @@ def add_plot( opt ):
 
   opt.ax = ax
 
-  if opt.paper_mode:
-    plt.tight_layout()
+  plt.tight_layout()
 
   if opt.file_name != None and opt.file_name != "":
     for file in opt.file_name.split():
       print "saving", file
-      if opt.paper_mode:
-        plt.savefig( file, bbox_inches="tight" )
-      else:
-        plt.savefig( file )
+      plt.savefig( file, bbox_inches="tight" )
   elif opt.show:
     plt.show()
 
@@ -194,16 +258,22 @@ def add_line_plot( ax, opt ):
   lines = []
   for i in xrange( len( opt.data ) ):
     c = list(opt.data[ i ])
-    if len(c) == 2:
+    # x, y data
+    if isinstance(c[0], list):
       line, = ( ax.plot( c[0], c[1], \
                        marker=opt.get_symbol(i), \
                        color=opt.get_color(i), \
-                       zorder=5+i ) )
+                       linestyle=opt.get_linestyle(i), \
+                       zorder=5+i,
+                       markersize=opt.markersize ) )
+    # y-only data
     else:
       line, = ( ax.plot( c, \
                        marker=opt.get_symbol(i), \
                        color=opt.get_color(i), \
-                       zorder=5+i ) )
+                       linestyle=opt.get_linestyle(i), \
+                       zorder=5+i,
+                       markersize=opt.markersize ) )
     lines.append(line)
 
   if opt.yrange is not None:
@@ -227,6 +297,124 @@ def add_line_plot( ax, opt ):
 
   ax.xaxis.grid(True)
   ax.yaxis.grid(True)
+
+
+def add_histogram_plot( ax, opt ):
+
+  histograms = []
+  for i in xrange( len( opt.data ) ):
+    n, bins, patches = ax.hist( opt.data[i], \
+                              bins=opt.histogram_bins, \
+                              color=opt.get_color(i) ) 
+    histograms.append(patches[0])
+
+  if opt.yrange is not None:
+    ax.set_ylim( opt.yrange )
+  if opt.xrange is not None:
+    ax.set_xlim( opt.xrange )
+
+  set_legend( ax, opt, histograms, opt.labels )
+  set_common( ax, opt )
+
+  ax.xaxis.grid(True)
+  ax.yaxis.grid(True)
+
+
+def add_boxplot_plot( ax, opt ):
+
+  bp = ax.boxplot( opt.data )
+
+  if opt.yrange is not None:
+    ax.set_ylim( opt.yrange )
+  if opt.xrange is not None:
+    ax.set_xlim( opt.xrange )
+
+  # Set colors
+  plt.setp( bp['boxes'], color=opt.boxplot_color_boxes )
+  plt.setp( bp['medians'], color=opt.boxplot_color_medians )
+  plt.setp( bp['whiskers'], color=opt.boxplot_color_whiskers )
+  plt.setp( bp['caps'], color=opt.boxplot_color_caps )
+  plt.setp( bp['fliers'], marker='x', color=opt.boxplot_color_fliers )
+  if opt.boxplot_fliers_size:
+    plt.setp( bp['fliers'], markersize=opt.boxplot_fliers_size )
+
+  # Set x tick labels
+  ax.tick_params( labelsize=opt.fontsize )
+  if opt.labels:
+    if opt.rotate_labels:
+      ax.set_xticklabels( opt.labels, \
+                          verticalalignment="top", \
+                          y=0.01, \
+                          horizontalalignment="left" \
+                                  if opt.rotate_labels_angle > 0 \
+                                  else "right", \
+                          rotation=-opt.rotate_labels_angle, \
+                          fontsize=opt.labels_fontsize )
+    else:
+      ax.set_xticklabels( opt.labels, \
+                          verticalalignment="top", \
+                          y=0.01, \
+                          fontsize=opt.labels_fontsize )
+
+
+  set_common( ax, opt )
+
+  ax.xaxis.grid(True)
+  ax.yaxis.grid(True)
+
+
+def add_heatmap_plot( ax, opt ):
+
+  # Plot
+  if opt.heatmap_cmap:
+    cmap = matplotlib.colors.LinearSegmentedColormap( "custom", opt.heatmap_cmap )
+    hm = ax.imshow( opt.data, interpolation='nearest', cmap=cmap )
+  else:
+    hm = ax.imshow( opt.data, interpolation='nearest' )
+
+  # Color bar
+  if opt.heatmap_cbar:
+    ax = opt.fig.add_subplot( opt.num_rows, opt.num_cols, opt.plot_idx )
+    cbar = plt.colorbar( hm, use_gridspec=True, shrink=opt. heatmap_cbar_shrink )
+    if opt.heatmap_cbar_label: 
+      cbar.set_label( opt.heatmap_cbar_label )
+
+  # x tick labels (opt.labels[0]) and y tick labels (opt.labels[1])
+  if opt.labels:
+    if opt.rotate_labels:
+      ax.set_xticklabels( opt.labels[0], \
+                          verticalalignment="top", \
+                          y=0.01, \
+                          horizontalalignment="left" \
+                                  if opt.rotate_labels_angle > 0 \
+                                  else "right", \
+                          rotation=-opt.rotate_labels_angle, \
+                          fontsize=opt.labels_fontsize )
+      ax.set_yticklabels( opt.labels[1], \
+                          verticalalignment="top", \
+                          y=0.01, \
+                          horizontalalignment="left" \
+                                  if opt.rotate_labels_angle > 0 \
+                                  else "right", \
+                          rotation=-opt.rotate_labels_angle, \
+                          fontsize=opt.labels_fontsize )
+
+    else:
+      ax.set_xticklabels( opt.labels[0], \
+                          verticalalignment="top", \
+                          y=0.01, \
+                          fontsize=opt.labels_fontsize )
+      ax.set_yticklabels( opt.labels[1], \
+                          verticalalignment="center", \
+                          y=0.01, \
+                          fontsize=opt.labels_fontsize )
+
+  if opt.yrange is not None:
+    ax.set_ylim( opt.yrange )
+  if opt.xrange is not None:
+    ax.set_xlim( opt.xrange )
+
+  set_common( ax, opt )
 
 
 def add_scatter_plot( ax, opt ):
@@ -256,7 +444,8 @@ def add_scatter_plot( ax, opt ):
     scatters.append( ax.scatter( x, y, \
                                marker=opt.get_symbol(i), \
                                color=opt.get_color(i), \
-                               zorder=5+i ) )
+                               zorder=5+i,
+                               s=opt.markersize ) )
 
     if opt.scatter_bar_arrow and i > 1:
       for j in xrange( len( x ) ):
@@ -317,8 +506,6 @@ def add_scatter_plot( ax, opt ):
 def add_bar_plot( ax, opt ):
 
   # Determine number of categories based on labels
-  #num_cat = len( opt.labels[0] )
-  #num_subcat = len( opt.labels[1] )
   num_cat = len(opt.data)
   num_subcat = len(opt.data[0])
 
@@ -352,8 +539,7 @@ def add_bar_plot( ax, opt ):
 
   bottom = np.array( [0.0] * num_cat )
 
-  # use narrower line widths for bars on paper mode
-  bar_linewidth = 0.5 if opt.paper_mode else None
+  bar_linewidth = 0.5 
   for i in xrange( num_subcat ):
     if opt.plot_type == "scatter_bar":
       # bars are actually scatters
@@ -394,6 +580,11 @@ def add_bar_plot( ax, opt ):
                            bottom=bottom,
                            hatch = opt.get_hatch(i)
                           ) )
+      # Annotate bars that exceed max y-axis value
+      if opt.overflow_labels_enabled:
+        for j in range(len(indexes[i])):
+          if opt.yrange and bar_data[i][j] > opt.yrange[1]:
+            ax.annotate("%d" % (bar_data[i][j]), xy=(indexes[i][j], opt.yrange[1]), xytext=(-len(indexes)*5/2 + i*5 + 1, 1), textcoords='offset points')
 
     if opt.plot_type == "stacked_bar":
       bottom += bar_data[i]
@@ -455,36 +646,29 @@ def add_bar_plot( ax, opt ):
 
   set_common( ax, opt )
 
+  ax.yaxis.grid(True)
+
+
 def set_legend( ax, opt, legend, legend_labels ):
   if not opt.legend_enabled:
     return
 
-  if not opt.paper_mode:
-    # using fancy translucent legend box
-    leg = ax.legend( legend, \
-                     legend_labels, loc='best', fancybox=True, \
-                     prop={'size':opt.fontsize} , \
-                     columnspacing=opt.legend_columnspacing, \
-                     handlelength=opt.legend_handlelength, \
-                     handletextpad=opt.legend_handletextpad)
-    leg.get_frame().set_alpha( 0.5 )
-  else:
-    leg = ax.legend( legend, \
-                     legend_labels, loc=8, \
-                     bbox_to_anchor=opt.legend_bbox, \
-                     ncol=opt.legend_ncol, \
-                     borderaxespad=0., \
-                     prop={'size':opt.fontsize} , \
-                     columnspacing=opt.legend_columnspacing, \
-                     handlelength=opt.legend_handlelength, \
-                     handletextpad=opt.legend_handletextpad)
-    # we dissappear the box
-    leg.get_frame().set_color("white")
+  leg = ax.legend( legend, \
+                   legend_labels, loc=8, \
+                   bbox_to_anchor=opt.legend_bbox, \
+                   ncol=opt.legend_ncol, \
+                   borderaxespad=0., \
+                   prop={'size':opt.fontsize} , \
+                   columnspacing=opt.legend_columnspacing, \
+                   handlelength=opt.legend_handlelength, \
+                   handletextpad=opt.legend_handletextpad)
+  # we dissappear the box
+  leg.get_frame().set_color("white")
 
 
 def set_common( ax, opt ):
   # Title and Legend stuff.
-  if not opt.paper_mode:
+  if opt.title:
     ax.set_title( opt.title, fontsize=opt.fontsize )
 
   # Set labels for axes
@@ -495,14 +679,11 @@ def set_common( ax, opt ):
   # Set font size for axes
   ax.tick_params( labelsize=opt.fontsize )
 
-  if opt.paper_mode:
-    # enable grid
-    ax.yaxis.grid(True)
-    # turn off top and right border
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    ax.xaxis.set_ticks_position('bottom')
-    ax.yaxis.set_ticks_position('left')
+  # turn off top and right border
+  ax.spines['right'].set_visible(False)
+  ax.spines['top'].set_visible(False)
+  ax.xaxis.set_ticks_position('bottom')
+  ax.yaxis.set_ticks_position('left')
 
   # when sharing axes, don't display labels
   if opt.share_axis == 1:

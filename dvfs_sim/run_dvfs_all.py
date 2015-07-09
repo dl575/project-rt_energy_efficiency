@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 from parse_lib import *
 from dvfs_sim_lib import *
 
@@ -25,6 +26,10 @@ def run_dvfs(predict_times, times, deadline=None, dvfs_levels=None, margin=1.1):
 
   return (result_times, frequencies, deadline)
 
+no_test = False
+if "--no_test" in sys.argv:
+  no_test = True
+
 input_dir = "data"
 output_dir = "predict_times"
 
@@ -45,7 +50,10 @@ for metric in [energy, deadline_misses]:
     sum_metric = 0
     for benchmark in benchmarks:
       # Read in execution times and predicted times
-      times = parse_execution_times("%s/%s/%s1.txt" % (input_dir, benchmark, benchmark))
+      if no_test:
+        times = parse_execution_times("%s/%s/%s0.txt" % (input_dir, benchmark, benchmark))
+      else:
+        times = parse_execution_times("%s/%s/%s1.txt" % (input_dir, benchmark, benchmark))
       predict_times = read_predict_file("%s/%s-%s.txt" % (output_dir, policy, benchmark))
 
       # Perform DVFS
@@ -55,12 +63,11 @@ for metric in [energy, deadline_misses]:
         deadline = 30000
       elif "shmupacabra" in benchmark:
         deadline = 1000000./60 # 60fps
-      elif "ldecode" in benchmark:
-        deadline = 1000000./30 # 30fps
       (result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=None, deadline=deadline) # Continuous
+      #(result_times, frequencies, deadline) = run_dvfs(predict_times, times, dvfs_levels=[0.1*x for x in range(1, 11)], deadline=deadline) 
 
       # Calculate metric of interest
-      metric_result = metric(result_times, frequencies, deadline)
+      metric_result = metric(result_times, times, frequencies, deadline)
       sum_metric += metric_result
       print metric_result, ",",
     # Output average

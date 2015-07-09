@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
@@ -49,7 +49,7 @@ times = parse_execution_times("data/%s/%s1.txt" % (benchmark, benchmark))
 
 # Predicted times
 predict_dir = "predict_times/"
-policies = ["policy_tuned_pid", "policy_data_dependent_oracle", "policy_data_dependent_lp"]
+policies = ["policy_tuned_pid", "policy_least_squares", "policy_conservative", "policy_oracle"]
 for (i, policy) in enumerate(policies):
   filename = "predict_times/%s-%s.txt" % (policy, benchmark)
   predict_times = read_predict_file(filename)

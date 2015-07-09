@@ -7,6 +7,7 @@ its use for setting DVFS levels.
 Functions:
   average(l)
   regression(Y, X)
+  print_dict(d, tabs)
 
   random_time_trace(N, mu, sigma)
   markov_time_trace(N, start, sigma)
@@ -17,6 +18,7 @@ Functions:
   scale_frequency_perfect(predicted_time, deadline)
 
   policy_average(train_times, train_metrics, test_times, test_metrics, window_size)
+  policy_worstcase(train_times, train_metrics, test_times, test_metrics)
   policy_pid(times, P, I, D, metrics)
   policy_pid_timeliness(train_times, train_metrics, test_times, test_metrics)
   policy_pid_energy(train_times, train_metrics, test_times, test_metrics)
@@ -45,8 +47,8 @@ import os
 import cvxpy
 import sklearn.linear_model
 
-benchmarks = ["pocketsphinx", "stringsearch", "sha", "rijndael",
-"xpilot_slice", "2048_slice", "curseofwar_slice", "uzbl"]
+benchmarks = ["pocketsphinx", "sha_preread", "rijndael_preread",
+"xpilot_slice", "2048_slice", "curseofwar_slice_sdl", "uzbl", "ldecode"]
 
 default_dvfs_levels = [.1*x for x in range(1, 11)]
 
@@ -63,6 +65,14 @@ def regression(Y, X):
   X = numpy.hstack((numpy.array([[1]*X.shape[0]]).T, X))
   (coeffs, residuals, rank, s) = numpy.linalg.lstsq(X, numpy.transpose(Y))
   return coeffs
+
+def print_dict(d, tabs=0):
+  for k, v in d.iteritems():
+    print '  '*tabs, k
+    if isinstance(v, dict):
+      print_dict(v, tabs+1)
+    else:
+      print '  '*(tabs+1), v
 
 def random_time_trace(N=300, mu=30, sigma=5):
   """
@@ -130,6 +140,18 @@ def scale_frequency_perfect(predicted_time, deadline):
     return min_frequency
   return desired_frequency
 
+def scale_frequency_new(predicted_time, deadline, dvfs_function, freq_levels):
+  """
+  Find the minimum frequency in freq_levels such that the execution time will
+  be less than the deadline. predicted_time is the execution time at
+  max(freq_levels) and dvfs_function describes how execution time varies with
+  different frequencies.
+  """
+  for f in freq_levels:
+    if dvfs_function(predicted_time, f) < deadline:
+      return f
+  return f
+
 def policy_average(train_times, train_metrics=None, test_times=None, test_metrics=None, window_size=10):
   """
   Use the average of the last [window_size] frames as the predicted time for the next frame.
@@ -145,6 +167,18 @@ def policy_average(train_times, train_metrics=None, test_times=None, test_metric
     window = times[i-window_size:i]
     predicted_times[i] = average(window)
   return predicted_times
+
+def policy_worstcase(train_times, train_metrics=None, test_times=None, test_metrics=None):
+  """
+  Predict all frames as the worst-case time seen. This is a conservative
+  prediction that should ensure no deadline misses.
+  """
+  # If no test set, then train and test on same set
+  if not test_times:
+    test_times = train_times
+
+  worstcase = max(train_times)
+  return [worstcase]*len(train_times)
 
 def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metrics=None):
   """
@@ -177,19 +211,20 @@ def policy_tuned_pid(train_times, train_metrics=None, test_times=None, test_metr
 
     frequencies = [scale_frequency_perfect(margin*t, deadline) for t in predict_times]
     result_times = [dvfs_time(t, f) for (t, f) in zip(train_times, frequencies)]
-    misses = deadline_misses(result_times, frequencies, deadline) 
+    misses = deadline_misses(result_times, train_times, frequencies, deadline) 
     # If better on deadline misses
     if misses < best_misses:
       best_misses = misses
-      best_energy = energy(result_times, frequencies, deadline)
+      best_energy = energy(result_times, train_times, frequencies, deadline)
       best_PID = (P, I, D)
     # If equal on misses, check if better on energy
     elif misses == best_misses:
-      e = energy(result_times, frequencies, deadline)
+      e = energy(result_times, train_times, frequencies, deadline)
       if e < best_energy:
         best_misses = misses
-        best_energy = energy(result_times, frequencies, deadline)
+        best_energy = energy(result_times, train_times, frequencies, deadline)
         best_PID = (P, I, D)
+  #best_PID = (1, 0.5, 0.01)
 
   # Write PID parameters out to file
   f = open("temp.lps", 'w')
@@ -372,7 +407,7 @@ def policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constr
   # Add constant term
   train_metrics = [[1] + x for x in train_metrics]
   X = numpy.array(train_metrics)
-  y = numpy.array(map(float, train_times))
+  y = numpy.array(train_times)
 
   # Construct the problem
   b = cvxpy.Variable(X.shape[1])
@@ -385,6 +420,9 @@ def policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constr
   prob.solve()
   if prob.status != cvxpy.OPTIMAL:
     print "Problem not solved optimally: ", prob.status
+    print "  Trying with CVXOPT..."
+    prob.solve(solver=cvxpy.SCS)
+    print "  Result: ", prob.status
   # Write out results
   coeffs = numpy.array(b.value)
   f = open("temp.lps", 'w')
@@ -426,24 +464,25 @@ def policy_oracle(train_times, train_metrics=None, test_times=None, test_metrics
   else:
     return train_times
 
-def deadline_misses(times, frequencies, deadline):
+def deadline_misses(times, baseline_times, frequencies, deadline):
   misses = [(1 if x > deadline else 0) for x in times]
   return float(sum(misses))/len(times)
 
-def tardiness(times, frequencies, deadline):
+def tardiness(times, baseline_times, frequencies, deadline):
   tardiness = [max(x - deadline, 0) for x in times]
   return (float(sum(tardiness))/len(times), max(tardiness))
 
-def normalized_tardiness(times, frequencies, deadline):
+def normalized_tardiness(times, baseline_times, frequencies, deadline):
   tardiness = [float(max(x - deadline, 0))/deadline for x in times]
   return (sum(tardiness)/len(times), max(tardiness))
-def avg_normalized_tardiness(times, frequencies, deadline):
-  return normalized_tardiness(times, frequencies, deadline)[0]
-def max_normalized_tardiness(times, frequencies, deadline):
-  return normalized_tardiness(times, frequencies, deadline)[1]
+def avg_normalized_tardiness(times, baseline_times, frequencies, deadline):
+  return normalized_tardiness(times, baseline_times, frequencies, deadline)[0]
+def max_normalized_tardiness(times, baseline_times, frequencies, deadline):
+  return normalized_tardiness(times, baseline_times, frequencies, deadline)[1]
 
-def energy(times, frequencies, deadline):
-  energies = [x*x for x in frequencies]
+def energy(times, baseline_times, frequencies, deadline):
+  energies = [f*f*float(t)/bt for (f, t, bt) in zip(frequencies, times, baseline_times)]
+  #energies = [f*f for (f, t, bt) in zip(frequencies, times, baseline_times)]
   return average(energies)
 
 def read_predict_file(filename):
@@ -456,3 +495,18 @@ def read_predict_file(filename):
     data.append(float(line))
   f.close()
   return data
+
+def get_nonzero_coeffs(filename, benchmark):
+  benchmark_found = False
+  f = open(filename, 'r')
+  for line in f:
+    if benchmark_found:
+      if "non-zero coeffs" in line:
+        coeffs_string = line
+        break
+    elif benchmark in line:
+      benchmark_found = True
+  f.close()
+  coeffs_array = coeffs_string.split('[')[1].split(']')[0]
+  coeffs = map(int, coeffs_array.split(','))
+  return coeffs
