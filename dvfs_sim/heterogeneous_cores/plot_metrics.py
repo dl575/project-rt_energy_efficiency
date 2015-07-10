@@ -8,43 +8,38 @@ from dvfs_sim_lib import *
 import tsg_plot
 import numpy
 
-def plot(data, benchmarks, metrics, policies):
-  # Common options for plots
-  opts = tsg_plot.PlotOptions()
-  attribute_dict = \
-      {
-          'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['red3'],
-          'bar_width' : 0.7,
-          'figsize' : (10.0, 3.0),
-          'fontsize' : 8,
-          'legend_ncol' : 6,
-          'file_name' : 'plot_metrics.pdf',
-          'rotate_labels' : True,
-          'rotate_labels_angle' : -45,
-          'xlabel' : '',
-          'title' : '',
-          'plot_idx' : 1,
-          'num_cols' : 3,
-          'num_rows' : 1,
-          'legend_columnspacing' : 1.0,
-          'legend_handlelength' : 1.0,
-      }
-  for name, value in attribute_dict.iteritems():
-    setattr(opts, name, value)
-
+def plot(data, benchmarks, metrics, policies, filename):
   for metric in metrics:
+    # Common options for plots
+    opts = tsg_plot.PlotOptions()
+    attribute_dict = \
+        {
+            'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['red3'],
+            'bar_width' : 0.7,
+            'figsize' : (3.5, 2.0),
+            'fontsize' : 8,
+            'legend_ncol' : 6,
+            'rotate_labels' : True,
+            'rotate_labels_angle' : -45,
+            'xlabel' : '',
+            'title' : '',
+            'legend_enabled' : True,
+            'legend_ncol' : 2,
+            'legend_columnspacing' : 1.0,
+            'legend_handlelength' : 1.0,
+        }
+    for name, value in attribute_dict.iteritems():
+      setattr(opts, name, value)
+
     metric_data = data[metric]
     opts.data = []
     opts.labels = [benchmarks, []]
+    opts.file_name = filename.split('.')[0] + "_%s.pdf" % (metric)
     for policy in policies:
       opts.data.append(metric_data[policy])
       opts.labels[1].append(policy_to_label(policy))
     opts.data = numpy.array(opts.data).T
     opts.ylabel = metric.replace('_', ' ') + " [%]"
-    if opts.plot_idx == 2:
-      opts.legend_enabled = True
-    else:
-      opts.legend_enabled = False
     tsg_plot.add_plot(opts)
 
 def policy_to_label(policy):
@@ -136,4 +131,4 @@ if __name__ == "__main__":
       for policy in policies:
         plot_data[metric][policy] = metric_data[policy]
 
-  plot(plot_data, benchmarks, metrics, policies)
+  plot(plot_data, benchmarks, metrics, policies, filename)
