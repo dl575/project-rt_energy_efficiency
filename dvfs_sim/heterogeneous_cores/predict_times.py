@@ -74,37 +74,58 @@ def run_prediction(train_filename, test_filename, policy):
 
 if __name__ == "__main__":
 
-  no_test = False
-  if len(sys.argv) > 1:
-    flags = sys.argv[1:]
-    # Don't use a test set (test on training set)
-    if "--no_test" in flags:
-      no_test = True
+	"""
+	Parse arguments
+	"""
+	if len(sys.argv) < 2:
+		print "usage: predict_times.py big|little [--no_test]"
+		exit(1)
+	if sys.argv[1] == "big":
+		bigonly = True
+		littleonly = False
+	elif sys.argv[1] == "little":
+		bigonly = False
+		littleonly = True
+	assert(bigonly != littleonly)
 
-  input_data_dir = "../data/"
-  output_dir = "predict_times/"
-  # Create output directory if it does not exist
-  if not os.path.isdir(output_dir):
-    os.system("mkdir " + output_dir)
-  policies = [
-      policy_worstcase,
-      policy_cvx_conservative_lasso,
-      ]
+	no_test = False
+	if len(sys.argv) > 1:
+		flags = sys.argv[1:]
+		# Don't use a test set (test on training set)
+		if "--no_test" in flags:
+			no_test = True
 
-  # For each DVFS policy
-  for policy in policies:
-    print policy.__name__
-    for benchmark in benchmarks:
-      # Predict execution times
-      train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
-      test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
-      print "  " + train_filename
-      if no_test:
-        (predict_times, times) = run_prediction(train_filename, None, policy)
-      else:
-        (predict_times, times) = run_prediction(train_filename, test_filename, policy)
-      # Write prediction out to file
-      out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
-      out_file.write("\n".join([str(x) for x in predict_times]))
-      out_file.close()
+	# Directories
+	if bigonly:
+		input_data_dir = "../data_big/"
+		output_dir = "predict_times_big/"
+	elif littleonly:
+		input_data_dir = "../data_little/"
+		output_dir = "predict_times_little/"
+	# Create output directory if it does not exist
+	if not os.path.isdir(output_dir):
+		os.system("mkdir " + output_dir)
+
+	# Policies to use
+	policies = [
+			policy_worstcase,
+			policy_cvx_conservative_lasso,
+			]
+
+	# For each DVFS policy
+	for policy in policies:
+		print policy.__name__
+		for benchmark in benchmarks:
+			# Predict execution times
+			train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
+			test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
+			print "  " + train_filename
+			if no_test:
+				(predict_times, times) = run_prediction(train_filename, None, policy)
+			else:
+				(predict_times, times) = run_prediction(train_filename, test_filename, policy)
+			# Write prediction out to file
+			out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
+			out_file.write("\n".join([str(x) for x in predict_times]))
+			out_file.close()
 

@@ -48,6 +48,9 @@ def plot(data, benchmarks, metrics, policies):
     tsg_plot.add_plot(opts)
 
 def policy_to_label(policy):
+  """
+  Convert policy function/configuration name to a more human readable format.
+  """
   d = {
       "policy_tuned_pid" : "pid",
       "policy_least_squares" : "Least-Squares",
@@ -119,8 +122,9 @@ if __name__ == "__main__":
     elif metric == "energy":
       for policy in policies:
         cvx_data = metric_data[policy]
-        #wc_data = metric_data[policy.replace("policy_cvx_conservative_lasso", "policy_worstcase")]
-        wc_data = metric_data[policy.replace("policy_cvx_conservative_lasso", "policy_worstcase").replace("littleonly", "biglittle")]
+        # Normalize to worstcase policy with biglittle available
+        wc_policy = policy.replace("policy_cvx_conservative_lasso", "policy_worstcase").replace("littleonly", "biglittle").replace("bigonly", "biglittle")
+        wc_data = metric_data[wc_policy]
         normalized_data = map(lambda x: x*100, normalize(cvx_data, wc_data))
         #normalized_data  = metric_data[policy]
         if metric not in plot_data.keys():

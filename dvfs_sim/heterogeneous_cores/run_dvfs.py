@@ -6,19 +6,6 @@ from parse_lib import *
 from dvfs_sim_lib import *
 
 """
-Parse arguments
-"""
-no_test = False
-if "--no_test" in sys.argv:
-  no_test = True
-
-"""
-Directories
-"""
-input_dir = "../data"
-output_dir = "predict_times"
-
-"""
 Configuration
 """
 margin = 1.1
@@ -50,7 +37,11 @@ def run_dvfs_hetero(metric, times, predict_times, deadline, biglittle, policy):
   big_count = 0
   switch_count = 0
   # Whether big core exists
-  big_core = "biglittle" in biglittle
+  big_core = "big" in biglittle
+  little_core = "little" in biglittle
+  # At least one core must exist
+  assert(big_core or little_core)
+  # Start on big core if it exists
   if big_core:
     last_core = "big"
   else:
@@ -65,29 +56,31 @@ def run_dvfs_hetero(metric, times, predict_times, deadline, biglittle, policy):
     found = False
 
     # See if any little frequencies work
-    for f in dvfs_levels_little:
-      # Calculate time for running on little core at this frequency
-      time = dvfs_function_little(pt, f)
-      # If switching cores, include switching overhead
-      if last_core == "big":
-        time += switching_time
-      # If resulting time is less than the deadline, use this frequency
-      if time <= deadline:
-        frequencies.append(little_energy_factor*f)
-        # Calculate resulting time based on actual time and freq used
+    if little_core:
+      for f in dvfs_levels_little:
+        # Calculate time for running on little core at this frequency
+        time = dvfs_function_little(pt, f)
+        # If switching cores, include switching overhead
         if last_core == "big":
-          result_times.append(dvfs_function_little(t, f) + switching_time)
-          switch_count += 1
-        else:
-          result_times.append(dvfs_function_little(t, f))
-        # Update current core to little core
-        last_core = "little"
-        little_count += 1
-        found = True
-        break
-    # little frequency works, move on to next point
-    if found:
-      continue
+          time += switching_time
+        # If resulting time is less than the deadline, use this frequency
+        if time <= deadline:
+          frequencies.append(little_energy_factor*f)
+          # Calculate resulting time based on actual time and freq used
+          if last_core == "big":
+            result_times.append(dvfs_function_little(t, f) + switching_time)
+            switch_count += 1
+          else:
+            result_times.append(dvfs_function_little(t, f))
+          # Update current core to little core
+          last_core = "little"
+          little_count += 1
+          found = True
+          break
+      # little frequency works, move on to next point
+      if found:
+        continue
+    assert(not found)
 
     # If no big core
     if not big_core:
@@ -98,26 +91,27 @@ def run_dvfs_hetero(metric, times, predict_times, deadline, biglittle, policy):
       little_count += 1
       continue
 
-    # If little frequencies don't work, use big core
-    for f in dvfs_levels_big:
-      # Calculate time for running on big core at this frequency
-      time = dvfs_function_big(pt, f)
-      # If switching cores, include switching overhead
+    if big_core:
+      # If little frequencies don't work, use big core
+      for f in dvfs_levels_big:
+        # Calculate time for running on big core at this frequency
+        time = dvfs_function_big(pt, f)
+        # If switching cores, include switching overhead
+        if last_core == "little":
+          time += switching_time
+        if time < deadline:
+          # Found, break out
+          break
+      # Use found frequency, or if not found, use max frequency
+      frequencies.append(f)
+      # Calculate resulting time based on actual time and freq used
       if last_core == "little":
-        time += switching_time
-      if time < deadline:
-        # Found, break out
-        break
-    # Use found frequency, or if not found, use max frequency
-    frequencies.append(f)
-    # Calculate resulting time based on actual time and freq used
-    if last_core == "little":
-      result_times.append(dvfs_function_big(t, f) + switching_time)
-      switch_count += 1
-    else:
-      result_times.append(dvfs_function_big(t, f))
-    last_core = "big"
-    big_count += 1
+        result_times.append(dvfs_function_big(t, f) + switching_time)
+        switch_count += 1
+      else:
+        result_times.append(dvfs_function_big(t, f))
+      last_core = "big"
+      big_count += 1
 
   # Calculate metric of interest
   if metric == "switch_count":
@@ -127,6 +121,36 @@ def run_dvfs_hetero(metric, times, predict_times, deadline, biglittle, policy):
   return metric_result
 
 if __name__ == "__main__":
+  """
+  Parse arguments
+  """
+  if len(sys.argv) < 2:
+    print "usage: run_dvfs.py big|little [--no_test]"
+    exit(1)
+  if sys.argv[1] == "big":
+    bigonly = True
+    littleonly = False
+  elif sys.argv[1] == "little":
+    bigonly = False
+    littleonly = True
+  else:
+    print "usage: run_dvfs.py big|little [--no_test]"
+    exit(1)
+  assert(bigonly != littleonly)
+  no_test = False
+  if "--no_test" in sys.argv:
+    no_test = True
+
+  """
+  Directories
+  """
+  if bigonly:
+    input_dir = "../data_big"
+    output_dir = "predict_times_big"
+  elif littleonly:
+    input_dir = "../data_little"
+    output_dir = "predict_times_little"
+
   # Find all policies that were run
   policies = []
   for root, dirname, filenames in os.walk(output_dir):
@@ -144,14 +168,12 @@ if __name__ == "__main__":
     print list_to_csv([""] + benchmarks + ["average"])
 
     # For heterogeneous core and switching time configurations
-    for biglittle in ["littleonly-60", "littleonly-80", "littleonly-100",
-        "biglittle-60", "biglittle-80", "biglittle-100"]:
-    #for biglittle in ["littleonly-100", "biglittle-100"]:
-      if "littleonly" in biglittle:
-        dvfs_levels_big = []
-      elif biglittle.split('-')[0] == "biglittle":
-        dvfs_levels_big = [x/14. for x in range(2, 21)] # Normalized to 1 <-> 1.4 GHz
-
+    if bigonly:
+      biglittle_configurations = ["bigonly-60", "bigonly-80", "bigonly-100"]
+    elif littleonly: 
+      biglittle_configurations = ["littleonly-60", "littleonly-80", "littleonly-100"]
+    biglittle_configurations += ["biglittle-60", "biglittle-80", "biglittle-100"]
+    for biglittle in biglittle_configurations:
       # For each governor policy
       for policy in policies:
         print "%s-%s" % (policy, biglittle), ",", 
