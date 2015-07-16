@@ -14,17 +14,18 @@ def plot(data, benchmarks, metrics, policies, filename):
     opts = tsg_plot.PlotOptions()
     attribute_dict = \
         {
-            'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['red3'],
+            #'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['red3'],
+            'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['blue3'],
+            'hatch' : ['']*3 + ['////']*3,
             'bar_width' : 0.7,
-            'figsize' : (3.5, 2.0),
+            'figsize' : (3.5, 1.5),
             'fontsize' : 8,
-            'legend_ncol' : 6,
             'rotate_labels' : True,
             'rotate_labels_angle' : -45,
             'xlabel' : '',
             'title' : '',
             'legend_enabled' : True,
-            'legend_ncol' : 2,
+            'legend_ncol' : 3,
             'legend_columnspacing' : 1.0,
             'legend_handlelength' : 1.0,
         }
@@ -42,15 +43,107 @@ def plot(data, benchmarks, metrics, policies, filename):
     opts.ylabel = metric.replace('_', ' ') + " [%]"
     tsg_plot.add_plot(opts)
 
+def plot_common(data, benchmarks, metrics, policies, filename):
+  # Common options
+  opts = tsg_plot.PlotOptions()
+  attribute_dict = \
+      {
+          'figsize' : (5.8, 2.0),
+          'fontsize' : 8,
+          'num_rows' : 1,
+          'num_cols' : 2,
+          'labels' : [benchmarks, []],
+          'legend_ncol' : 6,
+          'legend_handlelength' : 1.0,
+          'legend_columnspacing' : 0.8,
+          'legend_handletextpad' : 0.5,
+          'legend_bbox' : [0.05, 1.10, 2., 0.1],
+          'rotate_labels' : True,
+          'rotate_labels_angle' : -30,
+      }
+  for k, v in attribute_dict.iteritems():
+    setattr(opts, k, v)
+
+  return opts
+
+
+def plot_em(data, benchmarks, metrics, policies, filename):
+  opts = plot_common(data, benchmarks, metrics, policies, filename)
+  if len(policies) == 6:
+    opts.colors = tsg_plot.colors['blue3']*2
+    opts.hatch = ['']*3 + ['////']*3
+  elif len(policies) == 2:
+    opts.colors = [tsg_plot.colors['blue3'][0], tsg_plot.colors['blue3'][2]]
+  else:
+    raise Exception("Unsuported number of policies = %d" % len(policies))
+  opts.file_name = filename.split('.')[0] + "_em.pdf"
+
+  for metric in  ["energy", "deadline_misses"]:
+    if metric == "energy":
+      opts.ylabel = "Energy [%]"
+    elif metric == "deadline_misses":
+      opts.ylabel = "Misses [%]"
+    metric_data = data[metric]
+    opts.data = []
+    for policy in policies:
+      opts.data.append(metric_data[policy])
+      opts.labels[1].append(policy_to_label(policy))
+    opts.data = numpy.array(opts.data).T
+
+    if opts.plot_idx == 1:
+      opts.legend_enabled = True
+    else:
+      opts.legend_enabled = False
+
+    tsg_plot.add_plot(opts)
+ 
+def plot_core_counts(data, benchmarks, metrics, policies, filename):
+  opts = plot_common(data, benchmarks, metrics, policies, filename)
+  if len(policies) == 6: 
+    opts.colors = tsg_plot.colors['blue3']
+    opts.hatch = ['']*3
+  elif len(policies) == 2:
+    opts.colors = [tsg_plot.colors['blue3'][2]]
+  else:
+    raise Exception("Unsuported number of policies = %d" % len(policies))
+  opts.file_name = filename.split('.')[0] + "_counts.pdf"
+
+  for metric in  ["switch_count", "big_count"]:
+    if metric == "switch_count":
+      opts.ylabel = "Core Switches [%]"
+    elif metric == "big_count":
+      opts.ylabel = "Big Core Jobs [%]"
+    metric_data = data[metric]
+    opts.data = []
+    for policy in policies:
+      if "biglittle" in policy:
+        opts.data.append(metric_data[policy])
+        opts.labels[1].append(policy_to_label(policy))
+    opts.data = numpy.array(opts.data).T
+
+    if opts.plot_idx == 1:
+      opts.legend_enabled = True
+    else:
+      opts.legend_enabled = False
+
+    tsg_plot.add_plot(opts)
+ 
+
 def policy_to_label(policy):
   """
   Convert policy function/configuration name to a more human readable format.
+  """
+  policy = policy.strip().split('-')[1:]
+  policy[-1] = "%.1f" % (float(policy[-1])/100)
+  return '-'.join(policy)
+
   """
   d = {
       "policy_tuned_pid" : "pid",
       "policy_least_squares" : "Least-Squares",
       "policy_conservative" : "prediction",
-      "policy_cvx_conservative_lasso" : "prediction",
+      #"policy_cvx_conservative_lasso" : "prediction",
+      "policy_cvx_conservative_lasso" : "",
       "policy_oracle" : "oracle",
       }
   policy = policy.strip()
@@ -63,6 +156,7 @@ def policy_to_label(policy):
     else:
       result.append(word)
   return '-'.join(result)
+  """
 
 def parse(filename):
   data = {"metadata" : {"metrics" : [], "policies" : [], "benchmarks" : []}}
@@ -100,7 +194,7 @@ if __name__ == "__main__":
   if len(sys.argv) == 2:
     filename = sys.argv[1]
   else:
-    print "usage: plot_metrics_biglittle.py filename"
+    print "usage: plot_metrics.py filename"
     sys.exit()
 
   data = parse(filename)
@@ -120,8 +214,8 @@ if __name__ == "__main__":
         # Normalize to worstcase policy with biglittle available
         wc_policy = policy.replace("policy_cvx_conservative_lasso", "policy_worstcase").replace("littleonly", "biglittle").replace("bigonly", "biglittle")
         wc_data = metric_data[wc_policy]
-        normalized_data = map(lambda x: x*100, normalize(cvx_data, wc_data))
-        #normalized_data  = metric_data[policy]
+        #normalized_data = map(lambda x: x*100, normalize(cvx_data, wc_data))
+        normalized_data  = metric_data[policy]
         if metric not in plot_data.keys():
           plot_data[metric] = {}
         plot_data[metric][policy] = normalized_data
@@ -131,4 +225,6 @@ if __name__ == "__main__":
       for policy in policies:
         plot_data[metric][policy] = metric_data[policy]
 
-  plot(plot_data, benchmarks, metrics, policies, filename)
+  plot_em(plot_data, benchmarks, metrics, policies, filename)
+  plot_core_counts(plot_data, benchmarks, metrics, policies, filename)
+  #plot(plot_data, benchmarks, metrics, policies, filename)

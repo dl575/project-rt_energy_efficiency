@@ -10,10 +10,17 @@ Configuration
 """
 margin = 1.1
 # Scaling factor based on idle power at 1.4 GHz
-#little_energy_factor = 0.04/0.35 # little energy = little_energy_factor * big energy at same frequency
+#little_power_factor = 0.04/0.35 # little power = little_power_factor * big power at same frequency
 # Scaling factor based on active power of rijndael at 1.4 GHz
-little_energy_factor = 0.306/0.921 # littler energy = little energy_factor * big energy at same frequency
+little_power_factor = 0.306/0.921 # little power = little_power_factor * big power at same frequency
 big_speedup_factor = 2 # times faster than little core at same frequency
+"""
+E_small = P_small * t_small
+        = (little_power_factor * P_big) * (big_speedup_factor * t_big)
+        = (little_power_factor * big_speedup_factor) * E_big
+"""
+#little_energy_factor = little_power_factor*big_speedup_factor
+little_energy_factor = little_power_factor
 switching_time = 0 # microseconds to switch between cores
 
 # Normalized DVFS levels and execution time scaling function for little core
@@ -65,6 +72,8 @@ def run_dvfs_hetero(metric, times, predict_times, deadline, biglittle, policy):
           time += switching_time
         # If resulting time is less than the deadline, use this frequency
         if time <= deadline:
+          if little_energy_factor*f > f:
+            print f, little_energy_factor*f
           frequencies.append(little_energy_factor*f)
           # Calculate resulting time based on actual time and freq used
           if last_core == "big":
