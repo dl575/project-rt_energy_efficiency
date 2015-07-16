@@ -3,7 +3,7 @@
 import sys
 sys.path.extend([".."])
 import tsg_plot
-from run_dvfs_abs import *
+from run_dvfs import *
 
 def plot(data, xlabel, ylabel, filename):
   opts = tsg_plot.PlotOptions()
@@ -59,12 +59,12 @@ if __name__ == "__main__":
   # Normalize
   times_little, times_big = normalize(times_little, times_big)
   energy_little, energy_big = normalize(energy_little, energy_big)
-  #import math
-  #energy_little = map(math.log, energy_little)
-  #energy_big = map(math.log, energy_big)
 
+  # Plot time vs. freq
   plot([[dvfs_levels_little, times_little], [dvfs_levels_big, times_big]], "Frequency [MHz]", "Normalized Execution Time", "hetero_time_freq.pdf")
+  # Plot energy vs. freq
   plot([[dvfs_levels_little, energy_little], [dvfs_levels_big, energy_big]], "Frequency [MHz]", "Normalized Energy", "hetero_energy_freq.pdf")
+  # Plot energy vs. time
   plot([[times_little, energy_little], [times_big, energy_big]], "Normalized Execution Time", "Normalized Energy", "hetero_energy_time.pdf")
 
 

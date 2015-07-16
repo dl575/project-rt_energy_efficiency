@@ -8,43 +8,10 @@ from dvfs_sim_lib import *
 import tsg_plot
 import numpy
 
-def plot(data, benchmarks, metrics, policies, filename):
-  for metric in metrics:
-    # Common options for plots
-    opts = tsg_plot.PlotOptions()
-    attribute_dict = \
-        {
-            #'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['red3'],
-            'colors' : tsg_plot.colors['blue3'] + tsg_plot.colors['blue3'],
-            'hatch' : ['']*3 + ['////']*3,
-            'bar_width' : 0.7,
-            'figsize' : (3.5, 1.5),
-            'fontsize' : 8,
-            'rotate_labels' : True,
-            'rotate_labels_angle' : -45,
-            'xlabel' : '',
-            'title' : '',
-            'legend_enabled' : True,
-            'legend_ncol' : 3,
-            'legend_columnspacing' : 1.0,
-            'legend_handlelength' : 1.0,
-        }
-    for name, value in attribute_dict.iteritems():
-      setattr(opts, name, value)
-
-    metric_data = data[metric]
-    opts.data = []
-    opts.labels = [benchmarks, []]
-    opts.file_name = filename.split('.')[0] + "_%s.pdf" % (metric)
-    for policy in policies:
-      opts.data.append(metric_data[policy])
-      opts.labels[1].append(policy_to_label(policy))
-    opts.data = numpy.array(opts.data).T
-    opts.ylabel = metric.replace('_', ' ') + " [%]"
-    tsg_plot.add_plot(opts)
-
 def plot_common(data, benchmarks, metrics, policies, filename):
-  # Common options
+  """
+  Common plot options.
+  """
   opts = tsg_plot.PlotOptions()
   attribute_dict = \
       {
@@ -66,9 +33,14 @@ def plot_common(data, benchmarks, metrics, policies, filename):
 
   return opts
 
-
 def plot_em(data, benchmarks, metrics, policies, filename):
+  """
+  Plot energy and deadline misses.
+  """
+  # Common options
   opts = plot_common(data, benchmarks, metrics, policies, filename)
+
+  # Colors based on number of configurations
   if len(policies) == 6:
     opts.colors = tsg_plot.colors['blue3']*2
     opts.hatch = ['']*3 + ['////']*3
@@ -76,6 +48,7 @@ def plot_em(data, benchmarks, metrics, policies, filename):
     opts.colors = [tsg_plot.colors['blue3'][0], tsg_plot.colors['blue3'][2]]
   else:
     raise Exception("Unsuported number of policies = %d" % len(policies))
+
   opts.file_name = filename.split('.')[0] + "_em.pdf"
 
   for metric in  ["energy", "deadline_misses"]:
@@ -83,6 +56,7 @@ def plot_em(data, benchmarks, metrics, policies, filename):
       opts.ylabel = "Energy [%]"
     elif metric == "deadline_misses":
       opts.ylabel = "Misses [%]"
+    # Restructure data
     metric_data = data[metric]
     opts.data = []
     for policy in policies:
@@ -90,6 +64,7 @@ def plot_em(data, benchmarks, metrics, policies, filename):
       opts.labels[1].append(policy_to_label(policy))
     opts.data = numpy.array(opts.data).T
 
+    # Use one legend for both plots
     if opts.plot_idx == 1:
       opts.legend_enabled = True
     else:
@@ -98,7 +73,13 @@ def plot_em(data, benchmarks, metrics, policies, filename):
     tsg_plot.add_plot(opts)
  
 def plot_core_counts(data, benchmarks, metrics, policies, filename):
+  """
+  Plot number of core switches and number of jobs on big core.
+  """
+  # Common options
   opts = plot_common(data, benchmarks, metrics, policies, filename)
+
+  # Colors based on number of configurations
   if len(policies) == 6: 
     opts.colors = tsg_plot.colors['blue3']
     opts.hatch = ['']*3
@@ -106,6 +87,7 @@ def plot_core_counts(data, benchmarks, metrics, policies, filename):
     opts.colors = [tsg_plot.colors['blue3'][2]]
   else:
     raise Exception("Unsuported number of policies = %d" % len(policies))
+
   opts.file_name = filename.split('.')[0] + "_counts.pdf"
 
   for metric in  ["switch_count", "big_count"]:
@@ -113,6 +95,7 @@ def plot_core_counts(data, benchmarks, metrics, policies, filename):
       opts.ylabel = "Core Switches [%]"
     elif metric == "big_count":
       opts.ylabel = "Big Core Jobs [%]"
+    # Restructure data
     metric_data = data[metric]
     opts.data = []
     for policy in policies:
@@ -121,6 +104,7 @@ def plot_core_counts(data, benchmarks, metrics, policies, filename):
         opts.labels[1].append(policy_to_label(policy))
     opts.data = numpy.array(opts.data).T
 
+    # Use one legend for both plots
     if opts.plot_idx == 1:
       opts.legend_enabled = True
     else:
@@ -128,7 +112,6 @@ def plot_core_counts(data, benchmarks, metrics, policies, filename):
 
     tsg_plot.add_plot(opts)
  
-
 def policy_to_label(policy):
   """
   Convert policy function/configuration name to a more human readable format.
@@ -137,28 +120,10 @@ def policy_to_label(policy):
   policy[-1] = "%.1f" % (float(policy[-1])/100)
   return '-'.join(policy)
 
-  """
-  d = {
-      "policy_tuned_pid" : "pid",
-      "policy_least_squares" : "Least-Squares",
-      "policy_conservative" : "prediction",
-      #"policy_cvx_conservative_lasso" : "prediction",
-      "policy_cvx_conservative_lasso" : "",
-      "policy_oracle" : "oracle",
-      }
-  policy = policy.strip()
-  result = []
-  for word in policy.split('-'):
-    if word in d.keys():
-      result.append(d[word])
-    elif "cvx_conservative_lasso_" in word:
-      result.append("cvx-%s" % (policy.split('_')[4]))
-    else:
-      result.append(word)
-  return '-'.join(result)
-  """
-
 def parse(filename):
+  """
+  Parse raw data file.
+  """
   data = {"metadata" : {"metrics" : [], "policies" : [], "benchmarks" : []}}
 
   f = open(filename, 'r')
@@ -227,4 +192,3 @@ if __name__ == "__main__":
 
   plot_em(plot_data, benchmarks, metrics, policies, filename)
   plot_core_counts(plot_data, benchmarks, metrics, policies, filename)
-  #plot(plot_data, benchmarks, metrics, policies, filename)
