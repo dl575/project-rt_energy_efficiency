@@ -28,12 +28,32 @@ def function_pointers(filename):
     vectors.append(vector)
   return vectors
 
-def run_prediction(train_filename, test_filename, policy):
+def mask(metrics, nonzero_coeffs):
+  if not nonzero_coeffs:
+    return metrics
+
+  nfeatures = len(metrics[0])
+  zero_coeffs = []
+  for i in range(nfeatures):
+    if i not in nonzero_coeffs:
+      zero_coeffs.append(i)
+  if not zero_coeffs:
+    return metrics
+
+  for m in metrics:
+    # Zero out unused coefficients
+    for c in zero_coeffs:
+      m[c] = 0
+  return metrics
+
+
+def run_prediction(train_filename, test_filename, policy, nonzero_coeffs=None):
   """
   Runs [policy] on the data in [filename] in order to predict the execution
   time of tasks.  Returns the predicted times and the original observed
   execution times.
   """
+
   # Get base execution times
   train_times = parse_execution_times(train_filename)
   # Loop counter metrics
@@ -44,6 +64,8 @@ def run_prediction(train_filename, test_filename, policy):
   fp = function_pointers(train_filename)
   if fp:
     train_metrics = map(lambda x, y: x+y, train_metrics, fp)
+  # Mask out zero coefficients
+  train_metrics = mask(train_metrics, nonzero_coeffs)
 
   # Separate test set
   if test_filename:
@@ -57,6 +79,8 @@ def run_prediction(train_filename, test_filename, policy):
     fp = function_pointers(test_filename)
     if fp:
       test_metrics = map(lambda x, y: x+y, test_metrics, fp)
+    # Mask out zero coefficients
+    test_metrics = mask(test_metrics, nonzero_coeffs)
     # Predict times using the passed policy
     predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=test_times, test_metrics=test_metrics)
   # Use training set for test
@@ -64,6 +88,7 @@ def run_prediction(train_filename, test_filename, policy):
     test_times = parse_execution_times(train_filename)
     # Predict times using the passed policy
     predict_times = policy(train_times=train_times, train_metrics=train_metrics, test_times=None, test_metrics=None)
+
 
   s = 0
   for i in range(1, len(predict_times)):
@@ -79,10 +104,6 @@ if __name__ == "__main__":
     # Don't use a test set (test on training set)
     if "--no_test" in flags:
       no_test = True
-    # Specify a specific benchmark
-    for flag in flags:
-      if "--benchmark" in flag:
-        benchmarks = [flag.split('=')[1]]
 
   input_data_dir = "data/"
   output_dir = "predict_times/"
@@ -91,23 +112,26 @@ if __name__ == "__main__":
     os.system("mkdir " + output_dir)
   policies = [
       #policy_tuned_pid,
-      policy_conservative,
+      #policy_least_squares,
+      #policy_conservative,
       policy_cvx_conservative_lasso,
-      #policy_oracle,
+      policy_oracle,
       ]
 
   # For each DVFS policy
   for policy in policies:
     print policy.__name__
     for benchmark in benchmarks:
+      nonzero_coeffs = get_nonzero_coeffs("cvx/little_predictors.c", benchmark)
+
       # Predict execution times
       train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
       test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
       print "  " + train_filename
       if no_test:
-        (predict_times, times) = run_prediction(train_filename, None, policy)
+        (predict_times, times) = run_prediction(train_filename, None, policy, nonzero_coeffs)
       else:
-        (predict_times, times) = run_prediction(train_filename, test_filename, policy)
+        (predict_times, times) = run_prediction(train_filename, test_filename, policy, nonzero_coeffs)
       # Save lp solve output
       if policy == policy_conservative:
         os.system("cp temp.lps lps/%s.lps" % benchmark)
@@ -120,7 +144,10 @@ if __name__ == "__main__":
       elif policy == policy_tuned_pid:
         os.system("cp temp.lps pid/%s.lps" % benchmark)
       # Write prediction out to file
-      out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
+      if "oracle" not in policy.__name__:
+        out_file = open("%s/%s_restricted-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
+      else:
+        out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
       out_file.write("\n".join([str(x) for x in predict_times]))
       out_file.close()
 
