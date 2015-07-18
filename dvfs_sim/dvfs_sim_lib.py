@@ -45,9 +45,9 @@ import os
 import cvxpy
 import sklearn.linear_model
 
-benchmarks = ["pocketsphinx", "stringsearch", "sha", "rijndael",
-"xpilot_slice", "2048_slice", "curseofwar_slice", "uzbl"]
-
+#benchmarks = ["pocketsphinx", "stringsearch", "sha_preread", "rijndael_preread",
+#"xpilot_slice", "2048_slice", "curseofwar_slice_sdl", "uzbl", "ldecode"]
+benchmarks = ["ldecode"]
 default_dvfs_levels = [.1*x for x in range(1, 11)]
 
 def average(l):
@@ -385,6 +385,9 @@ def policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constr
   prob.solve()
   if prob.status != cvxpy.OPTIMAL:
     print "Problem not solved optimally: ", prob.status
+    # Retry with CVXOPT
+    prob.solve(solver=cvxpy.SCS)
+    print "  Result: ", prob.status
   # Write out results
   coeffs = numpy.array(b.value)
   f = open("temp.lps", 'w')
