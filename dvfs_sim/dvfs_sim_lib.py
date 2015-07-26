@@ -47,8 +47,16 @@ import os
 import cvxpy
 import sklearn.linear_model
 
-benchmarks = ["pocketsphinx", "sha_preread", "rijndael_preread",
-"xpilot_slice", "2048_slice", "curseofwar_slice_sdl", "uzbl", "ldecode"]
+benchmarks = [
+		"2048_slice",
+		"curseofwar_slice_sdl",
+		"ldecode",
+		"pocketsphinx",
+		"rijndael_preread",
+		"sha_preread",
+		"uzbl",
+		"xpilot_slice"
+		]
 
 default_dvfs_levels = [.1*x for x in range(1, 11)]
 
@@ -481,8 +489,18 @@ def max_normalized_tardiness(times, baseline_times, frequencies, deadline):
   return normalized_tardiness(times, baseline_times, frequencies, deadline)[1]
 
 def energy(times, baseline_times, frequencies, deadline):
-  energies = [f*f*float(t)/bt for (f, t, bt) in zip(frequencies, times, baseline_times)]
-  #energies = [f*f for (f, t, bt) in zip(frequencies, times, baseline_times)]
+  #energies = [f*f*float(t)/bt for (f, t, bt) in zip(frequencies, times, baseline_times)]
+  """
+  t = N/f
+  V = bf
+  P = 1/2CV^2Af
+    = 1/2CbAf^3
+  E = Pt
+    = 1/2CbAN f^2
+  E/E_max = f^2/f_max^2
+    = f^2 (given that f_max = 1)
+  """
+  energies = [f*f for f in frequencies]
   return average(energies)
 
 def read_predict_file(filename):
