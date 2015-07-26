@@ -428,6 +428,7 @@ def policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constr
   prob.solve()
   if prob.status != cvxpy.OPTIMAL:
     print "Problem not solved optimally: ", prob.status
+    # Retry with CVXOPT
     print "  Trying with CVXOPT..."
     prob.solve(solver=cvxpy.SCS)
     print "  Result: ", prob.status

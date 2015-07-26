@@ -36,6 +36,21 @@ colors = {
     'red4' : ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d'], # 4-class Reds
     'red5' : ['#fee5d9', '#fcae91', '#fb6a5a', '#de2d26', '#a50f15'], # 5-class Reds
 
+    'green3' : ['#e5f5e0', '#a1d99b', '#31a354'], # 3-class Greens
+    'green4' : ['#edf8e9', '#bae4b3', '#74c476', '#238b45'], # 4-class Greens
+    'green5' : ['#edf8e9', '#bae4b3', '#74c476', '#31a354', '#006d2c'], # 5-class Greens
+    'grey3' : ['#f0f0f0', '#bdbdbd', '#636363'], # 3-class Greys
+    'grey4' : ['#f7f7f7', '#cccccc', '#969696', '#525252'], # 4-class Greys
+    'grey5' : ['#f7f7f7', '#cccccc', '#969696', '#636363', '#252525'], # 5-class Greys
+
+    'orange3' : ['#fee6ce', '#fdae6b', '#e6550d'], # 3-class Oranges
+    'orange4' : ['#feedde', '#fdbe85', '#fd8d3c', '#d94701'], # 4-class Oranges
+    'orange5' : ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603'], # 5-class Oranges
+
+    'purple3' : ['#efedf5', '#bcbddc', '#756bb1'], # 3-class Purples
+    'purple4' : ['#f2f0f7', '#cbc9e2', '#9e9ac8', '#6a51a3'], # 4-class Purples
+    'purple5' : ['#f2f0f7', '#cbc9e2', '#9e9ac8', '#756bb1', '#54278f'], # 5-class Purples
+
     'qualitative' : ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#f77f00',
       '#ffff33', '#a65628', '#f781bf', '#999999'], # 9-class Set 1
     'qualitative_paired' : ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c',
