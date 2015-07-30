@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
 	# Policies to use
 	policies = [
-			policy_worstcase,
+      #policy_worstcase,
 			policy_cvx_conservative_lasso,
 			]
 
