@@ -1,0 +1,1980 @@
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255051599 us
+start_temperature 0
+sensor0 : 53000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+d2647603 2e9c5113 7fef8159 41b3cde7 e600f24b
+end_temperature 0
+sensor0 : 57000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255101930 us
+time 0 = 19287 us
+time_total 0 = 50105 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255117806 us
+start_temperature 1
+sensor0 : 52000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+94eb04e1 048fddcc e09a52ad 8fcb74e9 0886d0f8
+end_temperature 1
+sensor0 : 56000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255168097 us
+time 1 = 10675 us
+time_total 1 = 50084 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255175980 us
+start_temperature 2
+sensor0 : 52000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+888d98c5 fcab5a58 4d00b019 026f1acb 06a78975
+end_temperature 2
+sensor0 : 52000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255226271 us
+time 2 = 4238 us
+time_total 2 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255235309 us
+start_temperature 3
+sensor0 : 52000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+6bf95cfd 935c4e46 b79e82be 0f92a728 f03fdee6
+end_temperature 3
+sensor0 : 55000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255285601 us
+time 3 = 5803 us
+time_total 3 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255303577 us
+start_temperature 4
+sensor0 : 52000
+sensor1 : 50000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+df62184a 1549d5e3 376c8d34 e0c8732e e4e220fb
+end_temperature 4
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255353876 us
+time 4 = 15189 us
+time_total 4 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255363163 us
+start_temperature 5
+sensor0 : 52000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+28dc8f78 d9758e07 87cd8d59 d3324e4d 6d79962f
+end_temperature 5
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255413447 us
+time 5 = 5959 us
+time_total 5 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255430269 us
+start_temperature 6
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+fc429486 7cbbde2e eb03550d fda73326 7c7e05a1
+end_temperature 6
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255480571 us
+time 6 = 13974 us
+time_total 6 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255497665 us
+start_temperature 7
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+3b1ec342 0472fc72 2dac169b 7b071123 92682e08
+end_temperature 7
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255547973 us
+time 7 = 14053 us
+time_total 7 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255567352 us
+start_temperature 8
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+ebbc7daa 1c272c9f 9200f70b d37aa418 43b2ffc5
+end_temperature 8
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255617657 us
+time 8 = 16998 us
+time_total 8 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255622620 us
+start_temperature 9
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+07f3c521 95bcd5f9 9c95f340 f7532eeb d0da67de
+end_temperature 9
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255672904 us
+time 9 = 2231 us
+time_total 9 = 50092 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255689351 us
+start_temperature 10
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 51000
+sensor4 : 49000
+19f8c136 c6f313e7 d34284d9 d696ca3f 7cb7f975
+end_temperature 10
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+moment_end : 1438222255739656 us
+time 10 = 12778 us
+time_total 10 = 50098 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255762214 us
+start_temperature 11
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 51000
+sensor4 : 49000
+3187c175 9e814094 2583d5c9 8f387081 5a19f136
+end_temperature 11
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222255812518 us
+time 11 = 18275 us
+time_total 11 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255824853 us
+start_temperature 12
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 52000
+sensor4 : 49000
+5f142568 ad06e6f5 561329a0 ffb7ed38 46701dde
+end_temperature 12
+sensor0 : 56000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222255875158 us
+time 12 = 9005 us
+time_total 12 = 50092 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255884000 us
+start_temperature 13
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 52000
+sensor4 : 49000
+ef2c4e1e 0a49eab7 200a0c32 3fc0a9f4 d7995d70
+end_temperature 13
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 54000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222255934289 us
+time 13 = 5389 us
+time_total 13 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222255955047 us
+start_temperature 14
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+469df6c7 a33c6d07 32b519a6 75eb66b6 c8749bb9
+end_temperature 14
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256005346 us
+time 14 = 14192 us
+time_total 14 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256024446 us
+start_temperature 15
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+6e735d12 335a2309 c4a46cef ffb86bcb 7282eaad
+end_temperature 15
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256074757 us
+time 15 = 14598 us
+time_total 15 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256082508 us
+start_temperature 16
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+22275679 c3d5e3b9 2c6f3f52 3d05da6c 4edc4669
+end_temperature 16
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256132793 us
+time 16 = 4557 us
+time_total 16 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256149204 us
+start_temperature 17
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+b4b57493 8dc4c3b1 20c97fea de5e9ba0 b7826dab
+end_temperature 17
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256199500 us
+time 17 = 11396 us
+time_total 17 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256213469 us
+start_temperature 18
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+bbeb48d1 217907ef 6fe5bc11 165bf9e0 b1075ab3
+end_temperature 18
+sensor0 : 56000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256263766 us
+time 18 = 10391 us
+time_total 18 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256271839 us
+start_temperature 19
+sensor0 : 52000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+9ead34eb fee15a25 1132394e e2fb0891 3a0b54ce
+end_temperature 19
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256322133 us
+time 19 = 4951 us
+time_total 19 = 50090 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256329349 us
+start_temperature 20
+sensor0 : 52000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+206a9282 e8b835bb 900bb858 b84c7588 dc565dbb
+end_temperature 20
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256379626 us
+time 20 = 3912 us
+time_total 20 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256398869 us
+start_temperature 21
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+8d4559db eefc35e5 8e6bfc76 ec57da83 671a3f9f
+end_temperature 21
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256449177 us
+time 21 = 14731 us
+time_total 21 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256455815 us
+start_temperature 22
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+cffcb98d 64e581e2 939ba196 9e94a7c3 22265b7d
+end_temperature 22
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256506102 us
+time 22 = 3382 us
+time_total 22 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256517117 us
+start_temperature 23
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+fc7be579 17f73260 e228aa0f 7770dfa2 809f1b3b
+end_temperature 23
+sensor0 : 56000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 49000
+moment_end : 1438222256567409 us
+time 23 = 7603 us
+time_total 23 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256588801 us
+start_temperature 24
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+ca56f604 a38cb870 78348b63 d1b553b0 0b93afc1
+end_temperature 24
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256639117 us
+time 24 = 17249 us
+time_total 24 = 50098 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256664791 us
+start_temperature 25
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+611f58e8 4f8f976e 32e3ade2 2fcaa4ec 580c9262
+end_temperature 25
+sensor0 : 59000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256715111 us
+time 25 = 19469 us
+time_total 25 = 50092 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256735874 us
+start_temperature 26
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+4e7a08e0 86b39f0f 93a7e51e c3cfaf7e f8d194ba
+end_temperature 26
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256786329 us
+time 26 = 16890 us
+time_total 26 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256799982 us
+start_temperature 27
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+e83eab88 18a70369 84aed619 41766935 a93fb4ed
+end_temperature 27
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256850301 us
+time 27 = 9950 us
+time_total 27 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256871157 us
+start_temperature 28
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+edb369d3 65a2aba9 09051416 1f6b30a9 725b9c95
+end_temperature 28
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256921459 us
+time 28 = 17377 us
+time_total 28 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222256942483 us
+start_temperature 29
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+6bd53f9e 74ea1a69 da907383 12f2bbc5 6a7fb0b9
+end_temperature 29
+sensor0 : 59000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222256992798 us
+time 29 = 15846 us
+time_total 29 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257010141 us
+start_temperature 30
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+49dad286 4ef1d331 3ea38d4f 28b8a50b abcbc3d3
+end_temperature 30
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257060443 us
+time 30 = 14473 us
+time_total 30 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257078586 us
+start_temperature 31
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+8c203def 09acfdb5 0b9d4eb8 bff45a9f af6f12b4
+end_temperature 31
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257128896 us
+time 31 = 13843 us
+time_total 31 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257149312 us
+start_temperature 32
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+4270f589 c38a78b5 c935161d 94fb6009 a1eb285e
+end_temperature 32
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257199620 us
+time 32 = 17336 us
+time_total 32 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257216213 us
+start_temperature 33
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+6f803a58 ca99a45d cff3a97e 5a3b8b76 79c9eb9c
+end_temperature 33
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257266509 us
+time 33 = 11551 us
+time_total 33 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257274769 us
+start_temperature 34
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+1a7e29fa c8285aef cc615e4c 7c9f8c08 0daa2561
+end_temperature 34
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257325055 us
+time 34 = 5188 us
+time_total 34 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257337880 us
+start_temperature 35
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+69f73825 b482aaf3 0acbdabc 731e22ec 1112c0cf
+end_temperature 35
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257388266 us
+time 35 = 8609 us
+time_total 35 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257401322 us
+start_temperature 36
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+dc2a7e7d 8e844d9e f970be95 b76050e3 af09d172
+end_temperature 36
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257451634 us
+time 36 = 8914 us
+time_total 36 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257462734 us
+start_temperature 37
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+5de984f4 c8d7f8ac 5e796d92 4a47587f d8d12ea6
+end_temperature 37
+sensor0 : 55000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257513024 us
+time 37 = 7917 us
+time_total 37 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257530976 us
+start_temperature 38
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+a595e56d 75d75e3a cdb0bb76 6b4c366b 69b4214c
+end_temperature 38
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257581293 us
+time 38 = 14097 us
+time_total 38 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257588230 us
+start_temperature 39
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+ced7f83c d0154904 38726288 aaff37c3 fc59518c
+end_temperature 39
+sensor0 : 55000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257638514 us
+time 39 = 3478 us
+time_total 39 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257645848 us
+start_temperature 40
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+c96111b3 850ade74 40092417 eaefb074 994bfa06
+end_temperature 40
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257696134 us
+time 40 = 3919 us
+time_total 40 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257712340 us
+start_temperature 41
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+e6b6d46e 4446fb60 1952c1d1 d5909a62 0328374d
+end_temperature 41
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257762648 us
+time 41 = 13435 us
+time_total 41 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257769922 us
+start_temperature 42
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+133daffd 257e4f52 4afb71a8 279dd422 352820e6
+end_temperature 42
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257820204 us
+time 42 = 3685 us
+time_total 42 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257832911 us
+start_temperature 43
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+440adafd 03746fcb 14c7475c ed298bc6 be178b45
+end_temperature 43
+sensor0 : 56000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257883214 us
+time 43 = 8796 us
+time_total 43 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257890983 us
+start_temperature 44
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+c968eefa ccba9e32 d8364fc0 aa80a891 0f0a2ffd
+end_temperature 44
+sensor0 : 55000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222257941261 us
+time 44 = 4713 us
+time_total 44 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222257950434 us
+start_temperature 45
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+76e19918 660e8eeb bc799e6f 6a291974 a6f41cbb
+end_temperature 45
+sensor0 : 55000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258000715 us
+time 45 = 5871 us
+time_total 45 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258012042 us
+start_temperature 46
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+30af178b 9bc31af3 24da4e8a b1ae8cdf 8292f4a5
+end_temperature 46
+sensor0 : 56000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258062340 us
+time 46 = 7882 us
+time_total 46 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258076334 us
+start_temperature 47
+sensor0 : 53000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+c82c21a7 0e5fac9a 8cadf862 9c784cbc 3ea5aaf9
+end_temperature 47
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258126802 us
+time 47 = 10101 us
+time_total 47 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258148898 us
+start_temperature 48
+sensor0 : 54000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+bb89e0c1 43d9806e 52cfba0d ce9bdea2 9cd0805f
+end_temperature 48
+sensor0 : 58000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258199221 us
+time 48 = 18875 us
+time_total 48 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258206377 us
+start_temperature 49
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+8b3642ec 5fc5fdc2 331076a5 73c64404 ace36248
+end_temperature 49
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258256710 us
+time 49 = 3696 us
+time_total 49 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258275783 us
+start_temperature 50
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+3826a43f 7a1032a4 42432eff 93cb28af 34f72abb
+end_temperature 50
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258326088 us
+time 50 = 15962 us
+time_total 50 = 50090 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258344421 us
+start_temperature 51
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+5d0794d2 a29dfe9e 75976f73 d2e8ac40 9632f16b
+end_temperature 51
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258394732 us
+time 51 = 14409 us
+time_total 51 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258407206 us
+start_temperature 52
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+2ea29757 271b44d3 dabbc949 dc79b4f7 a2670ed0
+end_temperature 52
+sensor0 : 57000
+sensor1 : 51000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222258457522 us
+time 52 = 7785 us
+time_total 52 = 50097 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258480716 us
+start_temperature 53
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+9680b8db bc54f280 f447e05e b24c81fa 71e0d03a
+end_temperature 53
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222258531026 us
+time 53 = 17515 us
+time_total 53 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258551631 us
+start_temperature 54
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 51000
+c3dbd89a b999bb34 a510e26a f1e4426a 4cee8bc5
+end_temperature 54
+sensor0 : 60000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 51000
+moment_end : 1438222258601949 us
+time 54 = 17211 us
+time_total 54 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258616303 us
+start_temperature 55
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 51000
+3ce6eaad 673a1a5e af0164d2 b95ea289 6f684a83
+end_temperature 55
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 51000
+moment_end : 1438222258666601 us
+time 55 = 11201 us
+time_total 55 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258688399 us
+start_temperature 56
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+0e354860 c621694c 47efa7a6 655ad5a2 92bd5da4
+end_temperature 56
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222258738721 us
+time 56 = 18953 us
+time_total 56 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258748196 us
+start_temperature 57
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 51000
+f2d9a34c 26e51ecb 8e5a3534 b234a663 a17e96db
+end_temperature 57
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222258798487 us
+time 57 = 5530 us
+time_total 57 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258810492 us
+start_temperature 58
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+dc45e098 27222898 685f2ba7 338a1cc2 ae34bf88
+end_temperature 58
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222258860784 us
+time 58 = 8193 us
+time_total 58 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258878784 us
+start_temperature 59
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+82d2ed36 6436ca58 03d10dbf 70cec98a 5247358a
+end_temperature 59
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222258929122 us
+time 59 = 14115 us
+time_total 59 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222258949860 us
+start_temperature 60
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+60f90eb7 b2dcb9a8 7c2dd70e 2271a57f 06de3e56
+end_temperature 60
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259000171 us
+time 60 = 17800 us
+time_total 60 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259014341 us
+start_temperature 61
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+c9cf16fb 40e3fbd3 8a993632 11e4a93c 94a37052
+end_temperature 61
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259064636 us
+time 61 = 9027 us
+time_total 61 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259079354 us
+start_temperature 62
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+f388e624 0e4999e1 bfbe00a7 5cd65ef0 42bf748e
+end_temperature 62
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259129650 us
+time 62 = 10876 us
+time_total 62 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259141287 us
+start_temperature 63
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+1178330f 11b973a0 b20245d8 5e93eafb 63cb2e3b
+end_temperature 63
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259191575 us
+time 63 = 8312 us
+time_total 63 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259199341 us
+start_temperature 64
+sensor0 : 53000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+0b4f479f 38e7e6b1 3c986642 8a70a70b 5951bf2d
+end_temperature 64
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259249624 us
+time 64 = 4827 us
+time_total 64 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259262112 us
+start_temperature 65
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+56f03069 35e8f819 2d0184b2 c8a367be 2cb2fe99
+end_temperature 65
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259312400 us
+time 65 = 7920 us
+time_total 65 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259321713 us
+start_temperature 66
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+9f26a20b f29bb2b4 782f1891 8f47486b 4f9cd4e9
+end_temperature 66
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259372044 us
+time 66 = 6141 us
+time_total 66 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259386842 us
+start_temperature 67
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+8e57c1fc b67a7c0e eee7ab63 885fd341 1d9a3911
+end_temperature 67
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222259437146 us
+time 67 = 11970 us
+time_total 67 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259449486 us
+start_temperature 68
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+e8ca4247 384c19c6 14713a94 1367c35a 14f2d0ed
+end_temperature 68
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259499784 us
+time 68 = 8930 us
+time_total 68 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259512769 us
+start_temperature 69
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+95a09287 69d5e0dc 48747aac 7e2bff50 952e40d0
+end_temperature 69
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222259563078 us
+time 69 = 8791 us
+time_total 69 = 50105 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259577270 us
+start_temperature 70
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+3eb07a05 1ab5706b e6bbcee7 c0b7f252 17823a9c
+end_temperature 70
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259627564 us
+time 70 = 11155 us
+time_total 70 = 50085 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259638693 us
+start_temperature 71
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+8207ace9 4c43d5a0 2e143078 3134c7ea 9cec61ab
+end_temperature 71
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259688992 us
+time 71 = 7686 us
+time_total 71 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259700806 us
+start_temperature 72
+sensor0 : 53000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+afcd4ea3 032c07cb 0717a905 e1c9112b 9ca212df
+end_temperature 72
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 52000
+sensor4 : 50000
+moment_end : 1438222259751104 us
+time 72 = 9204 us
+time_total 72 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259771452 us
+start_temperature 73
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+23e82a96 c53183d9 6bb6d20a 0dea72b0 2f8fd3d3
+end_temperature 73
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259821755 us
+time 73 = 17778 us
+time_total 73 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259841849 us
+start_temperature 74
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+7f31149c 844787de 13c5a50d f8e021d5 3b7b29b0
+end_temperature 74
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259892270 us
+time 74 = 17001 us
+time_total 74 = 50087 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259908969 us
+start_temperature 75
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+54dc8fde 5fde623f 2240ed51 78056785 abbf26d5
+end_temperature 75
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222259959279 us
+time 75 = 13191 us
+time_total 75 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222259968465 us
+start_temperature 76
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+9aa8f7d4 51800b5c f663cc67 4d97bc7a 418b7afc
+end_temperature 76
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260018762 us
+time 76 = 5821 us
+time_total 76 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260033557 us
+start_temperature 77
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+980af03f c35d835c cc567bbb baaf2a6d f292f945
+end_temperature 77
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260083857 us
+time 77 = 9600 us
+time_total 77 = 50094 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260098285 us
+start_temperature 78
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+ee0a1609 3f23d92c c750d902 10c851f1 eba132c7
+end_temperature 78
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260148580 us
+time 78 = 11468 us
+time_total 78 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260161741 us
+start_temperature 79
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+ec989c62 6fbb0f98 3e1e86cb ab69a47a 1aecc76e
+end_temperature 79
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260212044 us
+time 79 = 10089 us
+time_total 79 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260225924 us
+start_temperature 80
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+8d410aa3 f569022d 0fc1d92b 8627a2f7 c3f3eb19
+end_temperature 80
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260276224 us
+time 80 = 10512 us
+time_total 80 = 50092 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260297276 us
+start_temperature 81
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+991bf327 9854c783 f960b624 46b7179d 51f4bb77
+end_temperature 81
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260347598 us
+time 81 = 18079 us
+time_total 81 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260361075 us
+start_temperature 82
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+5745b0e4 652ec1f2 d715e7ff d9e5f9e0 78a4d9ca
+end_temperature 82
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260411422 us
+time 82 = 10054 us
+time_total 82 = 50096 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260418458 us
+start_temperature 83
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+6cc04fcf 4d2fb26b 1001ccbc 0ab7bab5 6f4b99ef
+end_temperature 83
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260468741 us
+time 83 = 3545 us
+time_total 83 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260477056 us
+start_temperature 84
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+f944d627 67a649ff 66f5179f 9e9d9bc0 1059ed3e
+end_temperature 84
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260527337 us
+time 84 = 4851 us
+time_total 84 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260546918 us
+start_temperature 85
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 55000
+sensor3 : 53000
+sensor4 : 50000
+f1c0be04 72420046 74d0567e 3d755950 172423f4
+end_temperature 85
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260597229 us
+time 85 = 16920 us
+time_total 85 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260619144 us
+start_temperature 86
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+3871a83d e95c0642 c28aea83 87e982af 2e1738cd
+end_temperature 86
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260669448 us
+time 86 = 19729 us
+time_total 86 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260683001 us
+start_temperature 87
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+aef8abfc e1f6ecc8 93c08606 1da9043c 2d443c3a
+end_temperature 87
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260733298 us
+time 87 = 10840 us
+time_total 87 = 50093 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260746046 us
+start_temperature 88
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+c40d3369 8e3bbdb8 5fc126f5 1d7bc396 975382cf
+end_temperature 88
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260796703 us
+time 88 = 8652 us
+time_total 88 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260811050 us
+start_temperature 89
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+c13cdcce 655a9472 6bdc788a 0d13bf40 5bb6b902
+end_temperature 89
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260861349 us
+time 89 = 11265 us
+time_total 89 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260883497 us
+start_temperature 90
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+ba26fae3 1136a815 31c455e6 25e139b5 b7e09299
+end_temperature 90
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222260933807 us
+time 90 = 19607 us
+time_total 90 = 50091 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222260952654 us
+start_temperature 91
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+63e43064 1cab468d 9c4a2130 8ed47801 1ab11edf
+end_temperature 91
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+moment_end : 1438222261002957 us
+time 91 = 16195 us
+time_total 91 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261012633 us
+start_temperature 92
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+46e33422 f9ca69e4 8f34f5ca e25f653d c381be24
+end_temperature 92
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+moment_end : 1438222261062922 us
+time 92 = 6347 us
+time_total 92 = 50088 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261073498 us
+start_temperature 93
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+bbfaf714 e7b89c78 fbc761c8 c60be2cc 389adf9c
+end_temperature 93
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222261123793 us
+time 93 = 6811 us
+time_total 93 = 50090 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261145282 us
+start_temperature 94
+sensor0 : 55000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+83a3ed03 9b8ee33e 58134646 e26f922b 3b79af9f
+end_temperature 94
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222261195589 us
+time 94 = 18760 us
+time_total 94 = 50090 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261202381 us
+start_temperature 95
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+b6a90c07 0228bfd5 312cf4c6 96200de4 ac50a1f0
+end_temperature 95
+sensor0 : 56000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+moment_end : 1438222261252868 us
+time 95 = 3636 us
+time_total 95 = 50085 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261267711 us
+start_temperature 96
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+c3e735f2 292bbd1a 1ff1c670 c37cc430 fd49e38b
+end_temperature 96
+sensor0 : 57000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222261318012 us
+time 96 = 12153 us
+time_total 96 = 50086 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261333406 us
+start_temperature 97
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 51000
+6cd24e1c c289ff10 df40f50f 494a7728 e9b9c0a5
+end_temperature 97
+sensor0 : 58000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222261383786 us
+time 97 = 12770 us
+time_total 97 = 50089 us
+predicted time = 0.000000
+big core freq : 2000000khz
+============ deadline time : 50000 us ===========
+moment_start_0 : 1438222261401169 us
+start_temperature 98
+sensor0 : 54000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+a96f807e beefada9 73e60564 c6bfa1ea 418925fb
+end_temperature 98
+sensor0 : 59000
+sensor1 : 52000
+sensor2 : 56000
+sensor3 : 53000
+sensor4 : 50000
+moment_end : 1438222261451487 us
+time 98 = 14979 us
+time_total 98 = 50095 us
+predicted time = 0.000000
+big core freq : 2000000khz
