@@ -204,7 +204,7 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
         exec_time = 0;
     #else //cvx    
         if(CVX_COEFF == 100)
-            exec_time = -858.693607*loop_counter[0] + -864.704127*loop_counter[1] + 1.048158*loop_counter[3] + 0.131124*loop_counter[4] + 0.046368*loop_counter[5] + 0.111030*loop_counter[6] + 0.111030*loop_counter[7] + 0.111030*loop_counter[8] + 0.111030*loop_counter[9] + -37.148443*loop_counter[10] + -4.643609*loop_counter[11] + -1.641741*loop_counter[12] + -3.928025*loop_counter[13] + -3.928025*loop_counter[14] + -3.928025*loop_counter[15] + -3.928025*loop_counter[16] + 6.316377*loop_counter[17] + 2.241619*loop_counter[18] + 5.317076*loop_counter[19] + 5.317076*loop_counter[20] + 5.317076*loop_counter[21] + 5.317076*loop_counter[22] + 50.217930;
+            exec_time = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
     #endif
 #else
     #if !CVX_EN //conservative
@@ -228,6 +228,7 @@ int main(int argc, char **argv)
     SHA_INFO sha_info;
 
 //---------------------modified by TJSong----------------------//
+    static int jump = 0;
     int exec_time = 0;
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
@@ -284,6 +285,7 @@ int main(int argc, char **argv)
             CASE 4 = running on our prediction
             CASE 5 = running on oracle
             CASE 6 = running on pid
+            CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
             predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
@@ -299,10 +301,11 @@ int main(int argc, char **argv)
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
             dvfs_time = print_dvfs_timing();
-        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
+            predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
             moment_timing_print(0); //moment_start
-        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
             moment_timing_print(0); //moment_start
             
             start_timing();
@@ -347,16 +350,29 @@ int main(int argc, char **argv)
             dvfs_time = print_dvfs_timing();
             
             moment_timing_print(1); //moment_start
+        #elif PROACTIVE_EN /* CASE 4 */
+            static int job_number = 0; //job count
+            moment_timing_print(0); //moment_start
+            
+            start_timing();
+            jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+            job_number++;
         #endif
 
 //---------------------modified by TJSong----------------------//
 
           start_timing();
+          //print_start_emperature();
 
           //sha_stream(&sha_info, fin);
           sha_stream(&sha_info, file_buffer, flen);
           sha_print(&sha_info);
 
+          //print_end_temperature();
           end_timing();
 //---------------------modified by TJSong----------------------//
         exec_time = exec_timing();
@@ -368,8 +384,8 @@ int main(int argc, char **argv)
             print_exec_time(exec_time);
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
-        #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+        #else /* CASE 3,4,5,6 and 7 */
+            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
                 start_timing();
                 usleep(delay_time);
                 end_timing();
@@ -394,3 +410,4 @@ int main(int argc, char **argv)
     }
     return(0);
 }
+
