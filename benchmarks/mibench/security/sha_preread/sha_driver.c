@@ -6,6 +6,7 @@
 #include <time.h>
 #include "sha.h"
 #include "timing.h"
+#include <unistd.h>
 
 float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
 {
@@ -230,6 +231,7 @@ int main(int argc, char **argv)
 //---------------------modified by TJSong----------------------//
     static int jump = 0;
     int exec_time = 0;
+    int pid = getpid();
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
@@ -290,6 +292,7 @@ int main(int argc, char **argv)
         #if GET_PREDICT /* CASE 0 */
             predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
         #elif GET_DEADLINE /* CASE 1 */
+            moment_timing_print(0); //moment_start
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
@@ -353,9 +356,22 @@ int main(int argc, char **argv)
         #elif PROACTIVE_EN /* CASE 4 */
             static int job_number = 0; //job count
             moment_timing_print(0); //moment_start
-            
+           
+            /*char cmd[100];
+            if(job_number %2 ==0){
+                printf("job_number is %d\n", job_number);
+                sprintf(cmd, "taskset -p %s %d", "0xf0", pid);
+                fflush(stdout);
+                system(cmd);
+            }else{
+                printf("job_number is %d\n", job_number);
+                sprintf(cmd, "taskset -p %s %d", "0x0f", pid);
+                fflush(stdout);
+                system(cmd);
+            }*/
+ 
             start_timing();
-            jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
             end_timing();
             dvfs_time = print_dvfs_timing();
             
@@ -382,6 +398,7 @@ int main(int argc, char **argv)
             print_exec_time(exec_time);
         #elif GET_DEADLINE /* CASE 1 */
             print_exec_time(exec_time);
+            moment_timing_print(2); //moment_end
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5,6 and 7 */

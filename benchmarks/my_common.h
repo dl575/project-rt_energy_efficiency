@@ -22,7 +22,7 @@ some of all benchmarks use.
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 1 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -39,6 +39,8 @@ some of all benchmarks use.
 
 //automatically set
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
+#define MAX_FREQ_BIG (2000000)
+#define MAX_FREQ_LITTLE (1400000)
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
@@ -55,6 +57,8 @@ int slice_time=0;
 int dvfs_time=0;
 
 FILE *fp_max_freq; //File pointer scaling_max_freq
+FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
+FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
 #if CORE
@@ -160,6 +164,14 @@ void fopen_all(void){
         return;
     }
     #endif
+    if(NULL == (fp_max_freq_big = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+        printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
 #endif
     return;
 }
@@ -167,6 +179,8 @@ void fopen_all(void){
 void fclose_all(void){
 #if DVFS_EN
    fclose(fp_max_freq);
+   fclose(fp_max_freq_big);
+   fclose(fp_max_freq_little);
 #endif
     return;
 }
@@ -181,44 +195,161 @@ void fclose_all(void){
         int predicted_times[99]= {46990, 26386, 10480, 14356, 37609, 14764, 34571, 34880, 42083, 5459, 31788, 45231, 22286, 12951, 35105, 36135, 11272, 28169, 25608, 12252, 9675, 36479, 8343, 18809, 42702, 47991, 41746, 24477, 42947, 39045, 35882, 34341, 42920, 28659, 12809, 21187, 22082, 19568, 34752, 8705, 9701, 33182, 9115, 21715, 11454, 14555, 19411, 24459, 46773, 9119, 39555, 35710, 19189, 43042, 42460, 27762, 46997, 13591, 20331, 34696, 44210, 22334, 26761, 20571, 11988, 19570, 15264, 29545, 22103, 21771, 27557, 19004, 22716, 44018, 41972, 32629, 14489, 23706, 28375, 24863, 25989, 44674, 24589, 8890, 12011, 41867, 48901, 26733, 21315, 27941, 48508, 39972, 15688, 16899, 46393, 9038, 30051, 31022, 37037};
     #endif
 #endif
+
+int predicted_times_big[99]= {19937, 11322, 4657, 6283, 16035, 6445, 14736, 14897, 17905, 2544, 13597, 19206, 9614, 5713, 14979, 15386, 4982, 12054, 10996, 5351, 4332, 15510, 3763, 8152, 18149, 20344, 17743, 10509, 18231, 16605, 15304, 14654, 18231, 12296, 5632, 9128, 9533, 8477, 14817, 3925, 4332, 14166, 4050, 9371, 5064, 6364, 8396, 10509, 19856, 4088, 16848, 15223, 8276, 18311, 18067, 11891, 19937, 5958, 8802, 14816, 18799, 9615, 11484, 8883, 5307, 8477, 6688, 12623, 9533, 9334, 11809, 8233, 9778, 18717, 17825, 13923, 6363, 10184, 12135, 10672, 11159, 18962, 10589, 3969, 5307, 17823, 20750, 11484, 9208, 11972, 20587, 17011, 6851, 7339, 19693, 4087, 12866, 13272, 15792};
+int predicted_times_little[99]= {46990, 26386, 10480, 14356, 37609, 14764, 34571, 34880, 42083, 5459, 31788, 45231, 22286, 12951, 35105, 36135, 11272, 28169, 25608, 12252, 9675, 36479, 8343, 18809, 42702, 47991, 41746, 24477, 42947, 39045, 35882, 34341, 42920, 28659, 12809, 21187, 22082, 19568, 34752, 8705, 9701, 33182, 9115, 21715, 11454, 14555, 19411, 24459, 46773, 9119, 39555, 35710, 19189, 43042, 42460, 27762, 46997, 13591, 20331, 34696, 44210, 22334, 26761, 20571, 11988, 19570, 15264, 29545, 22103, 21771, 27557, 19004, 22716, 44018, 41972, 32629, 14489, 23706, 28375, 24863, 25989, 44674, 24589, 8890, 12011, 41867, 48901, 26733, 21315, 27941, 48508, 39972, 15688, 16899, 46393, 9038, 30051, 31022, 37037};
+float power_big[19] = { 0.130 ,  0.172 ,  0.215 ,  0.251 ,  0.289 ,  0.325 ,  0.370 ,  0.417 ,  0.484 ,  0.538 ,  0.607 ,  0.677 ,  0.737 ,  0.812 ,  0.922 ,  1.041 ,  1.169 ,  1.354 ,  1.675 };
+float power_little[13] = { 0.042 ,  0.055 ,  0.059 ,  0.068 ,  0.083 ,  0.093 ,  0.124 ,  0.167 ,  0.186 ,  0.199 ,  0.229 ,  0.278 ,  0.323 };
 #define WINDOW_SIZE (20) //cvx coefficient
-/*
-void set_freq_multiple(int job_number, int deadline_time){
 
-    int predicted_freq = MAX_FREQ;
-    static int previous_freq = MAX_FREQ;
-    int i;
-    static int jump = 0;
-    int arr[WINDOW_SIZE];
-    int predicted_times_arr_size = sizeof(predicted_times_arr)/sizeof(predicted_times_arr[0]);
-    for(i=0; i<WINDOW_SIZE; i++){
-        if(job_number + i >= predicted_times_arr_size)
-            arr[i] = -1;
+int set_freq_multiple_hetero(int job, int d, int pid){
+	int w=WINDOW_SIZE;
+	int i, j, k, brk;
+	int brk_big, brk_little;
+	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
+	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
+	int f_new, final_freq;
+	int f_new_big;
+	int f_new_little;
+	int T_sum_big = 0;
+	int T_sum_little = 0;
+	int T_est_big[WINDOW_SIZE];
+	int T_est_little[WINDOW_SIZE];
+	int size_big = sizeof(predicted_times_big)/sizeof(predicted_times_big[0]);
+	int size_little = sizeof(predicted_times_little)/sizeof(predicted_times_little[0]);
+	static int jump = 0; //if jump is 0, set new freq
+	static int group = 0; //how many jobs are grouped
+	float margin = 1.1;
+	static int f_previous = MAX_FREQ;
+    static int big_cnt = 0;
+    static int little_cnt = 0;
+    static int current_core = CORE; //0: little, 1: big
+    char cmd[100];
+
+	//estimate time for multiple jobs (from current to current + W)
+	printf("T_est : ");
+	for(i=0; i<w; i++){
+		if(job+i < size_big){
+			T_est_big[i] = predicted_times_big[job+i];
+			T_est_little[i] = predicted_times_little[job+i];
+		}
+        else{
+			T_est_big[i] = -1;
+			T_est_little[i] = -1;
+        }
+		printf("%d:%d, ", T_est_big[i], T_est_little[i]);
+	}
+	printf("\n");
+
+	if(jump == 0){
+		for(i=w; i>0; i--){
+			//1. Sum total time
+			T_sum_big = 0;
+			T_sum_little = 0;
+			for(j=0; j<i; j++){
+				T_sum_big += margin * T_est_big[j];
+				T_sum_little += margin * T_est_little[j];
+            }
+            #if OVERHEAD_EN //just add 1000us for simplicity
+            T_sum_big += 1000;
+            T_sum_little += 1000;
+            #endif
+			printf("T_sum big:little = %d:%d\t", T_sum_big, T_sum_little);
+			//2. Calculate new frequecy
+			f_new_big = (f_max_big * T_sum_big)/(i*d);
+			f_new_little = (f_max_little * T_sum_little)/(i*d);
+            //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
+	        f_new_big = ((int)((f_new_big + 100) / 100)) * 100;
+	        f_new_little = ((int)((f_new_little + 100) / 100)) * 100;
+			printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+			printf("power big:little (W) = %f:%f\n", power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+
+			//3. Check if all deadlines will be met
+			brk_big = 0;
+			brk_little = 0;
+			
+			for(j=1; j<i; j++){
+				T_sum_big = 0;
+				T_sum_little = 0;
+				for(k=0; k<j; k++){
+					T_sum_big += T_est_big[k];
+					T_sum_little += T_est_little[k];
+                }
+				if((T_sum_big * f_max_big) <= (j * d * f_new_big))
+					brk_big++;
+				if((T_sum_little * f_max_little) <= (j * d * f_new_little))
+					brk_little++;
+			}
+			if(brk_big == i-1 && brk_little == i-1){
+				jump = i-1;
+                group = i;
+				printf("group of %d\n", group);
+				break;
+			}
+		}	
+        //Select cores and use taskset command to migrate process if it was on different core
+        //f_new = f_new_little or f_new_big? let's compare power, because times will be same
+        //1. If big power is smaller or little freq is over max freq, select big core
+        //2. If little power is smaller, select little core
+        //3. If same, no change
+        if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
+             || f_new_little > 1400){  
+            f_new = f_new_big;
+            printf("big %d times\n", ++big_cnt);
+            if(!current_core){//if it was little core
+                sprintf(cmd, "taskset -p %s %d", "0xf0", pid);
+                fflush(stdout);
+                system(cmd);
+            }
+            current_core = 1;
+        }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
+            f_new = f_new_little;
+            printf("little %d times\n", ++little_cnt);
+            if(current_core){//if it was big core
+                sprintf(cmd, "taskset -p %s %d", "0x0f", pid);
+                fflush(stdout);
+                system(cmd);
+            }
+            current_core = 0;
+        }else{
+            if(current_core)
+                printf("big %d times\n", ++big_cnt);
+            else
+                printf("little %d times\n", ++little_cnt);
+        }
+           
+	}else{
+		f_new = f_previous; 
+		printf("f_new (Mhz) = %d\n", f_new);
+		jump--;
+		printf("group of %d\n", group);
+        if(current_core)
+            printf("big %d times\n", ++big_cnt);
         else
-            arr[i] = predicted_times_arr[job_number + i];
-    }
-    printf("jump = %d, arr: %d, %d, %d \n", jump, arr[0], arr[1], arr[2]);
-    if ( jump == 0 && ( arr[0] < arr[1] && arr[1] < arr[2] ) ){
-        predicted_freq = 1.1 * ( arr[0] + arr[1] + arr[2] ) * MAX_FREQ / (3 * deadline_time) ;
-        jump = WINDOW_SIZE;
-        printf("@1\n");        
-    }else if (jump > 0){
-        predicted_freq = previous_freq;
-        printf("@2\n");        
+            printf("little %d times\n", ++little_cnt);
+	}
+	printf("jump = %d\n", jump);
+
+    //if less then 200 Mhz, just set it minimum (200)
+    f_new = (f_new < 200)?(200):(f_new);
+    //save previous freq
+	f_previous = f_new;
+	//mhz->khz
+	final_freq = f_new*1000;
+    //set maximum frequency, because performance governor always use maximum freq.
+
+    if(current_core){
+        fprintf(fp_max_freq_big, "%d", final_freq);
+        fflush(fp_max_freq_big);
     }else{
-        predicted_freq = 1.1 * ( arr[0] ) * MAX_FREQ / (deadline_time) ;
-        jump = 1;
-        printf("@3\n");        
+        fprintf(fp_max_freq_little, "%d", final_freq);
+        fflush(fp_max_freq_little);
     }
-    jump--;
-
-    predicted_freq = (predicted_freq < 200000 || arr[0] <= 1 || arr[1] <= 1 || arr[2] <= 1)?(200000):(predicted_freq);
-    previous_freq = predicted_freq;
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-
+    return jump;
 }
-*/
+
+
+
 /*
 	int job : job number
 	int d : deadline
@@ -255,6 +386,9 @@ int set_freq_multiple(int job, int d){
 			T_sum = 0;
 			for(j=0; j<i; j++)
 				T_sum += margin * T_est[j];
+            #if OVERHEAD_EN //just add 1000us for simplicity
+            T_sum += 1000;
+            #endif
 			printf("T_sum = %d\t", T_sum);
 			//2. Calculate new frequecy
 			f_new = (f_max * T_sum)/(i*d);
@@ -269,11 +403,7 @@ int set_freq_multiple(int job, int d){
 				T_sum = 0;
 				for(k=0; k<j; k++)
 					T_sum += T_est[k];
-                #if OVERHEAD_EN //just add 1000us for simplicity
-				if((T_sum * f_max) <= (j * (d-1000) * f_new))//f_new should be round(f_new)?
-                #else
-				if((T_sum * f_max) <= (j * d * f_new))//f_new should be round(f_new)?
-                #endif
+				if((T_sum * f_max) <= (j * d * f_new))
 					brk++;
 			}
 			if(brk == i-1){
@@ -413,21 +543,22 @@ void print_freq(void){
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
 
-    #if CORE //big
+//    #if CORE //big
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
             printf("ERROR : FILE READ FAILED\n");
             return;
         }
         fscanf(fp_freq, "%d", &khz);
         printf("big core freq : %dkhz\n", khz);  
-    #else //LITTLE
+    fclose(fp_freq);
+//    #else //LITTLE
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
             return;
         }
         fscanf(fp_freq, "%d", &khz);
         printf("little core freq : %dkhz\n", khz);  
-    #endif
+//    #endif
     fclose(fp_freq);
     return;
 #endif
