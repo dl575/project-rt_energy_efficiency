@@ -5,6 +5,14 @@ some of all benchmarks use.
 #ifndef __MY_COMMON_H__
 #define __MY_COMMON_H__
 
+#define _GUU_SOURCE
+#include <sched.h>
+
+#include <stdlib.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+#include <sched.h>
 #include "timing.h"
 #include "deadline.h"
 //constant
@@ -225,7 +233,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
     static int little_cnt = 0;
     static int current_core = CORE; //0: little, 1: big
     char cmd[100];
-
+    cpu_set_t set;
 	//estimate time for multiple jobs (from current to current + W)
 	printf("T_est : ");
 	for(i=0; i<w; i++){
@@ -297,18 +305,42 @@ int set_freq_multiple_hetero(int job, int d, int pid){
             f_new = f_new_big;
             printf("big %d times\n", ++big_cnt);
             if(!current_core){//if it was little core
-                sprintf(cmd, "taskset -p %s %d", "0xf0", pid);
+                CPU_ZERO( &set );
+                CPU_SET( 4, &set );
+                CPU_SET( 5, &set );
+                CPU_SET( 6, &set );
+                CPU_SET( 7, &set );
+                if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+                {
+                    perror( "sched_setaffinity" );
+                    exit(2);
+                }
+                #if DEBUG_EN
+                sprintf(cmd, "taskset -p %d", pid);
                 fflush(stdout);
                 system(cmd);
+                #endif
             }
             current_core = 1;
         }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
             f_new = f_new_little;
             printf("little %d times\n", ++little_cnt);
             if(current_core){//if it was big core
-                sprintf(cmd, "taskset -p %s %d", "0x0f", pid);
+                CPU_ZERO( &set );
+                CPU_SET( 0, &set );
+                CPU_SET( 1, &set );
+                CPU_SET( 2, &set );
+                CPU_SET( 3, &set );
+                if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+                {
+                    perror( "sched_setaffinity" );
+                    exit(2);
+                }
+                #if DEBUG_EN
+                sprintf(cmd, "taskset -p %d", pid);
                 fflush(stdout);
                 system(cmd);
+                #endif
             }
             current_core = 0;
         }else{
