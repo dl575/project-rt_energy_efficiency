@@ -15,6 +15,12 @@ some of all benchmarks use.
 #include <sched.h>
 #include "timing.h"
 #include "deadline.h"
+
+extern struct slice_return{
+    int big;
+    int little;
+};
+
 //constant
 #define MILLION 1000000L
 #define ERROR_DEFINE -1
@@ -22,6 +28,7 @@ some of all benchmarks use.
 
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 1 //0:delay off, 1:delay on
 
@@ -70,7 +77,7 @@ FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
 #if CORE
-    int dvfs_table[19][19]={
+int dvfs_table[19][19]={
     {164, 892, 426, 717, 717, 694, 1521, 1753, 1762, 1853, 1929, 1792, 1753, 1823, 1773, 2009, 1839, 1906, 2019 }, 
     {1106, 114, 675, 656, 286, 568, 1600, 1524, 1507, 1497, 1290, 1527, 1490, 1497, 1565, 1597, 1596, 1688, 1662 }, 
     {466, 743, 83, 590, 551, 523, 1196, 1414, 1405, 1427, 1400, 1465, 1427, 1436, 1237, 1487, 1451, 1525, 1490 }, 
@@ -90,40 +97,63 @@ FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
     {2299, 1733, 1485, 1386, 1322, 1269, 1240, 1199, 1158, 1123, 1093, 1122, 1088, 1120, 1094, 1094, 21, 1073, 1063 }, 
     {2292, 1755, 1489, 1389, 1334, 1300, 1256, 1215, 1161, 1124, 1091, 1121, 1082, 1090, 1105, 1124, 1033, 20, 1043 }, 
     {2153, 1810, 1553, 1134, 1389, 1275, 1218, 1164, 915, 1144, 1104, 1149, 1104, 1086, 1077, 1105, 1035, 1060, 21 } 
-    };
-#else
-    int dvfs_table[13][13]={
-{190, 975, 414, 770, 2032, 1954, 1621, 1877, 1859, 1839, 1946, 1925, 1835 }, 
-{1109, 123, 706, 632, 1283, 1600, 1575, 1554, 1597, 1510, 1370, 1557, 1556 }, 
-{391, 793, 112, 588, 1503, 1439, 1134, 1444, 1419, 1416, 1415, 1458, 1425 }, 
-{1044, 791, 676, 77, 1428, 1329, 1367, 1331, 1039, 1308, 1310, 1373, 1285 }, 
-{1797, 1303, 1474, 1392, 56, 1299, 1257, 1252, 1237, 1235, 1039, 1250, 1241 }, 
-{2110, 1750, 1519, 1347, 1341, 48, 1218, 1227, 1196, 1224, 1193, 1237, 969 }, 
-{1492, 1724, 1098, 1373, 1304, 1252, 44, 1188, 1188, 1174, 1173, 1206, 1172 }, 
-{2113, 1742, 1486, 1369, 1318, 1255, 1211, 40, 1168, 1147, 1136, 1202, 1141 }, 
-{2166, 1692, 1544, 1049, 1271, 1261, 1229, 1163, 35, 1113, 1110, 1136, 1108 }, 
-{2187, 1754, 1475, 1374, 1292, 1199, 1200, 1119, 1125, 34, 1124, 1118, 1098 }, 
-{2120, 1222, 1501, 1357, 989, 1244, 1149, 1133, 1153, 1126, 30, 1126, 1094 }, 
-{2054, 1672, 1427, 1342, 1277, 1232, 1190, 1139, 1159, 1135, 1089, 28, 1070 }, 
-{2154, 1651, 1476, 1344, 1311, 917, 1160, 1173, 1142, 1135, 1075, 1133, 31 }
 };
-/*    
+#else
 int dvfs_table[13][13]={
-    {151, 856, 351, 672, 1696, 1660, 1404, 1679, 1735, 1683, 1627, 1679, 1635 }, 
-    {889, 101, 638, 595, 1175, 1480, 1441, 1420, 1420, 1420, 1190, 1470, 1421 }, 
-    {303, 716, 77, 556, 1363, 1331, 1063, 1316, 1313, 1308, 1297, 1352, 1329 }, 
-    {942, 662, 545, 70, 1292, 1267, 1253, 1237, 995, 1252, 1243, 1296, 1247 }, 
-    {1737, 1206, 1365, 1319, 53, 1216, 1231, 1205, 1217, 1217, 969, 1207, 1173 }, 
-    {1846, 1561, 1361, 1295, 1252, 46, 1187, 1164, 1151, 1154, 1143, 1193, 929 }, 
-    {1374, 1575, 1046, 1288, 1255, 1176, 41, 1144, 1154, 1132, 1114, 1156, 1133 }, 
-    {1874, 1556, 1374, 1294, 1260, 1189, 1152, 36, 1107, 1132, 1105, 1150, 1101 }, 
-    {1854, 1551, 1366, 963, 1223, 1170, 1150, 1110, 33, 1083, 1084, 1115, 1098 }, 
-    {1942, 1570, 1389, 1293, 1238, 1163, 1140, 1094, 1090, 30, 1053, 1101, 1065 }, 
-    {1851, 1126, 1373, 1269, 963, 1172, 1130, 1097, 1089, 1070, 28, 1082, 1057 }, 
-    {1865, 1517, 1343, 1262, 1226, 1168, 1145, 1097, 1079, 1063, 1046, 26, 1037 }, 
-    {1782, 1524, 1346, 1259, 1225, 895, 1130, 1083, 1084, 1062, 1036, 1084, 25 } 
-    };*/
+    {190, 975, 414, 770, 2032, 1954, 1621, 1877, 1859, 1839, 1946, 1925, 1835 }, 
+    {1109, 123, 706, 632, 1283, 1600, 1575, 1554, 1597, 1510, 1370, 1557, 1556 }, 
+    {391, 793, 112, 588, 1503, 1439, 1134, 1444, 1419, 1416, 1415, 1458, 1425 }, 
+    {1044, 791, 676, 77, 1428, 1329, 1367, 1331, 1039, 1308, 1310, 1373, 1285 }, 
+    {1797, 1303, 1474, 1392, 56, 1299, 1257, 1252, 1237, 1235, 1039, 1250, 1241 }, 
+    {2110, 1750, 1519, 1347, 1341, 48, 1218, 1227, 1196, 1224, 1193, 1237, 969 }, 
+    {1492, 1724, 1098, 1373, 1304, 1252, 44, 1188, 1188, 1174, 1173, 1206, 1172 }, 
+    {2113, 1742, 1486, 1369, 1318, 1255, 1211, 40, 1168, 1147, 1136, 1202, 1141 }, 
+    {2166, 1692, 1544, 1049, 1271, 1261, 1229, 1163, 35, 1113, 1110, 1136, 1108 }, 
+    {2187, 1754, 1475, 1374, 1292, 1199, 1200, 1119, 1125, 34, 1124, 1118, 1098 }, 
+    {2120, 1222, 1501, 1357, 989, 1244, 1149, 1133, 1153, 1126, 30, 1126, 1094 }, 
+    {2054, 1672, 1427, 1342, 1277, 1232, 1190, 1139, 1159, 1135, 1089, 28, 1070 }, 
+    {2154, 1651, 1476, 1344, 1311, 917, 1160, 1173, 1142, 1135, 1075, 1133, 31 }
+};
 #endif
+
+int dvfs_table_big[19][19]={
+    {164, 892, 426, 717, 717, 694, 1521, 1753, 1762, 1853, 1929, 1792, 1753, 1823, 1773, 2009, 1839, 1906, 2019 }, 
+    {1106, 114, 675, 656, 286, 568, 1600, 1524, 1507, 1497, 1290, 1527, 1490, 1497, 1565, 1597, 1596, 1688, 1662 }, 
+    {466, 743, 83, 590, 551, 523, 1196, 1414, 1405, 1427, 1400, 1465, 1427, 1436, 1237, 1487, 1451, 1525, 1490 }, 
+    {1027, 738, 577, 69, 545, 500, 1341, 1312, 1060, 1289, 1275, 1339, 1288, 1292, 1326, 1361, 1326, 1363, 1123 }, 
+    {1019, 290, 571, 546, 57, 457, 1275, 1266, 1271, 1254, 1039, 1266, 1227, 1237, 1263, 1314, 1294, 1337, 1315 }, 
+    {1074, 697, 549, 567, 479, 49, 1268, 1212, 1206, 1200, 1181, 1223, 975, 1239, 1254, 1279, 1253, 1278, 1244 }, 
+    {1530, 1707, 1137, 1362, 1334, 1246, 43, 1229, 1222, 1194, 1172, 1204, 1164, 1174, 985, 1267, 1225, 1265, 1217 }, 
+    {2224, 1734, 1505, 1405, 1351, 1279, 1226, 39, 1183, 1181, 1170, 1203, 1151, 1145, 1157, 1188, 1159, 1192, 1175 }, 
+    {2140, 1669, 1438, 1053, 1326, 1293, 1227, 1163, 35, 1177, 1158, 1186, 1130, 1123, 1138, 1169, 1142, 1175, 962 }, 
+    {2210, 1695, 1436, 1382, 1326, 1263, 1239, 1168, 1132, 32, 1136, 1173, 1113, 1103, 1122, 1163, 1135, 1176, 1165 }, 
+    {2263, 1291, 1519, 1390, 1078, 1255, 1181, 1135, 1121, 1101, 30, 1118, 1080, 1092, 1132, 1164, 1141, 1173, 1110 }, 
+    {2020, 1773, 1545, 1427, 1345, 1250, 1184, 1131, 1119, 1099, 1070, 29, 1075, 1081, 1097, 1149, 1142, 1173, 1117 }, 
+    {2124, 1761, 1556, 1418, 1346, 971, 1178, 1132, 1123, 1103, 1093, 1154, 26, 1088, 1100, 1153, 1123, 1138, 1104 }, 
+    {2011, 1684, 1478, 1355, 1285, 1216, 1179, 1128, 1118, 1102, 1090, 1141, 1084, 25, 1108, 1143, 1096, 1120, 1091 }, 
+    {1560, 1717, 1150, 1374, 1337, 1276, 971, 1185, 1163, 1130, 1092, 1128, 1094, 1111, 24, 1097, 1077, 1114, 1100 }, 
+    {2283, 1731, 1490, 1384, 1316, 1273, 1245, 1196, 1164, 1130, 1091, 1120, 1083, 1094, 1081, 23, 1075, 1105, 1085 }, 
+    {2299, 1733, 1485, 1386, 1322, 1269, 1240, 1199, 1158, 1123, 1093, 1122, 1088, 1120, 1094, 1094, 21, 1073, 1063 }, 
+    {2292, 1755, 1489, 1389, 1334, 1300, 1256, 1215, 1161, 1124, 1091, 1121, 1082, 1090, 1105, 1124, 1033, 20, 1043 }, 
+    {2153, 1810, 1553, 1134, 1389, 1275, 1218, 1164, 915, 1144, 1104, 1149, 1104, 1086, 1077, 1105, 1035, 1060, 21 } 
+};
+int dvfs_table_little[13][13]={
+    {190, 975, 414, 770, 2032, 1954, 1621, 1877, 1859, 1839, 1946, 1925, 1835 }, 
+    {1109, 123, 706, 632, 1283, 1600, 1575, 1554, 1597, 1510, 1370, 1557, 1556 }, 
+    {391, 793, 112, 588, 1503, 1439, 1134, 1444, 1419, 1416, 1415, 1458, 1425 }, 
+    {1044, 791, 676, 77, 1428, 1329, 1367, 1331, 1039, 1308, 1310, 1373, 1285 }, 
+    {1797, 1303, 1474, 1392, 56, 1299, 1257, 1252, 1237, 1235, 1039, 1250, 1241 }, 
+    {2110, 1750, 1519, 1347, 1341, 48, 1218, 1227, 1196, 1224, 1193, 1237, 969 }, 
+    {1492, 1724, 1098, 1373, 1304, 1252, 44, 1188, 1188, 1174, 1173, 1206, 1172 }, 
+    {2113, 1742, 1486, 1369, 1318, 1255, 1211, 40, 1168, 1147, 1136, 1202, 1141 }, 
+    {2166, 1692, 1544, 1049, 1271, 1261, 1229, 1163, 35, 1113, 1110, 1136, 1108 }, 
+    {2187, 1754, 1475, 1374, 1292, 1199, 1200, 1119, 1125, 34, 1124, 1118, 1098 }, 
+    {2120, 1222, 1501, 1357, 989, 1244, 1149, 1133, 1153, 1126, 30, 1126, 1094 }, 
+    {2054, 1672, 1427, 1342, 1277, 1232, 1190, 1139, 1159, 1135, 1089, 28, 1070 }, 
+    {2154, 1651, 1476, 1344, 1311, 917, 1160, 1173, 1142, 1135, 1075, 1133, 31 }
+};
+
+
 
 int check_define(void){
     int flag_cnt=0;
@@ -379,9 +409,158 @@ int set_freq_multiple_hetero(int job, int d, int pid){
     }
     return jump;
 }
+void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
+    int job_exec_time;
+    int predicted_freq = MAX_FREQ;
+    static int previous_freq = MAX_FREQ;
 
+	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
+	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
+	int f_new, final_freq;
+	int f_new_big = MAX_FREQ_BIG/1000;
+	int f_new_little = MAX_FREQ_LITTLE/1000;
+	int T_sum_big = 0;
+	int T_sum_little = 0;
+	float margin = 1.1;
+	static int f_previous = MAX_FREQ;
+    static int big_cnt = 0;
+    static int little_cnt = 0;
+    static int current_core = CORE; //0: little, 1: big
+    cpu_set_t set;
+    
+    for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
+        T_sum_big = margin * T_est_big * f_max_big / f_new_big;
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(T_sum_big + dvfs_table_big[f_new_big/100-2][f_new_big/100-2] + slice_time < d)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(T_sum_big + slice_time < d)
+            break;
+    #else // without dvfs + slice and oracle
+        if(T_sum_big < d)
+            break;
+    #endif
+    }      
+    for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
+        T_sum_little = margin * T_est_little * f_max_little / f_new_little;
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(T_sum_little + dvfs_table_little[f_new_little/100-2][f_new_little/100-2] + slice_time < d)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(T_sum_little + slice_time < d)
+            break;
+    #else // without dvfs + slice and oracle
+        if(T_sum_little < d)
+            break;
+    #endif
+    }     
+    //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
+    f_new_big = ((int)((f_new_big + 100) / 100)) * 100;
+    f_new_little = ((int)((f_new_little + 100) / 100)) * 100;
+    printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+    printf("power big:little (W) = %f:%f\n", power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+    //Select cores and use taskset command to migrate process if it was on different core
+    //f_new = f_new_little or f_new_big? let's compare power, because times will be same
+    //1. If big power is smaller or little freq is over max freq, select big core
+    //2. If little power is smaller, select little core
+    //3. If same, no change
+ 
+    if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
+            || f_new_little > 1400){  
+        f_new = f_new_big;
+        printf("big %d times\n", ++big_cnt);
+        if(!current_core){//if it was little core
+            CPU_ZERO( &set );
+            CPU_SET( 4, &set );
+            CPU_SET( 5, &set );
+            CPU_SET( 6, &set );
+            CPU_SET( 7, &set );
+            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+            {
+                perror( "sched_setaffinity" );
+                exit(2);
+            }
+            #if DEBUG_EN
+            sprintf(cmd, "taskset -p %d", pid);
+            flush(stdout);
+            system(cmd);
+            #endif
+        }
+        current_core = 1;
+    }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
+        f_new = f_new_little;
+        printf("little %d times\n", ++little_cnt);
+        if(current_core){//if it was big core
+            CPU_ZERO( &set );
+            CPU_SET( 0, &set );
+            CPU_SET( 1, &set );
+            CPU_SET( 2, &set );
+            CPU_SET( 3, &set );
+            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+            {
+                perror( "sched_setaffinity" );
+                exit(2);
+            }
+            #if DEBUG_EN
+            sprintf(cmd, "taskset -p %d", pid);
+            fflush(stdout);
+            system(cmd);
+            #endif
+        }
+        current_core = 0;
+    }else{
+        if(current_core)
+            printf("big %d times\n", ++big_cnt);
+        else
+            printf("little %d times\n", ++little_cnt);
+    }
+    //if less then 200 Mhz, just set it minimum (200)
+    f_new = (f_new < 200)?(200):(f_new);
+    //save previous freq
+	f_previous = f_new;
+	//mhz->khz
+	final_freq = f_new*1000;
+    //set maximum frequency, because performance governor always use maximum freq.
 
-
+    if(current_core){
+        fprintf(fp_max_freq_big, "%d", final_freq);
+        fflush(fp_max_freq_big);
+    }else{
+        fprintf(fp_max_freq_little, "%d", final_freq);
+        fflush(fp_max_freq_little);
+    }
+    return;
+}
+void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
+#if DVFS_EN
+    int job_exec_time;
+    int predicted_freq = MAX_FREQ;
+    static int previous_freq = MAX_FREQ;
+    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
+        job_exec_time = 1.1 * predicted_exec_time * MAX_FREQ / predicted_freq;
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(job_exec_time + slice_time < deadline_time)
+            break;
+    #else // without dvfs + slice and oracle
+        if(job_exec_time < deadline_time)
+            break;
+    #endif
+    }      
+    //calculate predicted freq and round up by adding 99999
+    //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
+    //remember current frequency to use later
+    previous_freq = predicted_freq;
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    fflush(fp_max_freq);
+#endif
+    return;
+}
 /*
 	int job : job number
 	int d : deadline
@@ -463,38 +642,6 @@ int set_freq_multiple(int job, int d){
     fprintf(fp_max_freq, "%d", final_freq);
     fflush(fp_max_freq);
     return jump;
-}
-
-void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
-#if DVFS_EN
-    int job_exec_time;
-    int predicted_freq = MAX_FREQ;
-    static int previous_freq = MAX_FREQ;
-    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-        job_exec_time = 1.1 * predicted_exec_time * MAX_FREQ / predicted_freq;
-    #if OVERHEAD_EN // with dvfs + slice overhead
-        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(job_exec_time + slice_time < deadline_time)
-            break;
-    #else // without dvfs + slice and oracle
-        if(job_exec_time < deadline_time)
-            break;
-    #endif
-    }      
-    //calculate predicted freq and round up by adding 99999
-    //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
-    //remember current frequency to use later
-    previous_freq = predicted_freq;
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-#endif
-
-    return;
 }
 
 void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){

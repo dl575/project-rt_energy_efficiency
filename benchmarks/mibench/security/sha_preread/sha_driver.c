@@ -8,7 +8,7 @@
 #include "timing.h"
 #include <unistd.h>
 
-float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
+struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
 {
   int loop_counter[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int i;
@@ -199,26 +199,40 @@ float sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
   {
     predict_exec_time:
     ;
-    float exec_time;
+    struct slice_return exec_time;
+    //float exec_time;
+    #if !CVX_EN //conservative
+        exec_time.big = 0;
+        exec_time.little = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
+    #else //cvx    
+        if(CVX_COEFF == 100){
+            exec_time.big = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
+            exec_time.little = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
+        }
+    #endif
+
+
+/*
 #if CORE
     #if !CVX_EN //conservative
-        exec_time = 0;
+        exec_time.big = 0;
     #else //cvx    
         if(CVX_COEFF == 100)
-            exec_time = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
+            exec_time.big = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
     #endif
 #else
     #if !CVX_EN //conservative
-        exec_time = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
+        exec_time.little = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
     #else //cvx    
         if(CVX_COEFF == 10)
-            exec_time = -23.689941*loop_counter[0] + -23.793744*loop_counter[1] + 0.132241*loop_counter[3] + 0.016516*loop_counter[4] + 0.005840*loop_counter[5] + 0.013962*loop_counter[6] + 0.013962*loop_counter[7] + 0.013962*loop_counter[8] + 0.013962*loop_counter[9] + 23.391490*loop_counter[10] + 2.923825*loop_counter[11] + 1.033574*loop_counter[12] + 2.473365*loop_counter[13] + 2.473365*loop_counter[14] + 2.473365*loop_counter[15] + 2.473365*loop_counter[16] + 0.974851*loop_counter[17] + 0.344855*loop_counter[18] + 0.824862*loop_counter[19] + 0.824862*loop_counter[20] + 0.824862*loop_counter[21] + 0.824862*loop_counter[22] + 7.801028;
+            exec_time.little = -23.689941*loop_counter[0] + -23.793744*loop_counter[1] + 0.132241*loop_counter[3] + 0.016516*loop_counter[4] + 0.005840*loop_counter[5] + 0.013962*loop_counter[6] + 0.013962*loop_counter[7] + 0.013962*loop_counter[8] + 0.013962*loop_counter[9] + 23.391490*loop_counter[10] + 2.923825*loop_counter[11] + 1.033574*loop_counter[12] + 2.473365*loop_counter[13] + 2.473365*loop_counter[14] + 2.473365*loop_counter[15] + 2.473365*loop_counter[16] + 0.974851*loop_counter[17] + 0.344855*loop_counter[18] + 0.824862*loop_counter[19] + 0.824862*loop_counter[20] + 0.824862*loop_counter[21] + 0.824862*loop_counter[22] + 7.801028;
         else if(CVX_COEFF == 50)
-            exec_time = 40.301451*loop_counter[0] + 40.303939*loop_counter[1] + 0.062243*loop_counter[3] + 0.007771*loop_counter[4] + 0.002748*loop_counter[5] + 0.006568*loop_counter[6] + 0.006568*loop_counter[7] + 0.006568*loop_counter[8] + 0.006568*loop_counter[9] + 1.083027*loop_counter[10] + 0.135339*loop_counter[11] + 0.047805*loop_counter[12] + 0.114497*loop_counter[13] + 0.114497*loop_counter[14] + 0.114497*loop_counter[15] + 0.114497*loop_counter[16] + 3.947360*loop_counter[17] + 1.395664*loop_counter[18] + 3.339157*loop_counter[19] + 3.339157*loop_counter[20] + 3.339157*loop_counter[21] + 3.339157*loop_counter[22] + 31.578068;
+            exec_time.little = 40.301451*loop_counter[0] + 40.303939*loop_counter[1] + 0.062243*loop_counter[3] + 0.007771*loop_counter[4] + 0.002748*loop_counter[5] + 0.006568*loop_counter[6] + 0.006568*loop_counter[7] + 0.006568*loop_counter[8] + 0.006568*loop_counter[9] + 1.083027*loop_counter[10] + 0.135339*loop_counter[11] + 0.047805*loop_counter[12] + 0.114497*loop_counter[13] + 0.114497*loop_counter[14] + 0.114497*loop_counter[15] + 0.114497*loop_counter[16] + 3.947360*loop_counter[17] + 1.395664*loop_counter[18] + 3.339157*loop_counter[19] + 3.339157*loop_counter[20] + 3.339157*loop_counter[21] + 3.339157*loop_counter[22] + 31.578068;
         else if(CVX_COEFF == 100)
-            exec_time = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
+            exec_time.little = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
     #endif
 #endif 
+*/
    return exec_time;
   }
 }
@@ -278,7 +292,10 @@ int main(int argc, char **argv)
 
 //---------------------modified by TJSong----------------------//
         // Perform slicing and prediction
-        float predicted_exec_time = 0.0;
+        //float predicted_exec_time = 0.0;
+        struct slice_return predicted_exec_time;
+        predicted_exec_time.big = 0;
+        predicted_exec_time.little = 0;
         /*
             CASE 0 = to get prediction equation
             CASE 1 = to get execution deadline
@@ -301,7 +318,11 @@ int main(int argc, char **argv)
             slice_time = print_slice_timing();
 
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
         #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
@@ -318,9 +339,25 @@ int main(int argc, char **argv)
             
             start_timing();
             #if OVERHEAD_EN //with overhead
-                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #endif
+                #endif
             #else //without overhead
-                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
+                    #endif
+                #endif
             #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
@@ -333,7 +370,11 @@ int main(int argc, char **argv)
             moment_timing_print(0); //moment_start
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
@@ -348,7 +389,11 @@ int main(int argc, char **argv)
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
@@ -357,21 +402,12 @@ int main(int argc, char **argv)
             static int job_number = 0; //job count
             moment_timing_print(0); //moment_start
            
-            /*char cmd[100];
-            if(job_number %2 ==0){
-                printf("job_number is %d\n", job_number);
-                sprintf(cmd, "taskset -p %s %d", "0xf0", pid);
-                fflush(stdout);
-                system(cmd);
-            }else{
-                printf("job_number is %d\n", job_number);
-                sprintf(cmd, "taskset -p %s %d", "0x0f", pid);
-                fflush(stdout);
-                system(cmd);
-            }*/
- 
             start_timing();
-            jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+            #if HETERO_EN 
+                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+            #elif !HETERO_EN
+                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
@@ -416,7 +452,11 @@ int main(int argc, char **argv)
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        print_predicted_time(predicted_exec_time);
+        #if CORE
+            print_predicted_time(predicted_exec_time.big);
+        #else
+            print_predicted_time(predicted_exec_time.little);
+        #endif
         print_freq(); 
 
 //---------------------modified by TJSong----------------------//
