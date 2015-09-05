@@ -23,6 +23,12 @@ void write_timing();
 void write_array(int *array, int array_len);
 void init_time_file();
 
+void print_start_temperature();
+void print_end_temperature();
+void fprint_start_temperature();
+void fprint_end_temperature();
+void print_file(FILE *file);
+void fprint_file(FILE *file);
 /*
  * Start of section to time.
  */
@@ -289,5 +295,97 @@ void print_delay_time(int pre_delay_time, int delay_time){
 }
 
 
+//Temperature-related functions
+
+void print_start_temperature() {
+    static int instance_number = 0;
+    FILE *fp_tmu; //File pointer of TMU file
+    if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
+        printf("TMU Read Error\n");
+        return -1;
+    }
+    printf("start_temperature %d\n", instance_number);
+    print_file(fp_tmu);
+    instance_number++;
+}
+void print_end_temperature() {
+    static int instance_number = 0;
+    FILE *fp_tmu; //File pointer of TMU file
+    if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
+        printf("TMU Read Error\n");
+        return -1;
+    }
+    printf("end_temperature %d\n", instance_number);
+    print_file(fp_tmu);
+    instance_number++;
+}
+void fprint_start_temperature() {
+/*    static int instance_number = 0;
+    FILE *fp_tmu; //File pointer of TMU file
+    FILE *time_file;
+    int c;
+    printf("1\n");
+    time_file = fopen("times.txt", "a");
+    printf("2\n");
+    if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
+        printf("2.5\n");
+        fprintf(time_file, "TMU Read Error\n");
+        printf("2.6\n");
+        return -1;
+    }
+    printf("3\n");
+    fprintf(time_file, "start_temperature %d\n", instance_number);
+    printf("4\n");
+    if(fp_tmu){
+    printf("5\n");
+        while((c = fgetc(fp_tmu)) != EOF){
+            fputs(c, time_file);
+            printf("6: %d\n", c);
+        }
+    }
+    fclose(time_file);
+    fclose(fp_tmu);
+    printf("7\n");
+    instance_number++;*/
+}
+void fprint_end_temperature() {
+    static int instance_number = 0;
+    FILE *fp_tmu; //File pointer of TMU file
+    FILE *time_file;
+    int c;
+    time_file = fopen("times.txt", "a");
+    if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
+        fprintf(time_file, "TMU Read Error\n");
+        return -1;
+    }
+    fprintf(time_file, "end_temperature %d\n", instance_number);
+    fclose(time_file);
+    fprint_file(fp_tmu);
+    instance_number++;
+}
+
+void print_file(FILE *file){
+    int c;
+    if(file){
+        while((c = getc(file)) != EOF){
+            putchar(c);
+        }
+        fclose(file);
+    }
+    return;
+}
+void fprint_file(FILE *file){
+    int c;
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    if(file){
+        while((c = getc(file)) != EOF){
+            fputs(c, time_file);
+        }
+        fclose(time_file);
+        fclose(file);
+    }
+    return;
+}
 
 #endif
