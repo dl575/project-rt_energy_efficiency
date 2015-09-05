@@ -75,9 +75,12 @@ do
         
         # 1. LINUX Governor
         echo ${SWEEP[$j]}
-        taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 performance ${SWEEP[$j]}
+#        taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
+#        ./runAll.sh $i $1 performance ${SWEEP[$j]}
 #        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+        #./runAll.sh $i $1 conservative ${SWEEP[$j]}
+        #./runAll.sh $i $1 ondemand ${SWEEP[$j]}
+        #./runAll.sh $i $1 powersave ${SWEEP[$j]}
 
         #enable convex
         sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -169,6 +172,7 @@ do
     elif [ $1 == "little" ] ; then
         sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both.py
         taskset 0xff ./plot_energy.py little ${BENCH_NAME[$i]}
+#        taskset 0xff ./plot_both.py little ${BENCH_NAME[$i]}
     fi
 
 done
@@ -184,6 +188,10 @@ for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
 do
  #   evince $1_${BENCH_NAME[$i]}.pdf &
 done
+#restore current time
+#echo "resetting date..."
+#sudo date --set="$CURRENT_TIME"
+#sudo date --set="Sun Mar 22 15:30:16 EST 2015"
 rm -rf sed*
 
 echo "[ ./temp.sh done ]"

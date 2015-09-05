@@ -352,6 +352,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
                 #endif
             }
             current_core = 1;
+            printf("current_core : %d\n", current_core);
         }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
             f_new = f_new_little;
             printf("little %d times\n", ++little_cnt);
@@ -373,11 +374,13 @@ int set_freq_multiple_hetero(int job, int d, int pid){
                 #endif
             }
             current_core = 0;
+            printf("current_core : %d\n", current_core);
         }else{
             if(current_core)
                 printf("big %d times\n", ++big_cnt);
             else
                 printf("little %d times\n", ++little_cnt);
+            printf("current_core : %d\n", current_core);
         }
            
 	}else{
@@ -389,6 +392,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
             printf("big %d times\n", ++big_cnt);
         else
             printf("little %d times\n", ++little_cnt);
+        printf("current_core : %d\n", current_core);
 	}
 	printf("jump = %d\n", jump);
 
@@ -487,6 +491,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
             #endif
         }
         current_core = 1;
+        printf("current_core : %d\n", current_core);
     }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
         f_new = f_new_little;
         printf("little %d times\n", ++little_cnt);
@@ -508,11 +513,13 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
             #endif
         }
         current_core = 0;
+        printf("current_core : %d\n", current_core);
     }else{
         if(current_core)
             printf("big %d times\n", ++big_cnt);
         else
             printf("little %d times\n", ++little_cnt);
+        printf("current_core : %d\n", current_core);
     }
     //if less then 200 Mhz, just set it minimum (200)
     f_new = (f_new < 200)?(200):(f_new);

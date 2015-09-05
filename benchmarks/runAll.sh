@@ -7,8 +7,8 @@ if [[ $# < 4 ]] ; then
     exit 1
 fi
 
-if [ $2 != "big" -a $2 != "little" ] ; then
-    echo 'USAGE : only big or little'
+if [ $2 != "big" ] && [ $2 != "little" ] && [ $2 != "hetero" ] ; then
+    echo 'USAGE : ./runAll.sh [N] [big/little/hetero] [governors] [sweep]'
     exit 1
 fi
 

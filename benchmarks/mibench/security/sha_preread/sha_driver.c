@@ -452,11 +452,10 @@ int main(int argc, char **argv)
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        #if CORE
-            print_predicted_time(predicted_exec_time.big);
-        #else
-            print_predicted_time(predicted_exec_time.little);
-        #endif
+        printf("big_");
+        print_predicted_time(predicted_exec_time.big);
+        printf("little_");
+        print_predicted_time(predicted_exec_time.little);
         print_freq(); 
 
 //---------------------modified by TJSong----------------------//
