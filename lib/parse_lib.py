@@ -15,6 +15,7 @@ Functions:
   data_remove_constant_cols(array)
 
   parse_execution_times(filename)
+  parse_predicted_times(filename)
   parse_frame_times(filename)
   parse_metrics(filename)
   parse(filename, regex)
@@ -194,6 +195,24 @@ def parse_execution_times(filename):
     res = re.match("time ([0-9]+) = ([0-9]+) us", line)
     if res:
       times.append(int(res.group(2)))
+  f.close()
+  return times
+
+"""
+Parses the included files for predicted times (of jobs). Returns a list of
+these times.
+Times are assumed to be recorded in the following format:
+  predicted time = [0-9]+
+  $1 is the job instance.
+  $2 is the predicted time in microseconds.
+"""
+def parse_predicted_times(filename):
+  f = open(filename, 'r')
+  times = []
+  for line in f:
+    res = re.match("predicted time = ([0-9]+)", line)
+    if res:
+      times.append(int(res.group(1)))
   f.close()
   return times
 
