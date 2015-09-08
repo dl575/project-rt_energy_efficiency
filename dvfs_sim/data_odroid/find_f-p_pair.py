@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     #print power array by C style
     print "#if "+benchmarks
-    print "\tfloat power_"+big_little+"_"+"["+str(len(powers))+"] = {",
+    print "\tfloat power_"+big_little+"["+str(len(powers))+"] = {",
     for i in reversed(xrange(0,len(powers))):
         print "%.3f"%powers[i],
         if i != 0:

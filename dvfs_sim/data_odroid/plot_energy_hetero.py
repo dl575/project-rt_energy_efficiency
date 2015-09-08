@@ -34,9 +34,12 @@ def plot(data, labels, kk):
     opts.xlabel = big_little
     if kk == 0 :
         opts.ylabel = "energy [%]"
-        opts.legend_enabled = True
+        opts.legend_enabled = False
     elif kk == 1 :
         opts.ylabel = "deadline_misses [%]"
+        opts.legend_enabled = True
+    elif kk == 2 :
+        opts.ylabel = "big usages [%]"
         opts.legend_enabled = False
         opts.file_name = ""+big_little+"_"+benchmarks+".pdf"
     opts.data = data
@@ -51,7 +54,6 @@ def parse(kk):
     f=open('parsed_data'+str(kk)+'.csv', 'w')
     f.close()    
     f2=open('_parsed_data'+str(kk)+'_'+big_little+'.csv', 'w')
-    #f2=open('_parsed_data'+str(kk)+'.csv', 'w')
     f2.close()    
     # Write out governors
     for idx, val in enumerate(governor_files):
@@ -59,12 +61,8 @@ def parse(kk):
         f.write(','+ val)
         f.close()
         f2=open('_parsed_data'+str(kk)+'_'+big_little+'.csv', 'a')
-        #f2=open('_parsed_data'+str(kk)+'.csv', 'a')
         f2.write(','+ val)
         f2.close()
-        # Both prediction w/ and w/o overhead uses the same log file
-        #if "prediction" in val:
-        #    governor_files[idx] = "prediction"
         
     for bench in benchmarks_list:
         print "---------"+bench+"----------"
@@ -76,24 +74,18 @@ def parse(kk):
         overhead_index=0;
         saved_end_index=0
         total_energy_performance = None
-        #if "uzbl" in bench:
-        #    parse_start = "csl"
-        #else:
         parse_start = None
-        #get deadline from performance file
-        #deadline = int(parse_lib.find(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+"performance", "deadline time : ([0-9\.]+) us"))
+        #get deadline from first file
         deadline = int(parse_lib.find(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+governor_files[0], "deadline time : ([0-9\.]+) us"))
 
         # Write out benchmark name
         f=open('parsed_data'+str(kk)+'.csv', 'a')
         f.write('\n'+bench+'('+str(deadline)+')');
-        #f2=open('_parsed_data'+str(kk)+'.csv', 'a')
         f2=open('_parsed_data'+str(kk)+'_'+big_little+'.csv', 'a')
         f2.write('\n'+bench+'('+str(deadline)+')');
 
         # For each governor
         for jj in governor_files:
-            #prediction > prediction_with_overhead and prediction_wo_overhead
             total_energy=0.0
 
             # Deadline misses
@@ -123,9 +115,7 @@ def parse(kk):
                     #get deadline misses, margin 0%
                     deadline_miss = parse_lib.deadline_misses(total_time_before_delay, deadline, margin=1.0)
                 # 0: prediction_with_overhead, 1: predcition_wo_overhead
-                print jj+str(overhead_index)
-                if jj == "prediction":
-                    overhead_index += 1;
+                print jj
                 #write deadline miss rate
                 print deadline_miss
                 f.write(","+"%f"%(deadline_miss))
@@ -133,7 +123,21 @@ def parse(kk):
             
             # Tardiness
             elif kk == 2:
-                print "tardiness"
+                print "big core usages"
+                # For each job,
+                big_cnt = 0
+                little_cnt = 0
+                current_core = parse_lib.parse_int(cur_path+"/"+big_little+"/"+benchmarks+"/"+bench+"/"+jj, "current_core : ([0-9\.]+)", start=parse_start)
+                for iii in xrange(0, len(current_core)):
+                    #which core ( 1: big, 0: little)
+                    if current_core[iii] == 1:
+                        big_cnt += 1 
+                    elif current_core[iii] == 0:
+                        little_cnt += 1
+                print jj
+                f.write(","+"%f"%(big_cnt*100/(big_cnt + little_cnt)))
+                f2.write(","+"%f"%(big_cnt*100/(big_cnt + little_cnt)))
+                print (big_cnt*100/(big_cnt + little_cnt))
             # Power
             elif kk == 0:
                 print "energy"
@@ -205,7 +209,6 @@ def parse(kk):
                             print "index error"
                             exit(0)
                         #power calculation (start_index <= i < end_index)
-            #          print "total_energy:"+str(total_energy)
                         for i in range(start_index, end_index):
                             #unit = W * us = uJ
                             if start_index == end_index:
@@ -218,13 +221,6 @@ def parse(kk):
                                 break
                             else:
                                 total_energy+=(global_power_little[i]+global_power_little[i+1])/2*(global_moment_little[i+1]-global_moment_little[i])
-                            #print "power_little"+str(i)+" : "+str(global_power_little[i])
-                         
-
-            ##                    print "E:"+str(i)+" : "+str((global_power[i]+global_power[i+1])/2*(global_moment[i+1]-global_moment[i]))
-                    #print "job time"+str(iii)+" : "+str(moment_end[iii]-moment_start[iii])
-                    #print "current core"+str(iii)+" : "+str(current_core[iii])
-                    #print "total E:"+str(iii)+" : "+str(total_energy)
                 ################################ calculate power end ###############################
                 # 0: prediction_with_overhead, 1: predcition_wo_overhead
                 print jj
@@ -244,53 +240,36 @@ def parse(kk):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3 or (sys.argv[1] != "big" and sys.argv[1] != "little" and sys.argv[1] != "hetero"):
-        print "usage: plot_both.py {big|little|hetero} benchmark [base_dir]"
+    if len(sys.argv) < 2 :
+        print "usage: plot_both.py benchmark [base_dir]"
         exit(0)
     else:
-        big_little=sys.argv[1]
-        benchmarks=sys.argv[2]
-        if len(sys.argv) >= 4:
-            cur_path=sys.argv[3]
+        big_little="hetero"
+        benchmarks=sys.argv[1]
+        if len(sys.argv) >= 3:
+            cur_path=sys.argv[2]
         else: 
             cur_path=os.getcwd()
 
     benchmarks_list=[]
-    #sweep_list=[20, 40, 60, 80, 100, 120, 140, 160, 180]
-    #sweep_list=[20, 100, 180]
     sweep_list = [60, 80, 100]
     for sweep in sweep_list:
         benchmarks_list.append(benchmarks+"-"+str(sweep))
-
-#    if(big_little == "big"):
-#        for sweep in sweep_list:
-#            benchmarks_list.append(benchmarks+"-"+str(sweep))
-        #benchmarks_list = ["stringsearch", "sha", "rijndael", "xpilot_slice", "julius_slice", "pocketsphinx", "2048_slice", "curseofwar_slice", "uzbl"]
-#    elif(big_little == "little"):
-#        for sweep in sweep_list:
- #           benchmarks_list.append(benchmarks+"-"+str(sweep))
 
     print benchmarks_list
     #######################################################
     #  IMPORTANT : THIS SHOULD BE IN ORDER...
     #######################################################
     # Power calculation assumes that experiments were run in this order
-    #governor_files = ["performance", "interactive", "conservative", "ondemand", "powersave", "prediction_with_overhead", "prediction_wo_overhead"]
     if "uzbl" in benchmarks_list:
         governor_files = ["performance", "interactive", "prediction_with_overhead", "prediction_wo_overhead", "cvx_with_overhead", "cvx_wo_overhead", "pid"]
     elif "xpilot_slice" in benchmarks_list:
         governor_files = ["performance", "interactive", "prediction_with_overhead", "prediction_wo_overhead", "cvx_with_overhead", "cvx_wo_overhead", "pid"]
     else:
         #governor_files = ["performance", "interactive", "cvx_with_overhead", "cvx_wo_overhead", "oracle", "pid", "proactive_with_overhead-W3", "proactive_wo_overhead-W3", "proactive_with_overhead-W5", "proactive_wo_overhead-W5", "proactive_with_overhead-W10", "proactive_wo_overhead-W10", "proactive_with_overhead-W20", "proactive_wo_overhead-W20"]
-        #governor_files = ["performance", "interactive", "cvx_with_overhead", "oracle", "pid", "proactive_with_overhead-W3", "proactive_with_overhead-W5", "proactive_with_overhead-W10", "proactive_with_overhead-W20"]
-        #governor_files = ["performance-big", "cvx_with_overhead-big", "cvx_with_overhead-hetero", "proactive_with_overhead-W5-big", "proactive_with_overhead-W5-hetero"]
-        #governor_files = ["performance-little", "cvx_with_overhead-little", "cvx_with_overhead-hetero", "proactive_with_overhead-W5-little", "proactive_with_overhead-W5-hetero"]
-        #governor_files = ["performance", "cvx_with_overhead", "proactive_with_overhead-W5"]
         governor_files = ["cvx_with_overhead", "proactive_with_overhead-W5"]
-        #governor_files = ["performance-big", "performance-little", "cvx_with_overhead-big",  "cvx_with_overhead-little", "cvx_with_overhead-hetero", "proactive_with_overhead-W5-big",   "proactive_with_overhead-W5-little","proactive_with_overhead-W5-hetero"]
-
     # For [energy, deadline_misses, tardiness]
-    for kk in range(2):
+    for kk in range(3):
         # Parse data and write to csv file
         print kk
         parse(kk)

@@ -7,6 +7,7 @@ import math
 sys.path.extend(['/home/odroid/project-rt_energy_efficiency/lib'])
 import parse_lib
 import matplotlib.pyplot as plt
+import time
 
 # Set up plotting options
 opts = tsg_plot.PlotOptions()
@@ -34,9 +35,12 @@ def plot(data, labels, idx):
     opts.xlabel = "hetero"
     if idx == 0 :
         opts.ylabel = "energy [%]"
-        opts.legend_enabled = True
+        opts.legend_enabled = False
     elif idx == 1 :
         opts.ylabel = "deadline_misses [%]"
+        opts.legend_enabled = True
+    elif idx == 2 :
+        opts.ylabel = "big usages [%]"
         opts.legend_enabled = False
         opts.file_name = "integrated_"+benchmark+".pdf"
     opts.data = data
@@ -56,14 +60,16 @@ if __name__ == "__main__":
             cur_path=sys.argv[2]
         else: 
             cur_path=os.getcwd()
+    print "[CHECK] Every plot has the same sweep and benchmark lists"
+    time.sleep(3)
 
-    cmd=['./plot_energy.py big '+benchmark, './plot_energy.py little '+benchmark, './plot_energy_hetero.py hetero '+benchmark]
+    cmd=['./plot_energy.py big '+benchmark, './plot_energy.py little '+benchmark, './plot_energy_hetero.py '+benchmark]
     big_little=['big', 'little', 'hetero']
     for n_cmd in xrange(0, len(cmd)):
         #execute plot scripts
         os.system(cmd[n_cmd]);
 
-    for idx in range(2):
+    for idx in range(3):
         line0 = []
         line1 = []
 
@@ -120,12 +126,14 @@ if __name__ == "__main__":
                     f.write(',' + str(line1[j][(i%len(cmd)) * num_governors + k]*100/norm_energy))
                 elif idx == 1: #deadline misses
                     f.write(',' + str(line1[j][(i%len(cmd)) * num_governors + k]))
+                elif idx == 2: #big usages
+                    f.write(',' + str(line1[j][(i%len(cmd)) * num_governors + k]))
             f.write('\n')
 
         f.close()
     
     # Read csv files and plots
-    for idx in range(2):
+    for idx in range(3):
         f=open('integrated_parsed_data'+str(idx)+'.csv', 'r')
         _subcat = []
         _subcat = f.readline().strip().split(',')[1:]

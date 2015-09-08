@@ -17,6 +17,7 @@ if __name__ == "__main__":
         # read execution time from out_file
         f = "%s/%s/%s0.txt" % (output_dir, benchmark, benchmark)
         predicted_times = parse_predicted_times(f)
+        print predicted_times
         output_file = open('predicted_time_array.txt', 'a')
         output_file.write("\n\n#if _"+benchmark+"_\n")
         output_file.write("int predicted_times_arr[" + str(len(predicted_times)) + "]= {")
