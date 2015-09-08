@@ -706,7 +706,7 @@ cf_dec c_name(set_key)(const byte in_key[], const word n_bytes, const enum aes_k
 #endif
 #endif
 
-cf_dec c_name(encrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx)
+cf_dec c_name(_encrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx)
 {   word        locals(b0, b1);
     const word  *kp = cx->e_key;
 

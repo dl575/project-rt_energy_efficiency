@@ -305,7 +305,7 @@ typedef struct
 } c_name(aes);
 
 cf_dec c_name(set_key)(const byte key[], const word n_bytes, const enum aes_key f, c_name(aes) *cx);
-cf_dec c_name(encrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx);
+cf_dec c_name(_encrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx);
 cf_dec c_name(decrypt)(const byte in_blk[], byte out_blk[], const c_name(aes) *cx);
 cf_dec c_name(set_blk)(const word n_bytes, c_name(aes) *cx);
 
@@ -328,8 +328,8 @@ public:
 #endif
     aes_ret set_key(const byte key[], const word n_bytes, const aes_key f)
             { return c_name(set_key)(key, n_bytes, f, &cx); }
-    aes_ret encrypt(const byte in_blk[], byte out_blk[]) const
-            { return c_name(encrypt)(in_blk, out_blk, &cx); }
+    aes_ret _encrypt(const byte in_blk[], byte out_blk[]) const
+            { return c_name(_encrypt)(in_blk, out_blk, &cx); }
     aes_ret decrypt(const byte in_blk[], byte out_blk[]) const
             { return c_name(decrypt)(in_blk, out_blk, &cx); }
 };

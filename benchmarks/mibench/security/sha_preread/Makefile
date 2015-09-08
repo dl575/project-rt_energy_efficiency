@@ -4,7 +4,10 @@
 # To use NIST's modified SHA of 7/11/94, define USE_MODIFIED_SHA
 
 CC = gcc
-CFLAGS = -O3 -Wall
+CFLAGS = -O3 -Wall -D_GNU_SOURCE
+
+#  2 CFLAGS = -pthread -march=native -O3 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE -std=c99 \
+
 
 sha:	sha_driver.o sha.o
 	$(CC) -o $@ sha_driver.o sha.o

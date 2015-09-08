@@ -136,7 +136,7 @@ int encfile(FILE *fout, aes *ctx, char* fn, char *file_buffer, int flen)
         for(i = 0; i < 16; ++i)         /* xor in previous cipher text  */
             inbuf[i] ^= outbuf[i]; 
 
-        encrypt(inbuf, outbuf, ctx);    /* and do the encryption        */
+        _encrypt(inbuf, outbuf, ctx);    /* and do the encryption        */
 
         if(fwrite(outbuf, 1, 16, fout) != 16)
         {
@@ -164,7 +164,7 @@ int encfile(FILE *fout, aes *ctx, char* fn, char *file_buffer, int flen)
         for(i = 0; i < 16; ++i)         /* xor in previous cipher text  */
             inbuf[i] ^= outbuf[i]; 
 
-        encrypt(inbuf, outbuf, ctx);    /* encrypt and output it        */
+        _encrypt(inbuf, outbuf, ctx);    /* encrypt and output it        */
 
         if(fwrite(outbuf, 1, 16, fout) != 16)
         {
@@ -248,7 +248,7 @@ int decfile(FILE *fin, FILE *fout, aes *ctx, char* ifn, char* ofn)
     return 0;
 }
 
-float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
+struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
 {
   int loop_counter[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   char inbuf[16];
@@ -460,29 +460,16 @@ float encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buffer, int flen)
   {
     predict_exec_time:
     ;
-
-    float exec_time;
-#if CORE // big
+    struct slice_return exec_time;
     #if !CVX_EN //conservative
-        exec_time = 0;
+        exec_time.big = 0;
+        exec_time.little = 2739.740000*loop_counter[0] + 14435.700000*loop_counter[7] + 0.089650*loop_counter[8] + -1039.580000*loop_counter[16] + 0.000000;
     #else // cvx
-        if(CVX_COEFF == 100)
-            exec_time = 849.942001*loop_counter[0] + 106.241872*loop_counter[1] + 300.468201*loop_counter[2] + 849.948329*loop_counter[3] + 849.948329*loop_counter[4] + 849.948329*loop_counter[5] + 0.246239*loop_counter[6] + -8439.247166*loop_counter[7] + 0.030829*loop_counter[8] + 0.246639*loop_counter[10] + 0.246639*loop_counter[11] + 0.246639*loop_counter[12] + 849.947168*loop_counter[15] + 880.316443*loop_counter[16] + 106.241208*loop_counter[17] + 849.939052*loop_counter[19] + 849.939052*loop_counter[20] + 849.939052*loop_counter[21] + 849.939058;
-
-    #endif
-#else // LITTLE
-    #if !CVX_EN //conservative
-        exec_time = 2739.740000*loop_counter[0] + 14435.700000*loop_counter[7] + 0.089650*loop_counter[8] + -1039.580000*loop_counter[16] + 0.000000;
-    #else // cvx
-        if(CVX_COEFF == 10)
-            exec_time = 23.450046*loop_counter[0] + 2.931267*loop_counter[1] + 8.290738*loop_counter[2] + 23.450088*loop_counter[3] + 23.450088*loop_counter[4] + 23.450088*loop_counter[5] + 0.256848*loop_counter[6] + -312.689169*loop_counter[7] + 0.032283*loop_counter[8] + 0.258283*loop_counter[10] + 0.258283*loop_counter[11] + 0.258283*loop_counter[12] + 23.449896*loop_counter[15] + 4.579052*loop_counter[16] + 2.931261*loop_counter[17] + 23.449951*loop_counter[19] + 23.449951*loop_counter[20] + 23.449951*loop_counter[21] + 23.449951;
-        else if(CVX_COEFF == 50)
-            exec_time = 26.310817*loop_counter[0] + 3.288876*loop_counter[1] + 9.302208*loop_counter[2] + 26.310776*loop_counter[3] + 26.310776*loop_counter[4] + 26.310776*loop_counter[5] + 0.264986*loop_counter[6] + 1927.342572*loop_counter[7] + 0.032031*loop_counter[8] + 0.256263*loop_counter[10] + 0.256263*loop_counter[11] + 0.256263*loop_counter[12] + 26.310804*loop_counter[15] + -147.398700*loop_counter[16] + 3.288882*loop_counter[17] + 26.310812*loop_counter[19] + 26.310812*loop_counter[20] + 26.310812*loop_counter[21] + 26.310812;
-        else if(CVX_COEFF == 100)
-            exec_time = 190.072036*loop_counter[0] + 23.759134*loop_counter[1] + 67.200776*loop_counter[2] + 190.072065*loop_counter[3] + 190.072065*loop_counter[4] + 190.072065*loop_counter[5] + 0.293611*loop_counter[6] + 14435.412854*loop_counter[7] + 0.028520*loop_counter[8] + 0.228157*loop_counter[10] + 0.228157*loop_counter[11] + 0.228157*loop_counter[12] + 190.072200*loop_counter[15] + -1039.576214*loop_counter[16] + 23.759113*loop_counter[17] + 190.072174*loop_counter[19] + 190.072174*loop_counter[20] + 190.072174*loop_counter[21] + 190.072174;
-
+        if(CVX_COEFF == 100){
+            exec_time.big = -16.998409*loop_counter[0] + -2.122975*loop_counter[1] + -6.028204*loop_counter[2] + -16.998321*loop_counter[3] + -16.998321*loop_counter[4] + -16.998321*loop_counter[5] + 0.117920*loop_counter[6] + 140.525487*loop_counter[7] + 0.014736*loop_counter[8] + 0.117990*loop_counter[10] + 0.117990*loop_counter[11] + 0.117990*loop_counter[12] + -16.992676*loop_counter[15] + 13.944916*loop_counter[16] + -2.121213*loop_counter[17] + -16.992588*loop_counter[19] + -16.992588*loop_counter[20] + -16.992588*loop_counter[21] + -16.992574;
+            exec_time.little = 19.368381*loop_counter[0] + 2.423232*loop_counter[1] + 6.860073*loop_counter[2] + 19.368482*loop_counter[3] + 19.368482*loop_counter[4] + 19.368482*loop_counter[5] + 0.243496*loop_counter[6] + -2015.689963*loop_counter[7] + 0.030451*loop_counter[8] + 0.243584*loop_counter[10] + 0.243584*loop_counter[11] + 0.243584*loop_counter[12] + 19.365654*loop_counter[15] + 1955.768669*loop_counter[16] + 2.423761*loop_counter[17] + 19.377854*loop_counter[19] + 19.377854*loop_counter[20] + 19.377854*loop_counter[21] + 19.377848;
+        }
     #endif 
-#endif
     return exec_time;
   }
 }
@@ -495,6 +482,8 @@ int main(int argc, char *argv[])
 
 //---------------------modified by TJSong----------------------//
     int exec_time = 0;
+    static int jump = 0;
+    int pid = getpid();
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
@@ -592,8 +581,10 @@ int main(int argc, char *argv[])
     //---------------------modified by TJSong----------------------//
 
     //---------------------modified by TJSong----------------------//
-         // Perform slicing and prediction
-        float predicted_exec_time = 0.0;
+        // Perform slicing and prediction
+        struct slice_return predicted_exec_time;
+        predicted_exec_time.big = 0;
+        predicted_exec_time.little = 0;
         /*
             CASE 0 = to get prediction equation
             CASE 1 = to get execution deadline
@@ -602,10 +593,12 @@ int main(int argc, char *argv[])
             CASE 4 = running on our prediction
             CASE 5 = running on oracle
             CASE 6 = running on pid
+            CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
             predicted_exec_time = encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen);
         #elif GET_DEADLINE /* CASE 1 */
+            moment_timing_print(0); //moment_start
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
@@ -614,13 +607,18 @@ int main(int argc, char *argv[])
             slice_time = print_slice_timing();
 
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
-        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
+            predicted_exec_time = encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen);
             moment_timing_print(0); //moment_start
-        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
             moment_timing_print(0); //moment_start
             
             start_timing();
@@ -630,9 +628,25 @@ int main(int argc, char *argv[])
             
             start_timing();
             #if OVERHEAD_EN //with overhead
-                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #endif
+                #endif
             #else //without overhead
-                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
+                    #endif
+                #endif
             #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
@@ -645,7 +659,11 @@ int main(int argc, char *argv[])
             moment_timing_print(0); //moment_start
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
@@ -660,17 +678,38 @@ int main(int argc, char *argv[])
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
             moment_timing_print(1); //moment_start
+        #elif PROACTIVE_EN /* CASE 4 */
+            static int job_number = 0; //job count
+            moment_timing_print(0); //moment_start
+           
+            start_timing();
+            #if HETERO_EN 
+                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+            #elif !HETERO_EN
+                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            #endif
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+            job_number++;
         #endif
     //---------------------modified by TJSong----------------------//
 
             start_timing();
+            //print_start_temperature();
             // Run encryption
             err = encfile(fout, ctx, argv[argv_i + 1], file_buffer, flen);
+            //print_end_temperature();
             end_timing();
 
             free(file_buffer);
@@ -683,6 +722,7 @@ int main(int argc, char *argv[])
             print_exec_time(exec_time);
         #elif GET_DEADLINE /* CASE 1 */
             print_exec_time(exec_time);
+            moment_timing_print(2); //moment_end
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
@@ -700,8 +740,20 @@ int main(int argc, char *argv[])
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        print_predicted_time(predicted_exec_time);
+        #if HETERO
+        printf("big_");
+        print_predicted_time(predicted_exec_time.big);
+        printf("little_");
+        print_predicted_time(predicted_exec_time.little);
+        #else
+            #if CORE
+                print_predicted_time(predicted_exec_time.big);
+            #else
+                print_predicted_time(predicted_exec_time.little);
+            #endif
+        #endif
         print_freq(); 
+
     //---------------------modified by TJSong----------------------//
 
         }

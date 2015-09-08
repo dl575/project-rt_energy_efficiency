@@ -200,7 +200,6 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int 
     predict_exec_time:
     ;
     struct slice_return exec_time;
-    //float exec_time;
     #if !CVX_EN //conservative
         exec_time.big = 0;
         exec_time.little = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
@@ -243,8 +242,8 @@ int main(int argc, char **argv)
     SHA_INFO sha_info;
 
 //---------------------modified by TJSong----------------------//
-    static int jump = 0;
     int exec_time = 0;
+    static int jump = 0;
     int pid = getpid();
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
@@ -292,7 +291,6 @@ int main(int argc, char **argv)
 
 //---------------------modified by TJSong----------------------//
         // Perform slicing and prediction
-        //float predicted_exec_time = 0.0;
         struct slice_return predicted_exec_time;
         predicted_exec_time.big = 0;
         predicted_exec_time.little = 0;
@@ -452,10 +450,18 @@ int main(int argc, char **argv)
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
+        #if HETERO
         printf("big_");
         print_predicted_time(predicted_exec_time.big);
         printf("little_");
         print_predicted_time(predicted_exec_time.little);
+        #else
+            #if CORE
+                print_predicted_time(predicted_exec_time.big);
+            #else
+                print_predicted_time(predicted_exec_time.little);
+            #endif
+        #endif
         print_freq(); 
 
 //---------------------modified by TJSong----------------------//
