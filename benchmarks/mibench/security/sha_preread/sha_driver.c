@@ -443,18 +443,16 @@ int main(int argc, char **argv)
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
-        moment_timing_print(2); //moment_end
-        print_exec_time(exec_time);
-        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            moment_timing_print(2); //moment_end
+            print_exec_time(exec_time);
+            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        #if HETERO
-        printf("big_");
-        print_predicted_time(predicted_exec_time.big);
-        printf("little_");
-        print_predicted_time(predicted_exec_time.little);
+        #if HETERO_EN
+            print_predicted_time(predicted_exec_time.big);
+            print_predicted_time(predicted_exec_time.little);
         #else
             #if CORE
                 print_predicted_time(predicted_exec_time.big);
