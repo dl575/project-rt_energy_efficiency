@@ -175,7 +175,13 @@ float run_loop_slice(struct state *st, struct ui *ui, int k)
     print_loop_counter:
     ;
 #if GET_PREDICT || DEBUG_EN
-      write_array(loop_counter, 14);
+    int i;
+    printf("loop counter = (");
+    for (i = 0; i < 14; i++) 
+      printf("%d, ", loop_counter[i]);
+    printf(")\n");
+     
+// write_array(loop_counter, 14);
 #endif
 
   }
@@ -326,7 +332,7 @@ int run_loop_loop_counters(struct state *st, struct ui *ui, int k)
       printf("%d, ", loop_counter[i]);
     printf(")\n");
     */
-    write_array(loop_counter, 13);
+    print_array(loop_counter, 13);
   }
   return k;
 }
@@ -377,7 +383,7 @@ void run (struct state *st, struct ui *ui) {
     static int cnt = 0;
 //---------------------modified by TJSong----------------------//
     fopen_all(); //fopen for frequnecy file
-    fprint_deadline(DEADLINE_TIME); //print deadline 
+    print_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
 //---------------------modified by TJSong----------------------//
@@ -400,22 +406,23 @@ void run (struct state *st, struct ui *ui) {
             start_timing();
             predicted_exec_time = run_loop_slice(st, ui, k); //slice        
             end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
 
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
         #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
-            moment_timing_fprint(0); //moment_start
+            predicted_exec_time = run_loop_slice(st, ui, k); //slice        
+            moment_timing_print(0); //moment_start
         #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
-            moment_timing_fprint(0); //moment_start
+            moment_timing_print(0); //moment_start
             
             start_timing();
             predicted_exec_time = run_loop_slice(st, ui, k); //slice        
             end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
             
             start_timing();
             #if OVERHEAD_EN //with overhead
@@ -424,56 +431,58 @@ void run (struct state *st, struct ui *ui) {
                 set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
             #endif
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
 
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
         #elif ORACLE_EN /* CASE 5 */
             //slice_time=0;
             static int job_cnt = 0; //job count
             predicted_exec_time  = exec_time_arr[job_cnt];
-            moment_timing_fprint(0); //moment_start
+            moment_timing_print(0); //moment_start
             
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
             
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
             job_cnt++;
         #elif PID_EN /* CASE 6 */
-            moment_timing_fprint(0); //moment_start
+            moment_timing_print(0); //moment_start
             
             start_timing();
             predicted_exec_time = pid_controller(exec_time); //pid == slice
             end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
             
             start_timing();
             set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
             
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
         #endif
     
 //---------------------modified by TJSong----------------------//
 
     start_timing();
+    print_start_temperature();
 
     k = run_loop(st, ui, k);
 
     finished = update_from_input(st, ui);
 
  if (!finished) {
+      print_end_temperature();
       end_timing();
 //---------------------modified by TJSong----------------------//
         exec_time = exec_timing();
         int delay_time = 0;
 
         #if GET_PREDICT /* CASE 0 */
-            fprint_exec_time(exec_time);
+            print_exec_time(exec_time);
         #elif GET_DEADLINE /* CASE 1 */
-            fprint_exec_time(exec_time);
+            print_exec_time(exec_time);
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
@@ -484,15 +493,15 @@ void run (struct state *st, struct ui *ui) {
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
-        moment_timing_fprint(2); //moment_end
-        fprint_exec_time(exec_time);
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
+        moment_timing_print(2); //moment_end
+        print_exec_time(exec_time);
+        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); 
+        print_predicted_time(predicted_exec_time);
+        print_freq(); 
 
     if(cnt++ > 200)//TJSong
         break;

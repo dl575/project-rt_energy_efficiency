@@ -51,7 +51,8 @@ D33_DISABLED="DEADLINE_33MS 0"
 #SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #SWEEP=("100")
 #SWEEP=("with_fan")
-SWEEP=("60" "80" "100")
+SWEEP=("60" "80" "100" "120" "140")
+#SWEEP=("140")
 #SWEEP=("4000000")
 _ALL_BENCH_=(
 "_stringsearch_"
@@ -83,21 +84,48 @@ _ALL_BENCH_=(
 #"_pocketsphinx_"
 #)
 
-SOURCE_FILES=(
-"mibench/security/sha_preread/sha_driver.c"
-)
-SOURCE_PATH=(
-"mibench/security/sha_preread"
-)
-BENCHMARKS=(
-"mibench/security/sha_preread"
-)
-BENCH_NAME=(
-"sha_preread"
-)
-_BENCH_FOR_DEFINE_=(
-"_sha_preread_"
-)
+#SOURCE_FILES=(
+#"mibench/security/sha_preread/sha_driver.c"
+#"mibench/office/stringsearch/pbmsrch_large.c"
+#"mibench/security/rijndael_preread/aesxam.c"
+#)
+#SOURCE_PATH=(
+#"mibench/security/sha_preread"
+#"mibench/office/stringsearch"
+#"mibench/security/rijndael_preread"
+#)
+#BENCHMARKS=(
+#"mibench/security/sha_preread"
+#"mibench/office/stringsearch"
+#"mibench/security/rijndael_preread"
+#)
+#BENCH_NAME=(
+#"sha_preread"
+#"stringsearch"
+#"rijndael_preread"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_sha_preread_"
+#"_stringsearch_"
+#"_rijndael_preread_"
+#)
+
+
+#SOURCE_FILES=(
+#"mibench/security/sha_preread/sha_driver.c"
+#)
+#SOURCE_PATH=(
+#"mibench/security/sha_preread"
+#)
+#BENCHMARKS=(
+#"mibench/security/sha_preread"
+#)
+#BENCH_NAME=(
+#"sha_preread"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_sha_preread_"
+#)
 
 #SOURCE_FILES=(
 #"curseofwar/main-sdl.c"
@@ -114,6 +142,23 @@ _BENCH_FOR_DEFINE_=(
 #_BENCH_FOR_DEFINE_=(
 #"_curseofwar_slice_sdl_"
 #)
+
+SOURCE_FILES=(
+"curseofwar/main-sdl.c"
+)
+SOURCE_PATH=(
+"curseofwar"
+)
+BENCHMARKS=(
+"curseofwar"
+)
+BENCH_NAME=(
+"curseofwar_slice_sdl"
+)
+_BENCH_FOR_DEFINE_=(
+"_curseofwar_slice_sdl_"
+)
+
 
 #SOURCE_FILES=(
 #"mibench/office/stringsearch/pbmsrch_large.c"

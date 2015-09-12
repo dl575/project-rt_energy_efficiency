@@ -106,7 +106,6 @@ do
 #        taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
 #        ./runAll.sh $i $1 pid ${SWEEP[$j]}
 
-        sed -i -e 's/'"WINDOW_SIZE (20)"'/'"WINDOW_SIZE (3)"'/g' $BENCH_PATH/$COMMON_FILE
         # 6. PROACTIVE with overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_with_overhead-W3 ${SWEEP[$j]}
@@ -115,7 +114,6 @@ do
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_wo_overhead-W3 ${SWEEP[$j]}
 
-        sed -i -e 's/'"WINDOW_SIZE (3)"'/'"WINDOW_SIZE (5)"'/g' $BENCH_PATH/$COMMON_FILE
         # 6. PROACTIVE with overhead
         taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
         ./runAll.sh $i $1 proactive_with_overhead-W5 ${SWEEP[$j]}
@@ -123,8 +121,6 @@ do
         # 7. PROACTIVE wo overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_wo_overhead-W5 ${SWEEP[$j]}
-
-        sed -i -e 's/'"WINDOW_SIZE (5)"'/'"WINDOW_SIZE (10)"'/g' $BENCH_PATH/$COMMON_FILE
         # 6. PROACTIVE with overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_with_overhead-W10 ${SWEEP[$j]}
@@ -133,7 +129,6 @@ do
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_wo_overhead-W10 ${SWEEP[$j]}
 
-        sed -i -e 's/'"WINDOW_SIZE (10)"'/'"WINDOW_SIZE (20)"'/g' $BENCH_PATH/$COMMON_FILE
         # 6. PROACTIVE with overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_with_overhead-W20 ${SWEEP[$j]}
@@ -182,16 +177,6 @@ sleep 3
 PID_POWER_MONITOR=$(pgrep 'power_monitor')
 sudo kill -9 $PID_POWER_MONITOR
 
-#evince plot
-cd $DATA_ODROID_PATH
-for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
-do
- #   evince $1_${BENCH_NAME[$i]}.pdf &
-done
-#restore current time
-#echo "resetting date..."
-#sudo date --set="$CURRENT_TIME"
-#sudo date --set="Sun Mar 22 15:30:16 EST 2015"
 rm -rf sed*
 
 echo "[ ./temp.sh done ]"

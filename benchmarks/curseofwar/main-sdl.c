@@ -46,7 +46,7 @@
 
 #include "timing.h"
 
-float run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_Surface *tileset, SDL_Surface *typeface, SDL_Surface *uisurf, int tile_variant[MAX_WIDTH][MAX_HEIGHT], int pop_variant[MAX_WIDTH][MAX_HEIGHT], int k)
+struct slice_return run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_Surface *tileset, SDL_Surface *typeface, SDL_Surface *uisurf, int tile_variant[MAX_WIDTH][MAX_HEIGHT], int pop_variant[MAX_WIDTH][MAX_HEIGHT], int k)
 {
   int loop_counter[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int finished = 0;
@@ -148,8 +148,13 @@ float run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_S
     print_loop_counter:
 #if GET_PREDICT || DEBUG_EN
     ;
-
-    write_array(loop_counter, 14);
+    /*int i;
+    printf("loop counter = (");
+    for (i = 0; i < 14; i++) 
+      printf("%d, ", loop_counter[i]);
+    printf(")\n");
+     */
+    print_array(loop_counter, 14);
     print_loop_counter_end:
 #endif
     ;
@@ -158,26 +163,14 @@ float run_loop_slice(struct state *st, struct ui *ui, SDL_Surface *screen, SDL_S
   {
     predict_exec_time:
     ;
-    float exec_time;
-#if CORE //big
+    struct slice_return exec_time;
     #if !CVX_EN //conservative
-        exec_time = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+        exec_time.big = 1054.000000*loop_counter[0] + -51.000000*loop_counter[1] + 2953.000000*loop_counter[2] + -164.000000*loop_counter[4] + -32.000000*loop_counter[10] + 0.000000;
+        exec_time.little = 802.000000*loop_counter[11] + 34871.000000*loop_counter[12] + 163.000000;
     #else //cvx
-        exec_time = 123.000002*loop_counter[0] + 1467.787853*loop_counter[2] + 382.868691*loop_counter[3] + 122.999998;
+        exec_time.big = 3329.000000*loop_counter[11] + 13830.000000*loop_counter[12] + 18.000000;
+        exec_time.little = 5471.000000*loop_counter[11] + 30306.000000*loop_counter[12] + 59.000000;
     #endif
-#else //LITTLE
-    #if !CVX_EN //conservative
-        exec_time = 802.000000*loop_counter[11] + 34871.000000*loop_counter[12] + 163.000000;
-    #else //cvx
-        if(CVX_COEFF == 10)
-            exec_time = 5577.000000*loop_counter[11] + 29843.000000*loop_counter[12] + 36.000000;
-        else if(CVX_COEFF == 50)
-            exec_time = 5484.000000*loop_counter[11] + 30296.000000*loop_counter[12] + 56.000000;
-        else if(CVX_COEFF == 100)
-            exec_time = 5471.000000*loop_counter[11] + 30306.000000*loop_counter[12] + 59.000000;
-
-    #endif
-#endif
     return exec_time;
   }
 }
@@ -251,6 +244,8 @@ void run(struct state *st, struct ui *ui,
 
 //---------------------modified by TJSong----------------------//
     int exec_time = 0;
+    static int jump = 0;
+    int pid = getpid();
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         //return ERROR_DEFINE;
@@ -269,7 +264,7 @@ void run(struct state *st, struct ui *ui,
     if (time - previous_time >= TIME_DELAY) {
 //---------------------modified by TJSong----------------------//
     fopen_all(); //fopen for frequnecy file
-    fprint_deadline(DEADLINE_TIME); //print deadline 
+    print_deadline(DEADLINE_TIME); //print deadline 
 //---------------------modified by TJSong----------------------//
 
 
@@ -278,7 +273,9 @@ void run(struct state *st, struct ui *ui,
 
 //---------------------modified by TJSong----------------------//
         // Perform slicing and prediction
-        float predicted_exec_time = 0.0;
+        struct slice_return predicted_exec_time;
+        predicted_exec_time.big = 0;
+        predicted_exec_time.little = 0;
         /*
             CASE 0 = to get prediction equation
             CASE 1 = to get execution deadline
@@ -287,89 +284,135 @@ void run(struct state *st, struct ui *ui,
             CASE 4 = running on our prediction
             CASE 5 = running on oracle
             CASE 6 = running on pid
+            CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
             predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
         #elif GET_DEADLINE /* CASE 1 */
+            moment_timing_print(0); //moment_start
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
             predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
             end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
 
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
-        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+            dvfs_time = print_dvfs_timing();
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
-            moment_timing_fprint(0); //moment_start
-        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
-            moment_timing_fprint(0); //moment_start
+            predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
+            moment_timing_print(0); //moment_start
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+            moment_timing_print(0); //moment_start
             
             start_timing();
             predicted_exec_time = run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k); //slice        
             end_timing();
-            end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
             
             start_timing();
             #if OVERHEAD_EN //with overhead
-                set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #endif
+                #endif
             #else //without overhead
-                set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
+                    #endif
+                #endif
             #endif
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
 
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
         #elif ORACLE_EN /* CASE 5 */
             //slice_time=0;
             static int job_cnt = 0; //job count
             predicted_exec_time  = exec_time_arr[job_cnt];
-            moment_timing_fprint(0); //moment_start
+            moment_timing_print(0); //moment_start
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
             
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
             job_cnt++;
         #elif PID_EN /* CASE 6 */
-            moment_timing_fprint(0); //moment_start
+            moment_timing_print(0); //moment_start
             
             start_timing();
             predicted_exec_time = pid_controller(exec_time); //pid == slice
             end_timing();
-            slice_time = fprint_slice_timing();
+            slice_time = print_slice_timing();
             
             start_timing();
-            set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
-            dvfs_time = fprint_dvfs_timing();
+            dvfs_time = print_dvfs_timing();
             
-            moment_timing_fprint(1); //moment_start
+            moment_timing_print(1); //moment_start
+        #elif PROACTIVE_EN /* CASE 4 */
+            static int job_number = 0; //job count
+            moment_timing_print(0); //moment_start
+           
+            start_timing();
+            #if HETERO_EN 
+                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+            #elif !HETERO_EN
+                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            #endif
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+            job_number++;
         #endif
-    
+
 //---------------------modified by TJSong----------------------//
 
-
-
       start_timing();
+      //print_start_temperature();
 
       k = run_loop(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k);
 
       end_timing();
+      //print_end_temperature();
 //---------------------modified by TJSong----------------------//
         exec_time = exec_timing();
         int delay_time = 0;
 
         #if GET_PREDICT /* CASE 0 */
-            fprint_exec_time(exec_time);
+            print_exec_time(exec_time);
         #elif GET_DEADLINE /* CASE 1 */
-            fprint_exec_time(exec_time);
+            print_exec_time(exec_time);
+            moment_timing_print(2); //moment_end
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
@@ -380,15 +423,24 @@ void run(struct state *st, struct ui *ui,
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
-        moment_timing_fprint(2); //moment_end
-        fprint_exec_time(exec_time);
-        fprint_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            moment_timing_print(2); //moment_end
+            print_exec_time(exec_time);
+            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
         #endif
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used
-        fprint_predicted_time(predicted_exec_time);
-        fprint_freq(); 
+        #if HETERO_EN
+            print_predicted_time(predicted_exec_time.big);
+            print_predicted_time(predicted_exec_time.little);
+        #else
+            #if CORE
+                print_predicted_time(predicted_exec_time.big);
+            #else
+                print_predicted_time(predicted_exec_time.little);
+            #endif
+        #endif
+        print_freq(); 
 
     if(cnt++ > 1000)//TJSong
         break;

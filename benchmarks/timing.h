@@ -12,28 +12,30 @@ extern int client_join = 0;
 
 //Define function names
 //all benchmarks use below common timing functions
-void start_timing();
-void end_timing();
-int exec_timing();
-void init_time_file();
-void my_usleep(unsigned long us);
+extern void start_timing();
+extern void end_timing();
+extern int exec_timing();
+extern void init_time_file();
+extern void my_usleep(unsigned long us);
 
 //These functions are defined differently by F_PRINT
-void print_array(int *array, int array_len);
-void print_timing();
-void moment_timing_print();
-int print_slice_timing();
-int print_dvfs_timing();
-void print_deadline(int deadline_time);
-void print_predicted_time(float predicted_exec_time);
-void print_exec_time(int exec_time);
-void print_total_time(int exec_time);
-void print_delay_time(int pre_delay_time, int delay_time);
-void print_current_core(int current_core);
+extern void print_array(int *array, int array_len);
+extern void print_timing();
+extern void moment_timing_print();
+extern int print_slice_timing();
+extern int print_dvfs_timing();
+extern void print_deadline(int deadline_time);
+extern void print_predicted_time(int predicted_exec_time);
+extern void print_exec_time(int exec_time);
+extern void print_total_time(int exec_time);
+extern void print_delay_time(int pre_delay_time, int delay_time);
+extern void print_current_core(int current_core, int big_little_cnt);
+extern void print_est_time(int T_est_big, int T_est_little);
+extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 
-void print_start_temperature();
-void print_end_temperature();
-void print_file(FILE *file);
+extern void print_start_temperature();
+extern void print_end_temperature();
+extern void print_file(FILE *file);
 
 //Implement actual function body
 /*
@@ -90,7 +92,6 @@ void print_array(int *array, int array_len) {
       printf("%d, ", array[i]);
   }
   printf(")\n");
-  fclose(time_file);
 }
 /*
  * Print timing information to stdout.
@@ -141,7 +142,7 @@ int print_dvfs_timing() {
 void print_deadline(int deadline_time){
     printf("============ deadline time : %d us ===========\n", deadline_time);
 }
-void print_predicted_time(float predicted_exec_time){
+void print_predicted_time(int predicted_exec_time){
     printf("predicted time = %f\n", predicted_exec_time);
 }
 void print_exec_time(int exec_time){
@@ -160,9 +161,22 @@ void print_delay_time(int pre_delay_time, int delay_time){
     printf("actual dealy is %d = %d us\n", instance_number, delay_time);
     instance_number++;
 }
-void print_current_core(int current_core){
+void print_current_core(int current_core, int big_little_cnt){
     printf("current_core : %d\n", current_core);
+    if(current_core == 1)
+        printf("big %d times\n", big_little_cnt);
+    else if(current_core ==0)
+        printf("little %d times\n", big_little_cnt);
 }
+void print_est_time(int T_est_big, int T_est_little){
+    printf("%d:%d, ", T_est_big, T_est_little);
+}
+void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){
+    printf("\n");
+	printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+	printf("power big:little (W) = %f:%f\n", power_big, power_little);
+}
+
 /*
  * Print start temperature
  */
@@ -292,7 +306,7 @@ void print_deadline(int deadline_time){
     fprintf(time_file, "============ deadline time : %d us ===========\n", deadline_time);
     fclose(time_file);
 }
-void print_predicted_time(float predicted_exec_time){
+void print_predicted_time(int predicted_exec_time){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
     fprintf(time_file, "predicted time = %f\n", predicted_exec_time);
@@ -323,10 +337,28 @@ void print_delay_time(int pre_delay_time, int delay_time){
     instance_number++;
     fclose(time_file);
 }
-void print_current_core(int current_core){
+void print_current_core(int current_core, int big_little_cnt){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
     fprintf(time_file, "current_core : %d\n", current_core);
+    if(current_core == 1)
+        fprintf(time_file, "big %d times\n", big_little_cnt);
+    else if(current_core ==0)
+        fprintf(time_file, "little %d times\n", big_little_cnt);
+    fclose(time_file);
+}
+void print_est_time(int T_est_big, int T_est_little){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "%d:%d, ", T_est_big, T_est_little);
+    fclose(time_file);
+}
+void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "\n");
+	fprintf(time_file, "f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+	fprintf(time_file, "power big:little (W) = %f:%f\n", power_big, power_little);
     fclose(time_file);
 }
 
@@ -337,7 +369,6 @@ void print_start_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
     FILE *time_file;
-    int c;
     time_file = fopen("times.txt", "a");
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         fprintf(time_file, "TMU Read Error\n");
@@ -355,7 +386,6 @@ void print_end_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
     FILE *time_file;
-    int c;
     time_file = fopen("times.txt", "a");
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         fprintf(time_file, "TMU Read Error\n");
