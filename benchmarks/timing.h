@@ -143,7 +143,7 @@ void print_deadline(int deadline_time){
     printf("============ deadline time : %d us ===========\n", deadline_time);
 }
 void print_predicted_time(int predicted_exec_time){
-    printf("predicted time = %f\n", predicted_exec_time);
+    printf("predicted time = %d\n", predicted_exec_time);
 }
 void print_exec_time(int exec_time){
     static int instance_number = 0;
@@ -309,7 +309,7 @@ void print_deadline(int deadline_time){
 void print_predicted_time(int predicted_exec_time){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "predicted time = %f\n", predicted_exec_time);
+    fprintf(time_file, "predicted time = %d\n", predicted_exec_time);
     fclose(time_file);
 }
 void print_exec_time(int exec_time){

@@ -19,6 +19,7 @@ some of all benchmarks use.
 #define MILLION 1000000L
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME 0
+#define MARGIN 1.1f
 
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
@@ -31,11 +32,11 @@ some of all benchmarks use.
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 1 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
-#define PROACTIVE_EN 0 //0:proactive dvfs off, 1:proactvie dvfs on
+#define PROACTIVE_EN 1 //0:proactive dvfs off, 1:proactvie dvfs on
 
 #define WINDOW_SIZE (5) //window size
 
@@ -56,10 +57,10 @@ some of all benchmarks use.
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 0
-#define _rijndael_preread_ 0
+#define _rijndael_preread_ 1
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
-#define _curseofwar_slice_sdl_ 1
+#define _curseofwar_slice_sdl_ 0
 #define _uzbl_ 0
 #define _ldecode_ 0
 
@@ -107,7 +108,7 @@ int dvfs_table_little[13][13];
         int predicted_times[1332];
     #endif
     #if _2048_slice_
-        int predicted_times[1];
+        int predicted_times[165];
     #endif
     #if _curseofwar_slice_sdl_
         int predicted_times[1002];
@@ -135,7 +136,7 @@ int dvfs_table_little[13][13];
         int predicted_times[1332];
     #endif
     #if _2048_slice_
-        int predicted_times[1];
+        int predicted_times[165];
     #endif
     #if _curseofwar_slice_sdl_
         int predicted_times[1002];
@@ -170,8 +171,8 @@ int dvfs_table_little[13][13];
     int predicted_times_little[1332];
 #endif
 #if _2048_slice_
-    int predicted_times_big[1];
-    int predicted_times_little[1];
+    int predicted_times_big[165];
+    int predicted_times_little[165];
 #endif
 #if _curseofwar_slice_sdl_
     int predicted_times_big[1002];
@@ -267,7 +268,248 @@ void fclose_all(void){
 #endif
     return;
 }
+void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
+#if DVFS_EN
+    int job_exec_time;
+    int predicted_freq = MAX_FREQ;
+    static int previous_freq = MAX_FREQ;
+    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
+        job_exec_time = MARGIN * predicted_exec_time * MAX_FREQ / predicted_freq;
+        //printf("time %d @%d\n", job_exec_time, predicted_freq);
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(job_exec_time + slice_time < deadline_time)
+            break;
+    #else // without dvfs + slice and oracle
+        if(job_exec_time < deadline_time)
+            break;
+    #endif
+    }      
+    //calculate predicted freq and round up by adding 99999
+    //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+    //if less then 200000, just set it minimum (200000)
+    predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
+    //remember current frequency to use later
+    previous_freq = predicted_freq;
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", predicted_freq);
+    fflush(fp_max_freq);
+#endif
+    return;
+}
+void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
+    int job_exec_time;
+    int predicted_freq = MAX_FREQ;
 
+	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
+	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
+	int f_new, final_freq;
+	int f_new_big = MAX_FREQ_BIG/1000;
+	int f_new_little = MAX_FREQ_LITTLE/1000;
+	int T_sum_big = 0;
+	int T_sum_little = 0;
+	static int f_previous_big = MAX_FREQ_BIG/1000;
+	static int f_previous_little = MAX_FREQ_LITTLE/1000;
+    static int big_cnt = 0;
+    static int little_cnt = 0;
+    static int current_core = CORE; //0: little, 1: big
+    cpu_set_t set;
+    
+    for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
+        T_sum_big = MARGIN * T_est_big * f_max_big / f_new_big;
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(T_sum_big + dvfs_table_big[f_previous_big/100-2][f_new_big/100-2] + slice_time < d)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(T_sum_big + slice_time < d)
+            break;
+    #else // without dvfs + slice and oracle
+        if(T_sum_big < d)
+            break;
+    #endif
+    }      
+    for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
+        T_sum_little = MARGIN * T_est_little * f_max_little / f_new_little;
+        //printf("time %d @%d\n", T_sum_little, f_new_little);
+    #if OVERHEAD_EN // with dvfs + slice overhead
+        if(T_sum_little + dvfs_table_little[f_previous_little/100-2][f_new_little/100-2] + slice_time < d)
+            break;
+    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+        if(T_sum_little + slice_time < d)
+            break;
+    #else // without dvfs + slice and oracle
+        if(T_sum_little < d)
+            break;
+    #endif
+    }     
+    //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
+    f_new_big = ((int)((f_new_big + 99) / 100)) * 100;
+    f_new_little = ((int)((f_new_little + 99) / 100)) * 100;
+    f_new_big = (f_new_big < 200)?(200):(f_new_big);
+    f_new_little = (f_new_little < 200)?(200):(f_new_little);
+    //printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+    //printf("power big:little (W) = %f:%f\n", power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+    //Select cores and use taskset command to migrate process if it was on different core
+    //f_new = f_new_little or f_new_big? let's compare power, because times will be same
+    //1. If big power is smaller or little freq is over max freq, select big core
+    //2. If little power is smaller, select little core
+    //3. If same, no change
+    
+    //debug
+    print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+ 
+    if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
+            || f_new_little > 1400){  
+        f_new = f_new_big;
+        //printf("big %d times\n", ++big_cnt);
+        if(!current_core){//if it was little core
+            CPU_ZERO( &set );
+            CPU_SET( 4, &set );
+            CPU_SET( 5, &set );
+            CPU_SET( 6, &set );
+            CPU_SET( 7, &set );
+            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+            {
+                perror( "sched_setaffinity" );
+                exit(2);
+            }
+            #if DEBUG_EN
+            sprintf(cmd, "taskset -p %d", pid);
+            flush(stdout);
+            system(cmd);
+            #endif
+        }
+        current_core = 1;
+        print_current_core(current_core, ++big_cnt);
+    }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
+        f_new = f_new_little;
+        //printf("little %d times\n", ++little_cnt);
+        if(current_core){//if it was big core
+            CPU_ZERO( &set );
+            CPU_SET( 0, &set );
+            CPU_SET( 1, &set );
+            CPU_SET( 2, &set );
+            CPU_SET( 3, &set );
+            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
+            {
+                perror( "sched_setaffinity" );
+                exit(2);
+            }
+            #if DEBUG_EN
+            sprintf(cmd, "taskset -p %d", pid);
+            fflush(stdout);
+            system(cmd);
+            #endif
+        }
+        current_core = 0;
+        print_current_core(current_core, ++little_cnt);
+    }else{
+        if(current_core)
+            print_current_core(current_core, ++big_cnt);
+        else
+            print_current_core(current_core, ++little_cnt);
+    }
+    //if less then 200 Mhz, just set it minimum (200)
+    //f_new = (f_new < 200)?(200):(f_new);
+    //save previous freq
+	f_previous_big = f_new_big;
+	f_previous_little = f_new_little;
+	//mhz->khz
+	final_freq = f_new*1000;
+    //set maximum frequency, because performance governor always use maximum freq.
+
+    if(current_core){
+        fprintf(fp_max_freq_big, "%d", final_freq);
+        fflush(fp_max_freq_big);
+    }else{
+        fprintf(fp_max_freq_little, "%d", final_freq);
+        fflush(fp_max_freq_little);
+    }
+    return;
+}
+/*
+	int job : job number
+	int d : deadline
+    int w : window size
+    return jump
+*/
+int set_freq_multiple(int job, int d){
+	int w=WINDOW_SIZE;
+	int i, j, k, brk;
+	int f_max = MAX_FREQ/1000;//khz->mhz
+	int f_new, final_freq;
+	int T_sum = 0;
+	int T_est[WINDOW_SIZE];
+	int size = sizeof(predicted_times)/sizeof(predicted_times[0]);
+	static int jump = 0; //if jump is 0, set new freq
+	static int group = 0; //how many jobs are grouped
+	static int f_previous = MAX_FREQ;
+
+	//estimate time for multiple jobs (from current to current + W)
+	//printf("T_est : ");
+	for(i=0; i<w; i++){
+		if(job+i < size)
+			T_est[i] = predicted_times[job+i];
+		else
+			T_est[i] = -1;
+		//printf("%d, ", T_est[i]);
+	}
+	//printf("\n");
+
+	if(jump == 0){
+		for(i=w; i>0; i--){
+			//1. Sum total time
+			T_sum = 0;
+			for(j=0; j<i; j++)
+				T_sum += MARGIN * T_est[j];
+            #if OVERHEAD_EN //just add 1000us for simplicity
+            T_sum += 1000;
+            #endif
+			//printf("T_sum = %d\t", T_sum);
+			//2. Calculate new frequecy
+			f_new = (f_max * T_sum)/(i*d);
+            //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
+	        f_new = ((int)((f_new + 99) / 100)) * 100;
+			//printf("f_new (Mhz) = %d\n", f_new);
+
+			//3. Check if all deadlines will be met
+			brk = 0;
+			
+			for(j=1; j<i; j++){
+				T_sum = 0;
+				for(k=0; k<j; k++)
+					T_sum += T_est[k];
+				if((T_sum * f_max) <= (j * d * f_new))
+					brk++;
+			}
+			if(brk == i-1){
+				jump = i-1;
+                group = i;
+				//printf("group of %d\n", group);
+				break;
+			}
+		}	
+	}else{
+		f_new = f_previous; 
+		//printf("f_new (Mhz) = %d\n", f_new);
+		jump--;
+		//printf("group of %d\n", group);
+	}
+	//printf("jump = %d\n", jump);
+
+    //if less then 200 Mhz, just set it minimum (200)
+    f_new = (f_new < 200)?(200):(f_new);
+    //save previous freq
+	f_previous = f_new;
+	//mhz->khz
+	final_freq = f_new*1000;
+    //set maximum frequency, because performance governor always use maximum freq.
+    fprintf(fp_max_freq, "%d", final_freq);
+    fflush(fp_max_freq);
+    return jump;
+}
 
 int set_freq_multiple_hetero(int job, int d, int pid){
 	int w=WINDOW_SIZE;
@@ -286,7 +528,6 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 	int size_little = sizeof(predicted_times_little)/sizeof(predicted_times_little[0]);
 	static int jump = 0; //if jump is 0, set new freq
 	static int group = 0; //how many jobs are grouped
-	float margin = 1.1;
 	static int f_previous = MAX_FREQ;
     static int big_cnt = 0;
     static int little_cnt = 0;
@@ -304,9 +545,9 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 			T_est_big[i] = -1;
 			T_est_little[i] = -1;
         }
-        #if DEBUG_EN
+        //#if DEBUG_EN
         print_est_time(T_est_big[i], T_est_little[i]);
-        #endif
+        //#endif
 	}
 	//printf("\n");
 
@@ -316,8 +557,8 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 			T_sum_big = 0;
 			T_sum_little = 0;
 			for(j=0; j<i; j++){
-				T_sum_big += margin * T_est_big[j];
-				T_sum_little += margin * T_est_little[j];
+				T_sum_big += MARGIN * T_est_big[j];
+				T_sum_little += MARGIN * T_est_little[j];
             }
             #if OVERHEAD_EN //just add 1000us for simplicity
             T_sum_big += 1000;
@@ -328,14 +569,14 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 			f_new_big = (f_max_big * T_sum_big)/(i*d);
 			f_new_little = (f_max_little * T_sum_little)/(i*d);
             //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
-	        f_new_big = ((int)((f_new_big + 100) / 100)) * 100;
-	        f_new_little = ((int)((f_new_little + 100) / 100)) * 100;
+	        f_new_big = ((int)((f_new_big + 99) / 100)) * 100;
+	        f_new_little = ((int)((f_new_little + 99) / 100)) * 100;
             f_new_big = (f_new_big < 200)?(200):(f_new_big);
             f_new_little = (f_new_little < 200)?(200):(f_new_little);
             
-            #if DEBUG_EN
+            //#if DEBUG_EN
             print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
-            #endif
+            //#endif
 
 			//3. Check if all deadlines will be met
 			brk_big = 0;
@@ -448,244 +689,6 @@ int set_freq_multiple_hetero(int job, int d, int pid){
         fprintf(fp_max_freq_little, "%d", final_freq);
         fflush(fp_max_freq_little);
     }
-    return jump;
-}
-void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
-    int job_exec_time;
-    int predicted_freq = MAX_FREQ;
-    static int previous_freq = MAX_FREQ;
-
-	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
-	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
-	int f_new, final_freq;
-	int f_new_big = MAX_FREQ_BIG/1000;
-	int f_new_little = MAX_FREQ_LITTLE/1000;
-	int T_sum_big = 0;
-	int T_sum_little = 0;
-	float margin = 1.1;
-	static int f_previous = MAX_FREQ;
-    static int big_cnt = 0;
-    static int little_cnt = 0;
-    static int current_core = CORE; //0: little, 1: big
-    cpu_set_t set;
-    
-    for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
-        T_sum_big = margin * T_est_big * f_max_big / f_new_big;
-    #if OVERHEAD_EN // with dvfs + slice overhead
-        if(T_sum_big + dvfs_table_big[f_new_big/100-2][f_new_big/100-2] + slice_time < d)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(T_sum_big + slice_time < d)
-            break;
-    #else // without dvfs + slice and oracle
-        if(T_sum_big < d)
-            break;
-    #endif
-    }      
-    for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
-        T_sum_little = margin * T_est_little * f_max_little / f_new_little;
-    #if OVERHEAD_EN // with dvfs + slice overhead
-        if(T_sum_little + dvfs_table_little[f_new_little/100-2][f_new_little/100-2] + slice_time < d)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(T_sum_little + slice_time < d)
-            break;
-    #else // without dvfs + slice and oracle
-        if(T_sum_little < d)
-            break;
-    #endif
-    }     
-    //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
-    f_new_big = ((int)((f_new_big + 100) / 100)) * 100;
-    f_new_little = ((int)((f_new_little + 100) / 100)) * 100;
-    f_new_big = (f_new_big < 200)?(200):(f_new_big);
-    f_new_little = (f_new_little < 200)?(200):(f_new_little);
-    //printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
-    //printf("power big:little (W) = %f:%f\n", power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
-    //Select cores and use taskset command to migrate process if it was on different core
-    //f_new = f_new_little or f_new_big? let's compare power, because times will be same
-    //1. If big power is smaller or little freq is over max freq, select big core
-    //2. If little power is smaller, select little core
-    //3. If same, no change
- 
-    if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
-            || f_new_little > 1400){  
-        f_new = f_new_big;
-        //printf("big %d times\n", ++big_cnt);
-        if(!current_core){//if it was little core
-            CPU_ZERO( &set );
-            CPU_SET( 4, &set );
-            CPU_SET( 5, &set );
-            CPU_SET( 6, &set );
-            CPU_SET( 7, &set );
-            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
-            {
-                perror( "sched_setaffinity" );
-                exit(2);
-            }
-            #if DEBUG_EN
-            sprintf(cmd, "taskset -p %d", pid);
-            flush(stdout);
-            system(cmd);
-            #endif
-        }
-        current_core = 1;
-        print_current_core(current_core, ++big_cnt);
-    }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
-        f_new = f_new_little;
-        //printf("little %d times\n", ++little_cnt);
-        if(current_core){//if it was big core
-            CPU_ZERO( &set );
-            CPU_SET( 0, &set );
-            CPU_SET( 1, &set );
-            CPU_SET( 2, &set );
-            CPU_SET( 3, &set );
-            if (sched_setaffinity( pid, sizeof( cpu_set_t ), &set ))
-            {
-                perror( "sched_setaffinity" );
-                exit(2);
-            }
-            #if DEBUG_EN
-            sprintf(cmd, "taskset -p %d", pid);
-            fflush(stdout);
-            system(cmd);
-            #endif
-        }
-        current_core = 0;
-        print_current_core(current_core, ++little_cnt);
-    }else{
-        if(current_core)
-            print_current_core(current_core, ++big_cnt);
-        else
-            print_current_core(current_core, ++little_cnt);
-    }
-    //if less then 200 Mhz, just set it minimum (200)
-    //f_new = (f_new < 200)?(200):(f_new);
-    //save previous freq
-	f_previous = f_new;
-	//mhz->khz
-	final_freq = f_new*1000;
-    //set maximum frequency, because performance governor always use maximum freq.
-
-    if(current_core){
-        fprintf(fp_max_freq_big, "%d", final_freq);
-        fflush(fp_max_freq_big);
-    }else{
-        fprintf(fp_max_freq_little, "%d", final_freq);
-        fflush(fp_max_freq_little);
-    }
-    return;
-}
-void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
-#if DVFS_EN
-    int job_exec_time;
-    int predicted_freq = MAX_FREQ;
-    static int previous_freq = MAX_FREQ;
-    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-        job_exec_time = 1.1 * predicted_exec_time * MAX_FREQ / predicted_freq;
-    #if OVERHEAD_EN // with dvfs + slice overhead
-        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(job_exec_time + slice_time < deadline_time)
-            break;
-    #else // without dvfs + slice and oracle
-        if(job_exec_time < deadline_time)
-            break;
-    #endif
-    }      
-    //calculate predicted freq and round up by adding 99999
-    //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
-    //remember current frequency to use later
-    previous_freq = predicted_freq;
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-#endif
-    return;
-}
-/*
-	int job : job number
-	int d : deadline
-    int w : window size
-    return jump
-*/
-int set_freq_multiple(int job, int d){
-	int w=WINDOW_SIZE;
-	int i, j, k, brk;
-	int f_max = MAX_FREQ/1000;//khz->mhz
-	int f_new, final_freq;
-	int T_sum = 0;
-	int T_est[WINDOW_SIZE];
-	int size = sizeof(predicted_times)/sizeof(predicted_times[0]);
-	static int jump = 0; //if jump is 0, set new freq
-	static int group = 0; //how many jobs are grouped
-	float margin = 1.1;
-	static int f_previous = MAX_FREQ;
-
-	//estimate time for multiple jobs (from current to current + W)
-	//printf("T_est : ");
-	for(i=0; i<w; i++){
-		if(job+i < size)
-			T_est[i] = predicted_times[job+i];
-		else
-			T_est[i] = -1;
-		//printf("%d, ", T_est[i]);
-	}
-	//printf("\n");
-
-	if(jump == 0){
-		for(i=w; i>0; i--){
-			//1. Sum total time
-			T_sum = 0;
-			for(j=0; j<i; j++)
-				T_sum += margin * T_est[j];
-            #if OVERHEAD_EN //just add 1000us for simplicity
-            T_sum += 1000;
-            #endif
-			//printf("T_sum = %d\t", T_sum);
-			//2. Calculate new frequecy
-			f_new = (f_max * T_sum)/(i*d);
-            //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
-	        f_new = ((int)((f_new + 100) / 100)) * 100;
-			//printf("f_new (Mhz) = %d\n", f_new);
-
-			//3. Check if all deadlines will be met
-			brk = 0;
-			
-			for(j=1; j<i; j++){
-				T_sum = 0;
-				for(k=0; k<j; k++)
-					T_sum += T_est[k];
-				if((T_sum * f_max) <= (j * d * f_new))
-					brk++;
-			}
-			if(brk == i-1){
-				jump = i-1;
-                group = i;
-				//printf("group of %d\n", group);
-				break;
-			}
-		}	
-	}else{
-		f_new = f_previous; 
-		//printf("f_new (Mhz) = %d\n", f_new);
-		jump--;
-		//printf("group of %d\n", group);
-	}
-	//printf("jump = %d\n", jump);
-
-    //if less then 200 Mhz, just set it minimum (200)
-    f_new = (f_new < 200)?(200):(f_new);
-    //save previous freq
-	f_previous = f_new;
-	//mhz->khz
-	final_freq = f_new*1000;
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", final_freq);
-    fflush(fp_max_freq);
     return jump;
 }
 

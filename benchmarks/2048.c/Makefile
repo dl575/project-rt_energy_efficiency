@@ -1,4 +1,4 @@
-CFLAGS += -std=c99
+CFLAGS += -std=c99 -D_GNU_SOURCE
 
 .PHONY: all clean
 

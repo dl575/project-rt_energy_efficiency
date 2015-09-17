@@ -2939,6 +2939,11 @@ NULL};
             moment_timing_print(0); //moment_start
            
             start_timing();
+            //Now, let's assume no slice time like ORACLE
+            end_timing();
+            slice_time = print_slice_timing();
+            
+            start_timing();
             #if HETERO_EN 
                 jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
             #elif !HETERO_EN
