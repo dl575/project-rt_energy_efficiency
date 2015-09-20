@@ -9,8 +9,8 @@ if [[ $# < 3 ]] ; then
     exit 1
 fi
 
-if [ $1 != "big" -a $1 != "little" ] ; then
-    echo 'USAGE : only big or little'
+if [ $1 != "big" ] && [ $1 != "little" ] && [ $1 != "hetero" ] ; then
+    echo 'USAGE : ./run.sh [big/little/hetero]'
     exit 1
 fi
 
@@ -24,17 +24,40 @@ elif [ $1 == "little" ] ; then
     TASKSET_FLAG="0x0f"
     MAX_FREQ=1400000
     SENSOR_ID="3-0045"
+elif [ $1 == "hetero" ] ; then
+    WHICH_CPU="cpu0"
+    TASKSET_FLAG="0x0f"
+    MAX_FREQ=1400000
+    SENSOR_ID="3-0045"
 fi
 
-sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
-sudo chmod 777 /sys/bus/i2c/drivers/INA231/$SENSOR_ID/sensor_W
-sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
-
-echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+init(){
+    if [ $1 == "big" ] ; then
+        echo big
+        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        sudo chmod 777 /sys/bus/i2c/drivers/INA231/3-0040/sensor_W
+        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq
+        echo 2000000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 
+        echo performance > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+    elif [ $1 == "little" ] ; then
+        echo little
+        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+        sudo chmod 777 /sys/bus/i2c/drivers/INA231/3-0045/sensor_W
+        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+        echo 1400000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 
+        echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    fi
+}
 
 echo $BENCHMARK">>>"
-echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+if [ $1 != "hetero" ] ; then
+    init $1
+else
+    init big
+    init little
+fi
 
 videos=("akiyo_qcif" "carphone_qcif" "claire_qcif" "coastguard_qcif" "container_qcif" "foreman_qcif" "hall_qcif" "mother-daughter_qcif" "news_qcif" "silent_qcif")
 if [[ $2 ]] ; then
@@ -51,24 +74,26 @@ if [[ $2 ]] ; then
     for video in "${videos[@]}"
     do
         echo $Index_videos
-        #cp -v videos/$video.264 test.264
-        cp -v /home/odroid/project-rt_energy_efficiency/datasets/videos_88x72/$video.264 test.264
+        cp -v videos/$video.264 test.264
+        #cp -v /home/odroid/project-rt_energy_efficiency/datasets/videos_88x72/$video.264 test.264
         taskset $TASKSET_FLAG ./bin/ldecod.dbg.exe $Index_videos
         ((++Index_videos))
     done
-    
-    mv times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
+    cp times.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"
     exit 1
 fi
 
+
 #SET TO PERFORMANCE AFTER RUN ALL
-echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+if [ $1 != "hetero" ] ; then
+    init $1
+else
+    init big
+    init little
+fi
 
 echo "[ run.sh "$2" done ]"
 exit 0
-
-
 

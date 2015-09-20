@@ -42,7 +42,7 @@ some of all benchmarks use.
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (140) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
@@ -57,15 +57,15 @@ some of all benchmarks use.
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 0
-#define _rijndael_preread_ 1
-#define _xpilot_slice_ 0
+#define _rijndael_preread_ 0
+#define _xpilot_slice_ 1
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _uzbl_ 0
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
-#define F_PRINT ((_pocketsphinx_ || _xpilot_slice_ || _2048_slice_ || _curseofwar_slice_sdl_ || _uzbl_ || _ldecode_)?(1):(0))
+#define F_PRINT ((_pocketsphinx_ || _2048_slice_ || _curseofwar_slice_sdl_ || _uzbl_ || _ldecode_)?(1):(0))
 
 extern struct slice_return{
     int big;
@@ -102,7 +102,7 @@ int dvfs_table_little[13][13];
         int predicted_times[99];
     #endif
     #if _xpilot_slice_
-        int predicted_times[1];
+        int predicted_times[1001];
     #endif
     #if _stringsearch_
         int predicted_times[1332];
@@ -130,7 +130,7 @@ int dvfs_table_little[13][13];
         int predicted_times[99];
     #endif
     #if _xpilot_slice_
-        int predicted_times[1];
+        int predicted_times[1001];
     #endif
     #if _stringsearch_
         int predicted_times[1332];
@@ -163,8 +163,8 @@ int dvfs_table_little[13][13];
     int predicted_times_little[99];
 #endif
 #if _xpilot_slice_
-    int predicted_times_big[1];
-    int predicted_times_little[1];
+    int predicted_times_big[1001];
+    int predicted_times_little[1001];
 #endif
 #if _stringsearch_
     int predicted_times_big[1332];
@@ -332,7 +332,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     }      
     for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
         T_sum_little = MARGIN * T_est_little * f_max_little / f_new_little;
-        //printf("time %d @%d\n", T_sum_little, f_new_little);
+        //printf("sum time %d @%d\n", T_sum_little, f_previous_little);
     #if OVERHEAD_EN // with dvfs + slice overhead
         if(T_sum_little + dvfs_table_little[f_previous_little/100-2][f_new_little/100-2] + slice_time < d)
             break;
@@ -344,6 +344,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
             break;
     #endif
     }     
+    //printf("est time %d @%d\n", T_est_little, f_new_little);
     //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
     f_new_big = ((int)((f_new_big + 99) / 100)) * 100;
     f_new_little = ((int)((f_new_little + 99) / 100)) * 100;
@@ -358,7 +359,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     //3. If same, no change
     
     //debug
-    print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+    //print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
  
     if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
             || f_new_little > 1400){  
@@ -416,6 +417,9 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     //save previous freq
 	f_previous_big = f_new_big;
 	f_previous_little = f_new_little;
+    //previous freq should not exceed max_freq
+	f_previous_big = (f_previous_big > MAX_FREQ_BIG/1000)?(MAX_FREQ_BIG/1000):(f_previous_big);
+	f_previous_little = (f_previous_little > MAX_FREQ_LITTLE/1000)?(MAX_FREQ_LITTLE/1000):(f_previous_little);
 	//mhz->khz
 	final_freq = f_new*1000;
     //set maximum frequency, because performance governor always use maximum freq.

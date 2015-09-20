@@ -24,8 +24,10 @@ fi
 # set core depends on argument 1
 if [ $1 == "big" ] ; then
     sed -i -e 's/'"$CORE_LITTLE"'/'"$CORE_BIG"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_ENABLED"'/'"$HETERO_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $1 == "little" ] ; then
     sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_ENABLED"'/'"$HETERO_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 # set core depends on argument 2
@@ -131,12 +133,12 @@ done
 cd $DVFS_SIM_PATH
 taskset 0xff $DVFS_SIM_PATH/predict_times.py 
 sleep 3
-cd $DVFS_SIM_PATH/lps
-taskset 0xff $DVFS_SIM_PATH/lps/gen_predictor.py
-cd $DVFS_SIM_PATH/pid
-taskset 0xff $DVFS_SIM_PATH/pid/gen_predictor.py
-cd $DVFS_SIM_PATH
-taskset 0xff $DVFS_SIM_PATH/gen_oracle_array.py
+#cd $DVFS_SIM_PATH/lps
+#taskset 0xff $DVFS_SIM_PATH/lps/gen_predictor.py
+#cd $DVFS_SIM_PATH/pid
+#taskset 0xff $DVFS_SIM_PATH/pid/gen_predictor.py
+#cd $DVFS_SIM_PATH
+#taskset 0xff $DVFS_SIM_PATH/gen_oracle_array.py
 cd $DVFS_SIM_PATH/cvx
 taskset 0xff $DVFS_SIM_PATH/cvx/gen_predictor.py
 

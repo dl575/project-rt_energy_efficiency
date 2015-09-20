@@ -16,21 +16,21 @@ if [[ $# < 4 ]] ; then
     exit 1
 fi
 
-if [ $2 != "big" -a $2 != "little" ] ; then
-    echo 'USAGE : only big or little'
+if [ $2 != "big" ] && [ $2 != "little" ] && [ $2 != "hetero" ] ; then
+    echo 'USAGE : ./buildAll.sh [N] [big/little/hetero] [policy] [sweep]'
     exit 1
 fi
-
-#if [ $3 != "predict_en" ] && [ $3 != "predict_dis" ] && [ $3 != "oracle_en" ] && [ $3 != "pid_en" ] ; then
-#    echo 'USAGE : only predict_en, predict_dis, oracle_en, or pid_en'
-#    exit 1
-#fi
 
 # set core depends on argument 2
 if [ $2 == "big" ] ; then
     sed -i -e 's/'"$CORE_LITTLE"'/'"$CORE_BIG"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_ENABLED"'/'"$HETERO_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $2 == "little" ] ; then
     sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_ENABLED"'/'"$HETERO_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $2 == "hetero" ] ; then
+    sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_DISABLED"'/'"$HETERO_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 # disable DEBUG_EN
@@ -41,6 +41,7 @@ sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # enable DELAY_EN
 sed -i -e 's/'"$DELAY_DISABLED"'/'"$DELAY_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # disable GET_PREDICT, GET_OVERHEAD, GET_DEADLINE
 sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -53,6 +54,7 @@ sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON
 sed -i -e 's/'"$SLICE_OVERHEAD_ONLY_ENABLED"'/'"$SLICE_OVERHEAD_ONLY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$ORACLE_ENABLED"'/'"$ORACLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$PROACTIVE_ENABLED"'/'"$PROACTIVE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # set PREDICT_EN depends on argument 3
 if [ $3 == "predict_dis" ] ; then
@@ -71,6 +73,12 @@ elif [ $3 == "oracle_en" ] ; then
     sed -i -e 's/'"$ORACLE_DISABLED"'/'"$ORACLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "pid_en" ] ; then
     sed -i -e 's/'"$PID_DISABLED"'/'"$PID_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "proactive_en+overhead_en" ] ; then
+    sed -i -e 's/'"$PROACTIVE_DISABLED"'/'"$PROACTIVE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "proactive_en+overhead_dis" ] ; then
+    sed -i -e 's/'"$PROACTIVE_DISABLED"'/'"$PROACTIVE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 function sweep {
@@ -120,7 +128,7 @@ elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocket
     taskset 0xff ./autogen.sh
     taskset 0xff ./configure --prefix=`pwd`/../install
     taskset 0xff sudo make install 
-elif [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
+elif [ ${SOURCE_FILES[$1]} == "curseofwar/main-sdl.c" ] ; then
     echo "[curseofwar] make SDL=yes"
     cd $BENCH_PATH/${SOURCE_PATH[$1]}
     taskset 0xff make SDL=yes
