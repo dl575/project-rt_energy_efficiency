@@ -276,7 +276,7 @@ uzbl_commands_run_argv (const gchar *cmd, GArray *argv, GString *result)
 }
 
 // Hand constructed slice of uzbl_commands_run_parsed
-float uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GString *result)
+struct slice_return uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GString *result)
 {
 /*
     if (info) {
@@ -353,37 +353,22 @@ float uzbl_commands_run_parsed_slice (const UzblCommand *info, GArray *argv, GSt
 print_loop_counter:
     ;
 #if GET_PREDICT || DEBUG_EN
-    printf("loop counter = (");
-    int i;
-    for (i = 0; i < 19; i++) {
-      printf("%d, ", loop_counter[i]);
-    }
-    printf(")\n");
+	print_array(loop_counter, 19);
 #endif
   {
     predict_exec_time:
     ;
 
-    float exec_time;
-#if CORE //big
+    struct slice_return exec_time;
     #if !CVX_EN //conservative
-        exec_time = 0;        
+        exec_time.big = 0;        
+        exec_time.little = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + 36819.485152*loop_counter[6] + 35519.485152*loop_counter[15] + -358.683173;
     #else //cvx
-        if(CVX_COEFF == 100) 
-            exec_time = 5517.920799*loop_counter[1] + 6354.089086*loop_counter[2] + -9893.425743*loop_counter[3] + -8198.425745*loop_counter[4] + -10044.425743*loop_counter[5] + 36294.574255*loop_counter[6] + -5087.336658*loop_counter[7] + -9946.425743*loop_counter[8] + -5808.504944*loop_counter[10] + -10294.425743*loop_counter[11] + 34694.574256*loop_counter[15] + -1557.336659*loop_counter[16] + -10449.425745*loop_counter[18] + -290.584141;
+		exec_time.big = 5517.920799*loop_counter[1] + 6354.089086*loop_counter[2] + -9893.425743*loop_counter[3] + -8198.425745*loop_counter[4] + -10044.425743*loop_counter[5] + 36294.574255*loop_counter[6] + -5087.336658*loop_counter[7] + -9946.425743*loop_counter[8] + -5808.504944*loop_counter[10] + -10294.425743*loop_counter[11] + 34694.574256*loop_counter[15] + -1557.336659*loop_counter[16] + -10449.425745*loop_counter[18] + -290.584141;
+		//exec_time.little = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
+		exec_time.little = 6720.198020*loop_counter[1] + 6848.277220*loop_counter[2] + -12539.435645*loop_counter[3] + -10249.435645*loop_counter[4] + -12551.435645*loop_counter[5] + 51809.564355*loop_counter[6] + -5779.158425*loop_counter[7] + -12438.435645*loop_counter[8] + -6161.237625*loop_counter[10] + -12549.435645*loop_counter[11] + 33487.564355*loop_counter[15] + -510.158425*loop_counter[16] + -11959.435645*loop_counter[18] + 558.960405;
+
     #endif
-#else //LITTLE
-    #if !CVX_EN //conservative
-        exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + 36819.485152*loop_counter[6] + 35519.485152*loop_counter[15] + -358.683173;
-    #else //cvx
-        if(CVX_COEFF == 10)
-            exec_time = 4891.287129*loop_counter[1] + 6689.801979*loop_counter[2] + -10197.831683*loop_counter[3] + -9057.831683*loop_counter[4] + -10203.831683*loop_counter[5] + 36868.168317*loop_counter[6] + -4301.029705*loop_counter[7] + -10074.831683*loop_counter[8] + -5417.544555*loop_counter[10] + -10245.831683*loop_counter[11] + 35568.168317*loop_counter[15] + -2915.029705*loop_counter[16] + -10548.831683*loop_counter[18] + -526.257424;
-        else if(CVX_COEFF == 50)
-            exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
-        else if(CVX_COEFF == 100) 
-            exec_time = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + -10246.514848*loop_counter[3] + -9076.514848*loop_counter[4] + -10252.514848*loop_counter[5] + 36819.485152*loop_counter[6] + -4575.732664*loop_counter[7] + -10123.514848*loop_counter[8] + -5358.099011*loop_counter[10] + -10294.514848*loop_counter[11] + 35519.485152*loop_counter[15] + -2245.732664*loop_counter[16] + -10524.514848*loop_counter[18] + -358.683173;
-    #endif
-#endif
     return exec_time;
   }
 
@@ -397,6 +382,8 @@ uzbl_commands_run (const gchar *cmd, GString *result)
 
 //---------------------modified by TJSong----------------------//
     static int exec_time = 0;
+    static int jump = 0;
+    int pid = getpid();
     if(check_define()==ERROR_DEFINE){
         printf("%s", "DEFINE ERROR!!\n");
         return ERROR_DEFINE;
@@ -416,8 +403,11 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     //start_timing();
 
 //---------------------modified by TJSong----------------------//
+		fopen_all(); //fopen for frequnecy file
         // Perform slicing and prediction
-        float predicted_exec_time = 0.0;
+        struct slice_return predicted_exec_time;
+        predicted_exec_time.big = 0;
+        predicted_exec_time.little = 0;
         /*
             CASE 0 = to get prediction equation
             CASE 1 = to get execution deadline
@@ -426,10 +416,12 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             CASE 4 = running on our prediction
             CASE 5 = running on oracle
             CASE 6 = running on pid
+            CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
             predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
         #elif GET_DEADLINE /* CASE 1 */
+            moment_timing_print(0); //moment_start
             //nothing
         #elif GET_OVERHEAD /* CASE 2 */
             start_timing();
@@ -438,13 +430,18 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             slice_time = print_slice_timing();
 
             start_timing();
-            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
-        #elif !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
             //slice_time=0; dvfs_time=0;
+            predicted_exec_time = uzbl_commands_run_parsed_slice (info, argv, result); //slice
             moment_timing_print(0); //moment_start
-        #elif !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
             moment_timing_print(0); //moment_start
             
             start_timing();
@@ -454,9 +451,25 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             
             start_timing();
             #if OVERHEAD_EN //with overhead
-                set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+                    #endif
+                #endif
             #else //without overhead
-                set_freq_uzbl(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
+                #if HETERO_EN
+                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+                #else
+                    #if CORE
+                        set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
+                    #else
+                        set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
+                    #endif
+                #endif
             #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
@@ -465,25 +478,20 @@ uzbl_commands_run (const gchar *cmd, GString *result)
         #elif ORACLE_EN /* CASE 5 */
             //slice_time=0;
             static int job_cnt = 0; //job count
-            static int csl = 1;
-            //Since we filter out initial part
-            if(csl){
-                if( 0 == strcmp(cmd, "set keycmd @[csl]@<span @cursor_style>@[ ]@</span>") ){
-                    csl--;
-                }
-                predicted_exec_time = DEADLINE_TIME;
-            }else{
-                predicted_exec_time = exec_time_arr[job_cnt];
-                job_cnt++;
-            }
+            predicted_exec_time  = exec_time_arr[job_cnt];
             moment_timing_print(0); //moment_start
             
             start_timing();
-            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
             moment_timing_print(1); //moment_start
+            job_cnt++;
         #elif PID_EN /* CASE 6 */
             moment_timing_print(0); //moment_start
             
@@ -493,12 +501,38 @@ uzbl_commands_run (const gchar *cmd, GString *result)
             slice_time = print_slice_timing();
             
             start_timing();
-            set_freq_uzbl(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #if CORE
+                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #else
+                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+            #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
             moment_timing_print(1); //moment_start
+        #elif PROACTIVE_EN /* CASE 4 */
+            static int job_number = 0; //job count
+            moment_timing_print(0); //moment_start
+          
+            start_timing();
+            //Now, let's assume no slice time like ORACLE
+            end_timing();
+            slice_time = print_slice_timing();
+ 
+            start_timing();
+            #if HETERO_EN 
+                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+            #elif !HETERO_EN
+                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+            #endif
+            end_timing();
+            dvfs_time = print_dvfs_timing();
+            
+            moment_timing_print(1); //moment_start
+            job_number++;
         #endif
+
+		fclose_all();
 //---------------------modified by TJSong----------------------//
     start_timing();
 
@@ -508,31 +542,45 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     end_timing();
     //print_timing();
 //---------------------modified by TJSong----------------------//
+		fopen_all();
         exec_time = exec_timing();
+        int cur_freq = print_freq(); 
         int delay_time = 0;
-
+        int actual_delay_time = 0;
+		
         #if GET_PREDICT /* CASE 0 */
             print_exec_time(exec_time);
         #elif GET_DEADLINE /* CASE 1 */
             print_exec_time(exec_time);
+            moment_timing_print(2); //moment_end
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] - dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
                 start_timing();
-                usleep(delay_time);
+				sleep_in_delay(delay_time, cur_freq);
                 end_timing();
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
-        moment_timing_print(2); //moment_end
-        print_exec_time(exec_time);
-        print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            moment_timing_print(2); //moment_end
+            print_delay_time(delay_time, actual_delay_time);
+            print_exec_time(exec_time);
+            print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
         #endif
 
         // Write out predicted time & print out frequency used
-        print_predicted_time(predicted_exec_time);
-        print_freq(); 
+        #if HETERO_EN
+            print_predicted_time(predicted_exec_time.big);
+            print_predicted_time(predicted_exec_time.little);
+        #else
+            #if CORE
+                print_predicted_time(predicted_exec_time.big);
+            #else
+                print_predicted_time(predicted_exec_time.little);
+            #endif
+        #endif
+		fclose_all();
 //---------------------modified by TJSong----------------------//
  
     uzbl_commands_args_free (argv);

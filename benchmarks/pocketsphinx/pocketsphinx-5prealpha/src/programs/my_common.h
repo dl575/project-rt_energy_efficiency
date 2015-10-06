@@ -1,1 +1,1 @@
-../../../../my_common.h
+/home/odroid/project-rt_energy_efficiency/benchmarks/my_common.h

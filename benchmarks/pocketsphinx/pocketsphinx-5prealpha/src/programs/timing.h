@@ -1,1 +1,1 @@
-../../../../timing.h
+/home/odroid/project-rt_energy_efficiency/benchmarks/timing.h

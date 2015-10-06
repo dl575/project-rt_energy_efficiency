@@ -8,6 +8,7 @@
 #include "my_common.h"
 
 extern struct timeval start, end, moment;
+extern struct timeval start_local, end_local;
 extern int client_join = 0;
 
 //Define function names
@@ -15,12 +16,16 @@ extern int client_join = 0;
 extern void start_timing();
 extern void end_timing();
 extern int exec_timing();
+extern void start_timing_local();
+extern void end_timing_local();
+extern int exec_timing_local();
 extern void init_time_file();
 extern void my_usleep(unsigned long us);
 
 //These functions are defined differently by F_PRINT
 extern void print_array(int *array, int array_len);
 extern void print_timing();
+extern void print_timing_local();
 extern void moment_timing_print();
 extern int print_slice_timing();
 extern int print_dvfs_timing();
@@ -28,9 +33,10 @@ extern void print_deadline(int deadline_time);
 extern void print_predicted_time(int predicted_exec_time);
 extern void print_exec_time(int exec_time);
 extern void print_total_time(int exec_time);
-extern void print_delay_time(int pre_delay_time, int delay_time);
+extern void print_delay_time(int delay_time, int actual_delay_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
+extern void print_enter();
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 
 extern void print_start_temperature();
@@ -56,6 +62,25 @@ void end_timing() {
  */
 int exec_timing() {
   return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+}
+/*
+ * Start of section to time.
+ */
+void start_timing_local() {
+  gettimeofday(&start_local, NULL);
+}
+/*
+ * Stop timing, record end time.
+ */
+void end_timing_local() {
+  gettimeofday(&end_local, NULL);
+}
+/*
+ * Return excute time
+ */
+int exec_timing_local() {
+  return (int)(end_local.tv_sec - start_local.tv_sec)*1000000 +
+	  (int)(end_local.tv_usec - start_local.tv_usec);
 }
 /*
  * Create new times.txt file
@@ -100,6 +125,16 @@ void print_timing() {
   static int instance_number = 0;
   printf("time %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
+  instance_number++;
+}
+/*
+ * Print timing information to stdout.
+ */
+void print_timing_local() {
+  static int instance_number = 0;
+  printf("time_local %d = %d us\n", instance_number, 
+    (int)(end_local.tv_sec - start_local.tv_sec)*1000000 +
+	(int)(end_local.tv_usec - start_local.tv_usec));
   instance_number++;
 }
 /*
@@ -155,10 +190,10 @@ void print_total_time(int exec_time){
     printf("time_total %d = %d us\n", instance_number, exec_time);
     instance_number++;
 }
-void print_delay_time(int pre_delay_time, int delay_time){
+void print_delay_time(int pre_delay_time, int actual_delay_time){
     static int instance_number = 0;
     printf("delay should be %d = %d us\n", instance_number, pre_delay_time);
-    printf("actual dealy is %d = %d us\n", instance_number, delay_time);
+    printf("actual dealy is %d = %d us\n", instance_number, actual_delay_time);
     instance_number++;
 }
 void print_current_core(int current_core, int big_little_cnt){
@@ -169,12 +204,22 @@ void print_current_core(int current_core, int big_little_cnt){
         printf("little %d times\n", big_little_cnt);
 }
 void print_est_time(int T_est_big, int T_est_little){
-    printf("%d:%d, ", T_est_big, T_est_little);
+	if(T_est_little == -99)//if -99, it's not hetero
+		printf("%d, ", T_est_big);//it's not big only
+	else
+		printf("%d:%d, ", T_est_big, T_est_little);
+}
+void print_enter(){
+	printf("\n");
 }
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){
     printf("\n");
-	printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
-	printf("power big:little (W) = %f:%f\n", power_big, power_little);
+	if(f_new_little == -99){//if -99, it's not hetero
+		printf("f_new (Mhz) = %d\n", f_new_big);//it's not big only
+	}else{
+		printf("f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+		printf("power big:little (W) = %f:%f\n", power_big, power_little);
+	}
 }
 
 /*
@@ -253,6 +298,20 @@ void print_timing() {
     instance_number++;
     fclose(time_file);
 }
+/*
+ * Print timing information to stdout.
+ */
+void print_timing_local() {
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    static int instance_number = 0;
+    fprintf(time_file, "time_local %d = %d us\n", instance_number, 
+        (int)(end_local.tv_sec - start_local.tv_sec)*1000000 +
+		(int)(end_local.tv_usec - start_local.tv_usec));
+    instance_number++;
+    fclose(time_file);
+}
+
 
 /*
  * Moment timing, fprint moment.
@@ -328,12 +387,13 @@ void print_total_time(int exec_time){
     instance_number++;
     fclose(time_file);
 }
-void print_delay_time(int pre_delay_time, int delay_time){
+void print_delay_time(int pre_delay_time, int actual_delay_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
     fprintf(time_file, "delay should be %d = %d us\n", instance_number, pre_delay_time);
-    fprintf(time_file, "actual dealy is %d = %d us\n", instance_number, delay_time);
+    fprintf(time_file, "actual dealy is %d = %d us\n", instance_number,
+			actual_delay_time);
     instance_number++;
     fclose(time_file);
 }
@@ -350,15 +410,27 @@ void print_current_core(int current_core, int big_little_cnt){
 void print_est_time(int T_est_big, int T_est_little){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "%d:%d, ", T_est_big, T_est_little);
+	if(T_est_little == -99)//if -99, it's not hetero
+		fprintf(time_file, "%d, ", T_est_big);
+	else
+		fprintf(time_file, "%d:%d, ", T_est_big, T_est_little);
+    fclose(time_file);
+}
+void print_enter(){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+	fprintf(time_file, "\n");
     fclose(time_file);
 }
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "\n");
-	fprintf(time_file, "f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
-	fprintf(time_file, "power big:little (W) = %f:%f\n", power_big, power_little);
+	if(f_new_little == -99){//if -99, it's not hetero
+		fprintf(time_file, "f_new (Mhz) = %d\n", f_new_big);//it's not big only
+	}else{
+		fprintf(time_file, "f_new big:little (Mhz) = %d:%d\n", f_new_big, f_new_little);
+		fprintf(time_file, "power big:little (W) = %f:%f\n", power_big, power_little);
+	}
     fclose(time_file);
 }
 

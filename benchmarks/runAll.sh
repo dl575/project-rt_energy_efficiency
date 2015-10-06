@@ -15,8 +15,12 @@ fi
 # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
 cd $BENCH_PATH/${BENCHMARKS[$1]}
 echo "entered "`pwd`
-./run.sh $2 $3 $4
 
+if [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
+	./run_no_sdl.sh $2 $3 $4
+else
+	./run.sh $2 $3 $4
+fi
 
 #sleep 3 
 #if [[ $3 ]] ; then # $2 is specific governor(or prediction)

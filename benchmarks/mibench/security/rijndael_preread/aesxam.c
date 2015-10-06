@@ -467,7 +467,8 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn, char *file_buf
     #else // cvx
         if(CVX_COEFF == 100){
             exec_time.big = -16.998409*loop_counter[0] + -2.122975*loop_counter[1] + -6.028204*loop_counter[2] + -16.998321*loop_counter[3] + -16.998321*loop_counter[4] + -16.998321*loop_counter[5] + 0.117920*loop_counter[6] + 140.525487*loop_counter[7] + 0.014736*loop_counter[8] + 0.117990*loop_counter[10] + 0.117990*loop_counter[11] + 0.117990*loop_counter[12] + -16.992676*loop_counter[15] + 13.944916*loop_counter[16] + -2.121213*loop_counter[17] + -16.992588*loop_counter[19] + -16.992588*loop_counter[20] + -16.992588*loop_counter[21] + -16.992574;
-            exec_time.little = 19.368381*loop_counter[0] + 2.423232*loop_counter[1] + 6.860073*loop_counter[2] + 19.368482*loop_counter[3] + 19.368482*loop_counter[4] + 19.368482*loop_counter[5] + 0.243496*loop_counter[6] + -2015.689963*loop_counter[7] + 0.030451*loop_counter[8] + 0.243584*loop_counter[10] + 0.243584*loop_counter[11] + 0.243584*loop_counter[12] + 19.365654*loop_counter[15] + 1955.768669*loop_counter[16] + 2.423761*loop_counter[17] + 19.377854*loop_counter[19] + 19.377854*loop_counter[20] + 19.377854*loop_counter[21] + 19.377848;
+			exec_time.little = 48.166445*loop_counter[0] + 6.021475*loop_counter[1] + 17.031604*loop_counter[2] + 48.166383*loop_counter[3] + 48.166383*loop_counter[4] + 48.166383*loop_counter[5] + 0.308425*loop_counter[6] + -363.743240*loop_counter[7] + 0.038558*loop_counter[8] + 0.308473*loop_counter[10] + 0.308473*loop_counter[11] + 0.308473*loop_counter[12] + 48.166277*loop_counter[15] + 28.759982*loop_counter[16] + 6.021270*loop_counter[17] + 48.166489*loop_counter[19] + 48.166489*loop_counter[20] + 48.166489*loop_counter[21] + 48.166445;
+
         }
     #endif 
     return exec_time;
@@ -720,8 +721,10 @@ int main(int argc, char *argv[])
             free(file_buffer);
 
     //---------------------modified by TJSong----------------------//
-         exec_time = exec_timing();
+        exec_time = exec_timing();
+        int cur_freq = print_freq(); 
         int delay_time = 0;
+        int actual_delay_time = 0;
 
         #if GET_PREDICT /* CASE 0 */
             print_exec_time(exec_time);
@@ -731,16 +734,17 @@ int main(int argc, char *argv[])
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] - dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
                 start_timing();
-                usleep(delay_time);
+				sleep_in_delay(delay_time, cur_freq);
                 end_timing();
-                delay_time = exec_timing();
+                actual_delay_time = exec_timing();
             }else
                 delay_time = 0;
             moment_timing_print(2); //moment_end
+            print_delay_time(delay_time, actual_delay_time);
             print_exec_time(exec_time);
-            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
         #endif
         fclose_all();//TJSong
 
@@ -755,7 +759,6 @@ int main(int argc, char *argv[])
                 print_predicted_time(predicted_exec_time.little);
             #endif
         #endif
-        print_freq(); 
 
     //---------------------modified by TJSong----------------------//
 

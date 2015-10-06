@@ -180,7 +180,8 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     // Run slicing in a forked process
     pid_t forked_pid = fork();
     if (forked_pid == 0) {
-        printf("forked %d :", job_cnt);
+        // printf("forked %d :", job_cnt);
+		// fflush(stdout);
         // Perform slicing and prediction
         struct slice_return predicted_exec_time;
         predicted_exec_time.big = 0;
@@ -288,25 +289,23 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             
             moment_timing_print(1); //moment_start
         #elif PROACTIVE_EN /* CASE 4 */
-            static int job_number = 0; //job count
             moment_timing_print(0); //moment_start
           
             start_timing();
             //Now, let's assume no slice time like ORACLE
             end_timing();
             slice_time = print_slice_timing();
- 
+			 
             start_timing();
             #if HETERO_EN 
-                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+                jump = set_freq_multiple_hetero(job_cnt, DEADLINE_TIME, pid); //do dvfs
             #elif !HETERO_EN
-                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+                jump = set_freq_multiple(job_cnt, DEADLINE_TIME); //do dvfs
             #endif
             end_timing();
             dvfs_time = print_dvfs_timing();
             
             moment_timing_print(1); //moment_start
-            job_number++;
         #endif
 
         // Write out predicted time & print out frequency used
@@ -320,7 +319,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
                 print_predicted_time(predicted_exec_time.little);
             #endif
         #endif
-        print_freq(); 
     //---------------------modified by TJSong----------------------//
       _Exit(0);
     } else {
@@ -342,7 +340,9 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
     //---------------------modified by TJSong----------------------//
         exec_time = exec_timing();
+        int cur_freq = print_freq(); 
         int delay_time = 0;
+        int actual_delay_time = 0;
         
         #if GET_PREDICT /* CASE 0 */
             print_exec_time(exec_time);
@@ -352,16 +352,17 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] - dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
                 start_timing();
-                usleep(delay_time);
+				sleep_in_delay(delay_time, cur_freq);
                 end_timing();
                 delay_time = exec_timing();
             }else
                 delay_time = 0;
             moment_timing_print(2); //moment_end
+            print_delay_time(delay_time, actual_delay_time);
             print_exec_time(exec_time);
-            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
         #endif
     //---------------------modified by TJSong----------------------//
 
@@ -683,10 +684,12 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
         exec_time.big = 21279.800000*loop_counter[22] + -20.805600*loop_counter[34] + 7.055560*loop_counter[35] + 24952.200000*loop_counter[39] + 0.000000;
         exec_time.little = -1989.000000*loop_counter[22] + 239.500000*loop_counter[34] + -968.000000*loop_counter[39] + 0.000000;
     #else //cvx
-        //exec_time.big = 2473.057995*loop_counter[22] + -11446.120859*loop_counter[23] + 78.796712*loop_counter[30] + 78.796712*loop_counter[32] + 27.858832*loop_counter[33] + -25.200000*loop_counter[34] + 11.450000*loop_counter[35] + 13919.179144*loop_counter[39] + 2473.058379*loop_counter[40] + 2473.058047;
-        exec_time.big = 2657.922160*loop_counter[22] + -11148.387481*loop_counter[23] + 84.694202*loop_counter[30] + 84.694202*loop_counter[32] + 29.944486*loop_counter[33] + -35.489068*loop_counter[34] + 39.036823*loop_counter[35] + 13806.416881*loop_counter[39] + 2657.939581*loop_counter[40] + 2657.923580;
-        //exec_time.little = -124.329431*loop_counter[22] + 8906.999995*loop_counter[23] + -9.698872*loop_counter[30] + -9.698872*loop_counter[32] + -3.429765*loop_counter[33] + 205.187500*loop_counter[34] + -69.937501*loop_counter[35] + 8776.000000*loop_counter[39] + -124.337120*loop_counter[40] + -124.329343;
-        exec_time.little = 6341.306541*loop_counter[22] + -16048.028311*loop_counter[23] + 202.047523*loop_counter[30] + 202.047523*loop_counter[32] + 71.434419*loop_counter[33] + -96.615409*loop_counter[34] + -52.374843*loop_counter[35] + 22389.338986*loop_counter[39] + 6341.310303*loop_counter[40] + 6341.306435;
+        exec_time.big = 2473.057995*loop_counter[22] + -11446.120859*loop_counter[23] + 78.796712*loop_counter[30] + 78.796712*loop_counter[32] + 27.858832*loop_counter[33] + -25.200000*loop_counter[34] + 11.450000*loop_counter[35] + 13919.179144*loop_counter[39] + 2473.058379*loop_counter[40] + 2473.058047;
+        //big dataset
+		//exec_time.big = 2657.922160*loop_counter[22] + -11148.387481*loop_counter[23] + 84.694202*loop_counter[30] + 84.694202*loop_counter[32] + 29.944486*loop_counter[33] + -35.489068*loop_counter[34] + 39.036823*loop_counter[35] + 13806.416881*loop_counter[39] + 2657.939581*loop_counter[40] + 2657.923580;
+        exec_time.little = -124.329431*loop_counter[22] + 8906.999995*loop_counter[23] + -9.698872*loop_counter[30] + -9.698872*loop_counter[32] + -3.429765*loop_counter[33] + 205.187500*loop_counter[34] + -69.937501*loop_counter[35] + 8776.000000*loop_counter[39] + -124.337120*loop_counter[40] + -124.329343;
+        //big dataset
+        //exec_time.little = 6341.306541*loop_counter[22] + -16048.028311*loop_counter[23] + 202.047523*loop_counter[30] + 202.047523*loop_counter[32] + 71.434419*loop_counter[33] + -96.615409*loop_counter[34] + -52.374843*loop_counter[35] + 22389.338986*loop_counter[39] + 6341.310303*loop_counter[40] + 6341.306435;
 
     #endif
 /*

@@ -25,6 +25,8 @@ GET_OVERHEAD_ENABLED="GET_OVERHEAD 1"
 GET_OVERHEAD_DISABLED="GET_OVERHEAD 0"
 DELAY_ENABLED="DELAY_EN 1"
 DELAY_DISABLED="DELAY_EN 0"
+IDLE_ENABLED="IDLE_EN 1"
+IDLE_DISABLED="IDLE_EN 0"
 DVFS_ENABLED="DVFS_EN 1"
 DVFS_DISABLED="DVFS_EN 0"
 DEBUG_ENABLED="DEBUG_EN 1"
@@ -51,8 +53,8 @@ D33_DISABLED="DEADLINE_33MS 0"
 #SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #SWEEP=("100")
 #SWEEP=("with_fan")
-SWEEP=("60" "80" "100" "120" "140")
-#SWEEP=("140")
+#SWEEP=("60" "80")
+SWEEP=( "140")
 #SWEEP=("4000000")
 _ALL_BENCH_=(
 "_stringsearch_"
@@ -61,6 +63,7 @@ _ALL_BENCH_=(
 "_xpilot_slice_"
 "_2048_slice_"
 "_curseofwar_slice_sdl_"
+"_curseofwar_slice_"
 "_ldecode_"
 "_pocketsphinx_"
 "_uzbl_"
@@ -83,7 +86,6 @@ _ALL_BENCH_=(
 #_BENCH_FOR_DEFINE_=(
 #"_pocketsphinx_"
 #)
-
 #SOURCE_FILES=(
 #"mibench/security/sha_preread/sha_driver.c"
 #"mibench/office/stringsearch/pbmsrch_large.c"
@@ -143,21 +145,111 @@ _ALL_BENCH_=(
 #"_curseofwar_slice_sdl_"
 #)
 
+#SOURCE_FILES=(
+#"xpilot/xpilot-4.5.5/src/server/server.c"
+#)
+#SOURCE_PATH=(
+#"xpilot/xpilot-4.5.5"
+#)
+#BENCHMARKS=(
+#"xpilot/xpilot-4.5.5"
+#)
+#BENCH_NAME=(
+#"xpilot_slice"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_xpilot_slice_"
+#)
+
+
+#SOURCE_FILES=(
+#"curseofwar/main.c"
+#)
+#SOURCE_PATH=(
+#"curseofwar"
+#)
+#BENCHMARKS=(
+#"curseofwar"
+#)
+#BENCH_NAME=(
+#"curseofwar_slice"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_curseofwar_slice_"
+#)
+
+
 SOURCE_FILES=(
-"curseofwar/main-sdl.c"
+"mibench/office/stringsearch/pbmsrch_large.c"
 )
 SOURCE_PATH=(
-"curseofwar"
+"mibench/office/stringsearch"
 )
 BENCHMARKS=(
-"curseofwar"
+"mibench/office/stringsearch"
 )
 BENCH_NAME=(
-"curseofwar_slice_sdl"
+"stringsearch"
 )
 _BENCH_FOR_DEFINE_=(
-"_curseofwar_slice_sdl_"
+"_stringsearch_"
 )
+
+#SOURCE_FILES=(
+#"mibench/office/stringsearch/pbmsrch_large.c"
+#"mibench/security/sha_preread/sha_driver.c"
+#"mibench/security/rijndael_preread/aesxam.c"
+#"2048.c/2048.c"
+#"curseofwar/main-sdl.c"
+#"xpilot/xpilot-4.5.5/src/server/server.c"
+#"ldecode/src/image.c"
+#"pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c"
+#"uzbl/src/commands.c"
+#)
+#SOURCE_PATH=(
+#"mibench/office/stringsearch"
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
+#"2048.c"
+#"curseofwar"
+#"xpilot/xpilot-4.5.5"
+#"ldecode"
+#"pocketsphinx/pocketsphinx-5prealpha"
+#"uzbl"
+#)
+#BENCHMARKS=(
+#"mibench/office/stringsearch"
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
+#"2048.c"
+#"curseofwar"
+#"xpilot/xpilot-4.5.5"
+#"ldecode"
+#"pocketsphinx/test"
+#"uzbl"
+#)
+#BENCH_NAME=(
+#"stringsearch"
+#"sha_preread"
+#"rijndael_preread"
+#"2048_slice"
+#"curseofwar_slice_sdl"
+#"xpilot_slice"
+#"ldecode"
+#"pocketsphinx"
+#"uzbl"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_stringsearch_"
+#"_sha_preread_"
+#"_rijndael_preread_"
+#"_2048_slice_"
+#"_curseofwar_slice_sdl_"
+#"_xpilot_slice_"
+#"_ldecode_"
+#"_pocketsphinx_"
+#"_uzbl_"
+#)
 
 
 #SOURCE_FILES=(

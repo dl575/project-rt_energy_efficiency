@@ -23,20 +23,21 @@ some of all benchmarks use.
 
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 1 //0:delay off, 1:delay on
+#define IDLE_EN 0 //0:idle off, 1:idle on
 
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 1 //0:prediction off, 1:prediction on
 #define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
-#define PROACTIVE_EN 1 //0:proactive dvfs off, 1:proactvie dvfs on
+#define PROACTIVE_EN 0 //0:proactive dvfs off, 1:proactvie dvfs on
 
 #define WINDOW_SIZE (5) //window size
 
@@ -53,19 +54,21 @@ some of all benchmarks use.
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
 #define MAX_FREQ_BIG (2000000)
 #define MAX_FREQ_LITTLE (1400000)
+#define MIN_FREQ (200000)
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
+#define _stringsearch_ 1
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
-#define _xpilot_slice_ 1
+#define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
+#define _curseofwar_slice_ 0
 #define _uzbl_ 0
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
-#define F_PRINT ((_pocketsphinx_ || _2048_slice_ || _curseofwar_slice_sdl_ || _uzbl_ || _ldecode_)?(1):(0))
+#define F_PRINT ((_pocketsphinx_ || _2048_slice_ || _curseofwar_slice_ || _ldecode_)?(1):(0))
 
 extern struct slice_return{
     int big;
@@ -73,6 +76,7 @@ extern struct slice_return{
 };
 
 struct timeval start, end, moment;
+struct timeval start_local, end_local;
 int slice_time=0;
 int dvfs_time=0;
 
@@ -113,11 +117,14 @@ int dvfs_table_little[13][13];
     #if _curseofwar_slice_sdl_
         int predicted_times[1002];
     #endif
+    #if _curseofwar_slice_
+        int predicted_times[1002];
+    #endif
     #if _ldecode_
         int predicted_times[3000];
     #endif
     #if _pocketsphinx_
-        int predicted_times[1];
+        int predicted_times[100];
     #endif
     #if _uzbl_
         int predicted_times[1];
@@ -141,11 +148,14 @@ int dvfs_table_little[13][13];
     #if _curseofwar_slice_sdl_
         int predicted_times[1002];
     #endif
+    #if _curseofwar_slice_
+        int predicted_times[1002];
+    #endif
     #if _ldecode_
         int predicted_times[3000];
     #endif
     #if _pocketsphinx_
-        int predicted_times[1];
+        int predicted_times[100];
     #endif
     #if _uzbl_
         int predicted_times[1];
@@ -178,13 +188,17 @@ int dvfs_table_little[13][13];
     int predicted_times_big[1002];
     int predicted_times_little[1002];
 #endif
+#if _curseofwar_slice_
+    int predicted_times_big[1002];
+    int predicted_times_little[1002];
+#endif
 #if _ldecode_
     int predicted_times_big[3000];
     int predicted_times_little[3000];
 #endif
 #if _pocketsphinx_
-    int predicted_times_big[1];
-    int predicted_times_little[1];
+    int predicted_times_big[100];
+    int predicted_times_little[100];
 #endif
 #if _uzbl_
     int predicted_times_big[1];
@@ -204,7 +218,7 @@ float power_little[13];
 int check_define(void){
     int flag_cnt=0;
     int bench_cnt=0;
-
+	
     if(GET_PREDICT)     {flag_cnt++;}
     if(GET_OVERHEAD)    {flag_cnt++;}
     if(GET_DEADLINE)    {flag_cnt++;}
@@ -221,6 +235,7 @@ int check_define(void){
     if(_xpilot_slice_)      {bench_cnt++;}
     if(_2048_slice_)        {bench_cnt++;}
     if(_curseofwar_slice_sdl_)  {bench_cnt++;}
+    if(_curseofwar_slice_)  {bench_cnt++;}
     if(_uzbl_)              {bench_cnt++;}
     if(_ldecode_)              {bench_cnt++;}
 
@@ -268,8 +283,54 @@ void fclose_all(void){
 #endif
     return;
 }
+
+int set_freq_to_specific(int khz){
+#if DVFS_EN
+	start_timing_local();
+    fprintf(fp_max_freq, "%d", khz);
+    fflush(fp_max_freq);
+	end_timing_local();
+#endif
+    return exec_timing_local();
+}
+
+void set_freq_to_specific_no_timing(int khz){
+#if DVFS_EN
+    fprintf(fp_max_freq, "%d", khz);
+    fflush(fp_max_freq);
+#endif
+    return;
+}
+
+void sleep_in_delay(int delay_time, int cur_freq){
+	#if !IDLE_EN
+		usleep(delay_time);
+	#else
+		//Set to lowest freq
+		int set_freq_delay = set_freq_to_specific(MIN_FREQ);
+		//Delay at lowest freq
+		if(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] > 0)
+			usleep(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]);
+		//Back to previous freq
+		set_freq_to_specific_no_timing(cur_freq);
+	#endif
+}
+
 void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
 #if DVFS_EN
+/*#if _uzbl_
+   	#if CORE //big
+        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+        }
+    #else //LITTLE
+        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+    }
+    #endif
+#endif*/
     int job_exec_time;
     int predicted_freq = MAX_FREQ;
     static int previous_freq = MAX_FREQ;
@@ -291,11 +352,15 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
     //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
     //if less then 200000, just set it minimum (200000)
     predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
+	//printf("frqeunecy %d\n\n", predicted_freq);
     //remember current frequency to use later
     previous_freq = predicted_freq;
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
     fflush(fp_max_freq);
+/*#if _uzbl_
+    fclose(fp_max_freq);
+#endif*/
 #endif
     return;
 }
@@ -315,6 +380,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     static int big_cnt = 0;
     static int little_cnt = 0;
     static int current_core = CORE; //0: little, 1: big
+    char cmd[100];
     cpu_set_t set;
     
     for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
@@ -359,7 +425,9 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     //3. If same, no change
     
     //debug
-    //print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+    //#if DEBUG_EN
+//    print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+    //#endif
  
     if(power_big[f_new_big/100-2] < power_little[f_new_little/100-2]
             || f_new_little > 1400){  
@@ -378,7 +446,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
             }
             #if DEBUG_EN
             sprintf(cmd, "taskset -p %d", pid);
-            flush(stdout);
+            fflush(stdout);
             system(cmd);
             #endif
         }
@@ -427,9 +495,13 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     if(current_core){
         fprintf(fp_max_freq_big, "%d", final_freq);
         fflush(fp_max_freq_big);
+//        fprintf(fp_max_freq_little, "%d", MAX_FREQ_LITTLE);
+//        fflush(fp_max_freq_little);
     }else{
         fprintf(fp_max_freq_little, "%d", final_freq);
         fflush(fp_max_freq_little);
+//        fprintf(fp_max_freq_big, "%d", MAX_FREQ_BIG);
+//        fflush(fp_max_freq_big);
     }
     return;
 }
@@ -451,18 +523,20 @@ int set_freq_multiple(int job, int d){
 	static int group = 0; //how many jobs are grouped
 	static int f_previous = MAX_FREQ;
 
-	//estimate time for multiple jobs (from current to current + W)
-	//printf("T_est : ");
-	for(i=0; i<w; i++){
-		if(job+i < size)
-			T_est[i] = predicted_times[job+i];
-		else
-			T_est[i] = -1;
-		//printf("%d, ", T_est[i]);
-	}
-	//printf("\n");
-
 	if(jump == 0){
+		//estimate time for multiple jobs (from current to current + W)
+		//printf("T_est : ");
+		for(i=0; i<w; i++){
+			if(job+i < size)
+				T_est[i] = predicted_times[job+i];
+			else
+				T_est[i] = -1;
+			//printf("%d, ", T_est[i]);
+			//#if DEBUG_EN
+			//print_est_time(T_est[i], -99);
+			//#endif
+		}
+		//print_enter();
 		for(i=w; i>0; i--){
 			//1. Sum total time
 			T_sum = 0;
@@ -477,6 +551,9 @@ int set_freq_multiple(int job, int d){
             //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
 	        f_new = ((int)((f_new + 99) / 100)) * 100;
 			//printf("f_new (Mhz) = %d\n", f_new);
+            //#if DEBUG_EN
+            //print_freq_power(f_new, -99, -99, -99);
+            //#endif
 
 			//3. Check if all deadlines will be met
 			brk = 0;
@@ -538,24 +615,22 @@ int set_freq_multiple_hetero(int job, int d, int pid){
     static int current_core = CORE; //0: little, 1: big
     char cmd[100];
     cpu_set_t set;
-	//estimate time for multiple jobs (from current to current + W)
-	//printf("T_est : ");
-	for(i=0; i<w; i++){
-		if(job+i < size_big){
-			T_est_big[i] = predicted_times_big[job+i];
-			T_est_little[i] = predicted_times_little[job+i];
-		}
-        else{
-			T_est_big[i] = -1;
-			T_est_little[i] = -1;
-        }
-        //#if DEBUG_EN
-        print_est_time(T_est_big[i], T_est_little[i]);
-        //#endif
-	}
-	//printf("\n");
-
 	if(jump == 0){
+		//estimate time for multiple jobs (from current to current + W)
+		for(i=0; i<w; i++){
+			if(job+i < size_big){
+				T_est_big[i] = predicted_times_big[job+i];
+				T_est_little[i] = predicted_times_little[job+i];
+			}
+			else{
+				T_est_big[i] = -1;
+				T_est_little[i] = -1;
+			}
+			//#if DEBUG_EN
+			//print_est_time(T_est_big[i], T_est_little[i]);
+			//#endif
+		}
+		//print_enter();
 		for(i=w; i>0; i--){
 			//1. Sum total time
 			T_sum_big = 0;
@@ -579,7 +654,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
             f_new_little = (f_new_little < 200)?(200):(f_new_little);
             
             //#if DEBUG_EN
-            print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
+            //print_freq_power(f_new_big, f_new_little, power_big[f_new_big/100-2], power_little[f_new_little/100-2]);
             //#endif
 
 			//3. Check if all deadlines will be met
@@ -698,7 +773,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 
 void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
 #if DVFS_EN
-    #if CORE //big
+   #if CORE //big
         if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
         printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
         return;
@@ -741,7 +816,7 @@ void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time,
 }
 
 #if !F_PRINT //just use printf
-void print_freq(void){
+int print_freq(void){
 #if DVFS_EN
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
@@ -763,11 +838,11 @@ void print_freq(void){
         printf("little core freq : %dkhz\n", khz);  
 //    #endif
     fclose(fp_freq);
-    return;
+    return khz;
 #endif
 }
 #elif F_PRINT //some benchmarks use file "times.txt" to print log 
-void print_freq(void){
+int print_freq(void){
 #if DVFS_EN
     FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
     int khz; //Value (khz) at start point.
@@ -791,7 +866,7 @@ void print_freq(void){
 //    #endif
         fclose(fp_freq);
     fclose(time_file); 
-    return;
+    return khz;
 #endif
 }
 
@@ -822,6 +897,11 @@ void print_freq(void){
         #define PID_D 1.000000
     #endif
     #if _curseofwar_slice_sdl_
+        #define PID_P 1.050000
+        #define PID_I 1.900000
+        #define PID_D 1.000000
+    #endif
+    #if _curseofwar_slice_
         #define PID_P 1.050000
         #define PID_I 1.900000
         #define PID_D 1.000000
@@ -868,6 +948,11 @@ void print_freq(void){
         #define PID_D 0.050000
     #endif
     #if _curseofwar_slice_sdl_
+        #define PID_P 0.150000
+        #define PID_I 1.600000
+        #define PID_D 0.000000
+    #endif
+    #if _curseofwar_slice_
         #define PID_P 0.150000
         #define PID_I 1.600000
         #define PID_D 0.000000
@@ -980,6 +1065,10 @@ float pid_controller(int last_time) {
     #endif
 
     #if _curseofwar_slice_sdl_
+    int exec_time_arr[1002]= {159, 22, 18, 25, 35149, 33, 16, 16, 18, 25288, 34, 17, 18, 18, 25730, 32, 24, 20, 18, 31065, 59, 16, 17, 19, 25757, 32, 17, 15, 20, 25708, 33, 17, 15, 18, 30105, 43, 18, 17, 18, 31144, 33, 17, 15, 18, 25923, 59, 18, 18, 26, 25833, 34, 20, 16, 19, 25826, 34, 20, 15, 18, 31304, 36, 18, 17, 18, 26212, 34, 17, 19, 18, 25995, 35, 26, 23, 18, 25961, 34, 18, 39, 23, 31348, 32, 25, 18, 18, 26093, 33, 19, 18, 20, 25980, 34, 17, 16, 18, 26107, 34, 17, 14, 18, 31390, 33, 23, 15, 16, 26139, 35, 17, 15, 19, 26108, 33, 16, 19, 27, 26291, 57, 19, 16, 18, 31620, 34, 17, 15, 19, 26399, 40, 19, 16, 18, 26275, 33, 27, 15, 19, 26268, 34, 20, 18, 18, 31713, 34, 16, 15, 18, 26580, 33, 17, 19, 17, 26401, 33, 26, 22, 18, 26332, 35, 18, 24, 31, 32131, 35, 18, 16, 42, 26681, 34, 29, 15, 19, 26479, 33, 17, 24, 18, 26645, 34, 19, 18, 19, 32030, 34, 25, 15, 14, 26648, 42, 19, 15, 30, 26989, 32, 18, 17, 17, 26599, 35, 20, 15, 19, 32099, 34, 17, 15, 17, 26805, 34, 17, 15, 19, 26825, 32, 19, 15, 17, 26981, 43, 18, 15, 16, 32426, 33, 18, 17, 18, 26853, 34, 19, 15, 17, 26740, 35, 18, 15, 18, 26883, 45, 18, 15, 20, 32239, 34, 21, 15, 19, 26957, 47, 19, 18, 16, 26940, 34, 17, 23, 18, 26840, 34, 18, 18, 18, 32198, 40, 18, 16, 27, 27048, 34, 18, 16, 19, 26849, 34, 17, 16, 18, 26861, 35, 17, 15, 18, 32321, 34, 18, 16, 18, 27032, 34, 19, 17, 19, 26902, 42, 19, 16, 17, 27080, 33, 16, 16, 25, 32494, 34, 20, 15, 18, 27256, 33, 19, 15, 17, 27174, 34, 19, 15, 18, 27375, 41, 20, 16, 18, 32686, 34, 24, 15, 18, 27442, 34, 20, 17, 18, 27398, 34, 26, 17, 18, 27327, 33, 17, 18, 30, 32901, 41, 17, 16, 23, 27420, 34, 19, 24, 18, 27366, 42, 18, 15, 30, 27601, 33, 21, 15, 20, 32893, 34, 17, 15, 17, 28079, 34, 17, 17, 20, 27581, 33, 17, 16, 19, 27778, 33, 18, 16, 41, 32846, 34, 18, 15, 18, 27576, 33, 17, 23, 19, 27470, 34, 18, 15, 17, 27631, 33, 18, 16, 18, 32970, 36, 19, 25, 20, 27745, 34, 18, 16, 17, 27551, 34, 20, 16, 17, 27779, 35, 18, 16, 19, 32973, 45, 21, 16, 17, 27769, 33, 16, 16, 17, 27984, 34, 21, 16, 30, 27709, 34, 17, 24, 24, 33056, 33, 18, 16, 19, 28064, 34, 18, 14, 18, 27751, 35, 27, 17, 17, 27879, 34, 18, 16, 17, 33204, 32, 19, 15, 17, 27884, 33, 17, 16, 17, 27829, 33, 19, 16, 19, 27805, 34, 18, 15, 20, 33546, 35, 17, 16, 18, 29348, 42, 19, 16, 18, 27927, 40, 19, 16, 18, 27933, 33, 18, 17, 39, 33299, 32, 19, 16, 14, 28357, 33, 32, 15, 18, 28006, 33, 18, 25, 20, 28631, 35, 18, 15, 18, 33487, 33, 20, 16, 17, 28075, 47, 19, 17, 17, 28000, 33, 19, 19, 38, 28225, 35, 19, 16, 18, 33496, 46, 18, 15, 22, 28315, 34, 27, 16, 19, 28196, 43, 17, 16, 19, 28077, 35, 20, 17, 18, 33803, 35, 18, 27, 17, 28666, 35, 20, 14, 19, 28427, 44, 17, 18, 19, 28380, 44, 27, 16, 18, 33869, 35, 18, 16, 17, 28471, 34, 18, 17, 18, 28455, 46, 19, 16, 19, 28585, 40, 19, 17, 20, 33950, 34, 18, 16, 16, 28460, 34, 18, 15, 17, 28878, 36, 19, 15, 18, 28773, 32, 18, 16, 18, 34124, 35, 19, 16, 14, 28640, 35, 17, 16, 17, 28656, 41, 18, 15, 22, 28975, 36, 27, 16, 18, 34121, 34, 19, 17, 20, 28942, 34, 98, 17, 26, 28755, 46, 17, 15, 18, 28636, 34, 18, 17, 22, 34187, 42, 27, 16, 18, 28782, 33, 18, 15, 17, 28742, 35, 16, 16, 17, 28905, 32, 20, 16, 18, 34336, 33, 18, 16, 22, 28889, 34, 18, 31, 21, 28950, 34, 17, 16, 18, 28963, 34, 18, 16, 18, 34599, 34, 16, 25, 15, 28915, 37, 19, 16, 18, 28860, 50, 18, 16, 39, 29200, 35, 19, 16, 19, 34609, 32, 25, 17, 14, 29134, 35, 19, 16, 16, 29125, 34, 19, 18, 17, 29244, 34, 19, 15, 19, 34727, 35, 19, 15, 18, 29109, 35, 20, 15, 18, 29178, 34, 17, 16, 20, 29072, 42, 17, 17, 19, 34757, 78, 19, 15, 17, 29335, 34, 18, 18, 16, 29284, 35, 18, 16, 17, 29193, 35, 18, 16, 18, 34867, 34, 40, 15, 17, 29739, 34, 19, 18, 18, 29407, 34, 19, 16, 16, 29402, 43, 17, 19, 18, 35043, 33, 27, 15, 16, 29477, 33, 17, 15, 17, 29452, 47, 18, 16, 39, 29805, 34, 18, 15, 20, 35076, 36, 19, 16, 18, 29767, 59, 43, 16, 17, 29723, 33, 17, 16, 30, 29533, 35, 18, 16, 30, 35413, 34, 19, 15, 14, 29711, 34, 16, 18, 18, 29692, 44, 18, 16, 17, 29695, 34, 17, 15, 18, 35259, 43, 17, 14, 15, 29575, 34, 17, 37, 26, 29746, 35, 17, 15, 17, 29858, 34, 20, 16, 17, 35451, 75, 48, 16, 14, 29825, 35, 19, 16, 18, 29855, 33, 17, 16, 18, 29818, 35, 18, 15, 17, 35321, 34, 19, 15, 17, 29768, 36, 28, 18, 18, 29815, 34, 18, 15, 17, 29971, 34, 18, 17, 19, 35484, 59, 18, 17, 16, 29992, 59, 18, 18, 18, 29886, 36, 19, 25, 21, 30014, 57, 20, 15, 20, 35485, 36, 19, 16, 37, 29982, 34, 21, 16, 17, 30054, 34, 18, 21, 18, 29927, 33, 17, 17, 18, 36048, 40, 20, 16, 15, 30148, 34, 19, 17, 17, 30201, 35, 18, 17, 17, 30162, 47, 19, 17, 17, 35677, 34, 43, 17, 15, 30544, 71, 20, 16, 17, 30143, 34, 17, 17, 16, 30178, 43, 29, 26, 17, 35669, 34, 17};
+    #endif
+
+    #if _curseofwar_slice_
     int exec_time_arr[1002]= {159, 22, 18, 25, 35149, 33, 16, 16, 18, 25288, 34, 17, 18, 18, 25730, 32, 24, 20, 18, 31065, 59, 16, 17, 19, 25757, 32, 17, 15, 20, 25708, 33, 17, 15, 18, 30105, 43, 18, 17, 18, 31144, 33, 17, 15, 18, 25923, 59, 18, 18, 26, 25833, 34, 20, 16, 19, 25826, 34, 20, 15, 18, 31304, 36, 18, 17, 18, 26212, 34, 17, 19, 18, 25995, 35, 26, 23, 18, 25961, 34, 18, 39, 23, 31348, 32, 25, 18, 18, 26093, 33, 19, 18, 20, 25980, 34, 17, 16, 18, 26107, 34, 17, 14, 18, 31390, 33, 23, 15, 16, 26139, 35, 17, 15, 19, 26108, 33, 16, 19, 27, 26291, 57, 19, 16, 18, 31620, 34, 17, 15, 19, 26399, 40, 19, 16, 18, 26275, 33, 27, 15, 19, 26268, 34, 20, 18, 18, 31713, 34, 16, 15, 18, 26580, 33, 17, 19, 17, 26401, 33, 26, 22, 18, 26332, 35, 18, 24, 31, 32131, 35, 18, 16, 42, 26681, 34, 29, 15, 19, 26479, 33, 17, 24, 18, 26645, 34, 19, 18, 19, 32030, 34, 25, 15, 14, 26648, 42, 19, 15, 30, 26989, 32, 18, 17, 17, 26599, 35, 20, 15, 19, 32099, 34, 17, 15, 17, 26805, 34, 17, 15, 19, 26825, 32, 19, 15, 17, 26981, 43, 18, 15, 16, 32426, 33, 18, 17, 18, 26853, 34, 19, 15, 17, 26740, 35, 18, 15, 18, 26883, 45, 18, 15, 20, 32239, 34, 21, 15, 19, 26957, 47, 19, 18, 16, 26940, 34, 17, 23, 18, 26840, 34, 18, 18, 18, 32198, 40, 18, 16, 27, 27048, 34, 18, 16, 19, 26849, 34, 17, 16, 18, 26861, 35, 17, 15, 18, 32321, 34, 18, 16, 18, 27032, 34, 19, 17, 19, 26902, 42, 19, 16, 17, 27080, 33, 16, 16, 25, 32494, 34, 20, 15, 18, 27256, 33, 19, 15, 17, 27174, 34, 19, 15, 18, 27375, 41, 20, 16, 18, 32686, 34, 24, 15, 18, 27442, 34, 20, 17, 18, 27398, 34, 26, 17, 18, 27327, 33, 17, 18, 30, 32901, 41, 17, 16, 23, 27420, 34, 19, 24, 18, 27366, 42, 18, 15, 30, 27601, 33, 21, 15, 20, 32893, 34, 17, 15, 17, 28079, 34, 17, 17, 20, 27581, 33, 17, 16, 19, 27778, 33, 18, 16, 41, 32846, 34, 18, 15, 18, 27576, 33, 17, 23, 19, 27470, 34, 18, 15, 17, 27631, 33, 18, 16, 18, 32970, 36, 19, 25, 20, 27745, 34, 18, 16, 17, 27551, 34, 20, 16, 17, 27779, 35, 18, 16, 19, 32973, 45, 21, 16, 17, 27769, 33, 16, 16, 17, 27984, 34, 21, 16, 30, 27709, 34, 17, 24, 24, 33056, 33, 18, 16, 19, 28064, 34, 18, 14, 18, 27751, 35, 27, 17, 17, 27879, 34, 18, 16, 17, 33204, 32, 19, 15, 17, 27884, 33, 17, 16, 17, 27829, 33, 19, 16, 19, 27805, 34, 18, 15, 20, 33546, 35, 17, 16, 18, 29348, 42, 19, 16, 18, 27927, 40, 19, 16, 18, 27933, 33, 18, 17, 39, 33299, 32, 19, 16, 14, 28357, 33, 32, 15, 18, 28006, 33, 18, 25, 20, 28631, 35, 18, 15, 18, 33487, 33, 20, 16, 17, 28075, 47, 19, 17, 17, 28000, 33, 19, 19, 38, 28225, 35, 19, 16, 18, 33496, 46, 18, 15, 22, 28315, 34, 27, 16, 19, 28196, 43, 17, 16, 19, 28077, 35, 20, 17, 18, 33803, 35, 18, 27, 17, 28666, 35, 20, 14, 19, 28427, 44, 17, 18, 19, 28380, 44, 27, 16, 18, 33869, 35, 18, 16, 17, 28471, 34, 18, 17, 18, 28455, 46, 19, 16, 19, 28585, 40, 19, 17, 20, 33950, 34, 18, 16, 16, 28460, 34, 18, 15, 17, 28878, 36, 19, 15, 18, 28773, 32, 18, 16, 18, 34124, 35, 19, 16, 14, 28640, 35, 17, 16, 17, 28656, 41, 18, 15, 22, 28975, 36, 27, 16, 18, 34121, 34, 19, 17, 20, 28942, 34, 98, 17, 26, 28755, 46, 17, 15, 18, 28636, 34, 18, 17, 22, 34187, 42, 27, 16, 18, 28782, 33, 18, 15, 17, 28742, 35, 16, 16, 17, 28905, 32, 20, 16, 18, 34336, 33, 18, 16, 22, 28889, 34, 18, 31, 21, 28950, 34, 17, 16, 18, 28963, 34, 18, 16, 18, 34599, 34, 16, 25, 15, 28915, 37, 19, 16, 18, 28860, 50, 18, 16, 39, 29200, 35, 19, 16, 19, 34609, 32, 25, 17, 14, 29134, 35, 19, 16, 16, 29125, 34, 19, 18, 17, 29244, 34, 19, 15, 19, 34727, 35, 19, 15, 18, 29109, 35, 20, 15, 18, 29178, 34, 17, 16, 20, 29072, 42, 17, 17, 19, 34757, 78, 19, 15, 17, 29335, 34, 18, 18, 16, 29284, 35, 18, 16, 17, 29193, 35, 18, 16, 18, 34867, 34, 40, 15, 17, 29739, 34, 19, 18, 18, 29407, 34, 19, 16, 16, 29402, 43, 17, 19, 18, 35043, 33, 27, 15, 16, 29477, 33, 17, 15, 17, 29452, 47, 18, 16, 39, 29805, 34, 18, 15, 20, 35076, 36, 19, 16, 18, 29767, 59, 43, 16, 17, 29723, 33, 17, 16, 30, 29533, 35, 18, 16, 30, 35413, 34, 19, 15, 14, 29711, 34, 16, 18, 18, 29692, 44, 18, 16, 17, 29695, 34, 17, 15, 18, 35259, 43, 17, 14, 15, 29575, 34, 17, 37, 26, 29746, 35, 17, 15, 17, 29858, 34, 20, 16, 17, 35451, 75, 48, 16, 14, 29825, 35, 19, 16, 18, 29855, 33, 17, 16, 18, 29818, 35, 18, 15, 17, 35321, 34, 19, 15, 17, 29768, 36, 28, 18, 18, 29815, 34, 18, 15, 17, 29971, 34, 18, 17, 19, 35484, 59, 18, 17, 16, 29992, 59, 18, 18, 18, 29886, 36, 19, 25, 21, 30014, 57, 20, 15, 20, 35485, 36, 19, 16, 37, 29982, 34, 21, 16, 17, 30054, 34, 18, 21, 18, 29927, 33, 17, 17, 18, 36048, 40, 20, 16, 15, 30148, 34, 19, 17, 17, 30201, 35, 18, 17, 17, 30162, 47, 19, 17, 17, 35677, 34, 43, 17, 15, 30544, 71, 20, 16, 17, 30143, 34, 17, 17, 16, 30178, 43, 29, 26, 17, 35669, 34, 17};
     #endif
 

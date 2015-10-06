@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "correct sweep??"
+sleep 1
+
 #enter password
 xdotool type odroid
 xdotool key KP_Enter
@@ -77,13 +80,26 @@ do
         echo ${SWEEP[$j]}
         taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
         ./runAll.sh $i $1 performance ${SWEEP[$j]}
-#        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
 
         #enable convex
         sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
         taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
         ./runAll.sh $i $1 cvx_with_overhead ${SWEEP[$j]}
+
+		# with idle
+        echo ${SWEEP[$j]}
+        taskset 0xff ./buildAll.sh $i $1 predict_dis_idle ${SWEEP[$j]}
+        ./runAll.sh $i $1 performance_idle ${SWEEP[$j]}
+        ./runAll.sh $i $1 interactive_idle ${SWEEP[$j]}
+
+        #enable convex
+        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+        # 2. convex  with overhead
+        taskset 0xff ./buildAll.sh $i $1 overhead_en_idle ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_with_overhead_idle ${SWEEP[$j]}
+
 
         # 3. convex wo overhead
 #        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
@@ -103,42 +119,14 @@ do
 #        taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
 #        ./runAll.sh $i $1 pid ${SWEEP[$j]}
 
-        sed -i -e 's/'"WINDOW_SIZE (20)"'/'"WINDOW_SIZE (3)"'/g' $BENCH_PATH/$COMMON_FILE
+#        sed -i -e 's/'"WINDOW_SIZE (5)"'/'"WINDOW_SIZE (5)"'/g' $BENCH_PATH/$COMMON_FILE
         # 6. PROACTIVE with overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_with_overhead-W3 ${SWEEP[$j]}
-        
-        # 7. PROACTIVE wo overhead
-#        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_wo_overhead-W3 ${SWEEP[$j]}
-
-        sed -i -e 's/'"WINDOW_SIZE (3)"'/'"WINDOW_SIZE (5)"'/g' $BENCH_PATH/$COMMON_FILE
-        # 6. PROACTIVE with overhead
-        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 proactive_with_overhead-W5 ${SWEEP[$j]}
+#        ./runAll.sh $i $1 proactive_with_overhead-W5 ${SWEEP[$j]}
         
         # 7. PROACTIVE wo overhead
 #        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
 #        ./runAll.sh $i $1 proactive_wo_overhead-W5 ${SWEEP[$j]}
-
-        sed -i -e 's/'"WINDOW_SIZE (5)"'/'"WINDOW_SIZE (10)"'/g' $BENCH_PATH/$COMMON_FILE
-        # 6. PROACTIVE with overhead
-#        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_with_overhead-W10 ${SWEEP[$j]}
-        
-        # 7. PROACTIVE wo overhead
-#        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_wo_overhead-W10 ${SWEEP[$j]}
-
-        sed -i -e 's/'"WINDOW_SIZE (10)"'/'"WINDOW_SIZE (20)"'/g' $BENCH_PATH/$COMMON_FILE
-        # 6. PROACTIVE with overhead
-#        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_en ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_with_overhead-W20 ${SWEEP[$j]}
-        
-        # 7. PROACTIVE wo overhead
-#        taskset 0xff ./buildAll.sh $i $1 proactive_en+overhead_dis ${SWEEP[$j]}
-#        ./runAll.sh $i $1 proactive_wo_overhead-W20 ${SWEEP[$j]}
-
 
         #kill power_monitor process
         sleep 10 
@@ -147,15 +135,15 @@ do
         cp $POWER_MONITOR_PATH/output_power.txt $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
 
         #filter uzbl
-        if [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
-            cd $DATA_ODROID_PATH
-            GOVERNOR_FILES=( "performance" "interactive" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_slice_only-100" "pid") 
-            for k in "${GOVERNOR_FILES[@]}"
-            do 
-                taskset 0xff ./filter_uzbl.py $1 ${SWEEP[$j]} $k > temp_uzbl
-                mv temp_uzbl $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}/$k
-            done
-        fi       
+#		if [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
+#           cd $DATA_ODROID_PATH
+#            GOVERNOR_FILES=( "performance" "interactive" "cvx_with_overhead-100" "cvx_wo_overhead-100" "cvx_with_slice_only-100" "pid") 
+#            for k in "${GOVERNOR_FILES[@]}"
+#            do 
+#                taskset 0xff ./filter_uzbl.py $1 ${SWEEP[$j]} $k > temp_uzbl
+#                mv temp_uzbl $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}/$k
+#            done
+#        fi       
     done
 
     #set SWEEP as 1
@@ -165,10 +153,10 @@ do
     cd $DATA_ODROID_PATH
     if [ $1 == "big" ] ; then
         sed -i -e 's/'"$PLOT_LITTLE"'/'"$PLOT_BIG"'/g' $DATA_ODROID_PATH/plot_both.py
-        taskset 0xff ./plot_energy.py big ${BENCH_NAME[$i]}
+#        taskset 0xff ./plot_energy.py big ${BENCH_NAME[$i]}
     elif [ $1 == "little" ] ; then
         sed -i -e 's/'"$PLOT_BIG"'/'"$PLOT_LITTLE"'/g' $DATA_ODROID_PATH/plot_both.py
-        taskset 0xff ./plot_energy.py little ${BENCH_NAME[$i]}
+#        taskset 0xff ./plot_energy.py little ${BENCH_NAME[$i]}
     fi
 
 done
@@ -178,12 +166,6 @@ sleep 3
 PID_POWER_MONITOR=$(pgrep 'power_monitor')
 sudo kill -9 $PID_POWER_MONITOR
 
-#evince plot
-cd $DATA_ODROID_PATH
-for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
-do
- #   evince $1_${BENCH_NAME[$i]}.pdf &
-done
 rm -rf sed*
 
 echo "[ ./temp.sh done ]"

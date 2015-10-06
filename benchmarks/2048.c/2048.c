@@ -4400,8 +4400,10 @@ int main(int argc, char *argv[]) {
     //print_end_temperature();
     end_timing();
 //---------------------modified by TJSong----------------------//
-        exec_time = exec_timing();
+	    exec_time = exec_timing();
+        int cur_freq = print_freq(); 
         int delay_time = 0;
+        int actual_delay_time = 0;
 
         #if GET_PREDICT /* CASE 0 */
             print_exec_time(exec_time);
@@ -4411,16 +4413,17 @@ int main(int argc, char *argv[]) {
         #elif GET_OVERHEAD /* CASE 2 */
             //nothing
         #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time) > 0)){
+            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] - dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
                 start_timing();
-                usleep(delay_time);
-                end_timing();
-                delay_time = exec_timing();
+				sleep_in_delay(delay_time, cur_freq);
+				end_timing();
+                actual_delay_time = exec_timing();
             }else
                 delay_time = 0;
             moment_timing_print(2); //moment_end
+            print_delay_time(delay_time, actual_delay_time);
             print_exec_time(exec_time);
-            print_total_time(exec_time + slice_time + dvfs_time + delay_time);
+            print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
         #endif
 
         // Write out predicted time & print out frequency used
@@ -4434,7 +4437,6 @@ int main(int argc, char *argv[]) {
                 print_predicted_time(predicted_exec_time.little);
             #endif
         #endif
-        print_freq(); 
 
 //---------------------modified by TJSong----------------------//
 

@@ -43,6 +43,9 @@ sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 # enable DVFS_EN
 sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
+# disable IDLE_EN
+sed -i -e 's/'"$IDLE_ENABLED"'/'"$IDLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
 # disable all flags ralated to predict/oralce/pid
 sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -71,9 +74,11 @@ do
 
     #move to benchamrk folder and build
     cd $BENCH_PATH/${SOURCE_PATH[$i]}
-    find . -type f | xargs -n 5 touch
-    taskset 0xff make clean -j16
-    taskset 0xff make -j16
+#    find . -type f | xargs -n 5 touch
+    if [ ${SOURCE_FILES[$i]} != "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
+    	taskset 0xff make clean -j16
+   		taskset 0xff make -j16
+	fi
 
     #Doing extra jobs (such as coyping binaries, fix_addresses)
     if [ ${SOURCE_FILES[$i]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
@@ -92,9 +97,8 @@ do
     elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
         echo "[pocketsphinx] make install"
         cd $BENCH_PATH/${SOURCE_PATH[$i]}
-        rm -rf autom4te.cache/
-        ./autogen.sh
-        ./configure --prefix=`pwd`/../install
+    	sudo taskset 0xff make clean -j16
+    	taskset 0xff ./configure --prefix=`pwd`/../install
         taskset 0xff sudo make install 
     elif [ ${SOURCE_FILES[$i]} == "curseofwar/main-sdl.c" ] ; then
         echo "[curseofwar] make SDL=yes"
@@ -104,7 +108,11 @@ do
 
     #run bnechmark
     cd $BENCH_PATH/${BENCHMARKS[$i]}
-    ./run.sh $1 performance temp_sample
+	if [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
+    	./run_no_sdl.sh $1 performance temp_sample
+	else
+    	./run.sh $1 performance temp_sample
+	fi
 
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/temp.txt
     

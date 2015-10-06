@@ -43,6 +43,9 @@ sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$DELAY_DISABLED"'/'"$DELAY_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 #sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
+# disable IDLE_EN
+sed -i -e 's/'"$IDLE_ENABLED"'/'"$IDLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
 # disable GET_PREDICT, GET_OVERHEAD, GET_DEADLINE
 sed -i -e 's/'"$GET_PREDICT_ENABLED"'/'"$GET_PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$GET_OVERHEAD_ENABLED"'/'"$GET_OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -59,9 +62,16 @@ sed -i -e 's/'"$PROACTIVE_ENABLED"'/'"$PROACTIVE_DISABLED"'/g' $BENCH_PATH/$COMM
 # set PREDICT_EN depends on argument 3
 if [ $3 == "predict_dis" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "predict_dis_idle" ] ; then
+    sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	sed -i -e 's/'"$IDLE_DISABLED"'/'"$IDLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "overhead_en" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "overhead_en_idle" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	sed -i -e 's/'"$IDLE_DISABLED"'/'"$IDLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "overhead_dis" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -103,9 +113,11 @@ bench ${_BENCH_FOR_DEFINE_[$1]}
 
 cd $BENCH_PATH/${SOURCE_PATH[$1]}
 echo "entered "$BENCH_PATH/${SOURCE_PATH[$1]}
-find . -type f | xargs -n 5 touch
-taskset 0xff make clean -j16
-taskset 0xff make -j16
+#find . -type f | xargs -n 5 touch
+if [ ${SOURCE_FILES[$1]} != "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
+	taskset 0xff make clean -j16
+	taskset 0xff make -j16
+fi
 
 #Doing extra jobs (such as coyping binaries, fix_addresses)
 if [ ${SOURCE_FILES[$1]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; then
@@ -124,9 +136,15 @@ if [ ${SOURCE_FILES[$1]} == "uzbl/src/commands.c" ] ; then
 elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
     echo "[pocketsphinx] make install"
     cd $BENCH_PATH/${SOURCE_PATH[$1]}
-    rm -rf autom4te.cache/
-    taskset 0xff ./autogen.sh
+    sudo taskset 0xff make clean -j16
+#    rm -rf autom4te.cache/
+#    taskset 0xff ./autogen.sh
+	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE}"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
     taskset 0xff ./configure --prefix=`pwd`/../install
+#    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE}"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+#	taskset 0xff sudo make
+#    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
     taskset 0xff sudo make install 
 elif [ ${SOURCE_FILES[$1]} == "curseofwar/main-sdl.c" ] ; then
     echo "[curseofwar] make SDL=yes"
