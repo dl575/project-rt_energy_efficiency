@@ -1,10 +1,17 @@
 #!/bin/bash
 
-#enter password
-xdotool type odroid
-xdotool key KP_Enter
-
 source global.sh
+
+#enter password
+if [ $ARCH_TYPE == "amd64" ] ; then 
+	xdotool type 333
+elif [ $ARCH_TYPE == "arm" ] ; then
+	xdotool type odroid
+else 
+	echo "unknown architecture"
+	exit 1
+fi
+xdotool key KP_Enter
 
 if [[ $# < 2 ]] ; then
     echo 'USAGE : ./set_prediction [big/little] [conservative/cvx]'
@@ -42,6 +49,7 @@ sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # enable DVFS_EN
 sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+sed -i -e 's/'"$DVFS_ENABLED"'/'"$DVFS_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # disable IDLE_EN
 sed -i -e 's/'"$IDLE_ENABLED"'/'"$IDLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE

@@ -1,8 +1,12 @@
-DATA_ODROID_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/data_odroid
-POWER_MONITOR_PATH=/home/odroid/project-rt_energy_efficiency/power_monitor
-TEMP_MONITOR_PATH=/home/odroid/project-rt_energy_efficiency/temp_monitor
-BENCH_PATH=/home/odroid/project-rt_energy_efficiency/benchmarks/
-DVFS_SIM_PATH=/home/odroid/project-rt_energy_efficiency/dvfs_sim/
+#Set manulaly PROJECT_PATH, then other path will be set relatively.
+ARCH_TYPE=`dpkg --print-architecture`
+PROJECT_PATH=/home/tjsong/research/project-rt_energy_efficiency/
+
+DATA_ODROID_PATH=$PROJECT_PATH/dvfs_sim/data_odroid/
+POWER_MONITOR_PATH=$PROJECT_PATH/power_monitor/
+TEMP_MONITOR_PATH=$PROJECT_PATH/temp_monitor/
+BENCH_PATH=$PROJECT_PATH/benchmarks/
+DVFS_SIM_PATH=$PROJECT_PATH/dvfs_sim/
 COMMON_FILE=("my_common.h")
 
 CORE_BIG="CORE 1"
@@ -54,7 +58,7 @@ D33_DISABLED="DEADLINE_33MS 0"
 #SWEEP=("100")
 #SWEEP=("with_fan")
 #SWEEP=("60" "80")
-SWEEP=( "140")
+SWEEP=("20" "40" "60" "80" "100" "120" "140")
 #SWEEP=("4000000")
 _ALL_BENCH_=(
 "_stringsearch_"
@@ -86,6 +90,29 @@ _ALL_BENCH_=(
 #_BENCH_FOR_DEFINE_=(
 #"_pocketsphinx_"
 #)
+
+SOURCE_FILES=(
+"mibench/security/sha_preread/sha_driver.c"
+"mibench/security/rijndael_preread/aesxam.c"
+)
+SOURCE_PATH=(
+"mibench/security/sha_preread"
+"mibench/security/rijndael_preread"
+)
+BENCHMARKS=(
+"mibench/security/sha_preread"
+"mibench/security/rijndael_preread"
+)
+BENCH_NAME=(
+"sha_preread"
+"rijndael_preread"
+)
+_BENCH_FOR_DEFINE_=(
+"_sha_preread_"
+"_rijndael_preread_"
+)
+
+
 #SOURCE_FILES=(
 #"mibench/security/sha_preread/sha_driver.c"
 #"mibench/office/stringsearch/pbmsrch_large.c"
@@ -179,21 +206,21 @@ _ALL_BENCH_=(
 #)
 
 
-SOURCE_FILES=(
-"mibench/office/stringsearch/pbmsrch_large.c"
-)
-SOURCE_PATH=(
-"mibench/office/stringsearch"
-)
-BENCHMARKS=(
-"mibench/office/stringsearch"
-)
-BENCH_NAME=(
-"stringsearch"
-)
-_BENCH_FOR_DEFINE_=(
-"_stringsearch_"
-)
+#SOURCE_FILES=(
+#"mibench/office/stringsearch/pbmsrch_large.c"
+#)
+#SOURCE_PATH=(
+#"mibench/office/stringsearch"
+#)
+#BENCHMARKS=(
+#"mibench/office/stringsearch"
+#)
+#BENCH_NAME=(
+#"stringsearch"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_stringsearch_"
+#)
 
 #SOURCE_FILES=(
 #"mibench/office/stringsearch/pbmsrch_large.c"

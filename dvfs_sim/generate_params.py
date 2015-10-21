@@ -28,7 +28,7 @@ def function_pointers(filename):
     vectors.append(vector)
   return vectors
 
-def run_prediction(train_filename, test_filename, policy):
+def run_prediction(train_filename, test_filename, policy, benchmark):
   """
   Runs [policy] on the data in [filename] in order to predict the execution
   time of tasks.  Returns the predicted times and the original observed
@@ -47,15 +47,26 @@ def run_prediction(train_filename, test_filename, policy):
     train_metrics = map(lambda x, y: x+y, train_metrics, fp)
   train_metrics = [[1] + x for x in train_metrics]
 
+  # Set scale
+  if "sha" in benchmark:
+    scale = 1000000
+  elif "rijndael" in benchmark:
+    scale = 100000
+  else:
+    scale = 1
+
+  print "void load_default_data(void) {"
   # Print train_metrics : Matrix X
   for j in xrange(0, len(train_metrics[0])):
     for i in xrange(0, len(train_metrics)):
-      print "  params.xx[%d] = %f;" % (i+j*len(train_metrics), train_metrics[i][j])
-
+      print "  params.xx[%d] = %f/%d;" % (i+j*len(train_metrics),
+          train_metrics[i][j], scale)
 
   # Print time_metrics : Vector Y
   for i in xrange(0, len(train_times)):
-    print "  params.yy[%d] = %f;" % (i, train_times[i])
+    print "  params.yy[%d] = %f/%d;" % (i, train_times[i], scale)
+  
+  print "}"
 
 
 if __name__ == "__main__":
@@ -69,11 +80,11 @@ if __name__ == "__main__":
 
   # For each DVFS policy
   for policy in policies:
-    print policy.__name__
+    #print policy.__name__
     for benchmark in benchmarks:
       # Predict execution times
       train_filename = "%s/%s/%s0.txt" % (input_data_dir, benchmark, benchmark)
       test_filename = "%s/%s/%s1.txt" % (input_data_dir, benchmark, benchmark)
-      print "  " + train_filename
-      run_prediction(train_filename, None, policy)
+      #print "  " + train_filename
+      run_prediction(train_filename, None, policy, benchmark)
      

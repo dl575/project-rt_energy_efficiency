@@ -1,13 +1,20 @@
 #!/bin/bash
 
+source global.sh
+
 echo "correct sweep??"
 sleep 1
 
 #enter password
-xdotool type odroid
+if [ $ARCH_TYPE == "amd64" ] ; then 
+	xdotool type 333
+elif [ $ARCH_TYPE == "arm" ] ; then
+	xdotool type odroid
+else 
+	echo "unknown architecture"
+	exit 1
+fi
 xdotool key KP_Enter
-
-source global.sh
 
 if [[ $# < 1 ]] ; then
     echo 'USAGE : ./run.sh [big/little/hetero]'
@@ -78,32 +85,32 @@ do
         
         # 1. LINUX Governor
         echo ${SWEEP[$j]}
-        taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 performance ${SWEEP[$j]}
-        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+#        taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
+#        ./runAll.sh $i $1 performance ${SWEEP[$j]}
+#        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
 
         #enable convex
         sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_with_overhead ${SWEEP[$j]}
+#        taskset 0xff ./buildAll.sh $i $1 overhead_en ${SWEEP[$j]}
+#        ./runAll.sh $i $1 cvx_with_overhead ${SWEEP[$j]}
 
 		# with idle
         echo ${SWEEP[$j]}
-        taskset 0xff ./buildAll.sh $i $1 predict_dis_idle ${SWEEP[$j]}
-        ./runAll.sh $i $1 performance_idle ${SWEEP[$j]}
-        ./runAll.sh $i $1 interactive_idle ${SWEEP[$j]}
+#        taskset 0xff ./buildAll.sh $i $1 predict_dis_idle ${SWEEP[$j]}
+#        ./runAll.sh $i $1 performance_idle ${SWEEP[$j]}
+#       ./runAll.sh $i $1 interactive_idle ${SWEEP[$j]}
 
         #enable convex
-        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
         # 2. convex  with overhead
-        taskset 0xff ./buildAll.sh $i $1 overhead_en_idle ${SWEEP[$j]}
-        ./runAll.sh $i $1 cvx_with_overhead_idle ${SWEEP[$j]}
+#        taskset 0xff ./buildAll.sh $i $1 overhead_en_idle ${SWEEP[$j]}
+#        ./runAll.sh $i $1 cvx_with_overhead_idle ${SWEEP[$j]}
 
 
         # 3. convex wo overhead
-#        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
-#        ./runAll.sh $i $1 cvx_wo_overhead ${SWEEP[$j]}
+        taskset 0xff ./buildAll.sh $i $1 overhead_dis ${SWEEP[$j]}
+        ./runAll.sh $i $1 cvx_wo_overhead ${SWEEP[$j]}
 
         # 3.5 convex with slice only
 #        taskset 0xff ./buildAll.sh $i $1 slice_overhead_en ${SWEEP[$j]}
