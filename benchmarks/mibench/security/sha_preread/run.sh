@@ -24,7 +24,7 @@ elif [ $1 == "little" ] ; then
 	if [ $ARCH_TYPE == "amd64" ] ; then 
     	TASKSET_FLAG="0x08"
     	MAX_FREQ=2534000
-	elif [ $ARCH_TYPE == "arm" ] ; then 
+	elif [ $ARCH_TYPE == "armhf" ] ; then 
 		TASKSET_FLAG="0x0f"
 		MAX_FREQ=1400000
 	else 

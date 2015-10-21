@@ -83,6 +83,9 @@ elif [ $3 == "oracle_en" ] ; then
     sed -i -e 's/'"$ORACLE_DISABLED"'/'"$ORACLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "pid_en" ] ; then
     sed -i -e 's/'"$PID_DISABLED"'/'"$PID_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	sed -i -e 's/'"$IDLE_DISABLED"'/'"$IDLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "pid_en_idle" ] ; then
+    sed -i -e 's/'"$PID_DISABLED"'/'"$PID_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "proactive_en+overhead_en" ] ; then
     sed -i -e 's/'"$PROACTIVE_DISABLED"'/'"$PROACTIVE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE

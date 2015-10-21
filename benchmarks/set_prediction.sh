@@ -5,7 +5,7 @@ source global.sh
 #enter password
 if [ $ARCH_TYPE == "amd64" ] ; then 
 	xdotool type 333
-elif [ $ARCH_TYPE == "arm" ] ; then
+elif [ $ARCH_TYPE == "armhf" ] ; then
 	xdotool type odroid
 else 
 	echo "unknown architecture"

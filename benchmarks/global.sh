@@ -1,6 +1,13 @@
 #Set manulaly PROJECT_PATH, then other path will be set relatively.
 ARCH_TYPE=`dpkg --print-architecture`
-PROJECT_PATH=/home/tjsong/research/project-rt_energy_efficiency/
+if [ $ARCH_TYPE == "amd64" ] ; then 
+	PROJECT_PATH=/home/tjsong/research/project-rt_energy_efficiency/
+elif [ $ARCH_TYPE == "armhf" ] ; then
+	PROJECT_PATH=/home/odroid/project-rt_energy_efficiency/
+else 
+	echo "unknown architecture"
+	exit 1
+fi
 
 DATA_ODROID_PATH=$PROJECT_PATH/dvfs_sim/data_odroid/
 POWER_MONITOR_PATH=$PROJECT_PATH/power_monitor/
