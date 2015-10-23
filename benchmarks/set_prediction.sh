@@ -48,8 +48,14 @@ fi
 sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # enable DVFS_EN
-sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-sed -i -e 's/'"$DVFS_ENABLED"'/'"$DVFS_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+if [ $ARCH_TYPE == "amd64" ] ; then 
+	sed -i -e 's/'"$DVFS_ENABLED"'/'"$DVFS_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $ARCH_TYPE == "armhf" ] ; then
+	sed -i -e 's/'"$DVFS_DISABLED"'/'"$DVFS_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+else 
+	echo "unknown architecture"
+	exit 1
+fi
 
 # disable IDLE_EN
 sed -i -e 's/'"$IDLE_ENABLED"'/'"$IDLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
