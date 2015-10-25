@@ -1,19 +1,6 @@
-#ifndef __DEADLINE_BIG_H__
-#define __DEADLINE_BIG_H__
+#ifndef __DEADLINE_H__
+#define __DEADLINE_H__
 #include "my_common.h"
-#if CORE
-    #if _pocketsphinx_
-        #define DEADLINE_TIME (int)((4000000*SWEEP)/100) //max_exec * sweep / 100
-    #else
-        #define DEADLINE_TIME (int)((50000*SWEEP)/100) //max_exec * sweep / 100
-    #endif
-#else //LITTLE
-    #if _pocketsphinx_
-        #define DEADLINE_TIME (int)((4000000*SWEEP)/100) //max_exec * sweep / 100
-    #else
-        #define DEADLINE_TIME (int)((50000*SWEEP)/100) //max_exec * sweep / 100
-    #endif
-#endif //CORE 
 
 //////////////////////////////////////////////////////////////////////
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
@@ -557,4 +544,4 @@ extern int dvfs_table_little[13][13]={
 
 
 
-#endif //__DEADLIN_H_
+#endif //__DEADLINE_H_

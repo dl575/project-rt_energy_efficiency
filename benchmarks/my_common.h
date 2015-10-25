@@ -1,6 +1,4 @@
-/* This file includes common functions which 
-some of all benchmarks use.
-*/
+/* This file includes common functions which some of all benchmarks use. */
 
 #ifndef __MY_COMMON_H__
 #define __MY_COMMON_H__
@@ -14,6 +12,7 @@ some of all benchmarks use.
 #include <sched.h>
 #include "timing.h"
 #include "deadline.h"
+#include "solver.h"
 
 //constant
 #define MILLION 1000000L
@@ -43,20 +42,20 @@ some of all benchmarks use.
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (140) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (40) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
 #define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
-//automatically set
-#if DVFS_EN
+//automatically set by platforms/architecture
+#if DVFS_EN //ODROID
 #define MAX_FREQ ((CORE)?(2000000):(1400000))
 #define MAX_FREQ_BIG (2000000)
 #define MAX_FREQ_LITTLE (1400000)
 #define MIN_FREQ (200000)
-#else
+#else //x86 laptop
 #define MAX_FREQ ((CORE)?(2534000):(2534000))
 #define MAX_FREQ_BIG (2534000)
 #define MAX_FREQ_LITTLE (2535000)
@@ -75,7 +74,41 @@ some of all benchmarks use.
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
-#define F_PRINT ((_pocketsphinx_ || _2048_slice_ || _curseofwar_slice_ || _ldecode_)?(1):(0))
+#define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
+                  || _curseofwar_slice_ || _ldecode_)?(1):(0))
+
+#if CORE //big
+    #if _pocketsphinx_
+        //max_exec * sweep / 100
+        #define DEADLINE_TIME (int)((4000000*SWEEP)/100) 
+    #else
+        #define DEADLINE_TIME (int)((50000*SWEEP)/100)
+    #endif
+#else //LITTLE
+    #if _pocketsphinx_
+        #define DEADLINE_TIME (int)((4000000*SWEEP)/100)
+    #else
+        #define DEADLINE_TIME (int)((50000*SWEEP)/100)
+    #endif
+#endif
+
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define TYPE_PREDICT 0 //add selected features and return predicted time
+#define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
+
+#if _sha_preread_
+#define M_JOB 50
+#define N_FEATURE 24
+#define SCALE 1000000
+#elif _rijndael_preread_
+#define M_JOB 50
+#define N_FEATURE 24
+#define SCALE 100000
+#else
+#define M_JOB 50 //Number of jobs
+#define N_FEATURE 24 //Numbef of features
+#define SCALE 1 //scale depends on benchamarks
+#endif
 
 extern struct slice_return{
     int big;
@@ -94,6 +127,19 @@ FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 void print_current_core(int current_core, int big_little_cnt);
 void print_est_time(int T_est_big, int T_est_little);
+
+//cvxgen and on-line training related
+Vars vars;
+Params params;
+Workspace work;
+Settings settings;
+
+int get_predicted_time(
+    int type, int *loop_counter, int size, int actual_exec_time, int freq);
+void init_online(void);
+void load_default_data(void);
+
+
 //////////////////////////////////////////////////////////////////////
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
 //////////////////////////////////////////////////////////////////////
@@ -266,7 +312,11 @@ void fopen_all(void){
         }
 		#endif
     #else //LITTLE
+		#if DVFS_EN
         if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+    #else
+        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
+    #endif
         printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
         return;
     }
@@ -277,7 +327,11 @@ void fopen_all(void){
         return;
     }
 	#endif
+	#if DVFS_EN
     if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+  #else
+    if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
+	#endif
         printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
         return;
     }
@@ -769,7 +823,11 @@ void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time,
         return;
         }
     #else //LITTLE
+    #if DVFS_EN
         if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+    #else
+        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
+    #endif
         printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
         return;
     }
@@ -821,7 +879,11 @@ int print_freq(void){
     fclose(fp_freq);
 #endif
 //    #else //LITTLE
+#if DVFS_EN
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+#else
+        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
+#endif
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
             return;
         }
@@ -848,7 +910,11 @@ int print_freq(void){
         fprintf(time_file, "big core freq : %dkhz\n", khz);  
 #endif
 //    #else //LITTLE
+#if DVFS_EN
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+#else
+        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
+#endif
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
             return;
         }
@@ -862,6 +928,86 @@ int print_freq(void){
 
 
 #endif
+
+//////////////////////////////////////////////////////////////////////
+// on-line training core function
+// type == prediction : update execution time (y) with scaled freq
+//                      return predicted time 
+// type == update     : update loop counter (x)
+//                      do optimization to find (betha)
+//////////////////////////////////////////////////////////////////////
+int get_predicted_time(
+    int type, int *loop_counter, int size, int actual_exec_time, int freq)
+{ 
+  int i;
+  static double error = 100.0; //error = |actual-predicted|/actual*100
+  static int exec_time = 0; //predicted execution time
+  static int rows = 0;
+  if(type == TYPE_PREDICT)//add selected features, return predicted time
+  {
+    //update params.xx, add 1 to leftmost column for constant term
+    params.xx[rows] = ((double)1)/((double)SCALE);
+    for(i = 0; i < size ; i++)
+      params.xx[rows + M_JOB * (i + 1)] =
+        ((double)loop_counter[i])/((double)SCALE);
+
+    //get predicted time
+    //b0 * loop_counter[0] + b1 * loop_counter[1] + ... + bn * loop_counter[n];
+    exec_time = 0;
+    exec_time += vars.bb[0];
+    for(i = 0; i < size ; i++)
+      exec_time += vars.bb[i + 1] * loop_counter[i];
+
+    //check error in previous job, and decide return value
+    if(fabs(error) > 10.0)//if |error| > 10%, return highest exec time
+      return DEADLINE_TIME;
+    else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
+      return exec_time;
+  }
+  else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
+  {
+    int num_iters;
+    //update params.yy, we assume time is scaled by freq linearly
+    double scaled_actual_exec_time 
+      = (double)actual_exec_time * ((double)freq/(double)MAX_FREQ);
+    params.yy[rows] = scaled_actual_exec_time/((double)SCALE);
+
+    //solve with updated params.xx and params.yy
+    num_iters = solve();
+
+    //calculate an error 
+    error = (scaled_actual_exec_time - (double)exec_time)/scaled_actual_exec_time*100;
+
+    //update row, increase by 1, loop around M_job (number of jobs)
+    if(rows == M_JOB - 1)
+      rows = 0;
+    else
+      rows++;
+    return -1;//return dummy
+  }
+}
+void init_online(void){
+  static int once = 1; //make sure init function is called once
+  if(once){ 
+    set_defaults();
+    setup_indexing();
+    load_default_data();
+    settings.verbose = 0;
+  }else{
+    printf("%s", "init_online function is already called!\n");
+  }
+  once = 0;
+}
+void load_default_data(void) {
+  int i, j;
+  for(i = 0; i < M_JOB; i ++){
+    for(j = 0; j < N_FEATURE; j ++){
+      params.xx[i + j * M_JOB] = 0;
+    }
+    params.yy[i] = 0;
+  }
+}
+
 /*
  * PID-based prediction of execution time.
  */
