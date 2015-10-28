@@ -34,6 +34,7 @@ extern void print_predicted_time(int predicted_exec_time);
 extern void print_exec_time(int exec_time);
 extern void print_total_time(int exec_time);
 extern void print_delay_time(int delay_time, int actual_delay_time);
+extern void print_update_time(int update_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
@@ -194,6 +195,11 @@ void print_delay_time(int pre_delay_time, int actual_delay_time){
     static int instance_number = 0;
     printf("delay should be %d = %d us\n", instance_number, pre_delay_time);
     printf("actual dealy is %d = %d us\n", instance_number, actual_delay_time);
+    instance_number++;
+}
+void print_update_time(int exec_time){
+    static int instance_number = 0;
+    printf("time_update %d = %d us\n", instance_number, exec_time);
     instance_number++;
 }
 void print_current_core(int current_core, int big_little_cnt){
@@ -394,6 +400,14 @@ void print_delay_time(int pre_delay_time, int actual_delay_time){
     fprintf(time_file, "delay should be %d = %d us\n", instance_number, pre_delay_time);
     fprintf(time_file, "actual dealy is %d = %d us\n", instance_number,
 			actual_delay_time);
+    instance_number++;
+    fclose(time_file);
+}
+void print_update_time(int exec_time){
+    static int instance_number = 0;
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+    fprintf(time_file, "time_update %d = %d us\n", instance_number, exec_time);
     instance_number++;
     fclose(time_file);
 }

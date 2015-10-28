@@ -404,16 +404,27 @@ int main(int argc, char **argv)
         end_timing();
 //---------------------modified by TJSong----------------------//
       exec_time = exec_timing();
-      int update_time = 0;
       int cur_freq = print_freq(); 
       int delay_time = 0;
       int actual_delay_time = 0;
+      int additional_dvfs_times = 0;
+      int update_time = 0;
+
+      #if IDLE_EN
+        additional_dvfs_times =
+          dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] +
+          dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2];
+      #endif
+
       #if ONLINE_EN /* CASE 0, 2, 3 and 4 */
         #if GET_PREDICT || GET_OVERHEAD \
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
+          start_timing();
           update_time = get_predicted_time(TYPE_SOLVE, NULL, 0, exec_time,
               cur_freq);
+          end_timing();
+          update_time = exec_timing();
         #endif
       #endif
 
@@ -425,10 +436,17 @@ int main(int argc, char **argv)
       #elif GET_OVERHEAD /* CASE 2 */
         //nothing
       #else /* CASE 3, 4, 5, 6 and 7 */
-        if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time -
-                slice_time - dvfs_time -
-                dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] -
-                dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
+        printf("%d, %d, %d, %d, %d, %d, %d \n", 
+            delay_time,
+            DEADLINE_TIME,
+            exec_time,
+            slice_time,
+            dvfs_time,
+            update_time,
+            additional_dvfs_times);
+        if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
+                - slice_time - dvfs_time - update_time 
+                - additional_dvfs_times) > 0)){
           start_timing();
           sleep_in_delay(delay_time, cur_freq);
           end_timing();
@@ -439,6 +457,7 @@ int main(int argc, char **argv)
         print_delay_time(delay_time, actual_delay_time);
         print_exec_time(exec_time);
         print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
+        print_update_time(update_time);
       #endif
       fclose_all();//TJSong
 
