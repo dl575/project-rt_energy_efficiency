@@ -12,12 +12,11 @@ CC = gcc
 #  2 CFLAGS = -pthread -march=native -O3 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE -std=c99 \
 
 all: sha
-sha: solver.o	sha_driver.o sha.o matrix_support.o ldl.o util.o
+sha: solver.o	sha_driver.o sha.o matrix_support.o ldl.o
 #	$(CC) -o $@ sha_driver.o sha.o
 #	strip $@
 solver.o: solver.h
 matrix_support.o: solver.h
 ldl.o: solver.h
-util.o: solver.h
 clean:
 	rm -rf *.o sha output*

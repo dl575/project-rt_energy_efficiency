@@ -42,7 +42,7 @@
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (40) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
@@ -63,8 +63,8 @@
 #endif
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
-#define _sha_preread_ 1
+#define _stringsearch_ 1
+#define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
@@ -104,9 +104,11 @@
 #define M_JOB 50
 #define N_FEATURE 24
 #define SCALE 100000
+#elif _stringsearch_
+#define M_JOB 50
+#define N_FEATURE 5
+#define SCALE 1
 #else
-#define M_JOB 50 //Number of jobs
-#define N_FEATURE 24 //Numbef of features
 #define SCALE 1 //scale depends on benchamarks
 #endif
 

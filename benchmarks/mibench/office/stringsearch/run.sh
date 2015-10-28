@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_PATH=/home/odroid/project-rt_energy_efficiency
+source global.sh
 BENCHMARK_FOLDER=stringsearch
 BENCHMARK=$BENCHMARK_FOLDER"-"$3
 
@@ -20,12 +20,21 @@ if [ $1 == "big" ] ; then
     MAX_FREQ=2000000
     SENSOR_ID="3-0040"
 elif [ $1 == "little" ] ; then
+	if [ $ARCH_TYPE == "amd64" ] ; then 
+    WHICH_CPU="cpu3"
+    TASKSET_FLAG="0x08"
+    MAX_FREQ=2534000
+	elif [ $ARCH_TYPE == "armhf" ] ; then 
     WHICH_CPU="cpu0"
-    TASKSET_FLAG="0x0f"
-    MAX_FREQ=1400000
+		TASKSET_FLAG="0x0f"
+		MAX_FREQ=1400000
+	else 
+		echo "unknown architecture"
+		exit 1
+	fi
     SENSOR_ID="3-0045"
 elif [ $1 == "hetero" ] ; then
-    WHICH_CPU="cpu0"
+    WHICH_CPU="$WHICH_CPU"
     TASKSET_FLAG="0x0f"
     MAX_FREQ=1400000
     SENSOR_ID="3-0045"
@@ -34,20 +43,20 @@ fi
 init(){
     if [ $1 == "big" ] ; then
         echo big
-        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
-        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
         sudo chmod 777 /sys/bus/i2c/drivers/INA231/3-0040/sensor_W
-        sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq
-        echo 2000000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 
-        echo performance > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
+        echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     elif [ $1 == "little" ] ; then
         echo little
-        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
         sudo chmod 777 /sys/bus/i2c/drivers/INA231/3-0045/sensor_W
-        sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
-        echo 1400000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 
-        echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
+        echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
+        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     fi
 }
 
@@ -57,6 +66,7 @@ init little
 
 if [[ $2 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
+    echo $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK
     echo $2 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
     if [[ $4 ]] ; then
 		if [ $3 == "freq_sweep" ] ; then
@@ -64,10 +74,10 @@ if [[ $2 ]] ; then
 		elif [ $3 == "freq_other_sweep" ] ; then
     		if [ $1 == "big" ] ; then
 				echo 1400000 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-				echo $4 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 
+				echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
     		elif [ $1 == "little" ] ; then
 				echo 1400000 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-				echo $4 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 
+				echo $4 > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
 			fi
 		fi
     fi

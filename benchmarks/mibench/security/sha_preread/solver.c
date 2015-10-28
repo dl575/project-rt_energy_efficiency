@@ -1,1 +1,1 @@
-../../../../cvxgen/solver.c
+../../../../cvxgen/m50n24/solver.c

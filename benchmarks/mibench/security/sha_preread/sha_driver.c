@@ -7,7 +7,6 @@
 #include "sha.h"
 #include "timing.h"
 #include "solver.h"
-//#include "data.h"
 #include <unistd.h>
 
 struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
@@ -184,6 +183,7 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int 
     print_loop_counter:
     ;
 #if GET_PREDICT || DEBUG_EN
+    //23
     print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
 #endif
   }
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
   FILE *fin;
   SHA_INFO sha_info;
 
-//---------------------modified by TJSong----------------------//
+  //---------------------modified by TJSong----------------------//
   int exec_time = 0;
   static int jump = 0;
   int pid = getpid();
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 #if ONLINE_EN
   init_online();
 #endif
-//---------------------modified by TJSong----------------------//
+  //---------------------modified by TJSong----------------------//
 
   if(argc < 2){
     printf("stdin read not currently supported for slicing. Please implement.\n");
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
           job_number++;
         #endif
 
-//---------------------modified by TJSong----------------------//
+        //---------------------modified by TJSong----------------------//
         start_timing();
 
         //sha_stream(&sha_info, fin);
@@ -402,77 +402,69 @@ int main(int argc, char **argv)
         sha_print(&sha_info);
 
         end_timing();
-//---------------------modified by TJSong----------------------//
-      exec_time = exec_timing();
-      int cur_freq = print_freq(); 
-      int delay_time = 0;
-      int actual_delay_time = 0;
-      int additional_dvfs_times = 0;
-      int update_time = 0;
+        //---------------------modified by TJSong----------------------//
+        exec_time = exec_timing();
+        int cur_freq = print_freq(); 
+        int delay_time = 0;
+        int actual_delay_time = 0;
+        int additional_dvfs_times = 0;
+        int update_time = 0;
 
-      #if IDLE_EN
-        additional_dvfs_times =
-          dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] +
-          dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2];
-      #endif
-
-      #if ONLINE_EN /* CASE 0, 2, 3 and 4 */
-        #if GET_PREDICT || GET_OVERHEAD \
-              || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
-              || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
-          start_timing();
-          update_time = get_predicted_time(TYPE_SOLVE, NULL, 0, exec_time,
-              cur_freq);
-          end_timing();
-          update_time = exec_timing();
+        #if IDLE_EN
+          additional_dvfs_times =
+            dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] +
+            dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2];
         #endif
-      #endif
 
-      #if GET_PREDICT /* CASE 0 */
-        print_exec_time(exec_time);
-      #elif GET_DEADLINE /* CASE 1 */
-        print_exec_time(exec_time);
-        moment_timing_print(2); //moment_end
-      #elif GET_OVERHEAD /* CASE 2 */
-        //nothing
-      #else /* CASE 3, 4, 5, 6 and 7 */
-        printf("%d, %d, %d, %d, %d, %d, %d \n", 
-            delay_time,
-            DEADLINE_TIME,
-            exec_time,
-            slice_time,
-            dvfs_time,
-            update_time,
-            additional_dvfs_times);
-        if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
-                - slice_time - dvfs_time - update_time 
-                - additional_dvfs_times) > 0)){
-          start_timing();
-          sleep_in_delay(delay_time, cur_freq);
-          end_timing();
-          actual_delay_time = exec_timing();
-        }else
-          delay_time = 0;
-        moment_timing_print(2); //moment_end
-        print_delay_time(delay_time, actual_delay_time);
-        print_exec_time(exec_time);
-        print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
-        print_update_time(update_time);
-      #endif
-      fclose_all();//TJSong
+        #if ONLINE_EN /* CASE 0, 2, 3 and 4 */
+          #if GET_PREDICT || GET_OVERHEAD \
+                || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
+                || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
+            start_timing();
+            update_time = get_predicted_time(TYPE_SOLVE, NULL, 0, exec_time,
+                cur_freq);
+            end_timing();
+            update_time = exec_timing();
+          #endif
+        #endif
 
-      // Write out predicted time & print out frequency used
-      #if HETERO_EN
-        print_predicted_time(predicted_exec_time.big);
-        print_predicted_time(predicted_exec_time.little);
-      #else
-        #if CORE
+        #if GET_PREDICT /* CASE 0 */
+          print_exec_time(exec_time);
+        #elif GET_DEADLINE /* CASE 1 */
+          print_exec_time(exec_time);
+          moment_timing_print(2); //moment_end
+        #elif GET_OVERHEAD /* CASE 2 */
+          //nothing
+        #else /* CASE 3, 4, 5, 6 and 7 */
+          if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
+                  - slice_time - dvfs_time - update_time 
+                  - additional_dvfs_times) > 0)){
+            start_timing();
+            sleep_in_delay(delay_time, cur_freq);
+            end_timing();
+            actual_delay_time = exec_timing();
+          }else
+            delay_time = 0;
+          moment_timing_print(2); //moment_end
+          print_delay_time(delay_time, actual_delay_time);
+          print_exec_time(exec_time);
+          print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
+          print_update_time(update_time);
+        #endif
+        fclose_all();//TJSong
+
+        // Write out predicted time & print out frequency used
+        #if HETERO_EN
           print_predicted_time(predicted_exec_time.big);
-        #else
           print_predicted_time(predicted_exec_time.little);
+        #else
+          #if CORE
+            print_predicted_time(predicted_exec_time.big);
+          #else
+            print_predicted_time(predicted_exec_time.little);
+          #endif
         #endif
-      #endif
-//---------------------modified by TJSong----------------------//
+        //---------------------modified by TJSong----------------------//
 
 
       }
