@@ -3,8 +3,6 @@
 #ifndef __MY_COMMON_H__
 #define __MY_COMMON_H__
 
-#include <sched.h>
-
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -12,7 +10,14 @@
 #include <sched.h>
 #include "timing.h"
 #include "deadline.h"
-#include "solver.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
+#include <stddef.h>
+#include <sys/types.h>
 
 //constant
 #define MILLION 1000000L
@@ -42,7 +47,7 @@
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (60) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
@@ -63,8 +68,8 @@
 #endif
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 1
-#define _sha_preread_ 0
+#define _stringsearch_ 0
+#define _sha_preread_ 1
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
@@ -97,20 +102,49 @@
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
 #if _sha_preread_
-#define M_JOB 50
-#define N_FEATURE 24
-#define SCALE 1000000
+#define N_FEATURE 23
 #elif _rijndael_preread_
-#define M_JOB 50
-#define N_FEATURE 24
-#define SCALE 100000
+#define N_FEATURE 23
 #elif _stringsearch_
-#define M_JOB 50
-#define N_FEATURE 5
-#define SCALE 1
+#define N_FEATURE 4
 #else
-#define SCALE 1 //scale depends on benchamarks
+#define N_FEATURE 4
 #endif
+
+/* codes from https://github.com/TUD-OS/ATLAS */
+#define AGING_FACTOR 0.9
+#define COLUMN_CONTRIBUTION 1.1
+typedef struct llsp_s llsp_t;
+llsp_t *llsp_new(size_t count);
+void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, double target);
+const double *llsp_solve(llsp_t *restrict llsp);
+double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics);
+void llsp_dispose(llsp_t *restrict llsp);
+
+/* float values below this are considered to be 0 */
+#define EPSILON 1E-10
+
+struct matrix {
+	double **matrix;         // pointers to matrix data, indexed columns first, rows second
+	size_t   columns;        // column count
+};
+
+struct llsp_s {
+	size_t        metrics;   // metrics count
+	double       *data;      // pointer to the malloc'ed data block, matrix is transposed
+	struct matrix full;      // pointers to the matrix in its original form with all columns
+	struct matrix sort;      // matrix with to-be-dropped columns shuffled to the right
+	struct matrix good;      // reduced matrix with low-contribution columns dropped
+	double        last_measured;
+	double        result[];  // the resulting coefficients
+};
+
+static void givens_fixup(struct matrix m, size_t row, size_t column);
+static void stabilize(struct matrix *sort, struct matrix *good);
+static void trisolve(struct matrix m);
+
+
+
 
 extern struct slice_return{
     int big;
@@ -129,18 +163,6 @@ FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 void print_current_core(int current_core, int big_little_cnt);
 void print_est_time(int T_est_big, int T_est_little);
-
-//cvxgen and on-line training related
-Vars vars;
-Params params;
-Workspace work;
-Settings settings;
-
-int get_predicted_time(
-    int type, int *loop_counter, int size, int actual_exec_time, int freq);
-void init_online(void);
-void load_default_data(void);
-
 
 //////////////////////////////////////////////////////////////////////
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
@@ -931,40 +953,284 @@ int print_freq(void){
 
 #endif
 
+/* llsp related codes from https://github.com/TUD-OS/ATLAS */
+llsp_t *llsp_new(size_t count)
+{
+	llsp_t *llsp;
+	
+	if (count < 1) return NULL;
+	
+	size_t llsp_size = sizeof(llsp_t) + count * sizeof(double);  // extra room for coefficients
+	llsp = malloc(llsp_size);
+	if (!llsp) return NULL;
+	memset(llsp, 0, llsp_size);
+	
+	llsp->metrics = count;
+	llsp->full.columns = count + 1;
+	llsp->sort.columns = count + 1;
+	
+	return llsp;
+}
+
+void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, double target)
+{
+	const size_t column_count = llsp->full.columns;
+	const size_t row_count = llsp->full.columns + 1;  // extra row for shifting down and trisolve
+	const size_t column_size = row_count * sizeof(double);
+	const size_t data_size = column_count * row_count * sizeof(double);
+	const size_t matrix_size = column_count * sizeof(double *);
+	const size_t index_last = column_count - 1;
+	
+	if (!llsp->data) {
+		llsp->data        = malloc(data_size);
+		llsp->full.matrix = malloc(matrix_size);
+		llsp->sort.matrix = malloc(matrix_size);
+		llsp->good.matrix = malloc(matrix_size);
+		if (!llsp->data || !llsp->full.matrix || !llsp->sort.matrix || !llsp->good.matrix)
+			abort();
+		
+		for (size_t column = 0; column < llsp->full.columns; column++)
+			llsp->full.matrix[column] =
+			llsp->sort.matrix[column] = llsp->data + column * row_count;
+		
+		/* we need an extra column for the column dropping scan */
+		llsp->good.matrix[index_last] = malloc(column_size);
+		if (!llsp->good.matrix[index_last]) abort();
+		
+		memset(llsp->data, 0, data_size);
+	}
+	
+	/* age out the past a little bit */
+	for (size_t element = 0; element < row_count * column_count; element++)
+		llsp->data[element] *= 1.0 - AGING_FACTOR;
+	
+	/* add new row to the top of the solving matrix */
+	memmove(llsp->data + 1, llsp->data, data_size - sizeof(double));
+	for (size_t column = 0; column < llsp->metrics; column++)
+		llsp->full.matrix[column][0] = metrics[column];
+	llsp->full.matrix[llsp->metrics][0] = target;
+	
+	/* givens fixup of the subdiagonal */
+	for (size_t i = 0; i < llsp->sort.columns; i++)
+		givens_fixup(llsp->sort, i + 1, i);
+	
+	llsp->last_measured = target;
+}
+
+const double *llsp_solve(llsp_t *restrict llsp)
+{
+	double *result = NULL;
+	
+	if (llsp->data) {
+		stabilize(&llsp->sort, &llsp->good);
+		trisolve(llsp->good);
+		
+		/* collect coefficients */
+		size_t result_row = llsp->good.columns;
+		for (size_t column = 0; column < llsp->metrics; column++)
+			llsp->result[column] = llsp->full.matrix[column][result_row];
+		result = llsp->result;
+	}
+	
+	return result;
+}
+
+double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics)
+{
+	/* calculate prediction by dot product */
+	double result = 0.0;
+	for (size_t i = 0; i < llsp->metrics; i++)
+		result += llsp->result[i] * metrics[i];
+	
+	if (result >= EPSILON)
+		return result;
+	else
+		return llsp->last_measured;
+}
+
+void llsp_dispose(llsp_t *restrict llsp)
+{
+	const size_t index_last = llsp->good.columns - 1;
+	
+	free(llsp->good.matrix[index_last]);
+	free(llsp->full.matrix);
+	free(llsp->sort.matrix);
+	free(llsp->good.matrix);
+	free(llsp->data);
+	free(llsp);
+}
+
+static void givens_fixup(struct matrix m, size_t row, size_t column)
+{
+	if (fabs(m.matrix[column][row]) < EPSILON) {  // alread zero
+		m.matrix[column][row] = 0.0;  // reset to an actual zero for stability
+		return;
+	}
+	
+	const size_t i = row;
+	const size_t j = column;
+	const double a_ij = m.matrix[j][i];
+	const double a_jj = m.matrix[j][j];
+	const double rho = ((a_jj < 0.0) ? -1.0 : 1.0) * sqrt(a_jj * a_jj + a_ij * a_ij);
+	const double c = a_jj / rho;
+	const double s = a_ij / rho;
+	
+	for (size_t x = column; x < m.columns; x++) {
+		if (x == column) {
+			// the real calculation below should produce the same, but this is more stable
+			m.matrix[x][i] = 0.0;
+			m.matrix[x][j] = rho;
+		} else {
+			const double a_ix = m.matrix[x][i];
+			const double a_jx = m.matrix[x][j];	
+			m.matrix[x][i] = c * a_ix - s * a_jx;
+			m.matrix[x][j] = s * a_ix + c * a_jx;
+		}
+		
+		// reset to an actual zero for stability
+		if (fabs(m.matrix[x][i]) < EPSILON)
+			m.matrix[x][i] = 0.0;
+		if (fabs(m.matrix[x][j]) < EPSILON)
+			m.matrix[x][j] = 0.0;
+	}
+}
+
+static void stabilize(struct matrix *sort, struct matrix *good)
+{
+	const size_t column_count = sort->columns;
+	const size_t row_count = sort->columns + 1;  // extra row for shifting down and trisolve
+	const size_t column_size = row_count * sizeof(double);
+	const size_t index_last = column_count - 1;
+	
+	bool drop[column_count];
+	double previous_residual = 0.0;
+	
+	good->columns = sort->columns;
+	memcpy(good->matrix[index_last], sort->matrix[index_last], column_size);
+	
+	/* Drop columns from right to left and watch the residual error.
+	 * We would actually copy the whole matrix, but when dropping from the right,
+	 * Givens fixup always affects only the last column, so we hand just the
+	 * last column through all possible positions. */
+	for (size_t column = index_last; (ssize_t)column >= 0; column--) {
+		good->matrix[column] = good->matrix[index_last];
+		givens_fixup(*good, column + 1, column);
+		
+		double residual = fabs(good->matrix[column][column]);
+		if (residual >= EPSILON && previous_residual >= EPSILON)
+			drop[column] = (residual / previous_residual < COLUMN_CONTRIBUTION);
+		else if (residual >= EPSILON && previous_residual < EPSILON)
+			drop[column] = false;
+		else
+			drop[column] = true;
+		
+		previous_residual = residual;
+		good->columns--;
+	}
+	/* The drop result for the last column is never used. The last column
+	 * represents our target vector, so we must never drop it. */
+	
+	/* shuffle all to-be-dropped columns to the right */
+	size_t keep_columns = index_last;  // number of columns to keep, starts with all
+	for (size_t drop_column = index_last - 1; (ssize_t)drop_column >= 0; drop_column--) {
+		if (!drop[drop_column]) continue;
+		
+		keep_columns--;
+		
+		if (drop_column < keep_columns) {  // column must move
+			double *temp = sort->matrix[drop_column];
+			memmove(&sort->matrix[drop_column], &sort->matrix[drop_column + 1],
+					(keep_columns - drop_column) * sizeof(double *));
+			sort->matrix[keep_columns] = temp;
+			
+			for (size_t column = drop_column; column < keep_columns; column++)
+				givens_fixup(*sort, column + 1, column);
+		}
+	}
+	
+	/* setup good-column matrix */
+	good->columns = sort->columns;
+	memcpy(good->matrix, sort->matrix, keep_columns * sizeof(double *));  // non-drop columns
+	memcpy(good->matrix[index_last], sort->matrix[index_last], column_size);   // copy last column
+	
+	/* Conceptually, we now drop the to-be-dropped columns from the right.
+	 * Again, dropping the from the right only affects the residual error
+	 * in the last column, so only it changes. Further, we no longer need
+	 * the residual, so we can omit a proper Givens fixup and zero the
+	 * residual instead.
+	 * The resulting matrix has the same number of columns as the input,
+	 * so the extra bottom-row used later by trisolve to store coefficients
+	 * will be the actual bottom-row and not destroy triangularity.
+	 * The resulting coeffients however will be the same as with an actual
+	 * column-reduced matrix, because the diagonal elements for all
+	 * dropped columns are zero. */
+	for (size_t column = index_last; (ssize_t)column >= (ssize_t)keep_columns; column--) {
+		good->matrix[column] = good->matrix[index_last];
+		good->matrix[column][column] = 0.0;
+	}
+}
+
+static void trisolve(struct matrix m)
+{
+	size_t result_row = m.columns;  // use extra row to solve the coefficients
+	for (size_t column = 0; column < m.columns - 1; column++)
+		m.matrix[column][result_row] = 0.0;
+	
+	for (size_t row = result_row - 2; (ssize_t)row >= 0; row--) {
+		size_t column = row;
+		
+		if (fabs(m.matrix[column][row]) >= EPSILON) {
+			column = m.columns - 1;
+			
+			double intermediate = m.matrix[column][row];
+			for (column--; column > row; column--)
+				intermediate -= m.matrix[column][result_row] * m.matrix[column][row];
+			m.matrix[column][result_row] = intermediate / m.matrix[column][row];
+
+			for (column--; (ssize_t)column >= 0; column--)
+				// must be upper triangular matrix
+				assert(m.matrix[column][row] == 0.0);
+		} else
+			m.matrix[column][row] = 0.0;  // reset to an actual zero for stability
+	}
+}
+
 //////////////////////////////////////////////////////////////////////
 // on-line training core function
 // type == prediction : update execution time (y) with scaled freq
 //                      return predicted time 
 // type == update     : update loop counter (x)
-//                      do optimization to find (betha)
+//                      solve MLSR to find (betha)
 //////////////////////////////////////////////////////////////////////
-int get_predicted_time(
-    int type, int *loop_counter, int size, int actual_exec_time, int freq)
+
+int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
+    int size, int actual_exec_time, int freq)
 { 
   int i;
   static double error = 100.0; //error = |actual-predicted|/actual*100
-  static int exec_time = 0; //predicted execution time
-  static int rows = 0;
+  static double exec_time = 0; //predicted execution time
+  static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
+
   if(type == TYPE_PREDICT)//add selected features, return predicted time
   {
     //update params.xx, add 1 to leftmost column for constant term
-    params.xx[rows] = ((double)1)/((double)SCALE);
+    metrics[0] = (double)1;
     for(i = 0; i < size ; i++)
-      params.xx[rows + M_JOB * (i + 1)] =
-        ((double)loop_counter[i])/((double)SCALE);
+      metrics[i+1] = (double)loop_counter[i];
 
     //get predicted time
-    //b0 * loop_counter[0] + b1 * loop_counter[1] + ... + bn * loop_counter[n];
-    exec_time = 0;
-    exec_time += vars.bb[0];
-    for(i = 0; i < size ; i++)
-      exec_time += vars.bb[i + 1] * loop_counter[i];
+    exec_time = llsp_predict(solver, metrics);
 
     //check error in previous job, and decide return value
-    if(fabs(error) > 10.0)//if |error| > 10%, return highest exec time
+    if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
+#if DELAY_EN
       return DEADLINE_TIME;
+#else
+      return (int)exec_time;
+#endif
+    }
     else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
-      return exec_time;
+      return (int)exec_time;
   }
   else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
   {
@@ -972,41 +1238,15 @@ int get_predicted_time(
     //update params.yy, we assume time is scaled by freq linearly
     double scaled_actual_exec_time 
       = (double)actual_exec_time * ((double)freq/(double)MAX_FREQ);
-    params.yy[rows] = scaled_actual_exec_time/((double)SCALE);
+    llsp_add(solver, metrics, scaled_actual_exec_time);
 
     //solve with updated params.xx and params.yy
-    num_iters = solve();
+    (void)llsp_solve(solver);
 
     //calculate an error 
     error = (scaled_actual_exec_time - (double)exec_time)/scaled_actual_exec_time*100;
 
-    //update row, increase by 1, loop around M_job (number of jobs)
-    if(rows == M_JOB - 1)
-      rows = 0;
-    else
-      rows++;
     return -1;//return dummy
-  }
-}
-void init_online(void){
-  static int once = 1; //make sure init function is called once
-  if(once){ 
-    set_defaults();
-    setup_indexing();
-    load_default_data();
-    settings.verbose = 0;
-  }else{
-    printf("%s", "init_online function is already called!\n");
-  }
-  once = 0;
-}
-void load_default_data(void) {
-  int i, j;
-  for(i = 0; i < M_JOB; i ++){
-    for(j = 0; j < N_FEATURE; j ++){
-      params.xx[i + j * M_JOB] = 0;
-    }
-    params.yy[i] = 0;
   }
 }
 

@@ -84,7 +84,15 @@ if [[ $2 ]] ; then
     sleep 1;
     echo $2"..."
 #    taskset $TASKSET_FLAG ./runme_sweep.sh
-    taskset $TASKSET_FLAG ./runme_slice.sh
+    taskset $TASKSET_FLAG ./runme_slice.sh &
+    sleep 5;
+
+    PRE_PWD=`pwd`
+    cd /$PROJECT_PATH/dummy/
+    /$PROJECT_PATH/dummy/dummy.sh &
+    sleep 60;
+    cd $PRE_PWD
+
     cp output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$1/$BENCHMARK_FOLDER/$BENCHMARK/$2
 else
     echo "specify governor!"

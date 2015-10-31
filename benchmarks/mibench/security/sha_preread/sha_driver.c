@@ -6,10 +6,11 @@
 #include <time.h>
 #include "sha.h"
 #include "timing.h"
-#include "solver.h"
+////#include "solver.h"
 #include <unistd.h>
 
-struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int flen)
+struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, 
+    int flen, llsp_t *restrict solver)
 {
   int loop_counter[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int i;
@@ -198,12 +199,35 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, int 
     exec_time.little = 80.605400*loop_counter[1] + 0.887891*loop_counter[3] + 15.467700*loop_counter[10] + 30.718300*loop_counter[17] + 0.000000;
   #else //off-line training with cvx    
     exec_time.big = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
-    exec_time.little = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
+    //exec_time.little = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
+    /*exec_time.little = 42.586877*loop_counter[0] + 42.774369*loop_counter[1] +
+      -0.013558*loop_counter[3] + -0.001249*loop_counter[4] +
+      -0.000605*loop_counter[5] + -0.001145*loop_counter[6] +
+      -0.001145*loop_counter[7] + -0.001145*loop_counter[8] +
+      -0.001145*loop_counter[9] + -40.162162*loop_counter[10] +
+      -5.020192*loop_counter[11] + -1.774992*loop_counter[12] +
+      -4.246779*loop_counter[13] + -4.246779*loop_counter[14] +
+      -4.246779*loop_counter[15] + -4.246779*loop_counter[16] +
+      14.611467*loop_counter[17] + 5.119025*loop_counter[18] +
+      12.418597*loop_counter[19] + 12.418597*loop_counter[20] +
+      12.418597*loop_counter[21] + 12.418597*loop_counter[22] + 116.334833;*/
+    exec_time.little = 9.547252*loop_counter[0] + 9.663151*loop_counter[1] +
+      0.056890*loop_counter[3] + 0.003556*loop_counter[4] +
+      0.000889*loop_counter[5] + 0.002845*loop_counter[6] +
+      0.002845*loop_counter[7] + 0.002845*loop_counter[8] +
+      0.002845*loop_counter[9] + 0.000007*loop_counter[11] +
+      0.036845*loop_counter[12] + 0.000009*loop_counter[13] +
+      0.000009*loop_counter[14] + 0.000009*loop_counter[15] +
+      0.000009*loop_counter[16] + -0.392372*loop_counter[17] +
+      -0.098093*loop_counter[18] + -0.313897*loop_counter[19] +
+      -0.313897*loop_counter[20] + -0.313897*loop_counter[21] +
+      -0.313897*loop_counter[22] + -0.000020;
+
   #endif
 #elif ONLINE_EN
   #if CORE //on-line training on big core
   #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, loop_counter,
+    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
         sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
   #endif
 #endif
@@ -224,9 +248,11 @@ int main(int argc, char **argv)
       printf("%s", "DEFINE ERROR!!\n");
       return ERROR_DEFINE;
   }
-#if ONLINE_EN
-  init_online();
-#endif
+//#if ONLINE_EN
+  int count = N_FEATURE + 1;
+  llsp_t *solver = llsp_new(count);
+  //init_online();
+//#endif
   //---------------------modified by TJSong----------------------//
 
   if(argc < 2){
@@ -282,12 +308,14 @@ int main(int argc, char **argv)
           CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
+          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
+              solver);
         #elif GET_DEADLINE /* CASE 1 */
           moment_timing_print(0); //moment_start
         #elif GET_OVERHEAD /* CASE 2 */
           start_timing();
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
+          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
+              solver);
           end_timing();
           slice_time = print_slice_timing();
 
@@ -301,13 +329,15 @@ int main(int argc, char **argv)
           dvfs_time = print_dvfs_timing();
         #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
           //slice_time=0; dvfs_time=0;
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
+          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
+              solver);
           moment_timing_print(0); //moment_start
         #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
           moment_timing_print(0); //moment_start
           
           start_timing();
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen);
+          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
+              solver);
           end_timing();
           slice_time = print_slice_timing();
           
@@ -421,7 +451,7 @@ int main(int argc, char **argv)
                 || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
                 || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
             start_timing();
-            update_time = get_predicted_time(TYPE_SOLVE, NULL, 0, exec_time,
+            update_time = get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
                 cur_freq);
             end_timing();
             update_time = exec_timing();
