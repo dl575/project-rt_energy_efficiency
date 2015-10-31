@@ -49,23 +49,20 @@ PID_ENABLED="PID_EN 1"
 PID_DISABLED="PID_EN 0"
 PROACTIVE_ENABLED="PROACTIVE_EN 1"
 PROACTIVE_DISABLED="PROACTIVE_EN 0"
+ONLINE_ENABLED="ONLINE_EN 1"
+ONLINE_DISABLED="ONLINE_EN 0"
 
-D0_DISABLED="DEADLINE_DEFAULT 0"
-D0_ENABLED="DEADLINE_DEFAULT 1"
-D0_DISABLED="DEADLINE_DEFAULT 0"
-D17_ENABLED="DEADLINE_17MS 1"
-D17_DISABLED="DEADLINE_17MS 0"
-D33_ENABLED="DEADLINE_33MS 1"
-D33_DISABLED="DEADLINE_33MS 0"
-#BEFORE_MODIFIED="delay_time\*0.95"
-#AFTER_MODIFIED="delay_time\*0.90"
+ARCH_ARM_EN="ARCH_ARM 1"
+ARCH_ARM_DIS="ARCH_ARM 0"
+ARCH_X86_EN="ARCH_X86 1"
+ARCH_X86_DIS="ARCH_X86 0"
 
 #SWEEP=("60" "80" "100" "120" "140")
 #SWEEP=("20" "40" "60" "80" "100" "120" "140" "160" "180")
 #SWEEP=("100")
 #SWEEP=("with_fan")
 #SWEEP=("60" "80")
-SWEEP=("20" "40" "60" "80" "100" "120" "140")
+SWEEP=("60" "80" "100" "120" "140")
 #SWEEP=("4000000")
 _ALL_BENCH_=(
 "_stringsearch_"
@@ -98,26 +95,26 @@ _ALL_BENCH_=(
 #"_pocketsphinx_"
 #)
 
-SOURCE_FILES=(
-"mibench/security/sha_preread/sha_driver.c"
-"mibench/security/rijndael_preread/aesxam.c"
-)
-SOURCE_PATH=(
-"mibench/security/sha_preread"
-"mibench/security/rijndael_preread"
-)
-BENCHMARKS=(
-"mibench/security/sha_preread"
-"mibench/security/rijndael_preread"
-)
-BENCH_NAME=(
-"sha_preread"
-"rijndael_preread"
-)
-_BENCH_FOR_DEFINE_=(
-"_sha_preread_"
-"_rijndael_preread_"
-)
+#SOURCE_FILES=(
+#"mibench/security/sha_preread/sha_driver.c"
+#"mibench/security/rijndael_preread/aesxam.c"
+#)
+#SOURCE_PATH=(
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
+#)
+#BENCHMARKS=(
+#"mibench/security/sha_preread"
+#"mibench/security/rijndael_preread"
+#)
+#BENCH_NAME=(
+#"sha_preread"
+#"rijndael_preread"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_sha_preread_"
+#"_rijndael_preread_"
+#)
 
 
 #SOURCE_FILES=(
@@ -147,21 +144,21 @@ _BENCH_FOR_DEFINE_=(
 #)
 
 
-#SOURCE_FILES=(
-#"mibench/security/sha_preread/sha_driver.c"
-#)
-#SOURCE_PATH=(
-#"mibench/security/sha_preread"
-#)
-#BENCHMARKS=(
-#"mibench/security/sha_preread"
-#)
-#BENCH_NAME=(
-#"sha_preread"
-#)
-#_BENCH_FOR_DEFINE_=(
-#"_sha_preread_"
-#)
+SOURCE_FILES=(
+"mibench/security/sha_preread/sha_driver.c"
+)
+SOURCE_PATH=(
+"mibench/security/sha_preread"
+)
+BENCHMARKS=(
+"mibench/security/sha_preread"
+)
+BENCH_NAME=(
+"sha_preread"
+)
+_BENCH_FOR_DEFINE_=(
+"_sha_preread_"
+)
 
 #SOURCE_FILES=(
 #"curseofwar/main-sdl.c"
@@ -228,7 +225,7 @@ _BENCH_FOR_DEFINE_=(
 #_BENCH_FOR_DEFINE_=(
 #"_stringsearch_"
 #)
-
+#
 #SOURCE_FILES=(
 #"mibench/office/stringsearch/pbmsrch_large.c"
 #"mibench/security/sha_preread/sha_driver.c"

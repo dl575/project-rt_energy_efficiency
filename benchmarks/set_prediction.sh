@@ -13,19 +13,31 @@ else
 fi
 xdotool key KP_Enter
 
-if [[ $# < 2 ]] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx]'
+if [[ $# < 3 ]] ; then
+    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
     exit 1
 fi
 
 if [ $1 != "big" -a $1 != "little" ] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx]'
+    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
     exit 1
 fi
 
 if [ $2 != "conservative" -a $2 != "cvx" ] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx]'
+    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
     exit 1
+fi
+
+# set architecture depends on ARCH_TYPE
+if [ $ARCH_TYPE == "amd64" ] ; then 
+    sed -i -e 's/'"$ARCH_ARM_EN"'/'"$ARCH_ARM_DIS"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ARCH_X86_DIS"'/'"$ARCH_X86_EN"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $ARCH_TYPE == "armhf" ] ; then
+    sed -i -e 's/'"$ARCH_ARM_DIS"'/'"$ARCH_ARM_EN"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ARCH_X86_EN"'/'"$ARCH_X86_DIS"'/g' $BENCH_PATH/$COMMON_FILE
+else 
+	echo "unknown architecture"
+	exit 1
 fi
 
 # set core depends on argument 1
@@ -43,6 +55,14 @@ if [ $2 == "conservative" ] ; then
 elif [ $2 == "cvx" ] ; then
     sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
+
+# set online depends on argument 3
+if [ $3 == "online" ] ; then
+    sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "offline" ] ; then
+    sed -i -e 's/'"$ONLINE_ENABLED"'/'"$ONLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+fi
+
 
 # disable DEBUG_EN
 sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -123,9 +143,9 @@ do
     #run bnechmark
     cd $BENCH_PATH/${BENCHMARKS[$i]}
 	if [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
-    	./run_no_sdl.sh $1 performance temp_sample
+    	./run_no_sdl.sh $i $1 performance temp_sample
 	else
-    	./run.sh $1 performance temp_sample
+    	./run.sh $i $1 performance temp_sample
 	fi
 
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/temp.txt

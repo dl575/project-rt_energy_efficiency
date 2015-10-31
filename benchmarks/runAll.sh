@@ -17,9 +17,9 @@ cd $BENCH_PATH/${BENCHMARKS[$1]}
 echo "entered "`pwd`
 
 if [ ${SOURCE_FILES[$1]} == "curseofwar/main.c" ] ; then
-	./run_no_sdl.sh $2 $3 $4
+	./run_no_sdl.sh $1 $2 $3 $4
 else
-	./run.sh $2 $3 $4
+	./run.sh $1 $2 $3 $4
 fi
 
 #sleep 3 

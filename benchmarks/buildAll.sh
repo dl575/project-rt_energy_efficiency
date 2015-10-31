@@ -21,6 +21,18 @@ if [ $2 != "big" ] && [ $2 != "little" ] && [ $2 != "hetero" ] ; then
     exit 1
 fi
 
+# set architecture depends on ARCH_TYPE
+if [ $ARCH_TYPE == "amd64" ] ; then 
+    sed -i -e 's/'"$ARCH_ARM_EN"'/'"$ARCH_ARM_DIS"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ARCH_X86_DIS"'/'"$ARCH_X86_EN"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $ARCH_TYPE == "armhf" ] ; then
+    sed -i -e 's/'"$ARCH_ARM_DIS"'/'"$ARCH_ARM_EN"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ARCH_X86_EN"'/'"$ARCH_X86_DIS"'/g' $BENCH_PATH/$COMMON_FILE
+else 
+	echo "unknown architecture"
+	exit 1
+fi
+
 # set core depends on argument 2
 if [ $2 == "big" ] ; then
     sed -i -e 's/'"$CORE_LITTLE"'/'"$CORE_BIG"'/g' $BENCH_PATH/$COMMON_FILE
@@ -100,6 +112,16 @@ elif [ $3 == "proactive_en+overhead_en" ] ; then
 elif [ $3 == "proactive_en+overhead_dis" ] ; then
     sed -i -e 's/'"$PROACTIVE_DISABLED"'/'"$PROACTIVE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_ENABLED"'/'"$OVERHEAD_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "offline" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	  sed -i -e 's/'"$IDLE_DISABLED"'/'"$IDLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	  sed -i -e 's/'"$ONLINE_ENABLED"'/'"$ONLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "online" ] ; then
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	  sed -i -e 's/'"$IDLE_DISABLED"'/'"$IDLE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	  sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 function sweep {
