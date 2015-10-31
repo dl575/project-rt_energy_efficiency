@@ -36,6 +36,7 @@ def run_prediction(train_filename, test_filename, policy):
   """
   # Get base execution times
   train_times = parse_execution_times(train_filename)
+  train_predicted_times = parse_predicted_times(train_filename)
   # Loop counter metrics
   train_metrics = parse(train_filename, "loop counter [0-9 ]*= \((.*)\)")
   train_metrics = [x.strip().strip(',').split(',') for x in train_metrics]
@@ -49,6 +50,7 @@ def run_prediction(train_filename, test_filename, policy):
   if test_filename:
     # Get base execution times
     test_times = parse_execution_times(test_filename)
+    test_predicted_times = parse_predicted_times(test_filename)
     # Loop counter metrics
     test_metrics = parse(test_filename, "loop counter [0-9 ]*= \((.*)\)")
     test_metrics = [x.strip().strip(',').split(',') for x in test_metrics]
@@ -91,9 +93,11 @@ if __name__ == "__main__":
     os.system("mkdir " + output_dir)
   policies = [
       #policy_tuned_pid,
-      policy_conservative,
-      policy_cvx_conservative_lasso,
+      #policy_conservative,
+      #policy_cvx_conservative_lasso,
       #policy_oracle,
+      policy_least_squares,
+      policy_cvx_least_squares
       ]
 
   # For each DVFS policy
@@ -119,6 +123,8 @@ if __name__ == "__main__":
         os.system("cp temp.lps lasso/%s.lps" % benchmark)
       elif policy == policy_tuned_pid:
         os.system("cp temp.lps pid/%s.lps" % benchmark)
+      elif policy == policy_cvx_least_squares:
+        os.system("cp temp.lps lls/%s.lps" % benchmark)
       # Write prediction out to file
       out_file = open("%s/%s-%s.txt" % (output_dir, policy.__name__, benchmark), 'w')
       out_file.write("\n".join([str(x) for x in predict_times]))
