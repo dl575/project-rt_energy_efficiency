@@ -50,9 +50,11 @@ import sklearn.linear_model
 benchmarks = [
 		"2048_slice",
 		"curseofwar_slice_sdl",
-		"ldecode",
+#	"curseofwar_slice",
+  	"ldecode",
 		"pocketsphinx",
-		"rijndael_preread",
+		"stringsearch",
+   	"rijndael_preread",
 		"sha_preread",
 		"uzbl",
 		"xpilot_slice"
@@ -461,7 +463,20 @@ def policy_cvx_conservative_lasso(train_times, train_metrics, test_times=None, t
   constraints = []
   #for i in range(len(train_times)):
   #  constraints.append("(X*b - y)[%d] >=0" % (i))
+#  obj = "cvxpy.Minimize(cvxpy.sum_squares(cvxpy.scalene(X*b - y, 1, %d)) + %d*cvxpy.norm(b[1:], 1))" % (underpredict_penalty, lasso_weight)
   obj = "cvxpy.Minimize(cvxpy.sum_entries(cvxpy.scalene(X*b - y, 1, %d)) + %d*cvxpy.norm(b[1:], 1))" % (underpredict_penalty, lasso_weight)
+  return policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constraints)
+
+def policy_cvx_least_squares(train_times, train_metrics, test_times=None, test_metrics=None, underpredict_penalty=100, lasso_weight=0):
+  """
+  Prediction based on cvx linear least-squares regression.
+  """
+  if not test_times:
+    test_times = train_times
+    test_metrics = train_metrics
+
+  constraints = []
+  obj = "cvxpy.Minimize(sum(cvxpy.square(X*b - y)))"
   return policy_cvx(train_times, train_metrics, test_times, test_metrics, obj, constraints)
 
 def policy_oracle(train_times, train_metrics=None, test_times=None, test_metrics=None):
