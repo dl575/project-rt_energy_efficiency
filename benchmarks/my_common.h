@@ -46,7 +46,7 @@
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (80) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
@@ -75,9 +75,9 @@
 #define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
+#define _stringsearch_ 1
 #define _sha_preread_ 0
-#define _rijndael_preread_ 1
+#define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
@@ -177,6 +177,7 @@
 #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
 #elif _stringsearch_
 #define N_FEATURE 4
+#define _SLICE_() slice(search_strings[i], solver);
 #else
 #define N_FEATURE 4
 #endif

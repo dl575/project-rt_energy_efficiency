@@ -17,13 +17,12 @@
 #include <limits.h>
 
 #include "timing.h"
-#include "solver.h"
 
 static size_t table[UCHAR_MAX + 1];
 static size_t len;
 static char *findme;
 
-struct slice_return slice(const char *string)
+struct slice_return slice(const char *string, llsp_t *restrict solver)
 {
   int loop_counter[4] = {0, 0, 0, 0};
   register size_t shift;
@@ -75,8 +74,10 @@ struct slice_return slice(const char *string)
     exec_time.big = exec_time.little = 0; //initialize
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
-    exec_time.big = 0;
+    #if ARCH_ARM
     exec_time.little = -1173.000000*loop_counter[0] + 103.000000*loop_counter[1] + 1842.000000*loop_counter[3] + 8605.000000;
+    #elif ARCH_X86
+    #endif
   #else //off-line training with cvx    
     exec_time.big = 183.880473*loop_counter[0] + 77.714286*loop_counter[1] + -501.451901*loop_counter[2] + 1018.451901*loop_counter[3] + 2389.119527;
     exec_time.little = 830.749752*loop_counter[0] + 104.500000*loop_counter[1] + -1081.749752*loop_counter[2] + 2544.249753*loop_counter[3] + 6369.250247;
@@ -84,7 +85,7 @@ struct slice_return slice(const char *string)
 #elif ONLINE_EN
   #if CORE //on-line training on big core
   #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, loop_counter,
+    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
         sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
   #endif
 #endif
@@ -144,7 +145,7 @@ char *strsearch(const char *string)
 
 #include <stdio.h>
 
-main()
+int main()
 {
       char *here;
       char *find_strings[] = { "Kur",
@@ -2816,23 +2817,17 @@ NULL};
   int i;
 
   //---------------------modified by TJSong----------------------//
-  int exec_time = 0;
-  static int jump = 0;
+  _INIT_();
+#if HETERO_EN
   int pid = getpid();
-  if(check_define()==ERROR_DEFINE){
-    printf("%s", "DEFINE ERROR!!\n");
-    return ERROR_DEFINE;
-  }
-#if ONLINE_EN
-  init_online();
 #endif
-  fopen_all();//TJSong 
   //---------------------modified by TJSong----------------------//
 
   for (i = 0; find_strings[i]; i++){
     init_search(find_strings[i]);
             
     //---------------------modified by TJSong----------------------//
+    fopen_all();//TJSong 
     print_deadline(DEADLINE_TIME); //print deadline 
     //---------------------modified by TJSong----------------------//
     
@@ -2852,12 +2847,12 @@ NULL};
       CASE 7 = running on proactive DVFS
     */
     #if GET_PREDICT /* CASE 0 */
-      predicted_exec_time = slice(search_strings[i]); //slice
+      predicted_exec_time = _SLICE_();
     #elif GET_DEADLINE /* CASE 1 */
       moment_timing_print(0); //moment_start
     #elif GET_OVERHEAD /* CASE 2 */
       start_timing();
-      predicted_exec_time = slice(search_strings[i]); //slice
+      predicted_exec_time = _SLICE_();
       end_timing();
       slice_time = print_slice_timing();
 
@@ -2871,13 +2866,13 @@ NULL};
       dvfs_time = print_dvfs_timing();
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
       //slice_time=0; dvfs_time=0;
-      predicted_exec_time = slice(search_strings[i]); //slice
+      predicted_exec_time = _SLICE_();
       moment_timing_print(0); //moment_start
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
       moment_timing_print(0); //moment_start
       
       start_timing();
-      predicted_exec_time = slice(search_strings[i]); //slice
+      predicted_exec_time = _SLICE_();
       end_timing();
       slice_time = print_slice_timing();
       
@@ -2963,6 +2958,7 @@ NULL};
       moment_timing_print(1); //moment_start
       job_number++;
     #endif
+
     //---------------------modified by TJSong----------------------//
     usleep(10000);
     start_timing();
@@ -2993,48 +2989,18 @@ NULL};
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
         start_timing();
-        update_time = get_predicted_time(TYPE_SOLVE, NULL, 0, exec_time,
+        update_time = get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
             cur_freq);
         end_timing();
         update_time = exec_timing();
       #endif
     #endif
 
-    #if GET_PREDICT /* CASE 0 */
-      print_exec_time(exec_time);
-    #elif GET_DEADLINE /* CASE 1 */
-      print_exec_time(exec_time);
-      moment_timing_print(2); //moment_end
-    #elif GET_OVERHEAD /* CASE 2 */
-      //nothing
-    #else /* CASE 3, 4, 5, 6 and 7 */
-      if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
-              - slice_time - dvfs_time - update_time 
-              - additional_dvfs_times) > 0)){
-        start_timing();
-        sleep_in_delay(delay_time, cur_freq);
-        end_timing();
-        actual_delay_time = exec_timing();
-      }else
-        delay_time = 0;
-      moment_timing_print(2); //moment_end
-      print_delay_time(delay_time, actual_delay_time);
-      print_exec_time(exec_time);
-      print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
-      print_update_time(update_time);
-    #endif
+    _DELAY_();
 
-    // Write out predicted time & print out frequency used
-    #if HETERO_EN
-      print_predicted_time(predicted_exec_time.big);
-      print_predicted_time(predicted_exec_time.little);
-    #else
-      #if CORE
-        print_predicted_time(predicted_exec_time.big);
-      #else
-        print_predicted_time(predicted_exec_time.little);
-      #endif
-    #endif
+    _PRINT_INFO_();
+    
+    fclose_all();//TJSong
     //---------------------modified by TJSong----------------------//
 
     printf("\"%s\" is%s in \"%s\"", find_strings[i],
@@ -3043,10 +3009,6 @@ NULL};
       printf(" [\"%s\"]", here);
     putchar('\n');
   }
-
-  //---------------------modified by TJSong----------------------//
-  fclose_all();//TJSong
-  //---------------------modified by TJSong----------------------//
   return 0;
 }
 

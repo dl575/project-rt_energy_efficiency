@@ -91,7 +91,8 @@ if [[ $3 ]] ; then
     PRE_PWD=`pwd`
     cd $PRE_PWD
     if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
-       [ ${BENCH_NAME[$1]} == "rijndael_preread" ] ; then
+       [ ${BENCH_NAME[$1]} == "rijndael_preread" ] || \
+       [ ${BENCH_NAME[$1]} == "stringsearch" ] ; then
       echo ${BENCH_NAME[$1]}"..."
       ./gen_runme_slice.py > runme_slice.sh
       chmod a+x runme_slice.sh
