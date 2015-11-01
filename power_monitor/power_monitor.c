@@ -24,7 +24,7 @@ void my_usleep(unsigned long us)
 #define MILLION 1000000L
 #define THOUSAND 1000L
 
-#define UPDATED_PERIOD (int)(263808*0.97) // 4705us is updated_period of sensors
+#define UPDATED_PERIOD (int)(4705*0.97) // 4705us is updated_period of sensors
 
 int main(void)
 {
@@ -34,13 +34,13 @@ int main(void)
     struct timeval s;
     
 #if CORE //big
-    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/2-0040/sensor_W", "r"))){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return -1;
     }
     fclose(fp_power); 
 #else //LITTLE    
-    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/2-0045/sensor_W", "r"))){
+    if(NULL == (fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return -1;
     }
@@ -51,13 +51,13 @@ int main(void)
         gettimeofday(&s, NULL);
 
 #if CORE //big
-        fp_power = fopen("/sys/bus/i2c/drivers/INA231/2-0040/sensor_W", "r");
+        fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r");
         if(fscanf(fp_power, "%f", &watt) < 0)
             return -1;
         fclose(fp_power);
         printf("moment : %llu us, big core power : %fW\n", (unsigned long long int)s.tv_sec * MILLION + (unsigned long long int)s.tv_usec, watt);
 #else //LITTLE    
-        fp_power = fopen("/sys/bus/i2c/drivers/INA231/2-0045/sensor_W", "r");
+        fp_power = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r");
         if(fscanf(fp_power, "%f", &watt) < 0)
             return -1;
         fclose(fp_power);

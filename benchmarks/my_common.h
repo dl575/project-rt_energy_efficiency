@@ -28,15 +28,15 @@
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
-#define IDLE_EN 0 //0:idle off, 1:idle on
+#define DELAY_EN 1 //0:delay off, 1:delay on
+#define IDLE_EN 1 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -51,7 +51,7 @@
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 1 //0:off-line training, 1:on-line training
@@ -71,13 +71,13 @@
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 0 //ARM ODROID
-#define ARCH_X86 1 //x86-laptop
+#define ARCH_ARM 1 //ARM ODROID
+#define ARCH_X86 0 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 1
+#define _stringsearch_ 0
 #define _sha_preread_ 0
-#define _rijndael_preread_ 0
+#define _rijndael_preread_ 1
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
@@ -988,8 +988,6 @@ int print_freq(void){
 //    #else //LITTLE
 #if DVFS_EN
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
-#else
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
 #endif
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
             return -1;
