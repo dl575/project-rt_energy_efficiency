@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import random
+import platform
 
 random.seed(0)
 
@@ -14,11 +15,22 @@ def gen_key():
     key += random.choice(hex_digits)
   return key
 
+def get_arch():
+  arch = platform.machine()
+  if arch == "arm":
+    ret = "odroid"
+  elif arch == "x86_64":
+    ret = "x86"
+  else:
+    ret = "unknown"
+  return ret
+
 output = "#!/bin/bash\n"
 output += "./rijndael "
 input_range = range(1, 100)
-for i in input_range:
-  output += "/home/odroid/project-rt_energy_efficiency/datasets/rijndael-50ms/input%d.txt output_large.enc e %s " % (i, gen_key())
-  #output += "../rijndael/input_files/input_random%d.asc output_large.enc e %s " % (i, gen_key())
+for j in xrange(0, 1):
+  for i in input_range:
+    output += "../../../../datasets/"+get_arch()+"/rijndael-50ms/input%d.txt output_large.enc e %s " % (i, gen_key())
+output += ">> output_slice.txt\n"
 print output
 

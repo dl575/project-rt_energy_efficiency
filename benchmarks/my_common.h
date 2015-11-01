@@ -20,7 +20,6 @@
 #include <sys/types.h>
 
 //constant
-#define MILLION 1000000L
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME 0
 #define MARGIN 1.1f
@@ -47,7 +46,7 @@
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (80) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
@@ -77,8 +76,8 @@
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
-#define _sha_preread_ 1
-#define _rijndael_preread_ 0
+#define _sha_preread_ 0
+#define _rijndael_preread_ 1
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
@@ -109,7 +108,6 @@
 #define _INIT_() \
   int exec_time = 0;\
   static int jump = 0;\
-  int pid = getpid();\
   if(check_define()==ERROR_DEFINE){\
       printf("%s", "DEFINE ERROR!!\n");\
       return ERROR_DEFINE;\
@@ -117,7 +115,6 @@
   llsp_t *solver = llsp_new(N_FEATURE + 1);
   /*  int exec_time = 0;
   static int jump = 0;
-  int pid = getpid();
   if(check_define()==ERROR_DEFINE){
       printf("%s", "DEFINE ERROR!!\n");
       return ERROR_DEFINE;
@@ -152,13 +149,32 @@
   print_exec_time(exec_time);
   print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
   print_update_time(update_time);*/
-
+#define _PRINT_INFO_() \
+  if(HETERO_EN){\
+    print_predicted_time(predicted_exec_time.big);\
+    print_predicted_time(predicted_exec_time.little);\
+  }else{\
+    if(CORE)\
+      print_predicted_time(predicted_exec_time.big);\
+    else\
+      print_predicted_time(predicted_exec_time.little);\
+  }\
+  /*if(HETERO_EN){
+    print_predicted_time(predicted_exec_time.big);
+    print_predicted_time(predicted_exec_time.little);
+  }else{
+    if(CORE)
+      print_predicted_time(predicted_exec_time.big);
+    else
+      print_predicted_time(predicted_exec_time.little);
+  }*/
 //Depends on benchmarks
 #if _sha_preread_
 #define N_FEATURE 23
 #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
 #elif _rijndael_preread_
 #define N_FEATURE 23
+#define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
 #elif _stringsearch_
 #define N_FEATURE 4
 #else
@@ -200,13 +216,18 @@ static void trisolve(struct matrix m);
 
 
 
-extern struct slice_return{
+struct slice_return{
     int big;
     int little;
 };
 
 struct timeval start, end, moment;
 struct timeval start_local, end_local;
+
+void start_timing_local();
+void end_timing_local();
+int exec_timing_local();
+
 int slice_time=0;
 int dvfs_time=0;
 
@@ -222,129 +243,129 @@ void print_est_time(int T_est_big, int T_est_little);
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
 //////////////////////////////////////////////////////////////////////
 #if CORE
-    int dvfs_table[19][19];
+  extern int dvfs_table[19][19];
 #else
-    int dvfs_table[13][13];
+  extern int dvfs_table[13][13];
 #endif
-int dvfs_table_big[19][19];
-int dvfs_table_little[13][13];
+extern int dvfs_table_big[19][19];
+extern int dvfs_table_little[13][13];
 
 //////////////////////////////////////////////////////////////////////
 //pro-active DVFS
 //////////////////////////////////////////////////////////////////////
 #if CORE //big
-    #if _sha_preread_
-        int predicted_times[99];
-    #endif
-    #if _xpilot_slice_
-        int predicted_times[1001];
-    #endif
-    #if _stringsearch_
-        int predicted_times[1332];
-    #endif
-    #if _2048_slice_
-        int predicted_times[165];
-    #endif
-    #if _curseofwar_slice_sdl_
-        int predicted_times[1002];
-    #endif
-    #if _curseofwar_slice_
-        int predicted_times[1002];
-    #endif
-    #if _ldecode_
-        int predicted_times[3000];
-    #endif
-    #if _pocketsphinx_
-        int predicted_times[100];
-    #endif
-    #if _uzbl_
-        int predicted_times[1];
-    #endif
-    #if _rijndael_preread_
-        int predicted_times[99];
-    #endif
+  #if _sha_preread_
+    extern int predicted_times[99];
+  #endif
+  #if _xpilot_slice_
+    extern int predicted_times[1001];
+  #endif
+  #if _stringsearch_
+    extern int predicted_times[1332];
+  #endif
+  #if _2048_slice_
+    extern int predicted_times[165];
+  #endif
+  #if _curseofwar_slice_sdl_
+    extern int predicted_times[1002];
+  #endif
+  #if _curseofwar_slice_
+    extern int predicted_times[1002];
+  #endif
+  #if _ldecode_
+    extern int predicted_times[3000];
+  #endif
+  #if _pocketsphinx_
+    extern int predicted_times[100];
+  #endif
+  #if _uzbl_
+    extern int predicted_times[1];
+  #endif
+  #if _rijndael_preread_
+    extern int predicted_times[99];
+  #endif
 #else //little
-    #if _sha_preread_
-        int predicted_times[99];
-    #endif
-    #if _xpilot_slice_
-        int predicted_times[1001];
-    #endif
-    #if _stringsearch_
-        int predicted_times[1332];
-    #endif
-    #if _2048_slice_
-        int predicted_times[165];
-    #endif
-    #if _curseofwar_slice_sdl_
-        int predicted_times[1002];
-    #endif
-    #if _curseofwar_slice_
-        int predicted_times[1002];
-    #endif
-    #if _ldecode_
-        int predicted_times[3000];
-    #endif
-    #if _pocketsphinx_
-        int predicted_times[100];
-    #endif
-    #if _uzbl_
-        int predicted_times[1];
-    #endif
-    #if _rijndael_preread_
-        int predicted_times[99];
-    #endif
+  #if _sha_preread_
+    extern int predicted_times[99];
+  #endif
+  #if _xpilot_slice_
+    extern int predicted_times[1001];
+  #endif
+  #if _stringsearch_
+    extern int predicted_times[1332];
+  #endif
+  #if _2048_slice_
+    extern int predicted_times[165];
+  #endif
+  #if _curseofwar_slice_sdl_
+    extern int predicted_times[1002];
+  #endif
+  #if _curseofwar_slice_
+    extern int predicted_times[1002];
+  #endif
+  #if _ldecode_
+    extern int predicted_times[3000];
+  #endif
+  #if _pocketsphinx_
+    extern int predicted_times[100];
+  #endif
+  #if _uzbl_
+    extern int predicted_times[1];
+  #endif
+  #if _rijndael_preread_
+    extern int predicted_times[99];
+  #endif
 #endif
 
 //////////////////////////////////////////////////////////////////////
 //predicted_times_big & predicted_times_little define
 //////////////////////////////////////////////////////////////////////
 #if _sha_preread_
-    int predicted_times_big[99];
-    int predicted_times_little[99];
+  extern int predicted_times_big[99];
+  extern int predicted_times_little[99];
 #endif
 #if _xpilot_slice_
-    int predicted_times_big[1001];
-    int predicted_times_little[1001];
+  extern int predicted_times_big[1001];
+  extern int predicted_times_little[1001];
 #endif
 #if _stringsearch_
-    int predicted_times_big[1332];
-    int predicted_times_little[1332];
+  extern int predicted_times_big[1332];
+  extern int predicted_times_little[1332];
 #endif
 #if _2048_slice_
-    int predicted_times_big[165];
-    int predicted_times_little[165];
+  extern int predicted_times_big[165];
+  extern int predicted_times_little[165];
 #endif
 #if _curseofwar_slice_sdl_
-    int predicted_times_big[1002];
-    int predicted_times_little[1002];
+  extern int predicted_times_big[1002];
+  extern int predicted_times_little[1002];
 #endif
 #if _curseofwar_slice_
-    int predicted_times_big[1002];
-    int predicted_times_little[1002];
+  extern int predicted_times_big[1002];
+  extern int predicted_times_little[1002];
 #endif
 #if _ldecode_
-    int predicted_times_big[3000];
-    int predicted_times_little[3000];
+  extern int predicted_times_big[3000];
+  extern int predicted_times_little[3000];
 #endif
 #if _pocketsphinx_
-    int predicted_times_big[100];
-    int predicted_times_little[100];
+  extern int predicted_times_big[100];
+  extern int predicted_times_little[100];
 #endif
 #if _uzbl_
-    int predicted_times_big[1];
-    int predicted_times_little[1];
+  extern int predicted_times_big[1];
+  extern int predicted_times_little[1];
 #endif
 #if _rijndael_preread_
-    int predicted_times_big[99];
-    int predicted_times_little[99];
+  extern int predicted_times_big[99];
+  extern int predicted_times_little[99];
 #endif
 
 //////////////////////////////////////////////////////////////////////
 //power array
 //////////////////////////////////////////////////////////////////////
-float power_big[19]; 
-float power_little[13];
+extern float power_big[19]; 
+extern float power_little[13];
 
 int check_define(void){
     int flag_cnt=0;
@@ -454,10 +475,10 @@ void sleep_in_delay(int delay_time, int cur_freq){
 }
 
 void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
-    int job_exec_time;
     int predicted_freq = MAX_FREQ;
+#if ARCH_ARM
     static int previous_freq = MAX_FREQ;
-#if DVFS_EN	
+    int job_exec_time;
     for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
         job_exec_time = MARGIN * predicted_exec_time * MAX_FREQ / predicted_freq;
         //printf("time %d @%d\n", job_exec_time, predicted_freq);
@@ -472,7 +493,7 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
             break;
     #endif
     }     
-#else	
+#elif ARCH_X86	
     //calculate predicted freq and round up by adding 99999
     predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
 #endif
@@ -480,30 +501,32 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
     predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
 	//printf("frqeunecy %d\n\n", predicted_freq);
     //remember current frequency to use later
+#if ARCH_ARM
     previous_freq = predicted_freq;
+#endif
     //set maximum frequency, because performance governor always use maximum freq.
     fprintf(fp_max_freq, "%d", predicted_freq);
     fflush(fp_max_freq);
     return;
 }
 void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
-    int job_exec_time;
-    int predicted_freq = MAX_FREQ;
-
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
-	int f_new, final_freq;
+	int f_new = MAX_FREQ/1000;
+  int final_freq = MAX_FREQ/1000;
 	int f_new_big = MAX_FREQ_BIG/1000;
 	int f_new_little = MAX_FREQ_LITTLE/1000;
 	int T_sum_big = 0;
 	int T_sum_little = 0;
 	static int f_previous_big = MAX_FREQ_BIG/1000;
 	static int f_previous_little = MAX_FREQ_LITTLE/1000;
-    static int big_cnt = 0;
-    static int little_cnt = 0;
-    static int current_core = CORE; //0: little, 1: big
-    char cmd[100];
-    cpu_set_t set;
+  static int big_cnt = 0;
+  static int little_cnt = 0;
+  static int current_core = CORE; //0: little, 1: big
+  cpu_set_t set;
+#if DEBUG_EN
+  char cmd[100];
+#endif
     
     for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
         T_sum_big = MARGIN * T_est_big * f_max_big / f_new_big;
@@ -642,7 +665,7 @@ int set_freq_multiple(int job, int d){
 	int T_est[WINDOW_SIZE];
 	int size = sizeof(predicted_times)/sizeof(predicted_times[0]);
 	static int jump = 0; //if jump is 0, set new freq
-	static int group = 0; //how many jobs are grouped
+	//static int group = 0; //how many jobs are grouped
 	static int f_previous = MAX_FREQ;
 
 	if(jump == 0){
@@ -689,7 +712,7 @@ int set_freq_multiple(int job, int d){
 			}
 			if(brk == i-1){
 				jump = i-1;
-                group = i;
+                //group = i;
 				//printf("group of %d\n", group);
 				break;
 			}
@@ -716,11 +739,12 @@ int set_freq_multiple(int job, int d){
 
 int set_freq_multiple_hetero(int job, int d, int pid){
 	int w=WINDOW_SIZE;
-	int i, j, k, brk;
+	int i, j, k;
 	int brk_big, brk_little;
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
-	int f_new, final_freq;
+	int f_new = MAX_FREQ/1000;
+  int final_freq = MAX_FREQ/1000;
 	int f_new_big;
 	int f_new_little;
 	int T_sum_big = 0;
@@ -728,15 +752,18 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 	int T_est_big[WINDOW_SIZE];
 	int T_est_little[WINDOW_SIZE];
 	int size_big = sizeof(predicted_times_big)/sizeof(predicted_times_big[0]);
-	int size_little = sizeof(predicted_times_little)/sizeof(predicted_times_little[0]);
+	//int size_little = sizeof(predicted_times_little)/sizeof(predicted_times_little[0]);
 	static int jump = 0; //if jump is 0, set new freq
-	static int group = 0; //how many jobs are grouped
+	//static int group = 0; //how many jobs are grouped
 	static int f_previous = MAX_FREQ;
-    static int big_cnt = 0;
-    static int little_cnt = 0;
-    static int current_core = CORE; //0: little, 1: big
-    char cmd[100];
-    cpu_set_t set;
+  static int big_cnt = 0;
+  static int little_cnt = 0;
+  static int current_core = CORE; //0: little, 1: big
+  cpu_set_t set;
+#if DEBUG_EN
+  char cmd[100];
+#endif
+
 	if(jump == 0){
 		//estimate time for multiple jobs (from current to current + W)
 		for(i=0; i<w; i++){
@@ -797,7 +824,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 			}
 			if(brk_big == i-1 && brk_little == i-1){
 				jump = i-1;
-                group = i;
+                //group = i;
 				//printf("group of %d\n", group);
 				break;
 			}
@@ -950,9 +977,10 @@ int print_freq(void){
 #if DVFS_EN
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
             printf("ERROR : FILE READ FAILED\n");
-            return;
+            return -1;
         }
-        fscanf(fp_freq, "%d", &khz);
+        if(fscanf(fp_freq, "%d", &khz)<0)
+          return -1;
         printf("big core freq : %dkhz\n", khz);  
     fclose(fp_freq);
 #endif
@@ -963,9 +991,10 @@ int print_freq(void){
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
 #endif
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-            return;
+            return -1;
         }
-        fscanf(fp_freq, "%d", &khz);
+        if(fscanf(fp_freq, "%d", &khz)<0)
+          return -1;
         printf("little core freq : %dkhz\n", khz);  
 //    #endif
     fclose(fp_freq);
@@ -982,9 +1011,10 @@ int print_freq(void){
 #if DVFS_EN
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
             printf("ERROR : FILE READ FAILED\n");
-            return;
+            return -1;
         }
-        fscanf(fp_freq, "%d", &khz);
+        if(fscanf(fp_freq, "%d", &khz)<0)
+          return -1;
         fprintf(time_file, "big core freq : %dkhz\n", khz);  
 #endif
 //    #else //LITTLE
@@ -994,9 +1024,10 @@ int print_freq(void){
         if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
 #endif
             printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-            return;
+            return -1;
         }
-        fscanf(fp_freq, "%d", &khz);
+        if(fscanf(fp_freq, "%d", &khz)<0)
+          return -1;
         fprintf(time_file, "little core freq : %dkhz\n", khz);  
 //    #endif
         fclose(fp_freq);
@@ -1288,7 +1319,6 @@ int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
   }
   else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
   {
-    int num_iters;
     //update params.yy, we assume time is scaled by freq linearly
     double scaled_actual_exec_time 
       = (double)actual_exec_time * ((double)freq/(double)MAX_FREQ);
@@ -1301,6 +1331,9 @@ int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     error = (scaled_actual_exec_time - (double)exec_time)/scaled_actual_exec_time*100;
 
     return -1;//return dummy
+  }else{
+    perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
+    return -1;
   }
 }
 

@@ -147,7 +147,7 @@
 #include "asteroid.h"
 #include "score.h"
 
-int client_join;//TJSong
+int client_join = 0;//TJSong
 char netserver_version[] = VERSION;
 
 #define MAX_SELECT_FD			(sizeof(int) * 8 - 1)

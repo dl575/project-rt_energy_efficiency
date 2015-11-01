@@ -4,12 +4,15 @@
 #include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "deadline.h"
 #include "my_common.h"
 
+#define MILLION 1000000L
+
 extern struct timeval start, end, moment;
 extern struct timeval start_local, end_local;
-extern int client_join = 0;
+extern int client_join;
 
 //Define function names
 //all benchmarks use below common timing functions
@@ -236,7 +239,7 @@ void print_start_temperature() {
     FILE *fp_tmu; //File pointer of TMU file
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         printf("TMU Read Error\n");
-        return -1;
+        return;
     }
     printf("start_temperature %d\n", instance_number);
     print_file(fp_tmu);
@@ -250,7 +253,7 @@ void print_end_temperature() {
     FILE *fp_tmu; //File pointer of TMU file
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         printf("TMU Read Error\n");
-        return -1;
+        return;
     }
     printf("end_temperature %d\n", instance_number);
     print_file(fp_tmu);

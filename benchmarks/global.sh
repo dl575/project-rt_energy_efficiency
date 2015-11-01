@@ -2,8 +2,10 @@
 ARCH_TYPE=`dpkg --print-architecture`
 if [ $ARCH_TYPE == "amd64" ] ; then 
 	PROJECT_PATH=/home/tjsong/research/project-rt_energy_efficiency/
+  PLATFORM_NAME="x86"
 elif [ $ARCH_TYPE == "armhf" ] ; then
 	PROJECT_PATH=/home/odroid/project-rt_energy_efficiency/
+  PLATFORM_NAME="odroid"
 else 
 	echo "unknown architecture"
 	exit 1
@@ -95,26 +97,26 @@ _ALL_BENCH_=(
 #"_pocketsphinx_"
 #)
 
-#SOURCE_FILES=(
-#"mibench/security/sha_preread/sha_driver.c"
-#"mibench/security/rijndael_preread/aesxam.c"
-#)
-#SOURCE_PATH=(
-#"mibench/security/sha_preread"
-#"mibench/security/rijndael_preread"
-#)
-#BENCHMARKS=(
-#"mibench/security/sha_preread"
-#"mibench/security/rijndael_preread"
-#)
-#BENCH_NAME=(
-#"sha_preread"
-#"rijndael_preread"
-#)
-#_BENCH_FOR_DEFINE_=(
-#"_sha_preread_"
-#"_rijndael_preread_"
-#)
+SOURCE_FILES=(
+"mibench/security/sha_preread/sha_driver.c"
+"mibench/security/rijndael_preread/aesxam.c"
+)
+SOURCE_PATH=(
+"mibench/security/sha_preread"
+"mibench/security/rijndael_preread"
+)
+BENCHMARKS=(
+"mibench/security/sha_preread"
+"mibench/security/rijndael_preread"
+)
+BENCH_NAME=(
+"sha_preread"
+"rijndael_preread"
+)
+_BENCH_FOR_DEFINE_=(
+"_sha_preread_"
+"_rijndael_preread_"
+)
 
 
 #SOURCE_FILES=(
@@ -144,22 +146,22 @@ _ALL_BENCH_=(
 #)
 
 
-SOURCE_FILES=(
-"mibench/security/sha_preread/sha_driver.c"
-)
-SOURCE_PATH=(
-"mibench/security/sha_preread"
-)
-BENCHMARKS=(
-"mibench/security/sha_preread"
-)
-BENCH_NAME=(
-"sha_preread"
-)
-_BENCH_FOR_DEFINE_=(
-"_sha_preread_"
-)
-
+#SOURCE_FILES=(
+#"mibench/security/sha_preread/sha_driver.c"
+#)
+#SOURCE_PATH=(
+#"mibench/security/sha_preread"
+#)
+#BENCHMARKS=(
+#"mibench/security/sha_preread"
+#)
+#BENCH_NAME=(
+#"sha_preread"
+#)
+#_BENCH_FOR_DEFINE_=(
+#"_sha_preread_"
+#)
+#
 #SOURCE_FILES=(
 #"curseofwar/main-sdl.c"
 #)

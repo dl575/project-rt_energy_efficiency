@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source global.sh
-BENCHMARK_FOLDER=$BENCH_NAME
+BENCHMARK_FOLDER=${BENCH_NAME[$1]}
 BENCHMARK=$BENCHMARK_FOLDER"-"$4
 
 if [[ $# < 4 ]] ; then
@@ -90,10 +90,13 @@ if [[ $3 ]] ; then
 
     PRE_PWD=`pwd`
     cd $PRE_PWD
-    if [ ${BENCH_NAME[$1]} == "sha_preread" ] ; then
+    if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
+       [ ${BENCH_NAME[$1]} == "rijndael_preread" ] ; then
+      echo ${BENCH_NAME[$1]}"..."
+      ./gen_runme_slice.py > runme_slice.sh
+      chmod a+x runme_slice.sh
+      sleep 3
       taskset $TASKSET_FLAG ./runme_slice.sh
-    elif [ ${BENCH_NAME[$1]} == "rijndael_preread" ] ; then
-      taskset $TASKSET_FLAG ./runme_slice.sh > output_slice.txt
     fi
 #    taskset $TASKSET_FLAG ./runme_slice.sh &
 #    sleep 5;

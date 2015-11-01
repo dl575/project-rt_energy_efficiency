@@ -184,13 +184,13 @@ done
 #cd $DVFS_SIM_PATH/cvx
 #taskset 0xff $DVFS_SIM_PATH/cvx/gen_predictor.py
 #
-#for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
-#do
-#    echo "#if _"${BENCH_NAME[$i]}"_"
-#    cd $BENCH_PATH/${SOURCE_PATH[$i]}
-#    #run find_deadline.py script
-#    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt
-#    echo "#endif"
-#done
+for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+do
+  echo "#if _"${BENCH_NAME[$i]}"_"
+  cd $BENCH_PATH/${SOURCE_PATH[$i]}
+  #run find_deadline.py script
+  taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt
+  echo "#endif"
+done
 
 exit 0

@@ -15,7 +15,7 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
   int i;
   {
     sha_info->count_lo = 0L;
-    return0:
+    //return0:
     ;
 
   }
@@ -73,14 +73,14 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
             loop_counter[9]++;
           }
 
-          return3:
+          //return3:
           ;
 
         }
         count_rename1 -= 64;
       }
 
-      return1:
+      //return1:
       ;
 
     }
@@ -128,7 +128,7 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
           loop_counter[16]++;
         }
 
-        return4:
+        //return4:
         ;
 
       }
@@ -171,16 +171,16 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
         loop_counter[22]++;
       }
 
-      return5:
+      //return5:
       ;
 
     }
-    return2:
+    //return2:
     ;
 
   }
   {
-    print_loop_counter:
+    //print_loop_counter:
     ;
 #if GET_PREDICT || DEBUG_EN
     //23
@@ -188,13 +188,12 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
 #endif
   }
   {
-    predict_exec_time:
+    //predict_exec_time:
     ;
     struct slice_return exec_time;
     exec_time.big = exec_time.little = 0; //initialize
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
-    exec_time.big = 0;
     #if ARCH_ARM
       exec_time.little = 207.249000*loop_counter[1] + -0.220808*loop_counter[3] + -455.847000*loop_counter[10] + 65.212500*loop_counter[17] + 0.000000;
     #elif ARCH_X86
@@ -211,8 +210,6 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
       -0.313897*loop_counter[22] + -0.000020;
     #endif
   #else //off-line training with cvx    
-    exec_time.big = 39.731974*loop_counter[0] + 39.977368*loop_counter[1] + 0.000885*loop_counter[3] + 0.000132*loop_counter[4] + 0.000036*loop_counter[5] + 0.000087*loop_counter[6] + 0.000087*loop_counter[7] + 0.000087*loop_counter[8] + 0.000087*loop_counter[9] + -2.631229*loop_counter[10] + -0.328817*loop_counter[11] + -0.116261*loop_counter[12] + -0.278069*loop_counter[13] + -0.278069*loop_counter[14] + -0.278069*loop_counter[15] + -0.278069*loop_counter[16] + 4.160141*loop_counter[17] + 1.461587*loop_counter[18] + 3.480920*loop_counter[19] + 3.480920*loop_counter[20] + 3.480920*loop_counter[21] + 3.480920*loop_counter[22] + 32.918977;
-    //exec_time.little = 40.301967*loop_counter[0] + 40.303426*loop_counter[1] + 0.062132*loop_counter[3] + 0.007766*loop_counter[4] + 0.002747*loop_counter[5] + 0.006571*loop_counter[6] + 0.006571*loop_counter[7] + 0.006571*loop_counter[8] + 0.006571*loop_counter[9] + 1.082202*loop_counter[10] + 0.135301*loop_counter[11] + 0.047775*loop_counter[12] + 0.114539*loop_counter[13] + 0.114539*loop_counter[14] + 0.114539*loop_counter[15] + 0.114539*loop_counter[16] + 3.947418*loop_counter[17] + 1.395629*loop_counter[18] + 3.339139*loop_counter[19] + 3.339139*loop_counter[20] + 3.339139*loop_counter[21] + 3.339139*loop_counter[22] + 31.580287;
   #endif
 #elif ONLINE_EN
   #if CORE //on-line training on big core
@@ -231,7 +228,10 @@ int main(int argc, char **argv)
   SHA_INFO sha_info;
 
   //---------------------modified by TJSong----------------------//
-  _INIT_()
+  _INIT_();
+#if HETERO_EN
+  int pid = getpid();
+#endif
   //---------------------modified by TJSong----------------------//
 
   if(argc < 2){
@@ -252,7 +252,7 @@ int main(int argc, char **argv)
         // Get file length
         int flen;
         fseek(fin, 0, SEEK_END);
-        fgetpos(fin, &flen);
+        fgetpos(fin, (fpos_t*)&flen);
         fseek(fin, 0, SEEK_SET);
         // Allocate buffer
         char *file_buffer = malloc(sizeof(char) * (flen + 1));
@@ -386,7 +386,7 @@ int main(int argc, char **argv)
           end_timing();
           slice_time = print_slice_timing();
 
-         start_timing();
+          start_timing();
           #if HETERO_EN 
             jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
           #elif !HETERO_EN
@@ -433,29 +433,11 @@ int main(int argc, char **argv)
           #endif
         #endif
 
-        #if GET_PREDICT /* CASE 0 */
-          print_exec_time(exec_time);
-        #elif GET_DEADLINE /* CASE 1 */
-          print_exec_time(exec_time);
-          moment_timing_print(2); //moment_end
-        #elif GET_OVERHEAD /* CASE 2 */
-          //nothing
-        #else /* CASE 3, 4, 5, 6 and 7 */
-          _DELAY_();
-       #endif
-        fclose_all();//TJSong
+        _DELAY_();
 
-        // Write out predicted time & print out frequency used
-        #if HETERO_EN
-          print_predicted_time(predicted_exec_time.big);
-          print_predicted_time(predicted_exec_time.little);
-        #else
-          #if CORE
-            print_predicted_time(predicted_exec_time.big);
-          #else
-            print_predicted_time(predicted_exec_time.little);
-          #endif
-        #endif
+        _PRINT_INFO_();
+        
+        fclose_all();//TJSong
         //---------------------modified by TJSong----------------------//
 
 
