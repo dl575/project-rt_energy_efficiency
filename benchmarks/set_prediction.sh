@@ -14,17 +14,17 @@ fi
 xdotool key KP_Enter
 
 if [[ $# < 3 ]] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
+    echo 'USAGE : ./set_prediction [big/little] [cons/cvx] [online/offline]'
     exit 1
 fi
 
 if [ $1 != "big" -a $1 != "little" ] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
+    echo 'USAGE : ./set_prediction [big/little] [cons/cvx] [online/offline]'
     exit 1
 fi
 
-if [ $2 != "conservative" -a $2 != "cvx" ] ; then
-    echo 'USAGE : ./set_prediction [big/little] [conservative/cvx] [online/offline]'
+if [ $2 != "cons" -a $2 != "cvx" ] ; then
+    echo 'USAGE : ./set_prediction [big/little] [cons/cvx] [online/offline]'
     exit 1
 fi
 
@@ -50,7 +50,7 @@ elif [ $1 == "little" ] ; then
 fi
 
 # set core depends on argument 2
-if [ $2 == "conservative" ] ; then
+if [ $2 == "cons" ] ; then
     sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $2 == "cvx" ] ; then
     sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -172,25 +172,25 @@ do
     rm -rf $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample
 done
 
-cd $DVFS_SIM_PATH
-taskset 0xff $DVFS_SIM_PATH/predict_times.py 
-sleep 3
-#cd $DVFS_SIM_PATH/lps
-#taskset 0xff $DVFS_SIM_PATH/lps/gen_predictor.py
-#cd $DVFS_SIM_PATH/pid
-#taskset 0xff $DVFS_SIM_PATH/pid/gen_predictor.py
 #cd $DVFS_SIM_PATH
-#taskset 0xff $DVFS_SIM_PATH/gen_oracle_array.py
-cd $DVFS_SIM_PATH/cvx
-taskset 0xff $DVFS_SIM_PATH/cvx/gen_predictor.py
-
-for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
-do
-    echo "#if _"${BENCH_NAME[$i]}"_"
-    cd $BENCH_PATH/${SOURCE_PATH[$i]}
-    #run find_deadline.py script
-    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt
-    echo "#endif"
-done
+#taskset 0xff $DVFS_SIM_PATH/predict_times.py 
+#sleep 3
+##cd $DVFS_SIM_PATH/lps
+##taskset 0xff $DVFS_SIM_PATH/lps/gen_predictor.py
+##cd $DVFS_SIM_PATH/pid
+##taskset 0xff $DVFS_SIM_PATH/pid/gen_predictor.py
+##cd $DVFS_SIM_PATH
+##taskset 0xff $DVFS_SIM_PATH/gen_oracle_array.py
+#cd $DVFS_SIM_PATH/cvx
+#taskset 0xff $DVFS_SIM_PATH/cvx/gen_predictor.py
+#
+#for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
+#do
+#    echo "#if _"${BENCH_NAME[$i]}"_"
+#    cd $BENCH_PATH/${SOURCE_PATH[$i]}
+#    #run find_deadline.py script
+#    taskset 0xff $DVFS_SIM_PATH/data_odroid/find_deadline.py M0.txt
+#    echo "#endif"
+#done
 
 exit 0

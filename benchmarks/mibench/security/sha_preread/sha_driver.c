@@ -231,14 +231,7 @@ int main(int argc, char **argv)
   SHA_INFO sha_info;
 
   //---------------------modified by TJSong----------------------//
-  int exec_time = 0;
-  static int jump = 0;
-  int pid = getpid();
-  if(check_define()==ERROR_DEFINE){
-      printf("%s", "DEFINE ERROR!!\n");
-      return ERROR_DEFINE;
-  }
-  llsp_t *solver = llsp_new(N_FEATURE + 1);
+  _INIT_()
   //---------------------modified by TJSong----------------------//
 
   if(argc < 2){
@@ -294,14 +287,12 @@ int main(int argc, char **argv)
           CASE 7 = running on proactive DVFS
         */
         #if GET_PREDICT /* CASE 0 */
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
-              solver);
+          predicted_exec_time = _SLICE_();
         #elif GET_DEADLINE /* CASE 1 */
           moment_timing_print(0); //moment_start
         #elif GET_OVERHEAD /* CASE 2 */
           start_timing();
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
-              solver);
+          predicted_exec_time = _SLICE_();
           end_timing();
           slice_time = print_slice_timing();
 
@@ -315,15 +306,13 @@ int main(int argc, char **argv)
           dvfs_time = print_dvfs_timing();
         #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
           //slice_time=0; dvfs_time=0;
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
-              solver);
+          predicted_exec_time = _SLICE_();
           moment_timing_print(0); //moment_start
         #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
           moment_timing_print(0); //moment_start
           
           start_timing();
-          predicted_exec_time = sha_stream_slice(&sha_info, file_buffer, flen,
-              solver);
+          predicted_exec_time = _SLICE_();
           end_timing();
           slice_time = print_slice_timing();
           
@@ -452,21 +441,8 @@ int main(int argc, char **argv)
         #elif GET_OVERHEAD /* CASE 2 */
           //nothing
         #else /* CASE 3, 4, 5, 6 and 7 */
-          if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
-                  - slice_time - dvfs_time - update_time 
-                  - additional_dvfs_times) > 0)){
-            start_timing();
-            sleep_in_delay(delay_time, cur_freq);
-            end_timing();
-            actual_delay_time = exec_timing();
-          }else
-            delay_time = 0;
-          moment_timing_print(2); //moment_end
-          print_delay_time(delay_time, actual_delay_time);
-          print_exec_time(exec_time);
-          print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
-          print_update_time(update_time);
-        #endif
+          _DELAY_();
+       #endif
         fclose_all();//TJSong
 
         // Write out predicted time & print out frequency used

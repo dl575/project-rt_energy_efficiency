@@ -29,15 +29,15 @@
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
-#define IDLE_EN 1 //0:idle off, 1:idle on
+#define DELAY_EN 0 //0:delay off, 1:delay on
+#define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -52,7 +52,12 @@
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+
+//ONLINE related
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define TYPE_PREDICT 0 //add selected features and return predicted time
+#define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
 //automatically set by platforms/architecture
 #if DVFS_EN //ODROID
@@ -67,8 +72,8 @@
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
@@ -100,12 +105,58 @@
     #endif
 #endif
 
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
-#define TYPE_PREDICT 0 //add selected features and return predicted time
-#define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
+//Macro for common code blocks
+#define _INIT_() \
+  int exec_time = 0;\
+  static int jump = 0;\
+  int pid = getpid();\
+  if(check_define()==ERROR_DEFINE){\
+      printf("%s", "DEFINE ERROR!!\n");\
+      return ERROR_DEFINE;\
+  }\
+  llsp_t *solver = llsp_new(N_FEATURE + 1);
+  /*  int exec_time = 0;
+  static int jump = 0;
+  int pid = getpid();
+  if(check_define()==ERROR_DEFINE){
+      printf("%s", "DEFINE ERROR!!\n");
+      return ERROR_DEFINE;
+  }
+  llsp_t *solver = llsp_new(N_FEATURE + 1);*/
+#define _DELAY_() \
+  if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time \
+          - slice_time - dvfs_time - update_time \
+          - additional_dvfs_times) > 0)){\
+    start_timing();\
+    sleep_in_delay(delay_time, cur_freq);\
+    end_timing();\
+    actual_delay_time = exec_timing();\
+  }else\
+    delay_time = 0;\
+  moment_timing_print(2); \
+  print_delay_time(delay_time, actual_delay_time);\
+  print_exec_time(exec_time);\
+  print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);\
+  print_update_time(update_time);
+  /*if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time 
+          - slice_time - dvfs_time - update_time 
+          - additional_dvfs_times) > 0)){
+    start_timing();
+    sleep_in_delay(delay_time, cur_freq);
+    end_timing();
+    actual_delay_time = exec_timing();
+  }else
+    delay_time = 0;
+  moment_timing_print(2); //moment_end
+  print_delay_time(delay_time, actual_delay_time);
+  print_exec_time(exec_time);
+  print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
+  print_update_time(update_time);*/
 
+//Depends on benchmarks
 #if _sha_preread_
 #define N_FEATURE 23
+#define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
 #elif _rijndael_preread_
 #define N_FEATURE 23
 #elif _stringsearch_

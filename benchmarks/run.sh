@@ -5,13 +5,13 @@ BENCHMARK_FOLDER=$BENCH_NAME
 BENCHMARK=$BENCHMARK_FOLDER"-"$4
 
 if [[ $# < 4 ]] ; then
-    echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
-    exit 1
+  echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
+  exit 1
 fi
 
 if [ $2 != "big" ] && [ $2 != "little" ] && [ $2 != "hetero" ] ; then
-    echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
-    exit 1
+  echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
+  exit 1
 fi
 
 if [ $2 == "big" ] ; then
@@ -32,37 +32,41 @@ elif [ $2 == "little" ] ; then
 		echo "unknown architecture"
 		exit 1
 	fi
-    SENSOR_ID="2-0045"
+  SENSOR_ID="2-0045"
 elif [ $2 == "hetero" ] ; then
-    WHICH_CPU="$WHICH_CPU"
-    TASKSET_FLAG="0x0f"
-    MAX_FREQ=1400000
-    SENSOR_ID="2-0045"
+  WHICH_CPU="$WHICH_CPU"
+  TASKSET_FLAG="0x0f"
+  MAX_FREQ=1400000
+  SENSOR_ID="2-0045"
 fi
 
 init(){
-    if [ $1 == "big" ] ; then
-        echo big
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
-        sudo chmod 777 /sys/bus/i2c/drivers/INA231/2-0040/sensor_W
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
-        echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    elif [ $1 == "little" ] ; then
-        echo little
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq
-        sudo chmod 777 /sys/bus/i2c/drivers/INA231/2-0045/sensor_W
-        sudo chmod 777 /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_cur_freq
-        echo $MAX_FREQ > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_max_freq 
-        echo performance > /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-    fi
+	if [ $ARCH_TYPE == "amd64" ] ; then 
+    sudo chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+    sudo chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+    sudo chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq
+    echo $MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 
+    echo performance > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+  elif [ $ARCH_TYPE == "armhf" ] ; then 
+    sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+    sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+    sudo chmod 777 /sys/bus/i2c/drivers/INA231/2-0040/sensor_W
+    sudo chmod 777 /sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq
+    echo $MAX_FREQ > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 
+    echo performance > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+    sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    sudo chmod 777 /sys/bus/i2c/drivers/INA231/2-0045/sensor_W
+    sudo chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+    echo $MAX_FREQ > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 
+    echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	else 
+		echo "unknown architecture"
+		exit 1
+	fi
 }
 
-echo $BENCHMARK">>>"
-init big
-init little
+init 
 
 if [[ $3 ]] ; then
     mkdir -p $PROJECT_PATH/dvfs_sim/data_odroid/$2/$BENCHMARK_FOLDER/$BENCHMARK
@@ -107,8 +111,7 @@ else
 fi
 
 #SET TO PERFORMANCE AFTER RUN ALL
-init big
-init little
+init
 
 echo "[ run.sh "$3" done ]"
 exit 0
