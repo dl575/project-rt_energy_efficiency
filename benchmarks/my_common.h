@@ -46,15 +46,15 @@
 
 #define DEBUG_EN 0 //debug information print on/off
 
-#define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
+#define SWEEP (60) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -71,13 +71,13 @@
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
+#define _stringsearch_ 1
 #define _sha_preread_ 0
-#define _rijndael_preread_ 1
+#define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
@@ -404,112 +404,109 @@ int check_define(void){
 }
 
 void fopen_all(void){
-    #if CORE //big
-		#if DVFS_EN
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-        printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-        }
-		#endif
-    #else //LITTLE
-		#if DVFS_EN
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-    #else
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
-    #endif
-        printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
-    #endif
-	#if DVFS_EN
-    if(NULL == (fp_max_freq_big = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-        printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
-	#endif
-	#if DVFS_EN
-    if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-  #else
-    if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
-	#endif
-        printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
+#if ARCH_ARM
+  #if CORE //big
+  if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+    printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return;
+  }
+  #else //little
+  if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return;
+  }
+  #endif
+  if(NULL == (fp_max_freq_big = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+    printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return;
+  }
+  if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return;
+  }
+#elif ARCH_X86
+  if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
+    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return;
+  }
+  if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
+    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return;
+  }
+#endif
 }
 
 void fclose_all(void){
-   fclose(fp_max_freq);
-#if DVFS_EN
-   fclose(fp_max_freq_big);
+  fclose(fp_max_freq);
+#if ARCH_ARM
+  fclose(fp_max_freq_big);
 #endif
-   fclose(fp_max_freq_little);
-    return;
+  fclose(fp_max_freq_little);
+  return;
 }
 
 int set_freq_to_specific(int khz){
 	start_timing_local();
-    fprintf(fp_max_freq, "%d", khz);
-    fflush(fp_max_freq);
-	end_timing_local();
-    return exec_timing_local();
+  fprintf(fp_max_freq, "%d", khz);
+  fflush(fp_max_freq);
+  end_timing_local();
+  return exec_timing_local();
 }
 
 void set_freq_to_specific_no_timing(int khz){
-    fprintf(fp_max_freq, "%d", khz);
-    fflush(fp_max_freq);
-    return;
+  fprintf(fp_max_freq, "%d", khz);
+  fflush(fp_max_freq);
+  return;
 }
 
 void sleep_in_delay(int delay_time, int cur_freq){
-	#if !IDLE_EN
-		usleep(delay_time);
-	#else
-		//Set to lowest freq
-		int set_freq_delay = set_freq_to_specific(MIN_FREQ);
-		//Delay at lowest freq
-		if(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] > 0)
-			usleep(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]);
-		//Back to previous freq
-		set_freq_to_specific_no_timing(cur_freq);
-	#endif
+#if !IDLE_EN
+  usleep(delay_time);
+#else
+  //Set to lowest freq
+  int set_freq_delay = set_freq_to_specific(MIN_FREQ);
+  //Delay at lowest freq
+  if(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] > 0)
+    usleep(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]);
+  //Back to previous freq
+  set_freq_to_specific_no_timing(cur_freq);
+#endif
 }
 
 void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
-    int predicted_freq = MAX_FREQ;
+  int predicted_freq = MAX_FREQ;
 #if ARCH_ARM
-    static int previous_freq = MAX_FREQ;
-    int job_exec_time;
-    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-        job_exec_time = MARGIN * predicted_exec_time * MAX_FREQ / predicted_freq;
-        //printf("time %d @%d\n", job_exec_time, predicted_freq);
-    #if OVERHEAD_EN // with dvfs + slice overhead
-        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(job_exec_time + slice_time < deadline_time)
-            break;
-    #else // without dvfs + slice and oracle
-        if(job_exec_time < deadline_time)
-            break;
-    #endif
-    }     
+  static int previous_freq = MAX_FREQ;
+  int job_exec_time;
+  for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
+    job_exec_time = MARGIN * predicted_exec_time * MAX_FREQ / predicted_freq;
+  #if OVERHEAD_EN // with dvfs + slice overhead
+    if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
+        break;
+  #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+    if(job_exec_time + slice_time < deadline_time)
+        break;
+  #else // without dvfs + slice and oracle
+    if(job_exec_time < deadline_time)
+        break;
+  #endif
+  }     
 #elif ARCH_X86	
-    //calculate predicted freq and round up by adding 99999
-    predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+  //calculate predicted freq and round up by adding 99999
+  predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
 #endif
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
-	//printf("frqeunecy %d\n\n", predicted_freq);
-    //remember current frequency to use later
+  //if less then 200000, just set it minimum (200000)
+  predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
 #if ARCH_ARM
-    previous_freq = predicted_freq;
+  //remember current frequency to use later
+  previous_freq = predicted_freq;
 #endif
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-    fflush(fp_max_freq);
-    return;
+  //set maximum frequency, because performance governor always use maximum freq.
+  fprintf(fp_max_freq, "%d", predicted_freq);
+  fflush(fp_max_freq);
+  return;
 }
+
 void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
@@ -969,73 +966,93 @@ void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time,
     return;
 }
 
+
 #if !F_PRINT //just use printf
 int print_freq(void){
-    FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
-    int khz; //Value (khz) at start point.
-
-//    #if CORE //big
-#if DVFS_EN
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-            printf("ERROR : FILE READ FAILED\n");
-            return -1;
-        }
-        if(fscanf(fp_freq, "%d", &khz)<0)
-          return -1;
-        printf("big core freq : %dkhz\n", khz);  
-    fclose(fp_freq);
+  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+  int khz; //Value (khz) at start point.
+#if ARCH_ARM
+#if CORE
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  printf("little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  return khz;
+#else
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  printf("little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  return khz;
 #endif
-//    #else //LITTLE
-#if DVFS_EN
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+#elif ARCH_X86
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  printf("little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  return khz;
 #endif
-            printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-            return -1;
-        }
-        if(fscanf(fp_freq, "%d", &khz)<0)
-          return -1;
-        printf("little core freq : %dkhz\n", khz);  
-//    #endif
-    fclose(fp_freq);
-    return khz;
 }
 #elif F_PRINT //some benchmarks use file "times.txt" to print log 
 int print_freq(void){
-    FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
-    int khz; //Value (khz) at start point.
-
-    FILE *time_file;
-    time_file = fopen("times.txt", "a");
-//    #if CORE //big
-#if DVFS_EN
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
-            printf("ERROR : FILE READ FAILED\n");
-            return -1;
-        }
-        if(fscanf(fp_freq, "%d", &khz)<0)
-          return -1;
-        fprintf(time_file, "big core freq : %dkhz\n", khz);  
-#endif
-//    #else //LITTLE
-#if DVFS_EN
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+  FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
+  int khz; //Value (khz) at start point.
+  FILE *time_file;
+  time_file = fopen("times.txt", "a");
+#if ARCH_ARM
+#if CORE
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  fprintf(time_file, "little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  fclose(time_file); 
+  return khz;
 #else
-        if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  fprintf(time_file, "little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  fclose(time_file); 
+  return khz;
 #endif
-            printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-            return -1;
-        }
-        if(fscanf(fp_freq, "%d", &khz)<0)
-          return -1;
-        fprintf(time_file, "little core freq : %dkhz\n", khz);  
-//    #endif
-        fclose(fp_freq);
-    fclose(time_file); 
-    return khz;
+#elif ARCH_X86
+  if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
+    printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+    return -1;
+  }
+  if(fscanf(fp_freq, "%d", &khz)<0)
+    return -1;
+  fprintf(time_file, "little core freq : %dkhz\n", khz);  
+  fclose(fp_freq);
+  fclose(time_file); 
+  return khz;
+#endif
 }
 
 
 #endif
+
+
 
 /* llsp related codes from https://github.com/TUD-OS/ATLAS */
 llsp_t *llsp_new(size_t count)
