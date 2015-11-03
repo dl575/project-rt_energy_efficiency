@@ -1,8 +1,47 @@
 #!/bin/bash
 
-echo "interference start"
-for (( j=0; j<10000; j++ ));
+source global.sh
+
+if [[ $# < 1 ]] ; then
+  echo 'USAGE : ./dummy.sh [big/little]'
+  exit 1
+fi
+
+if [ $1 != "big" ] && [ $1 != "little" ] && [ $1 != "hetero" ] ; then
+  echo 'USAGE : ./dummy.sh [big/little]'
+  exit 1
+fi
+
+if [ $1 == "big" ] ; then
+    WHICH_CPU="cpu7"
+    TASKSET_FLAG="0x80"
+    MAX_FREQ=2000000
+    SENSOR_ID="3-0040"
+elif [ $1 == "little" ] ; then
+	if [ $ARCH_TYPE == "amd64" ] ; then 
+    WHICH_CPU="cpu3"
+    TASKSET_FLAG="0x08"
+    MAX_FREQ=2534000
+	elif [ $ARCH_TYPE == "armhf" ] ; then 
+    WHICH_CPU="cpu3"
+		TASKSET_FLAG="0x08"
+		MAX_FREQ=1400000
+	else 
+		echo "unknown architecture"
+		exit 1
+	fi
+  SENSOR_ID="3-0045"
+elif [ $1 == "hetero" ] ; then
+  WHICH_CPU="cpu3"
+  TASKSET_FLAG="0x08"
+  MAX_FREQ=1400000
+  SENSOR_ID="3-0045"
+fi
+
+echo "[interference start]"
+for (( j=0; j<5000; j++ ));
 do
-  taskset 0x08 echo "interference"
+  taskset $TASKSET_FLAG echo "interference" > dummy.out
 done
-echo "interference end"
+rm dummy.out
+echo "[interference end]"

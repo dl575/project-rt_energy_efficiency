@@ -465,7 +465,6 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
         -9.543077*loop_counter[15] + -0.840988*loop_counter[16] +
         -1.198821*loop_counter[17] + -9.544754*loop_counter[19] +
         -9.544754*loop_counter[20] + -9.544754*loop_counter[21] + -9.544967;
-
     #elif ARCH_X86
       exec_time.little = -0.395954 + -0.395954*loop_counter[0] +
         -6.335272*loop_counter[1] + -1.583818*loop_counter[2] +
@@ -479,6 +478,20 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
         -0.395954*loop_counter[21] + 0;
     #endif
   #else //off-line training with cvx    
+    #if ARCH_ARM
+      exec_time.little = -176.509733*loop_counter[0] +
+        -22.067275*loop_counter[1] + -62.395429*loop_counter[2] +
+        -176.507597*loop_counter[3] + -176.507597*loop_counter[4] +
+        -176.507597*loop_counter[5] + 0.305519*loop_counter[6] +
+        -2849.055084*loop_counter[7] + 0.038208*loop_counter[8] +
+        0.305732*loop_counter[10] + 0.305732*loop_counter[11] +
+        0.305732*loop_counter[12] + -176.507575*loop_counter[15] +
+        1759.938960*loop_counter[16] + -22.066504*loop_counter[17] +
+        -176.498538*loop_counter[19] + -176.498538*loop_counter[20] +
+        -176.498538*loop_counter[21] + -176.498520; 
+    #elif ARCH_X86
+      exec_time.litte = 0;
+    #endif
   #endif
 #elif ONLINE_EN
   #if CORE //on-line training on big core

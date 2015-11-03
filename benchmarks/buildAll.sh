@@ -45,6 +45,9 @@ elif [ $2 == "hetero" ] ; then
     sed -i -e 's/'"$HETERO_DISABLED"'/'"$HETERO_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
+# set predictor
+sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+
 # disable DEBUG_EN
 sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
@@ -61,7 +64,6 @@ fi
 
 # enable DELAY_EN
 sed -i -e 's/'"$DELAY_DISABLED"'/'"$DELAY_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-#sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # disable IDLE_EN
 sed -i -e 's/'"$IDLE_ENABLED"'/'"$IDLE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -80,7 +82,13 @@ sed -i -e 's/'"$PID_ENABLED"'/'"$PID_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 sed -i -e 's/'"$PROACTIVE_ENABLED"'/'"$PROACTIVE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
 # set PREDICT_EN depends on argument 3
-if [ $3 == "predict_dis" ] ; then
+if [ $3 == "set_prediction_offline" ] ; then
+    sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ONLINE_ENABLED"'/'"$ONLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "set_prediction_online" ] ; then
+    sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "predict_dis" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "predict_dis_idle" ] ; then
     sed -i -e 's/'"$PREDICT_ENABLED"'/'"$PREDICT_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
