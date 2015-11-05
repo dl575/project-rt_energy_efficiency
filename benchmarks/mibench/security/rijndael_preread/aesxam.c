@@ -744,12 +744,8 @@ int main(int argc, char *argv[])
       end_timing();
 //free(file_buffer);
       //---------------------modified by TJSong----------------------//
-      exec_time = exec_timing();
-      int cur_freq = print_freq(); 
-      int delay_time = 0;
-      int actual_delay_time = 0;
-      int additional_dvfs_times = 0;
-      int update_time = 0;
+
+      _DEFINE_TIME_();
 
       #if IDLE_EN
         additional_dvfs_times =
@@ -762,7 +758,7 @@ int main(int argc, char *argv[])
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
           start_timing();
-          update_time = get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
+          (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
               cur_freq);
           end_timing();
           update_time = exec_timing();

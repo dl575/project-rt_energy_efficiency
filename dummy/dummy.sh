@@ -39,9 +39,18 @@ elif [ $1 == "hetero" ] ; then
 fi
 
 echo "[interference start]"
-for (( j=0; j<5000; j++ ));
-do
-  taskset $TASKSET_FLAG echo "interference" > dummy.out
-done
-rm dummy.out
+START=$(($(date +%s%N)/1000))
+echo $START
+#for (( j=0; j<5000; j++ ));
+#do
+#  taskset $TASKSET_FLAG echo "interference" > dummy.out
+#  taskset $TASKSET_FLAG echo "interference" > dummy.out
+#done
+#rm dummy.out
+cd compile_long
+taskset $TASKSET_FLAG make -B
+cd ../
 echo "[interference end]"
+END=$(($(date +%s%N)/1000))
+echo $END
+echo $(($END-$START))" us"

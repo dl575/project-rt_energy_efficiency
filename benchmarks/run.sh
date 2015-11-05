@@ -90,30 +90,32 @@ if [[ $3 ]] ; then
 
     PRE_PWD=`pwd`
     cd $PRE_PWD
-#    if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
-#       [ ${BENCH_NAME[$1]} == "rijndael_preread" ] || \
-#       [ ${BENCH_NAME[$1]} == "stringsearch" ] ; then
-#      echo ${BENCH_NAME[$1]}"..."
-#      ./gen_runme_slice.py > runme_slice.sh
-#      chmod a+x runme_slice.sh
-#      sleep 3
-#      cat /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-#      taskset $TASKSET_FLAG ./runme_slice.sh
-#    fi
+    if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
+       [ ${BENCH_NAME[$1]} == "rijndael_preread" ] || \
+       [ ${BENCH_NAME[$1]} == "stringsearch" ] ; then
+      echo ${BENCH_NAME[$1]}"..."
+      ./gen_runme_slice.py > runme_slice.sh
+      chmod a+x runme_slice.sh
+      sleep 3
+      cat /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+      taskset $TASKSET_FLAG ./runme_slice.sh
+    fi
+
+#    echo ${BENCH_NAME[$1]}"..."
+#    ./gen_runme_slice_dummy.py > runme_slice.sh
+#    chmod a+x runme_slice.sh
+#    sleep 3
+#    taskset $TASKSET_FLAG ./runme_slice.sh &
+#    sleep 3;
 #
-    echo ${BENCH_NAME[$1]}"..."
-    ./gen_runme_slice_dummy.py > runme_slice.sh
-    chmod a+x runme_slice.sh
-    sleep 3
-    taskset $TASKSET_FLAG ./runme_slice.sh &
-    sleep 3;
-
-    PRE_PWD=`pwd`
-    cd /$PROJECT_PATH/dummy/
-    /$PROJECT_PATH/dummy/dummy.sh $2 &
-    sleep 180; #dumm.sh takes around 150s at lowest freq on little core
-    cd $PRE_PWD 
-
+#    PRE_PWD=`pwd`
+#    cd /$PROJECT_PATH/dummy/
+#    /$PROJECT_PATH/dummy/dummy.sh $2 &
+#    /$PROJECT_PATH/dummy/dummy.sh $2 &
+#    /$PROJECT_PATH/dummy/dummy.sh $2 &
+#    sleep 120; #dummy.sh takes around 150s at lowest freq on little core
+#    cd $PRE_PWD 
+#
     cp $PRE_PWD/output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$2/$BENCHMARK_FOLDER/$BENCHMARK/$3
 else
     echo "specify governor!"

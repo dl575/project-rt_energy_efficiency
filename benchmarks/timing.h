@@ -18,10 +18,10 @@ extern int client_join;
 //all benchmarks use below common timing functions
 extern void start_timing();
 extern void end_timing();
-extern int exec_timing();
+extern double exec_timing();
 extern void start_timing_local();
 extern void end_timing_local();
-extern int exec_timing_local();
+extern double exec_timing_local();
 extern void init_time_file();
 extern void my_usleep(unsigned long us);
 
@@ -30,14 +30,14 @@ extern void print_array(int *array, int array_len);
 extern void print_timing();
 extern void print_timing_local();
 extern void moment_timing_print();
-extern int print_slice_timing();
-extern int print_dvfs_timing();
-extern void print_deadline(int deadline_time);
-extern void print_predicted_time(int predicted_exec_time);
-extern void print_exec_time(int exec_time);
-extern void print_total_time(int exec_time);
-extern void print_delay_time(int delay_time, int actual_delay_time);
-extern void print_update_time(int update_time);
+extern double print_slice_timing();
+extern double print_dvfs_timing();
+extern void print_deadline(double deadline_time);
+extern void print_predicted_time(double predicted_exec_time);
+extern void print_exec_time(double exec_time);
+extern void print_total_time(double exec_time);
+extern void print_delay_time(double delay_time, double actual_delay_time);
+extern void print_update_time(double update_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
@@ -64,8 +64,8 @@ void end_timing() {
 /*
  * Return excute time
  */
-int exec_timing() {
-  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+double exec_timing() {
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec);
 }
 /*
  * Start of section to time.
@@ -82,9 +82,9 @@ void end_timing_local() {
 /*
  * Return excute time
  */
-int exec_timing_local() {
-  return (int)(end_local.tv_sec - start_local.tv_sec)*1000000 +
-	  (int)(end_local.tv_usec - start_local.tv_usec);
+double exec_timing_local() {
+  return (double)(end_local.tv_sec - start_local.tv_sec)*1000000 +
+	  (double)(end_local.tv_usec - start_local.tv_usec);
 }
 /*
  * Create new times.txt file
@@ -158,51 +158,51 @@ void moment_timing_print(int start_end) {
 /*
  * Print slicing timing information to stdout.
  */
-int print_slice_timing() {
+double print_slice_timing() {
   static int instance_number = 0;
   printf("time_slice %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
-  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec);
 }
 /*
  * Print dvfs timing information to stdout.
  */
-int print_dvfs_timing() {
+double print_dvfs_timing() {
   static int instance_number = 0;
   printf("time_dvfs %d = %d us\n", instance_number, 
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
-  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec);
 }
 /*
  * Print deadline information to stdout.
  */
-void print_deadline(int deadline_time){
-    printf("============ deadline time : %d us ===========\n", deadline_time);
+void print_deadline(double deadline_time){
+    printf("============ deadline time : %d us ===========\n", (int)deadline_time);
 }
-void print_predicted_time(int predicted_exec_time){
-    printf("predicted time = %d\n", predicted_exec_time);
+void print_predicted_time(double predicted_exec_time){
+    printf("predicted time = %d\n", (int)predicted_exec_time);
 }
-void print_exec_time(int exec_time){
+void print_exec_time(double exec_time){
     static int instance_number = 0;
-    printf("time %d = %d us\n", instance_number, exec_time);
+    printf("time %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
 }
-void print_total_time(int exec_time){
+void print_total_time(double exec_time){
     static int instance_number = 0;
-    printf("time_total %d = %d us\n", instance_number, exec_time);
+    printf("time_total %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
 }
-void print_delay_time(int pre_delay_time, int actual_delay_time){
+void print_delay_time(double pre_delay_time, double actual_delay_time){
     static int instance_number = 0;
-    printf("delay should be %d = %d us\n", instance_number, pre_delay_time);
-    printf("actual dealy is %d = %d us\n", instance_number, actual_delay_time);
+    printf("delay should be %d = %d us\n", instance_number, (int)pre_delay_time);
+    printf("actual dealy is %d = %d us\n", instance_number, (int)actual_delay_time);
     instance_number++;
 }
-void print_update_time(int exec_time){
+void print_update_time(double exec_time){
     static int instance_number = 0;
-    printf("time_update %d = %d us\n", instance_number, exec_time);
+    printf("time_update %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
 }
 void print_current_core(int current_core, int big_little_cnt){
@@ -342,7 +342,7 @@ void moment_timing_print(int start_end) {
 /*
  * Write slicing timing information to times.txt.
  */
-int print_slice_timing() {
+double print_slice_timing() {
   static int instance_number = 0;
   FILE *time_file;
   time_file = fopen("times.txt", "a");
@@ -350,12 +350,12 @@ int print_slice_timing() {
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
   fclose(time_file);
-  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec));
 }
 /*
  * Write dvfs timing information to times.txt.
  */
-int print_dvfs_timing() {
+double print_dvfs_timing() {
   static int instance_number = 0;
   FILE *time_file;
   time_file = fopen("times.txt", "a");
@@ -363,54 +363,56 @@ int print_dvfs_timing() {
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
   fclose(time_file);
-  return (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec);
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec));
 }
 /*
  * Write deadline information to times.txt.
  */
-void print_deadline(int deadline_time){
+void print_deadline(double deadline_time){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "============ deadline time : %d us ===========\n", deadline_time);
+    fprintf(time_file, "============ deadline time : %d us ===========\n",
+        (int)deadline_time);
     fclose(time_file);
 }
-void print_predicted_time(int predicted_exec_time){
+void print_predicted_time(double predicted_exec_time){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "predicted time = %d\n", predicted_exec_time);
+    fprintf(time_file, "predicted time = %d\n", (int)predicted_exec_time);
     fclose(time_file);
 }
-void print_exec_time(int exec_time){
+void print_exec_time(double exec_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "time %d = %d us\n", instance_number, exec_time);
+    fprintf(time_file, "time %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
     fclose(time_file);
 }
-void print_total_time(int exec_time){
+void print_total_time(double exec_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "time_total %d = %d us\n", instance_number, exec_time);
+    fprintf(time_file, "time_total %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
     fclose(time_file);
 }
-void print_delay_time(int pre_delay_time, int actual_delay_time){
+void print_delay_time(double pre_delay_time, double actual_delay_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "delay should be %d = %d us\n", instance_number, pre_delay_time);
+    fprintf(time_file, "delay should be %d = %d us\n", instance_number, 
+        (int)pre_delay_time);
     fprintf(time_file, "actual dealy is %d = %d us\n", instance_number,
-			actual_delay_time);
+			  (int)actual_delay_time);
     instance_number++;
     fclose(time_file);
 }
-void print_update_time(int exec_time){
+void print_update_time(double exec_time){
     static int instance_number = 0;
     FILE *time_file;
     time_file = fopen("times.txt", "a");
-    fprintf(time_file, "time_update %d = %d us\n", instance_number, exec_time);
+    fprintf(time_file, "time_update %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
     fclose(time_file);
 }

@@ -21,8 +21,8 @@
 
 //constant
 #define ERROR_DEFINE -1
-#define AVG_DVFS_TIME 0
-#define MARGIN 1.1f
+#define AVG_DVFS_TIME (double)0
+#define MARGIN (double)1.1
 
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
@@ -31,7 +31,7 @@
 #define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
@@ -51,7 +51,7 @@
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 1 //0:off-line training, 1:on-line training
@@ -71,13 +71,13 @@
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 1
+#define _stringsearch_ 0
 #define _sha_preread_ 0
-#define _rijndael_preread_ 0
+#define _rijndael_preread_ 1
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
@@ -92,34 +92,47 @@
 #if CORE //big
     #if _pocketsphinx_
         //max_exec * sweep / 100
-        #define DEADLINE_TIME (int)((4000000*SWEEP)/100) 
+        #define DEADLINE_TIME (double)((4000000*SWEEP)/100) 
     #else
-        #define DEADLINE_TIME (int)((50000*SWEEP)/100)
+        #define DEADLINE_TIME (double)((50000*SWEEP)/100)
     #endif
 #else //LITTLE
     #if _pocketsphinx_
-        #define DEADLINE_TIME (int)((4000000*SWEEP)/100)
+        #define DEADLINE_TIME (double)((4000000*SWEEP)/100)
     #else
-        #define DEADLINE_TIME (int)((50000*SWEEP)/100)
+        #define DEADLINE_TIME (double)((50000*SWEEP)/100)
     #endif
 #endif
 
 //Macro for common code blocks
 #define _INIT_() \
-  int exec_time = 0;\
+  double exec_time = 0;\
   static int jump = 0;\
   if(check_define()==ERROR_DEFINE){\
       printf("%s", "DEFINE ERROR!!\n");\
       return ERROR_DEFINE;\
   }\
   llsp_t *solver = llsp_new(N_FEATURE + 1);
-  /*  int exec_time = 0;
+  /*  double exec_time = 0;
   static int jump = 0;
   if(check_define()==ERROR_DEFINE){
       printf("%s", "DEFINE ERROR!!\n");
       return ERROR_DEFINE;
   }
   llsp_t *solver = llsp_new(N_FEATURE + 1);*/
+#define _DEFINE_TIME_() \
+  exec_time = exec_timing();\
+  int cur_freq = print_freq(); \
+  int delay_time = 0;\
+  int actual_delay_time = 0;\
+  int additional_dvfs_times = 0;\
+  int update_time = 0;
+  /*exec_time = exec_timing();
+  int cur_freq = print_freq(); 
+  int delay_time = 0;
+  int actual_delay_time = 0;
+  int additional_dvfs_times = 0;
+  int update_time = 0;*/
 #define _DELAY_() \
   if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time \
           - slice_time - dvfs_time - update_time \
@@ -172,22 +185,31 @@
 #if _sha_preread_
 #define N_FEATURE 23
 #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
+#define SCALE (double)1000
 #elif _rijndael_preread_
 #define N_FEATURE 23
 #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
+#define SCALE (double)1000
 #elif _stringsearch_
 #define N_FEATURE 4
 #define _SLICE_() slice(search_strings[i], solver);
+#define SCALE (double)1
 #else
 #define N_FEATURE 4
+#define SCALE (double)1
 #endif
+#define N_ERROR (10)
+#define N_STABLE (4)
+#define N_EVENT (3)
+//#define N_STABLE N_FEATURE
 
 /* codes from https://github.com/TUD-OS/ATLAS */
-#define AGING_FACTOR (0.0)
+#define REMOVE_FACTOR (0.0)
 #define COLUMN_CONTRIBUTION 1.1
 typedef struct llsp_s llsp_t;
 llsp_t *llsp_new(size_t count);
-void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, double target);
+void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, 
+    double target, double remove_factor);
 const double *llsp_solve(llsp_t *restrict llsp);
 double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics);
 void llsp_dispose(llsp_t *restrict llsp);
@@ -218,8 +240,8 @@ static void trisolve(struct matrix m);
 
 
 struct slice_return{
-    int big;
-    int little;
+  double big;
+  double little;
 };
 
 struct timeval start, end, moment;
@@ -227,10 +249,10 @@ struct timeval start_local, end_local;
 
 void start_timing_local();
 void end_timing_local();
-int exec_timing_local();
+double exec_timing_local();
 
-int slice_time=0;
-int dvfs_time=0;
+double slice_time=0;
+double dvfs_time=0;
 
 FILE *fp_max_freq; //File pointer scaling_max_freq
 FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
@@ -445,7 +467,7 @@ void fclose_all(void){
   return;
 }
 
-int set_freq_to_specific(int khz){
+double set_freq_to_specific(int khz){
 	start_timing_local();
   fprintf(fp_max_freq, "%d", khz);
   fflush(fp_max_freq);
@@ -459,29 +481,31 @@ void set_freq_to_specific_no_timing(int khz){
   return;
 }
 
-void sleep_in_delay(int delay_time, int cur_freq){
+void sleep_in_delay(double delay_time, int cur_freq){
 #if !IDLE_EN
-  usleep(delay_time);
+  usleep((int)delay_time);
 #else
   //Set to lowest freq
-  int set_freq_delay = set_freq_to_specific(MIN_FREQ);
+  double set_freq_delay = set_freq_to_specific(MIN_FREQ);
   //Delay at lowest freq
   if(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] > 0)
-    usleep(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]);
+    usleep(int(delay_time - set_freq_delay -
+          (double)dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]));
   //Back to previous freq
   set_freq_to_specific_no_timing(cur_freq);
 #endif
 }
 
-void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
+void set_freq(double predicted_exec_time, double slice_time, 
+    double deadline_time, double avg_dvfs_time){
   int predicted_freq = MAX_FREQ;
 #if ARCH_ARM
   static int previous_freq = MAX_FREQ;
-  int job_exec_time;
+  double job_exec_time;
   for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-    job_exec_time = MARGIN * predicted_exec_time * MAX_FREQ / predicted_freq;
+    job_exec_time = MARGIN * predicted_exec_time * (double)MAX_FREQ / (double)predicted_freq;
   #if OVERHEAD_EN // with dvfs + slice overhead
-    if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
+    if(job_exec_time + (double)dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
         break;
   #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
     if(job_exec_time + slice_time < deadline_time)
@@ -493,7 +517,8 @@ void set_freq(float predicted_exec_time, int slice_time, int deadline_time, int 
   }     
 #elif ARCH_X86	
   //calculate predicted freq and round up by adding 99999
-  predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
+  predicted_freq = (int)(MARGIN * predicted_exec_time * MAX_FREQ /
+      (deadline_time - slice_time - avg_dvfs_time) + 99999);
 #endif
   //if less then 200000, just set it minimum (200000)
   predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
@@ -918,54 +943,6 @@ int set_freq_multiple_hetero(int job, int d, int pid){
     return jump;
 }
 
-void set_freq_uzbl(float predicted_exec_time, int slice_time, int deadline_time, int avg_dvfs_time){
-#if DVFS_EN
-   #if CORE //big
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-        }
-    #else //LITTLE
-    #if DVFS_EN
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-    #else
-        if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
-    #endif
-        printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-        return;
-    }
-    #endif
-#endif
-    int job_exec_time;
-    int predicted_freq = MAX_FREQ;
-    static int previous_freq = MAX_FREQ;
-    for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-        job_exec_time = 1.1 * predicted_exec_time * MAX_FREQ / predicted_freq;
-    #if OVERHEAD_EN
-        if(job_exec_time + dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
-            break;
-    #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
-        if(job_exec_time + slice_time < deadline_time)
-            break;
-    #else
-        if(job_exec_time < deadline_time)
-            break;
-    #endif
-    }      
-    //calculate predicted freq and round up by adding 99999
-    //predicted_freq = 1.1 * predicted_exec_time * MAX_FREQ / (deadline_time - slice_time - avg_dvfs_time) + 99999;
-    //if less then 200000, just set it minimum (200000)
-    predicted_freq = (predicted_freq < 200000 || predicted_exec_time <= 1)?(200000):(predicted_freq);
-    //remember current frequency to use later
-    previous_freq = predicted_freq;
-    //set maximum frequency, because performance governor always use maximum freq.
-    fprintf(fp_max_freq, "%d", predicted_freq);
-#if DVFS_EN
-    fclose(fp_max_freq);
-#endif
-    return;
-}
-
 
 #if !F_PRINT //just use printf
 int print_freq(void){
@@ -1073,7 +1050,8 @@ llsp_t *llsp_new(size_t count)
 	return llsp;
 }
 
-void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, double target)
+void llsp_add(llsp_t *restrict llsp, const double *restrict metrics,
+    double target, double remove_factor)
 {
 	const size_t column_count = llsp->full.columns;
 	const size_t row_count = llsp->full.columns + 1;  // extra row for shifting down and trisolve
@@ -1103,7 +1081,7 @@ void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, double targ
 	
 	/* age out the past a little bit */
 	for (size_t element = 0; element < row_count * column_count; element++)
-		llsp->data[element] *= 1.0 - AGING_FACTOR;
+		llsp->data[element] *= 1.0 - remove_factor;
 	
 	/* add new row to the top of the solving matrix */
 	memmove(llsp->data + 1, llsp->data, data_size - sizeof(double));
@@ -1302,49 +1280,108 @@ static void trisolve(struct matrix m)
 //                      return predicted time 
 // type == update     : update loop counter (x)
 //                      solve MLSR to find (betha)
+// Check errro in consecutive jobs for the interference event
 //////////////////////////////////////////////////////////////////////
+int func_is_stable(double errors[N_ERROR], int n_stable){
+  int avg_error = 0;
+  printf("stable error \n");
+  for(int i = 0; i < n_stable ; i++){
+    printf("%f ,", errors[i]);
+    avg_error += fabs(errors[i]);
+  }
+  avg_error /= n_stable;
+  if(avg_error > 10.0)
+    return 0;
+  else
+    return 1;
+}
+int func_is_event(double errors[N_ERROR], int n_event){
+  int is_event = 1;
+  int avg_error = 0;
+  //if any error in n_event is less than 10%, we count this as just outlier
+  //when errors in n_event consecutive jobs, we count this as an event
+  printf("event error \n");
+  for(int i = 0; i < n_event ; i++){
+    printf("%f ,", errors[i]);
+    avg_error += fabs(errors[i]);
+    if(errors[i] < 10.0)
+      is_event = 0;
+  }
+  avg_error /= n_event;
+  if(avg_error > 10.0)
+    is_event = 1;
 
+  return is_event;
+}
 int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     int size, int actual_exec_time, int freq)
 { 
   int i;
   static double error = 100.0; //error = |actual-predicted|/actual*100
+  static double errors[N_ERROR] = {0}; //save the past errors
+  static int is_stable = 0; //indicator whether prediction is stable
   static double exec_time = 0; //predicted execution time
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
+  static double remove_factor = 0.0; //remove factor
 
   if(type == TYPE_PREDICT)//add selected features, return predicted time
   {
     //update params.xx, add 1 to leftmost column for constant term
-    metrics[0] = (double)1;
+    metrics[0] = (double)1/SCALE;
     for(i = 0; i < size ; i++)
-      metrics[i+1] = (double)loop_counter[i];
+      metrics[i+1] = (double)loop_counter[i]/SCALE;
 
     //get predicted time
     exec_time = llsp_predict(solver, metrics);
 
     //check error in previous job, and decide return value
-    if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
+    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
+    if(!is_stable){//be conservative until prediction is stable
 #if DELAY_EN
       return DEADLINE_TIME;
 #else
-      return (int)exec_time;
+      return exec_time;
 #endif
     }
-    else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
-      return (int)exec_time;
+    //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
+    else//as soon as it is stable, we can use predicted time
+      return exec_time;
   }
   else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
   {
     //update params.yy, we assume time is scaled by freq linearly
-    double scaled_actual_exec_time 
-      = (double)actual_exec_time * ((double)freq/(double)MAX_FREQ);
-    llsp_add(solver, metrics, scaled_actual_exec_time);
+    double scaled_actual_exec_time = (double)actual_exec_time *
+      ((double)freq/(double)MAX_FREQ);
+    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    
+    //reset remove_factore as 0 
+    remove_factor = 0.0;
 
     //solve with updated params.xx and params.yy
     (void)llsp_solve(solver);
 
     //calculate an error 
     error = (scaled_actual_exec_time - (double)exec_time)/scaled_actual_exec_time*100;
+
+    //update errors array, keep newest one at the first index 
+    for(int j = N_ERROR-1 ; j > 0; j--)
+      errors[j] = errors[j-1];
+    errors[0] = error;
+
+    //for(int j=0; j<N_ERROR; j++)
+    //  printf("%f, ", errors[j]);
+
+    //check stability
+    is_stable = func_is_stable(errors, N_STABLE);
+
+    //While prediction is stable, if we find errors in consecutive jobs, we
+    //give up old data by removing factor (if 0.9, decrease by 90%)
+    printf("is stable %d, is_event %d\n", is_stable, func_is_event(errors,
+          N_EVENT));
+    if(is_stable && func_is_event(errors, N_EVENT)){
+      printf("old data removed\n");
+      remove_factor = 1.00;
+    }
 
     return -1;//return dummy
   }else{
