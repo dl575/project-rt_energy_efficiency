@@ -42,11 +42,11 @@ extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
-
+/*
 extern void print_start_temperature();
 extern void print_end_temperature();
 extern void print_file(FILE *file);
-
+*/
 //Implement actual function body
 /*
  * Start of section to time.
@@ -232,8 +232,6 @@ void print_freq_power(int f_new_big, int f_new_little, float power_big, float po
 }
 
 /*
- * Print start temperature
- */
 void print_start_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
@@ -245,9 +243,6 @@ void print_start_temperature() {
     print_file(fp_tmu);
     instance_number++;
 }
-/*
- * Print end temperature
- */
 void print_end_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
@@ -259,9 +254,6 @@ void print_end_temperature() {
     print_file(fp_tmu);
     instance_number++;
 }
-/*
- * Print file
- */
 void print_file(FILE *file){
     int c;
     if(file){
@@ -272,7 +264,7 @@ void print_file(FILE *file){
     }
     return;
 }
-
+*/
 #elif F_PRINT //some benchmarks use file "times.txt" to print log 
 /*
  * Write the passed integer array to the timing file.
@@ -350,7 +342,7 @@ double print_slice_timing() {
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
   fclose(time_file);
-  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec));
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec);
 }
 /*
  * Write dvfs timing information to times.txt.
@@ -363,7 +355,7 @@ double print_dvfs_timing() {
     (int)(end.tv_sec - start.tv_sec)*1000000 + (int)(end.tv_usec - start.tv_usec));
   instance_number++;
   fclose(time_file);
-  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec));
+  return (double)(end.tv_sec - start.tv_sec)*1000000 + (double)(end.tv_usec - start.tv_usec);
 }
 /*
  * Write deadline information to times.txt.
@@ -454,8 +446,6 @@ void print_freq_power(int f_new_big, int f_new_little, float power_big, float po
 }
 
 /*
- * Write start temperature
- */
 void print_start_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
@@ -463,16 +453,13 @@ void print_start_temperature() {
     time_file = fopen("times.txt", "a");
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         fprintf(time_file, "TMU Read Error\n");
-        return -1;
+        return;
     }
     fprintf(time_file, "start_temperature %d\n", instance_number);
     fclose(time_file);
     print_file(fp_tmu);
     instance_number++;
 }
-/*
- * Write end temperature
- */
 void print_end_temperature() {
     static int instance_number = 0;
     FILE *fp_tmu; //File pointer of TMU file
@@ -480,16 +467,13 @@ void print_end_temperature() {
     time_file = fopen("times.txt", "a");
     if(NULL == (fp_tmu = fopen("/sys/bus/platform/drivers/exynos-tmu/10060000.tmu/temp", "r"))){
         fprintf(time_file, "TMU Read Error\n");
-        return -1;
+        return;
     }
     fprintf(time_file, "end_temperature %d\n", instance_number);
     fclose(time_file);
     print_file(fp_tmu);
     instance_number++;
 }
-/*
- * Write file
- */
 void print_file(FILE *file){
     int c;
     FILE *time_file;
@@ -502,7 +486,7 @@ void print_file(FILE *file){
         fclose(file);
     }
     return;
-}
+}*/
 #endif
 
 #endif

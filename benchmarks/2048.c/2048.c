@@ -17,10 +17,9 @@
 #include <time.h>
 #include <signal.h>
 
-#include "../timing.h"
-#include "../my_common.h"
+#include "timing.h"
 
-#define SIZE 4
+#define SIZE 30
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -40,7 +39,7 @@ void getColor(uint8_t value, char *color, size_t length) {
     snprintf(color,length,"\e[38;5;%d;48;5;%dm",*foreground,*background);
 }
 
-void drawBoard(uint8_t board[SIZE][SIZE]) {
+void drawBoard(uint8_t board[SIZE][SIZE], int new_s) {
     uint8_t x,y;
     char c;
     char color[40], reset[] = "\e[m";
@@ -48,15 +47,15 @@ void drawBoard(uint8_t board[SIZE][SIZE]) {
 
     printf("2048.c %17d pts\n\n",score);
 
-    for (y=0;y<SIZE;y++) {
-        for (x=0;x<SIZE;x++) {
+    for (y=0;y<new_s;y++) {
+        for (x=0;x<new_s;x++) {
             getColor(board[x][y],color,40);
             printf("%s",color);
             printf("       ");
             printf("%s",reset);
         }
         printf("\n");
-        for (x=0;x<SIZE;x++) {
+        for (x=0;x<new_s;x++) {
             getColor(board[x][y],color,40);
             printf("%s",color);
             if (board[x][y]!=0) {
@@ -70,7 +69,7 @@ void drawBoard(uint8_t board[SIZE][SIZE]) {
             printf("%s",reset);
         }
         printf("\n");
-        for (x=0;x<SIZE;x++) {
+        for (x=0;x<new_s;x++) {
             getColor(board[x][y],color,40);
             printf("%s",color);
             printf("       ");
@@ -107,11 +106,11 @@ uint8_t findTarget(uint8_t array[SIZE],uint8_t x,uint8_t stop) {
     return x;
 }
 
-bool slideArray(uint8_t array[SIZE]) {
+bool slideArray(uint8_t array[SIZE], int new_s) {
     bool success = false;
     uint8_t x,t,stop=0;
 
-    for (x=0;x<SIZE;x++) {
+    for (x=0;x<new_s;x++) {
         if (array[x]!=0) {
             t = findTarget(array,x,stop);
             // if target is not original position, then move or merge
@@ -135,8 +134,8 @@ bool slideArray(uint8_t array[SIZE]) {
     return success;
 }
 
-void rotateBoard(uint8_t board[SIZE][SIZE]) {
-    uint8_t i,j,n=SIZE;
+void rotateBoard(uint8_t board[SIZE][SIZE], int new_s) {
+    uint8_t i,j,n=new_s;
     uint8_t tmp;
     for (i=0; i<n/2; i++) {
         for (j=i; j<n-i-1; j++) {
@@ -149,61 +148,61 @@ void rotateBoard(uint8_t board[SIZE][SIZE]) {
     }
 }
 
-bool moveUp(uint8_t board[SIZE][SIZE]) {
+bool moveUp(uint8_t board[SIZE][SIZE], int new_s) {
     bool success = false;
     uint8_t x;
-    for (x=0;x<SIZE;x++) {
-        success |= slideArray(board[x]);
+    for (x=0;x<new_s;x++) {
+        success |= slideArray(board[x], new_s);
     }
     return success;
 }
 
-bool moveLeft(uint8_t board[SIZE][SIZE]) {
+bool moveLeft(uint8_t board[SIZE][SIZE], int new_s) {
     bool success;
-    rotateBoard(board);
-    success = moveUp(board);
-    rotateBoard(board);
-    rotateBoard(board);
-    rotateBoard(board);
+    rotateBoard(board, new_s);
+    success = moveUp(board, new_s);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
     return success;
 }
 
-bool moveDown(uint8_t board[SIZE][SIZE]) {
+bool moveDown(uint8_t board[SIZE][SIZE], int new_s) {
     bool success;
-    rotateBoard(board);
-    rotateBoard(board);
-    success = moveUp(board);
-    rotateBoard(board);
-    rotateBoard(board);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    success = moveUp(board, new_s);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
     return success;
 }
 
-bool moveRight(uint8_t board[SIZE][SIZE]) {
+bool moveRight(uint8_t board[SIZE][SIZE], int new_s) {
     bool success;
-    rotateBoard(board);
-    rotateBoard(board);
-    rotateBoard(board);
-    success = moveUp(board);
-    rotateBoard(board);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    success = moveUp(board, new_s);
+    rotateBoard(board, new_s);
     return success;
 }
 
-bool findPairDown(uint8_t board[SIZE][SIZE]) {
+bool findPairDown(uint8_t board[SIZE][SIZE], int new_s) {
     bool success = false;
     uint8_t x,y;
-    for (x=0;x<SIZE;x++) {
-        for (y=0;y<SIZE-1;y++) {
+    for (x=0;x<new_s;x++) {
+        for (y=0;y<new_s-1;y++) {
             if (board[x][y]==board[x][y+1]) return true;
         }
     }
     return success;
 }
 
-uint8_t countEmpty(uint8_t board[SIZE][SIZE]) {
+uint8_t countEmpty(uint8_t board[SIZE][SIZE], int new_s) {
     uint8_t x,y;
     uint8_t count=0;
-    for (x=0;x<SIZE;x++) {
-        for (y=0;y<SIZE;y++) {
+    for (x=0;x<new_s;x++) {
+        for (y=0;y<new_s;y++) {
             if (board[x][y]==0) {
                 count++;
             }
@@ -212,19 +211,20 @@ uint8_t countEmpty(uint8_t board[SIZE][SIZE]) {
     return count;
 }
 
-bool gameEnded(uint8_t board[SIZE][SIZE]) {
+bool gameEnded(uint8_t board[SIZE][SIZE], int new_s) {
     bool ended = true;
-    if (countEmpty(board)>0) return false;
-    if (findPairDown(board)) return false;
-    rotateBoard(board);
-    if (findPairDown(board)) ended = false;
-    rotateBoard(board);
-    rotateBoard(board);
-    rotateBoard(board);
+    if (countEmpty(board, new_s)>0) return false;
+    if (findPairDown(board, new_s)) return false;
+    rotateBoard(board, new_s);
+    if (findPairDown(board, new_s)) ended = false;
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    rotateBoard(board, new_s);
+    ended = false;
     return ended;
 }
 
-void addRandom(uint8_t board[SIZE][SIZE]) {
+void addRandom(uint8_t board[SIZE][SIZE], int new_s) {
     static bool initialized = false;
     uint8_t x,y;
     uint8_t r,len=0;
@@ -236,8 +236,8 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
         initialized = true;
     }
 
-    for (x=0;x<SIZE;x++) {
-        for (y=0;y<SIZE;y++) {
+    for (x=0;x<new_s;x++) {
+        for (y=0;y<new_s;y++) {
             if (board[x][y]==0) {
                 list[len][0]=x;
                 list[len][1]=y;
@@ -255,16 +255,16 @@ void addRandom(uint8_t board[SIZE][SIZE]) {
     }
 }
 
-void initBoard(uint8_t board[SIZE][SIZE]) {
+void initBoard(uint8_t board[SIZE][SIZE], int new_s) {
     uint8_t x,y;
     for (x=0;x<SIZE;x++) {
         for (y=0;y<SIZE;y++) {
             board[x][y]=0;
         }
     }
-    addRandom(board);
-    addRandom(board);
-    drawBoard(board);
+    addRandom(board, new_s);
+    addRandom(board, new_s);
+    drawBoard(board, new_s);
     score = 0;
 }
 
@@ -322,7 +322,7 @@ int test() {
         for (i=0;i<SIZE;i++) {
             array[i] = in[i];
         }
-        slideArray(array);
+        slideArray(array, SIZE);
         for (i=0;i<SIZE;i++) {
             if (array[i] != out[i]) {
                 success = false;
@@ -361,15 +361,16 @@ void signal_callback_handler(int signum) {
     exit(signum);
 }
 
-struct slice_return main_loop_slice(char c, uint8_t board[4][4])
+struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE], 
+    int new_s, llsp_t *restrict solver)
 {
   uint8_t scheme_rename = scheme;
-  uint8_t board_rename[4][4];
+  uint8_t board_rename[SIZE][SIZE];
   int board_i0;
-  for (board_i0 = 0; board_i0 < 4; board_i0++)
+  for (board_i0 = 0; board_i0 < new_s; board_i0++)
   {
     int board_i1;
-    for (board_i1 = 0; board_i1 < 4; board_i1++)
+    for (board_i1 = 0; board_i1 < new_s; board_i1++)
     {
       board_rename[board_i0][board_i1] = board[board_i0][board_i1];
     }
@@ -393,7 +394,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename5;
         uint8_t j_rename5;
-        uint8_t n_rename5 = 4;
+        uint8_t n_rename5 = new_s;
         uint8_t tmp_rename5;
         for (i_rename5 = 0; i_rename5 < (n_rename5 / 2); i_rename5++)
         {
@@ -418,7 +419,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
         bool return_value;
         bool success_rename6 = false;
         uint8_t x_rename6;
-        for (x_rename6 = 0; x_rename6 < 4; x_rename6++)
+        for (x_rename6 = 0; x_rename6 < new_s; x_rename6++)
         {
           loop_counter[5]++;
           {
@@ -427,7 +428,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
             uint8_t x_rename24;
             uint8_t t_rename24;
             uint8_t stop_rename24 = 0;
-            for (x_rename24 = 0; x_rename24 < 4; x_rename24++)
+            for (x_rename24 = 0; x_rename24 < new_s; x_rename24++)
             {
               loop_counter[6]++;
               if (board_rename[x_rename6][x_rename24] != 0)
@@ -539,7 +540,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename7;
         uint8_t j_rename7;
-        uint8_t n_rename7 = 4;
+        uint8_t n_rename7 = new_s;
         uint8_t tmp_rename7;
         for (i_rename7 = 0; i_rename7 < (n_rename7 / 2); i_rename7++)
         {
@@ -563,7 +564,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename8;
         uint8_t j_rename8;
-        uint8_t n_rename8 = 4;
+        uint8_t n_rename8 = new_s;
         uint8_t tmp_rename8;
         for (i_rename8 = 0; i_rename8 < (n_rename8 / 2); i_rename8++)
         {
@@ -587,7 +588,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename9;
         uint8_t j_rename9;
-        uint8_t n_rename9 = 4;
+        uint8_t n_rename9 = new_s;
         uint8_t tmp_rename9;
         for (i_rename9 = 0; i_rename9 < (n_rename9 / 2); i_rename9++)
         {
@@ -632,7 +633,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename10;
         uint8_t j_rename10;
-        uint8_t n_rename10 = 4;
+        uint8_t n_rename10 = new_s;
         uint8_t tmp_rename10;
         for (i_rename10 = 0; i_rename10 < (n_rename10 / 2); i_rename10++)
         {
@@ -656,7 +657,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename11;
         uint8_t j_rename11;
-        uint8_t n_rename11 = 4;
+        uint8_t n_rename11 = new_s;
         uint8_t tmp_rename11;
         for (i_rename11 = 0; i_rename11 < (n_rename11 / 2); i_rename11++)
         {
@@ -680,7 +681,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename12;
         uint8_t j_rename12;
-        uint8_t n_rename12 = 4;
+        uint8_t n_rename12 = new_s;
         uint8_t tmp_rename12;
         for (i_rename12 = 0; i_rename12 < (n_rename12 / 2); i_rename12++)
         {
@@ -705,7 +706,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
         bool return_value;
         bool success_rename13 = false;
         uint8_t x_rename13;
-        for (x_rename13 = 0; x_rename13 < 4; x_rename13++)
+        for (x_rename13 = 0; x_rename13 < new_s; x_rename13++)
         {
           loop_counter[31]++;
           {
@@ -714,7 +715,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
             uint8_t x_rename25;
             uint8_t t_rename25;
             uint8_t stop_rename25 = 0;
-            for (x_rename25 = 0; x_rename25 < 4; x_rename25++)
+            for (x_rename25 = 0; x_rename25 < new_s; x_rename25++)
             {
               loop_counter[32]++;
               if (board_rename[x_rename13][x_rename25] != 0)
@@ -826,7 +827,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename14;
         uint8_t j_rename14;
-        uint8_t n_rename14 = 4;
+        uint8_t n_rename14 = new_s;
         uint8_t tmp_rename14;
         for (i_rename14 = 0; i_rename14 < (n_rename14 / 2); i_rename14++)
         {
@@ -869,7 +870,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       bool return_value;
       bool success_rename2 = false;
       uint8_t x_rename2;
-      for (x_rename2 = 0; x_rename2 < 4; x_rename2++)
+      for (x_rename2 = 0; x_rename2 < new_s; x_rename2++)
       {
         loop_counter[47]++;
         {
@@ -878,7 +879,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
           uint8_t x_rename15;
           uint8_t t_rename15;
           uint8_t stop_rename15 = 0;
-          for (x_rename15 = 0; x_rename15 < 4; x_rename15++)
+          for (x_rename15 = 0; x_rename15 < new_s; x_rename15++)
           {
             loop_counter[48]++;
             if (board_rename[x_rename2][x_rename15] != 0)
@@ -1002,7 +1003,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename16;
         uint8_t j_rename16;
-        uint8_t n_rename16 = 4;
+        uint8_t n_rename16 = new_s;
         uint8_t tmp_rename16;
         for (i_rename16 = 0; i_rename16 < (n_rename16 / 2); i_rename16++)
         {
@@ -1026,7 +1027,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename17;
         uint8_t j_rename17;
-        uint8_t n_rename17 = 4;
+        uint8_t n_rename17 = new_s;
         uint8_t tmp_rename17;
         for (i_rename17 = 0; i_rename17 < (n_rename17 / 2); i_rename17++)
         {
@@ -1172,7 +1173,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename19;
         uint8_t j_rename19;
-        uint8_t n_rename19 = 4;
+        uint8_t n_rename19 = new_s;
         uint8_t tmp_rename19;
         for (i_rename19 = 0; i_rename19 < (n_rename19 / 2); i_rename19++)
         {
@@ -1196,7 +1197,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
       {
         uint8_t i_rename20;
         uint8_t j_rename20;
-        uint8_t n_rename20 = 4;
+        uint8_t n_rename20 = new_s;
         uint8_t tmp_rename20;
         for (i_rename20 = 0; i_rename20 < (n_rename20 / 2); i_rename20++)
         {
@@ -1236,10 +1237,10 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
     uint8_t x_rename4;
     uint8_t y_rename4;
     char color_rename4[40];
-    for (y_rename4 = 0; y_rename4 < 4; y_rename4++)
+    for (y_rename4 = 0; y_rename4 < new_s; y_rename4++)
     {
       loop_counter[81]++;
-      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      for (x_rename4 = 0; x_rename4 < new_s; x_rename4++)
       {
         loop_counter[82]++;
         {
@@ -1275,7 +1276,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
         }
       }
 
-      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      for (x_rename4 = 0; x_rename4 < new_s; x_rename4++)
       {
         loop_counter[86]++;
         {
@@ -1319,7 +1320,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
 
       }
 
-      for (x_rename4 = 0; x_rename4 < 4; x_rename4++)
+      for (x_rename4 = 0; x_rename4 < new_s; x_rename4++)
       {
         loop_counter[91]++;
         {
@@ -1368,21 +1369,55 @@ struct slice_return main_loop_slice(char c, uint8_t board[4][4])
     print_loop_counter:
     ;
 #if GET_PREDICT || DEBUG_EN
-      print_array(loop_counter, 95);
+    //95
+    print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
 #endif
   }
   {
     predict_exec_time:
     ;
-
     struct slice_return exec_time;
-    #if !CVX_EN //conservative
-        exec_time.big = 0;
-        exec_time.little = 0;
-    #else //cvx
-        exec_time.big = 30.262234*loop_counter[2] + 17.994036*loop_counter[3] + 10.699317*loop_counter[4] + 10.699317*loop_counter[5] + 3.782781*loop_counter[6] + -1.619241*loop_counter[7] + -22.736878*loop_counter[8] + -10.779013*loop_counter[9] + 3.645839*loop_counter[10] + 3.428931*loop_counter[11] + -13.891662*loop_counter[12] + 2.616272*loop_counter[13] + 2.169268*loop_counter[14] + 8.947325*loop_counter[15] + 17.994037*loop_counter[16] + 10.699316*loop_counter[17] + 17.994037*loop_counter[18] + 10.699316*loop_counter[19] + 17.994037*loop_counter[20] + 10.699316*loop_counter[21] + 19.881375*loop_counter[24] + 11.821563*loop_counter[25] + 7.029118*loop_counter[26] + 11.821562*loop_counter[27] + 7.029118*loop_counter[28] + 11.821563*loop_counter[29] + 7.029118*loop_counter[30] + 7.029118*loop_counter[31] + 2.485168*loop_counter[32] + 2.932223*loop_counter[33] + -27.193720*loop_counter[34] + -10.662566*loop_counter[35] + 6.480495*loop_counter[36] + 6.627086*loop_counter[37] + 10.686983*loop_counter[38] + 3.047801*loop_counter[39] + 3.472551*loop_counter[40] + 6.923594*loop_counter[41] + 11.821561*loop_counter[42] + 7.029117*loop_counter[43] + 69.272591*loop_counter[46] + 24.491547*loop_counter[47] + 8.659068*loop_counter[48] + 2.516203*loop_counter[49] + -12.085516*loop_counter[50] + -11.292506*loop_counter[51] + 4.354149*loop_counter[52] + 3.740321*loop_counter[53] + 8.239810*loop_counter[54] + 3.922243*loop_counter[55] + 3.506747*loop_counter[56] + 9.536052*loop_counter[57] + 20.242443*loop_counter[60] + 12.036303*loop_counter[61] + 7.156798*loop_counter[62] + 12.036304*loop_counter[63] + 7.156798*loop_counter[64] + 7.156798*loop_counter[65] + 2.530310*loop_counter[66] + -0.448751*loop_counter[67] + 12.472025*loop_counter[68] + -1.065685*loop_counter[69] + -1.718118*loop_counter[70] + -1.767091*loop_counter[71] + -2.679586*loop_counter[72] + 0.453188*loop_counter[73] + 0.537835*loop_counter[74] + 0.426072*loop_counter[75] + 12.036340*loop_counter[76] + 7.156791*loop_counter[77] + 12.036340*loop_counter[78] + 7.156791*loop_counter[79] + 49.376776*loop_counter[81] + 17.457336*loop_counter[82] + 2.538678*loop_counter[83] + -0.322145*loop_counter[84] + -0.322145*loop_counter[85] + 17.457336*loop_counter[86] + 2.538678*loop_counter[87] + -0.322144*loop_counter[88] + -0.322144*loop_counter[89] + 2.538679*loop_counter[90] + 17.457336*loop_counter[91] + 2.538678*loop_counter[92] + -0.322144*loop_counter[93] + -0.322144*loop_counter[94] + 139.658779;
-        exec_time.little = 143.725897*loop_counter[2] + 71.862946*loop_counter[3] + 35.931472*loop_counter[4] + 35.931472*loop_counter[5] + 8.982868*loop_counter[6] + 29.824582*loop_counter[7] + -226.250470*loop_counter[8] + -11.482109*loop_counter[9] + 52.099785*loop_counter[10] + 56.165270*loop_counter[11] + 251.411585*loop_counter[12] + -44.215254*loop_counter[13] + -56.433540*loop_counter[14] + 244.231277*loop_counter[15] + 71.862949*loop_counter[16] + 35.931474*loop_counter[17] + 71.862949*loop_counter[18] + 35.931474*loop_counter[19] + 71.862949*loop_counter[20] + 35.931474*loop_counter[21] + 144.417481*loop_counter[24] + 72.208737*loop_counter[25] + 36.104370*loop_counter[26] + 72.208741*loop_counter[27] + 36.104370*loop_counter[28] + 72.208741*loop_counter[29] + 36.104370*loop_counter[30] + 36.104370*loop_counter[31] + 9.026093*loop_counter[32] + 8.351316*loop_counter[33] + -22.022977*loop_counter[34] + 31.195991*loop_counter[35] + 27.630895*loop_counter[36] + 29.502669*loop_counter[37] + -24.359625*loop_counter[38] + -16.741679*loop_counter[39] + -38.724075*loop_counter[40] + 154.421044*loop_counter[41] + 72.208740*loop_counter[42] + 36.104370*loop_counter[43] + 368.056169*loop_counter[46] + 92.014044*loop_counter[47] + 23.003511*loop_counter[48] + 36.990204*loop_counter[49] + 53.916959*loop_counter[50] + 0.348548*loop_counter[51] + 26.614041*loop_counter[52] + 48.634990*loop_counter[53] + 347.056422*loop_counter[54] + -42.011968*loop_counter[55] + -50.221354*loop_counter[56] + -177.292163*loop_counter[57] + -69.597837*loop_counter[60] + -34.798916*loop_counter[61] + -17.399459*loop_counter[62] + -34.798919*loop_counter[63] + -17.399459*loop_counter[64] + -17.399459*loop_counter[65] + -4.349865*loop_counter[66] + 79.401575*loop_counter[67] + 36.064302*loop_counter[68] + 24.597466*loop_counter[69] + 65.082144*loop_counter[70] + 78.102795*loop_counter[71] + 710.699071*loop_counter[72] + -84.293894*loop_counter[73] + -102.452975*loop_counter[74] + -104.607489*loop_counter[75] + -34.798919*loop_counter[76] + -17.399459*loop_counter[77] + -34.798919*loop_counter[78] + -17.399459*loop_counter[79] + 37.801512*loop_counter[81] + 9.450378*loop_counter[82] + 44.732054*loop_counter[83] + -17.507846*loop_counter[84] + -17.507846*loop_counter[85] + 9.450378*loop_counter[86] + 44.732054*loop_counter[87] + -17.507846*loop_counter[88] + -17.507846*loop_counter[89] + 44.732055*loop_counter[90] + 9.450378*loop_counter[91] + 44.732055*loop_counter[92] + -17.507846*loop_counter[93] + -17.507846*loop_counter[94] + 151.206049;
+    exec_time.big = exec_time.little = 0; //initialize
+#if !ONLINE_EN
+  #if !CVX_EN //off-line training with conservative
+    #if ARCH_ARM
+      exec_time.little = 0;
+    #elif ARCH_X86
+      exec_time.little = 6.184759*loop_counter[2] + 7.020581*loop_counter[3] +
+        0.045134*loop_counter[4] + 4.174456*loop_counter[5] +
+        0.015958*loop_counter[6] + 7.020581*loop_counter[16] +
+        0.045134*loop_counter[17] + 7.020581*loop_counter[18] +
+        0.045133*loop_counter[19] + 7.020581*loop_counter[20] +
+        0.045133*loop_counter[21] + 7.184752*loop_counter[24] +
+        6.908165*loop_counter[25] + 0.052830*loop_counter[26] +
+        6.908163*loop_counter[27] + 0.052830*loop_counter[28] +
+        6.908163*loop_counter[29] + 0.052830*loop_counter[30] +
+        4.107625*loop_counter[31] + 0.018678*loop_counter[32] +
+        6.908164*loop_counter[42] + 0.052830*loop_counter[43] +
+        14.538062*loop_counter[46] + 14.813545*loop_counter[47] +
+        0.202028*loop_counter[48] + -0.184669*loop_counter[60] +
+        9.566143*loop_counter[61] + 0.019425*loop_counter[62] +
+        9.566142*loop_counter[63] + 0.019425*loop_counter[64] +
+        -0.065290*loop_counter[65] + -0.023088*loop_counter[66] +
+        9.566142*loop_counter[76] + 0.019425*loop_counter[77] +
+        9.566142*loop_counter[78] + 0.019425*loop_counter[79] +
+        27.117715*loop_counter[81] + 0.243525*loop_counter[82] +
+        0.243525*loop_counter[86] + 0.243525*loop_counter[91] + 27.815240;
     #endif
+  #else //off-line training with cvx    
+    #if ARCH_ARM
+      exec_time.little = 0;
+    #elif ARCH_X86
+      exec_time.little = 0;
+    #endif
+  #endif
+#elif ONLINE_EN
+  #if CORE //on-line training on big core
+  #else //on-line training on little core
+    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
+        sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+  #endif
+#endif
     return exec_time;
   }
 }
@@ -4185,293 +4220,276 @@ bool main_loop_loop_counters(char c, uint8_t board[4][4])
   return success;
 }
 
-bool main_loop(char c, uint8_t board[SIZE][SIZE]) {
+bool main_loop(char c, uint8_t board[SIZE][SIZE], int new_s) {
     bool success;
 
         switch(c) {
             case 97:    // 'a' key
             case 104:   // 'h' key
             case 68:    // left arrow
-                success = moveLeft(board);  break;
+                success = moveLeft(board, new_s);  break;
             case 100:   // 'd' key
             case 108:   // 'l' key
             case 67:    // right arrow
-                success = moveRight(board); break;
+                success = moveRight(board, new_s); break;
             case 119:   // 'w' key
             case 107:   // 'k' key
             case 65:    // up arrow
-                success = moveUp(board);    break;
+                success = moveUp(board, new_s);    break;
             case 115:   // 's' key
             case 106:   // 'j' key
             case 66:    // down arrow
-                success = moveDown(board);  break;
+                success = moveDown(board, new_s);  break;
             default: success = false;
         }
-        drawBoard(board);
+        drawBoard(board, new_s);
 
     return success;
 
 }
 
 int main(int argc, char *argv[]) {
-    uint8_t board[SIZE][SIZE];
-    char c;
-    bool success;
+  uint8_t board[SIZE][SIZE];
+  char c;
+  bool success;
 
-    init_time_file();
-//---------------------modified by TJSong----------------------//
-    int exec_time = 0;
-    static int jump = 0;
-    int pid = getpid();
-    if(check_define()==ERROR_DEFINE){
-        printf("%s", "DEFINE ERROR!!\n");
-        return ERROR_DEFINE;
-    }
+  init_time_file();
+  //---------------------modified by TJSong----------------------//
+  _INIT_();
+#if HETERO_EN
+  int pid = getpid();
+#endif
+  //---------------------modified by TJSong----------------------//
+
+
+  if (argc == 2 && strcmp(argv[1],"test")==0) {
+    return test();
+  }
+  if (argc == 2 && strcmp(argv[1],"blackwhite")==0) {
+    scheme = 1;
+  }
+  if (argc == 2 && strcmp(argv[1],"bluered")==0) {
+    scheme = 2;
+  }
+
+  printf("\e[?25l\e[2J");
+
+  // register signal handler for when ctrl-c is pressed
+  signal(SIGINT, signal_callback_handler);
+  
+  int new_s = SIZE;
+  initBoard(board, new_s);
+  setBufferedInput(false);
+  while (true) {
+    //---------------------modified by TJSong----------------------//
+    // c=getchar(); //to input automatically
+    static int i=0;
+    c=65+(i++)%4;
+    new_s = 4*((rand())%4)+4;//4~29
+    usleep(100000);
+    //---------------------modified by TJSong----------------------//
+
+    //---------------------modified by TJSong----------------------//
     fopen_all(); //fopen for frequnecy file
-//---------------------modified by TJSong----------------------//
-
-
-    if (argc == 2 && strcmp(argv[1],"test")==0) {
-        return test();
-    }
-    if (argc == 2 && strcmp(argv[1],"blackwhite")==0) {
-        scheme = 1;
-    }
-    if (argc == 2 && strcmp(argv[1],"bluered")==0) {
-        scheme = 2;
-    }
-
-    printf("\e[?25l\e[2J");
-
-    // register signal handler for when ctrl-c is pressed
-    signal(SIGINT, signal_callback_handler);
-
-    initBoard(board);
-    setBufferedInput(false);
-    while (true) {
-//---------------------modified by TJSong----------------------//
-        // c=getchar(); //to input automatically
-        static int i=0;
-        c=65+(i++)%4;
-        usleep(100000);
-//---------------------modified by TJSong----------------------//
-
-//---------------------modified by TJSong----------------------//
     print_deadline(DEADLINE_TIME); //print deadline 
-//---------------------modified by TJSong----------------------//
+    //---------------------modified by TJSong----------------------//
 
-//---------------------modified by TJSong----------------------//
-        // Perform slicing and prediction
-        struct slice_return predicted_exec_time;
-        predicted_exec_time.big = 0;
-        predicted_exec_time.little = 0;
-        /*
-            CASE 0 = to get prediction equation
-            CASE 1 = to get execution deadline
-            CASE 2 = to get overhead deadline
-            CASE 3 = running on default linux governors
-            CASE 4 = running on our prediction
-            CASE 5 = running on oracle
-            CASE 6 = running on pid
-            CASE 7 = running on proactive DVFS
-        */
-        #if GET_PREDICT /* CASE 0 */
-            predicted_exec_time = main_loop_slice(c, board); //slice
-        #elif GET_DEADLINE /* CASE 1 */
-            moment_timing_print(0); //moment_start
-            //nothing
-        #elif GET_OVERHEAD /* CASE 2 */
-            start_timing();
-            predicted_exec_time = main_loop_slice(c, board); //slice
-            end_timing();
-            slice_time = print_slice_timing();
+    //---------------------modified by TJSong----------------------//
+    // Perform slicing and prediction
+    struct slice_return predicted_exec_time;
+    predicted_exec_time.big = 0;
+    predicted_exec_time.little = 0;
+    /*
+      CASE 0 = to get prediction equation
+      CASE 1 = to get execution deadline
+      CASE 2 = to get overhead deadline
+      CASE 3 = running on default linux governors
+      CASE 4 = running on our prediction
+      CASE 5 = running on oracle
+      CASE 6 = running on pid
+      CASE 7 = running on proactive DVFS
+    */
+    #if GET_PREDICT /* CASE 0 */
+      predicted_exec_time = _SLICE_();
+    #elif GET_DEADLINE /* CASE 1 */
+      moment_timing_print(0); //moment_start
+    #elif GET_OVERHEAD /* CASE 2 */
+      start_timing();
+      predicted_exec_time = _SLICE_();
+      end_timing();
+      slice_time = print_slice_timing();
 
-            start_timing();
-            #if CORE
-                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #else
-                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #endif
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
-            //slice_time=0; dvfs_time=0;
-            predicted_exec_time = main_loop_slice(c, board); //slice
-            moment_timing_print(0); //moment_start
-        #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
-            moment_timing_print(0); //moment_start
-            
-            start_timing();
-            predicted_exec_time = main_loop_slice(c, board); //slice
-            end_timing();
-            slice_time = print_slice_timing();
-            
-            start_timing();
-            #if OVERHEAD_EN //with overhead
-                #if HETERO_EN
-                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
-                #else
-                    #if CORE
-                        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-                    #else
-                        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-                    #endif
-                #endif
-            #else //without overhead
-                #if HETERO_EN
-                    set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
-                #else
-                    #if CORE
-                        set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
-                    #else
-                        set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
-                    #endif
-                #endif
-            #endif
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-
-            moment_timing_print(1); //moment_start
-        #elif ORACLE_EN /* CASE 5 */
-            //slice_time=0;
-            static int job_cnt = 0; //job count
-            predicted_exec_time  = exec_time_arr[job_cnt];
-            moment_timing_print(0); //moment_start
-            
-            start_timing();
-            #if CORE
-                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #else
-                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #endif
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-            
-            moment_timing_print(1); //moment_start
-            job_cnt++;
-        #elif PID_EN /* CASE 6 */
-            moment_timing_print(0); //moment_start
-            
-            start_timing();
-            predicted_exec_time = pid_controller(exec_time); //pid == slice
-            end_timing();
-            slice_time = print_slice_timing();
-            
-            start_timing();
-            #if CORE
-                set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #else
-                set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #endif
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-            
-            moment_timing_print(1); //moment_start
-        #elif PROACTIVE_EN /* CASE 4 */
-            static int job_number = 0; //job count
-            moment_timing_print(0); //moment_start
-          
-            start_timing();
-            //Now, let's assume no slice time like ORACLE
-            end_timing();
-            slice_time = print_slice_timing();
- 
-            start_timing();
-            #if HETERO_EN 
-                jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
-            #elif !HETERO_EN
-                jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
-            #endif
-            end_timing();
-            dvfs_time = print_dvfs_timing();
-            
-            moment_timing_print(1); //moment_start
-            job_number++;
+      start_timing();
+      #if CORE
+        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #else
+        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #endif
+      end_timing();
+      dvfs_time = print_dvfs_timing();
+    #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
+      //slice_time=0; dvfs_time=0;
+      predicted_exec_time = _SLICE_();
+      moment_timing_print(0); //moment_start
+    #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
+      moment_timing_print(0); //moment_start
+      
+      start_timing();
+      predicted_exec_time = _SLICE_();
+      end_timing();
+      slice_time = print_slice_timing();
+      
+      start_timing();
+      #if OVERHEAD_EN //with overhead
+        #if HETERO_EN
+          set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+        #else
+          #if CORE
+            set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+          #else
+            set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+          #endif
         #endif
+      #else //without overhead
+        #if HETERO_EN
+          set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+        #else
+          #if CORE
+            set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
+          #else
+            set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
+          #endif
+        #endif
+      #endif
+      end_timing();
+      dvfs_time = print_dvfs_timing();
 
-//---------------------modified by TJSong----------------------//
+      moment_timing_print(1); //moment_start
+    #elif ORACLE_EN /* CASE 5 */
+      //slice_time=0;
+      static int job_cnt = 0; //job count
+      predicted_exec_time  = exec_time_arr[job_cnt];
+      moment_timing_print(0); //moment_start
+      
+      start_timing();
+      #if CORE
+        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #else
+        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #endif
+      end_timing();
+      dvfs_time = print_dvfs_timing();
+      
+      moment_timing_print(1); //moment_start
+      job_cnt++;
+    #elif PID_EN /* CASE 6 */
+      moment_timing_print(0); //moment_start
+      
+      start_timing();
+      predicted_exec_time = pid_controller(exec_time); //pid == slice
+      end_timing();
+      slice_time = print_slice_timing();
+      
+      start_timing();
+      #if CORE
+        set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #else
+        set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
+      #endif
+      end_timing();
+      dvfs_time = print_dvfs_timing();
+      
+      moment_timing_print(1); //moment_start
+    #elif PROACTIVE_EN /* CASE 7 */
+      static int job_number = 0; //job count
+      moment_timing_print(0); //moment_start
+    
+      start_timing();
+      //Now, let's assume no slice time like ORACLE
+      end_timing();
+      slice_time = print_slice_timing();
 
+      start_timing();
+      #if HETERO_EN 
+        jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
+      #elif !HETERO_EN
+        jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
+      #endif
+      end_timing();
+      dvfs_time = print_dvfs_timing();
+      
+      moment_timing_print(1); //moment_start
+      job_number++;
+    #endif
+
+    //---------------------modified by TJSong----------------------//
     start_timing();
-    //print_start_temperature();
 
-    success = main_loop(c, board);
+    success = main_loop(c, board, new_s);
     //success = main_loop_loop_counters(c, board);
 
-    //print_end_temperature();
     end_timing();
-//---------------------modified by TJSong----------------------//
-	    exec_time = exec_timing();
-        int cur_freq = print_freq(); 
-        int delay_time = 0;
-        int actual_delay_time = 0;
+    //---------------------modified by TJSong----------------------//
+    _DEFINE_TIME_();
 
-        #if GET_PREDICT /* CASE 0 */
-            print_exec_time(exec_time);
-        #elif GET_DEADLINE /* CASE 1 */
-            print_exec_time(exec_time);
-            moment_timing_print(2); //moment_end
-        #elif GET_OVERHEAD /* CASE 2 */
-            //nothing
-        #else /* CASE 3,4,5 and 6 */
-            if(DELAY_EN && jump == 0 && ((delay_time = DEADLINE_TIME - exec_time - slice_time - dvfs_time - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] - dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2]) > 0)){
-                start_timing();
-				sleep_in_delay(delay_time, cur_freq);
-				end_timing();
-                actual_delay_time = exec_timing();
-            }else
-                delay_time = 0;
-            moment_timing_print(2); //moment_end
-            print_delay_time(delay_time, actual_delay_time);
-            print_exec_time(exec_time);
-            print_total_time(exec_time + slice_time + dvfs_time + actual_delay_time);
-        #endif
+    #if IDLE_EN
+      additional_dvfs_times =
+        dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] +
+        dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2];
+    #endif
 
-        // Write out predicted time & print out frequency used
-        #if HETERO_EN
-            print_predicted_time(predicted_exec_time.big);
-            print_predicted_time(predicted_exec_time.little);
-        #else
-            #if CORE
-                print_predicted_time(predicted_exec_time.big);
-            #else
-                print_predicted_time(predicted_exec_time.little);
-            #endif
-        #endif
+    #if ONLINE_EN /* CASE 0, 2, 3 and 4 */
+      #if GET_PREDICT || GET_OVERHEAD \
+            || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
+            || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
+        start_timing();
+        (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
+            cur_freq);
+        end_timing();
+        update_time = exec_timing();
+      #endif
+    #endif
 
-//---------------------modified by TJSong----------------------//
+    _DELAY_();
 
-        if (success) {
-            //drawBoard(board);
-
-            //usleep(150000);
-            addRandom(board);
-            drawBoard(board);
-            if (gameEnded(board)) {
-                printf("         GAME OVER          \n");
-                break;
-            }
-        }
-        if (c=='q') {
-            printf("        QUIT? (y/n)         \n");
-            c=getchar();
-            if (c=='y') {
-                break;
-            }
-            drawBoard(board);
-        }
-        if (c=='r') {
-            printf("       RESTART? (y/n)       \n");
-            c=getchar();
-            if (c=='y') {
-                initBoard(board);
-            }
-            drawBoard(board);
-        }
-    }
+    _PRINT_INFO_();
+    
     fclose_all();//TJSong
-    setBufferedInput(true);
+    //---------------------modified by TJSong----------------------//
 
-    printf("\e[?25h\e[m");
+    if (i > 500)
+      break;
+    if (success) {
+      //drawBoard(board);
 
-    return EXIT_SUCCESS;
+      //usleep(150000);
+      addRandom(board, new_s);
+      drawBoard(board, new_s);
+      if (gameEnded(board, new_s)) {
+        printf("         GAME OVER          \n");
+        break;
+      }
+    }
+    if (c=='q') {
+      printf("        QUIT? (y/n)         \n");
+      c=getchar();
+      if (c=='y') {
+        break;
+      }
+      drawBoard(board, new_s);
+    }
+    if (c=='r') {
+      printf("       RESTART? (y/n)       \n");
+      c=getchar();
+      if (c=='y') {
+        initBoard(board, new_s);
+      }
+      drawBoard(board, new_s);
+    }
+  }
+  setBufferedInput(true);
+
+  printf("\e[?25h\e[m");
+
+  return EXIT_SUCCESS;
 }

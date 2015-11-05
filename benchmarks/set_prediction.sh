@@ -148,11 +148,15 @@ do
     	./run.sh $i $1 performance temp_sample
 	fi
 
+    mkdir -p $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}
+    mkdir -p $PROJECT_PATH/../ext_prediction_data/$PLATFORM_NAME/data_dummy/$1/${BENCH_NAME[$i]}
+
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/temp.txt
     
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
     cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"0.txt"
-    mv $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
+    cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
+    cp $DVFS_SIM_PATH/data_odroid/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}-temp_sample/performance $PROJECT_PATH/../ext_prediction_data/$PLATFORM_NAME/data_dummy/little/${BENCH_NAME[$i]}/$3".txt"
 
     #filter xpilot_slice and uzbl
     if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then

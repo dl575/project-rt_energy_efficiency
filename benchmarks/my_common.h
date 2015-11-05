@@ -54,7 +54,7 @@
 #define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -77,9 +77,9 @@
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 0
-#define _rijndael_preread_ 1
+#define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
-#define _2048_slice_ 0
+#define _2048_slice_ 1
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
@@ -193,6 +193,10 @@
 #elif _stringsearch_
 #define N_FEATURE 4
 #define _SLICE_() slice(search_strings[i], solver);
+#define SCALE (double)1
+#elif _2048_slice_
+#define N_FEATURE 95
+#define _SLICE_() main_loop_slice(c, board, new_s, solver);
 #define SCALE (double)1
 #else
 #define N_FEATURE 4
@@ -1284,9 +1288,7 @@ static void trisolve(struct matrix m)
 //////////////////////////////////////////////////////////////////////
 int func_is_stable(double errors[N_ERROR], int n_stable){
   int avg_error = 0;
-  printf("stable error \n");
   for(int i = 0; i < n_stable ; i++){
-    printf("%f ,", errors[i]);
     avg_error += fabs(errors[i]);
   }
   avg_error /= n_stable;
@@ -1300,9 +1302,7 @@ int func_is_event(double errors[N_ERROR], int n_event){
   int avg_error = 0;
   //if any error in n_event is less than 10%, we count this as just outlier
   //when errors in n_event consecutive jobs, we count this as an event
-  printf("event error \n");
   for(int i = 0; i < n_event ; i++){
-    printf("%f ,", errors[i]);
     avg_error += fabs(errors[i]);
     if(errors[i] < 10.0)
       is_event = 0;
@@ -1376,8 +1376,6 @@ int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
 
     //While prediction is stable, if we find errors in consecutive jobs, we
     //give up old data by removing factor (if 0.9, decrease by 90%)
-    printf("is stable %d, is_event %d\n", is_stable, func_is_event(errors,
-          N_EVENT));
     if(is_stable && func_is_event(errors, N_EVENT)){
       printf("old data removed\n");
       remove_factor = 1.00;
