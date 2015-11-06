@@ -79,8 +79,8 @@
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
-#define _2048_slice_ 1
-#define _curseofwar_slice_sdl_ 0
+#define _2048_slice_ 0
+#define _curseofwar_slice_sdl_ 1
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
 #define _ldecode_ 0
@@ -198,10 +198,15 @@
 #define N_FEATURE 95
 #define _SLICE_() main_loop_slice(c, board, new_s, solver);
 #define SCALE (double)1
+#elif _curseofwar_slice_sdl_
+#define N_FEATURE 14
+#define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
+#define SCALE (double)1
 #else
 #define N_FEATURE 4
 #define SCALE (double)1
 #endif
+
 #define N_ERROR (10)
 #define N_STABLE (4)
 #define N_EVENT (3)

@@ -134,10 +134,6 @@ do
     	sudo taskset 0xff make clean -j16
     	taskset 0xff ./configure --prefix=`pwd`/../install
         taskset 0xff sudo make install 
-    elif [ ${SOURCE_FILES[$i]} == "curseofwar/main-sdl.c" ] ; then
-        echo "[curseofwar] make SDL=yes"
-        cd $BENCH_PATH/${SOURCE_PATH[$i]}
-        taskset 0xff make SDL=yes
     fi
 
     #run bnechmark

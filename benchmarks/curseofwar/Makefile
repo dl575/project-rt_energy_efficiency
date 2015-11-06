@@ -31,34 +31,47 @@ OBJS_NCURSES = $(SRCS_NCURSES:.c=.o)
 OBJS_SDL = $(SRCS_SDL:.c=.o)
 
 EXECS = $(EXEC_NCURSES) $(EXEC_SDL)
-CFLAGS += -Wall -O2 -D_GNU_SOURCE
+CFLAGS += -O2 -D_GNU_SOURCE -std=c99
 LDLIBS += -lm
 
 # Common sources and header
 OBJS = $(OBJS_INDEP) 
 HDRS = $(HDRS_INDEP) 
-# SDL or ncurses
-ifdef SDL
- OBJS += $(OBJS_SDL)
- HDRS += $(HDRS_SDL)
- CFLAGS += $(shell sdl-config --cflags)
- LDLIBS += $(shell sdl-config --libs)
- EXEC = $(EXEC_SDL)
- # Version-specific
- INSTALL_OPTIONAL = install-sdl-manpage
- UNINSTALL_OPTIONAL = uninstall-sdl-manpage
- ifdef INSTALL_DATA
-  INSTALL_OPTIONAL += install-images
-  UNINSTALL_OPTIONAL += uninstall-images
- endif
-else
- OBJS += $(OBJS_NCURSES)
- HDRS += $(HDRS_NCURSES)
- LDLIBS += -lncurses
- EXEC = $(EXEC_NCURSES)
- # Version-specific
- INSTALL_OPTIONAL = install-manpage install-changelog
- UNINSTALL_OPTIONAL = uninstall-manpage uninstall-changelog
+## SDL or ncurses
+#ifdef SDL
+# OBJS += $(OBJS_SDL)
+# HDRS += $(HDRS_SDL)
+# CFLAGS += $(shell sdl-config --cflags)
+# LDLIBS += $(shell sdl-config --libs)
+# EXEC = $(EXEC_SDL)
+# # Version-specific
+# INSTALL_OPTIONAL = install-sdl-manpage
+# UNINSTALL_OPTIONAL = uninstall-sdl-manpage
+# ifdef INSTALL_DATA
+#  INSTALL_OPTIONAL += install-images
+#  UNINSTALL_OPTIONAL += uninstall-images
+# endif
+#else
+# OBJS += $(OBJS_NCURSES)
+# HDRS += $(HDRS_NCURSES)
+# LDLIBS += -lncurses
+# EXEC = $(EXEC_NCURSES)
+# # Version-specific
+# INSTALL_OPTIONAL = install-manpage install-changelog
+# UNINSTALL_OPTIONAL = uninstall-manpage uninstall-changelog
+#endif
+
+OBJS += $(OBJS_SDL)
+HDRS += $(HDRS_SDL)
+CFLAGS += $(shell sdl-config --cflags)
+LDLIBS += $(shell sdl-config --libs)
+EXEC = $(EXEC_SDL)
+# Version-specific
+INSTALL_OPTIONAL = install-sdl-manpage
+UNINSTALL_OPTIONAL = uninstall-sdl-manpage
+ifdef INSTALL_DATA
+ INSTALL_OPTIONAL += install-images
+ UNINSTALL_OPTIONAL += uninstall-images
 endif
 
 VERSION=$(shell cat VERSION)

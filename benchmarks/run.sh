@@ -93,7 +93,8 @@ if [[ $3 ]] ; then
     if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
        [ ${BENCH_NAME[$1]} == "rijndael_preread" ] || \
        [ ${BENCH_NAME[$1]} == "stringsearch" ] || \
-       [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
+       [ ${BENCH_NAME[$1]} == "2048_slice" ] || \
+       [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] ; then
       echo ${BENCH_NAME[$1]}"..."
       ./gen_runme_slice.py > runme_slice.sh
       chmod a+x runme_slice.sh
