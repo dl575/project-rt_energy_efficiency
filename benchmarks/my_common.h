@@ -54,7 +54,7 @@
 #define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -82,8 +82,8 @@
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 1
-#define _ldecode_ 0
+#define _uzbl_ 0
+#define _ldecode_ 1
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
@@ -202,7 +202,7 @@
 #define N_FEATURE 14
 #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
 #define SCALE (double)1
-#elif _pocketsphinx_
+#elif _pocketsphinx_ //fork: no solver
 #define N_FEATURE 11
 #define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
 #define SCALE (double)1
@@ -213,6 +213,10 @@
 #elif _uzbl_
 #define N_FEATURE 19
 #define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver);
+#define SCALE (double)1
+#elif _ldecode_ //fork: no solver
+#define N_FEATURE 42
+#define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
 #define SCALE (double)1
 #else
 #define N_FEATURE 4

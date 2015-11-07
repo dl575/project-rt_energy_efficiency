@@ -96,7 +96,8 @@ if [[ $3 ]] ; then
        [ ${BENCH_NAME[$1]} == "stringsearch" ] || \
        [ ${BENCH_NAME[$1]} == "2048_slice" ] || \
        [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
-       [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
+       [ ${BENCH_NAME[$1]} == "pocketsphinx" ] || \
+       [ ${BENCH_NAME[$1]} == "ldecode" ] ; then
       ./gen_runme_slice.py > runme_slice.sh
       chmod a+x runme_slice.sh
       sleep 3
