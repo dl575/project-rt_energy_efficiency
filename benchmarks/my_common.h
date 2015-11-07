@@ -514,7 +514,7 @@ void sleep_in_delay(double delay_time, int cur_freq){
   double set_freq_delay = set_freq_to_specific(MIN_FREQ);
   //Delay at lowest freq
   if(delay_time - set_freq_delay - dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2] > 0)
-    usleep(int(delay_time - set_freq_delay -
+    usleep((int)(delay_time - set_freq_delay -
           (double)dvfs_table[cur_freq/100000-2][MIN_FREQ/100000-2]));
   //Back to previous freq
   set_freq_to_specific_no_timing(cur_freq);
