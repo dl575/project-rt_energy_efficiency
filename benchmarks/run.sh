@@ -143,6 +143,41 @@ if [[ $3 ]] ; then
       echo "xdotool done"
       PID_FREECIV_SERVER=$(pgrep 'xpilot')
       kill -9 $PID_FREECIV_SERVER
+    elif [ ${BENCH_NAME[$1]} == "uzbl" ] ; then
+      taskset 0xff ./fix_addresses.py 
+      taskset $TASKSET_FLAG uzbl-browser > output_slice.txt &
+      sleep 10;
+      #find the window 1
+      xdotool search --sync --onlyvisible --class "uzbl"  
+      #maximize the window 1
+	    if [ $ARCH_TYPE == "armhf" ] ; then 
+        xdotool key alt+F10;            sleep 1;
+      fi
+      #type url, go to csl site
+      xdotool key o; sleep 1; xdotool type csl.cornell.edu; sleep 1;
+      xdotool key Return; sleep 10;
+      #move mouse and click people/research tab
+	    if [ $ARCH_TYPE == "amd64" ] ; then 
+        xdotool mousemove 1541 814; xdotool click 1; sleep 10;
+        xdotool mousemove 1740 809; xdotool click 1; sleep 10;
+	    elif [ $ARCH_TYPE == "armhf" ] ; then 
+        xdotool mousemove 337 343; xdotool click 1; sleep 10;
+        xdotool mousemove 536 342; xdotool click 1; sleep 10;
+      fi
+      #refresh/back/forward//scroll 
+      xdotool key r;sleep 10;xdotool key b;sleep 10;xdotool key m;sleep 10;
+      xdotool key j;sleep 1;xdotool key j;sleep 1;xdotool key j;sleep 1;
+      xdotool key k;sleep 1;xdotool key k;sleep 1;xdotool key k;sleep 1;
+      xdotool key l;sleep 1;xdotool key l;sleep 1;xdotool key l;sleep 1;
+      xdotool key h;sleep 1;xdotool key h;sleep 1;xdotool key h;sleep 1;
+      #close
+	    if [ $ARCH_TYPE == "amd64" ] ; then 
+        xdotool mousemove 1448 490; sleep 1; xdotool click 1; sleep 1;
+	    elif [ $ARCH_TYPE == "armhf" ] ; then 
+        xdotool mousemove 1267 2; sleep 1; xdotool click 1; sleep 1;
+        xdotool mousemove 786 16; sleep 1; xdotool click 1; sleep 1;
+      fi
+      sleep 30;
     fi
 
 #    echo ${BENCH_NAME[$1]}"..."

@@ -2523,9 +2523,85 @@ struct slice_return Main_loop_slice(llsp_t *restrict solver)
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time.little = 67.890170*loop_counter[6] + 70.076545*loop_counter[7] + 70.076545*loop_counter[8] + 67.890170*loop_counter[10] + 67.890170*loop_counter[12] + 75.583403*loop_counter[13] + -19.912843*loop_counter[14] + 0.013315*loop_counter[17] + 0.013315*loop_counter[18] + 5.421329*loop_counter[19] + -265.384048*loop_counter[20] + -55.922088*loop_counter[21] + 44.203297*loop_counter[24] + 44.203298*loop_counter[25] + 44.203298*loop_counter[28] + 18.818149*loop_counter[29] + 70.076545*loop_counter[36] + 13.996733*loop_counter[42] + -59.276412*loop_counter[45] + -167.923179*loop_counter[46] + 13.996733*loop_counter[89] + -59.276412*loop_counter[92] + 147.258299*loop_counter[93] + 0.699840*loop_counter[98] + 13.996733*loop_counter[99] + 6.999247*loop_counter[100] + 2.549430*loop_counter[101] + 2.332800*loop_counter[103] + 13.996733*loop_counter[104] + -21.947356*loop_counter[105] + -21.947356*loop_counter[106] + 18.963339*loop_counter[107] + 3.499183*loop_counter[109] + 13.996733*loop_counter[110] + 0.699840*loop_counter[131] + 12.471487*loop_counter[135] + -20.880061*loop_counter[136] + 19.954665*loop_counter[138] + 64.456695*loop_counter[140] + 0.013315*loop_counter[149] + -2.397624*loop_counter[150] + -2.774341*loop_counter[151] + -4.434051*loop_counter[153] + 0.858891*loop_counter[154] + -3.166590*loop_counter[155] + 0.141635*loop_counter[156] + 3.364209*loop_counter[157] + -18.066154*loop_counter[161] + 0.055531*loop_counter[163] + -7.515581*loop_counter[166] + 7.182396*loop_counter[167] + -0.757575*loop_counter[169] + -0.757574*loop_counter[170] + -36.942203*loop_counter[172] + 41.525434*loop_counter[173] + -3.792294*loop_counter[178] + -96.352713*loop_counter[181] + -96.352713*loop_counter[182] + 106.541048*loop_counter[194] + 13.996734*loop_counter[196] + 13.996734*loop_counter[199] + 0.013315*loop_counter[200] + 0.013315*loop_counter[201] + 13.996734*loop_counter[214] + 12.471487*loop_counter[215] + -51.022992*loop_counter[216] + -101.462825*loop_counter[220] + 144.029167*loop_counter[221] + 31.398923*loop_counter[225] + 31.398923*loop_counter[226] + 31.398923*loop_counter[230] + 33.096980*loop_counter[231] + -32.878139*loop_counter[232] + 144.029167*loop_counter[233] + 0.109350*loop_counter[237] + -9.374983*loop_counter[238] + 0.054675*loop_counter[239] + -9.897423*loop_counter[240] + 176.040587;
-    #elif ARCH_X86
-      exec_time.little = 0;
+      exec_time.little = 67.890170*loop_counter[6] + 70.076545*loop_counter[7]
+        + 70.076545*loop_counter[8] + 67.890170*loop_counter[10] +
+        67.890170*loop_counter[12] + 75.583403*loop_counter[13] +
+        -19.912843*loop_counter[14] + 0.013315*loop_counter[17] +
+        0.013315*loop_counter[18] + 5.421329*loop_counter[19] +
+        -265.384048*loop_counter[20] + -55.922088*loop_counter[21] +
+        44.203297*loop_counter[24] + 44.203298*loop_counter[25] +
+        44.203298*loop_counter[28] + 18.818149*loop_counter[29] +
+        70.076545*loop_counter[36] + 13.996733*loop_counter[42] +
+        -59.276412*loop_counter[45] + -167.923179*loop_counter[46] +
+        13.996733*loop_counter[89] + -59.276412*loop_counter[92] +
+        147.258299*loop_counter[93] + 0.699840*loop_counter[98] +
+        13.996733*loop_counter[99] + 6.999247*loop_counter[100] +
+        2.549430*loop_counter[101] + 2.332800*loop_counter[103] +
+        13.996733*loop_counter[104] + -21.947356*loop_counter[105] +
+        -21.947356*loop_counter[106] + 18.963339*loop_counter[107] +
+        3.499183*loop_counter[109] + 13.996733*loop_counter[110] +
+        0.699840*loop_counter[131] + 12.471487*loop_counter[135] +
+        -20.880061*loop_counter[136] + 19.954665*loop_counter[138] +
+        64.456695*loop_counter[140] + 0.013315*loop_counter[149] +
+        -2.397624*loop_counter[150] + -2.774341*loop_counter[151] +
+        -4.434051*loop_counter[153] + 0.858891*loop_counter[154] +
+        -3.166590*loop_counter[155] + 0.141635*loop_counter[156] +
+        3.364209*loop_counter[157] + -18.066154*loop_counter[161] +
+        0.055531*loop_counter[163] + -7.515581*loop_counter[166] +
+        7.182396*loop_counter[167] + -0.757575*loop_counter[169] +
+        -0.757574*loop_counter[170] + -36.942203*loop_counter[172] +
+        41.525434*loop_counter[173] + -3.792294*loop_counter[178] +
+        -96.352713*loop_counter[181] + -96.352713*loop_counter[182] +
+        106.541048*loop_counter[194] + 13.996734*loop_counter[196] +
+        13.996734*loop_counter[199] + 0.013315*loop_counter[200] +
+        0.013315*loop_counter[201] + 13.996734*loop_counter[214] +
+        12.471487*loop_counter[215] + -51.022992*loop_counter[216] +
+        -101.462825*loop_counter[220] + 144.029167*loop_counter[221] +
+        31.398923*loop_counter[225] + 31.398923*loop_counter[226] +
+        31.398923*loop_counter[230] + 33.096980*loop_counter[231] +
+        -32.878139*loop_counter[232] + 144.029167*loop_counter[233] +
+        0.109350*loop_counter[237] + -9.374983*loop_counter[238] +
+        0.054675*loop_counter[239] + -9.897423*loop_counter[240] + 176.040587;
+#elif ARCH_X86
+      exec_time.little = -1.749813*loop_counter[0] +
+        12.161031*loop_counter[6] + 12.680051*loop_counter[7] +
+        12.680051*loop_counter[8] + 12.161031*loop_counter[10] +
+        12.161031*loop_counter[12] + 66.276412*loop_counter[13] +
+        -62.093513*loop_counter[14] + 0.019267*loop_counter[17] +
+        0.019267*loop_counter[18] + 0.294487*loop_counter[19] +
+        -43.694222*loop_counter[20] + -9.397756*loop_counter[21] +
+        7.387092*loop_counter[24] + 7.387092*loop_counter[25] +
+        7.387092*loop_counter[28] + 1.506657*loop_counter[29] +
+        12.680051*loop_counter[36] + -0.434345*loop_counter[42] +
+        -12.580408*loop_counter[45] + -6.533515*loop_counter[46] +
+        -0.434345*loop_counter[89] + -12.580408*loop_counter[92] +
+        -21.203745*loop_counter[93] + -0.021717*loop_counter[98] +
+        -0.434345*loop_counter[99] + 5.458958*loop_counter[100] +
+        -0.072391*loop_counter[103] + -0.434345*loop_counter[104] +
+        -1.213000*loop_counter[105] + -1.213000*loop_counter[106] +
+        3.362755*loop_counter[107] + -0.108586*loop_counter[109] +
+        -0.434345*loop_counter[110] + -0.021717*loop_counter[131] +
+        0.917959*loop_counter[135] + -9.735127*loop_counter[136] +
+        2.424421*loop_counter[138] + 6.066312*loop_counter[140] +
+        0.019267*loop_counter[149] + -0.006763*loop_counter[150] +
+        0.172421*loop_counter[151] + 0.129689*loop_counter[153] +
+        -0.075057*loop_counter[154] + 0.136155*loop_counter[155] +
+        -0.289091*loop_counter[156] + -0.006296*loop_counter[157] +
+        0.406778*loop_counter[161] + 0.656212*loop_counter[163] +
+        47.131603*loop_counter[166] + -54.238906*loop_counter[167] +
+        3.559664*loop_counter[169] + 3.559664*loop_counter[170] +
+        -6.134230*loop_counter[172] + 5.854066*loop_counter[173] +
+        33.503108*loop_counter[178] + 13.767256*loop_counter[181] +
+        13.767256*loop_counter[182] + 2.988774*loop_counter[194] +
+        -0.434345*loop_counter[196] + -0.434345*loop_counter[199] +
+        0.019267*loop_counter[200] + 0.019267*loop_counter[201] +
+        -0.434345*loop_counter[214] + 0.917959*loop_counter[215] +
+        -2.811466*loop_counter[216] + 12.435963*loop_counter[220] +
+        1.904836*loop_counter[221] + 2.424421*loop_counter[225] +
+        2.424421*loop_counter[226] + 2.424421*loop_counter[230] +
+        -0.875786*loop_counter[232] + 1.904836*loop_counter[233] +
+        -0.003393*loop_counter[237] + -1.262241*loop_counter[238] +
+        -0.001697*loop_counter[239] + -0.754526*loop_counter[240] + 82.984818;
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM

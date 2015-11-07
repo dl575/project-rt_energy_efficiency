@@ -83,13 +83,12 @@ endif
 
 PKG_CFLAGS := $(shell pkg-config --cflags $(REQ_PKGS))
 
-LDLIBS := $(shell pkg-config --libs $(REQ_PKGS) x11)
+LDLIBS := $(shell pkg-config --libs $(REQ_PKGS) x11) -lm
 
 CFLAGS += -std=c99 $(PKG_CFLAGS) -ggdb -W -Wall -Wextra -pthread -Wunused-function -D_GNU_SOURCE
 
 SOURCES := \
     comm.c \
-    commands.c \
     events.c \
     gui.c \
     inspector.c \

@@ -169,11 +169,7 @@ do
 
     #filter xpilot_slice and uzbl
     if [ ${BENCH_NAME[$i]} == "xpilot_slice" ] ; then
-        cd $DATA_ODROID_PATH
-        taskset 0xff ./filter_xpilot.py $1 temp_sample temp.txt > temp
-        cp temp $BENCH_PATH/${SOURCE_PATH[$i]}/M0.txt
-        cp temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"0.txt"
-        mv temp $DVFS_SIM_PATH/data/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"1.txt"
+      echo "filter need?"
     elif [ ${BENCH_NAME[$i]} == "uzbl" ] ; then
         cd $DATA_ODROID_PATH
         taskset 0xff ./filter_uzbl.py $1 temp_sample temp.txt > temp
