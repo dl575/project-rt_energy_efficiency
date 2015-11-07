@@ -35,7 +35,6 @@
  *
  */
 
-struct timeval start, end, moment;
 #include "timing.h"
 
 /* System headers. */
@@ -790,10 +789,20 @@ done:
         fclose(ctmfh);
 }
 
+//---------------------modified by TJSong----------------------//
+#if ONLINE_EN
+extern llsp_t *solver;
+#endif
+//---------------------modified by TJSong----------------------//
 int
 main(int32 argc, char *argv[])
 {
+    //---------------------modified by TJSong----------------------//
     init_time_file();
+#if ONLINE_EN
+    solver = llsp_new(N_FEATURE + 1);
+#endif
+    //---------------------modified by TJSong----------------------//
 
     ps_decoder_t *ps;
     cmd_ln_t *config;
@@ -826,6 +835,12 @@ main(int32 argc, char *argv[])
     }
 
     process_ctl(ps, config, ctlfh);
+
+    //---------------------modified by TJSong----------------------//
+#if ONLINE_EN
+    llsp_dispose(solver);
+#endif
+    //---------------------modified by TJSong----------------------//
 
     fclose(ctlfh);
     ps_free(ps);

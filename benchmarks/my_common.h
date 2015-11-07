@@ -54,7 +54,7 @@
 #define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -74,13 +74,13 @@
 #define ARCH_ARM 0 //ARM ODROID
 #define ARCH_X86 1 //x86-laptop
 
-#define _pocketsphinx_ 0
+#define _pocketsphinx_ 1
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
-#define _curseofwar_slice_sdl_ 1
+#define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
 #define _ldecode_ 0
@@ -201,6 +201,10 @@
 #elif _curseofwar_slice_sdl_
 #define N_FEATURE 14
 #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
+#define SCALE (double)1
+#elif _pocketsphinx_
+#define N_FEATURE 11
+#define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
 #define SCALE (double)1
 #else
 #define N_FEATURE 4
@@ -1127,8 +1131,9 @@ double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics)
 {
 	/* calculate prediction by dot product */
 	double result = 0.0;
-	for (size_t i = 0; i < llsp->metrics; i++)
+	for (size_t i = 0; i < llsp->metrics; i++){
 		result += llsp->result[i] * metrics[i];
+  }
 	
 	if (result >= EPSILON)
 		return result;
@@ -1318,7 +1323,7 @@ int func_is_event(double errors[N_ERROR], int n_event){
 
   return is_event;
 }
-int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
+double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     int size, int actual_exec_time, int freq)
 { 
   int i;
@@ -1333,7 +1338,7 @@ int get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
   {
     //update params.xx, add 1 to leftmost column for constant term
     metrics[0] = (double)1/SCALE;
-    for(i = 0; i < size ; i++)
+    for(i = 0; i < N_FEATURE ; i++)
       metrics[i+1] = (double)loop_counter[i]/SCALE;
 
     //get predicted time

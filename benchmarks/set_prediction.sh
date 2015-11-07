@@ -28,6 +28,12 @@ if [ $2 != "cons" -a $2 != "cvx" ] ; then
     exit 1
 fi
 
+if [ $3 != "online" -a $3 != "offline" ] ; then
+    echo 'USAGE : ./set_prediction [big/little] [cons/cvx] [online/offline]'
+    exit 1
+fi
+
+
 # set architecture depends on ARCH_TYPE
 if [ $ARCH_TYPE == "amd64" ] ; then 
     sed -i -e 's/'"$ARCH_ARM_EN"'/'"$ARCH_ARM_DIS"'/g' $BENCH_PATH/$COMMON_FILE
@@ -129,11 +135,18 @@ do
         taskset 0xff make -j16 
         taskset 0xff sudo make install 
     elif [ ${SOURCE_FILES[$i]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocketsphinx/pocketsphinx.c" ] ; then
-        echo "[pocketsphinx] make install"
-        cd $BENCH_PATH/${SOURCE_PATH[$i]}
-    	sudo taskset 0xff make clean -j16
-    	taskset 0xff ./configure --prefix=`pwd`/../install
-        taskset 0xff sudo make install 
+      echo "[pocketsphinx] make install"
+      cd $BENCH_PATH/${SOURCE_PATH[$1]}
+      sudo taskset 0xff make clean -j16
+#    rm -rf autom4te.cache/
+#    taskset 0xff ./autogen.sh
+    sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE -std=c99}\nLIBS+=-lm"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+      taskset 0xff ./configure --prefix=`pwd`/../install
+#    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+    sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE -std=c99}\nLIBS+=-lm"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+#	taskset 0xff sudo make
+#    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+      taskset 0xff sudo make install 
     fi
 
     #run bnechmark

@@ -180,10 +180,10 @@ elif [ ${SOURCE_FILES[$1]} == "pocketsphinx/pocketsphinx-5prealpha/src/libpocket
     sudo taskset 0xff make clean -j16
 #    rm -rf autom4te.cache/
 #    taskset 0xff ./autogen.sh
-	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE}"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE -std=c99}\nLIBS+=-lm"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
     taskset 0xff ./configure --prefix=`pwd`/../install
 #    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
-	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE}"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
+	sed -i -e 's/'"-g -O2 -Wall}"'/'"-g -O2 -Wall -D_GNU_SOURCE -std=c99}\nLIBS+=-lm"'/g' $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
 #	taskset 0xff sudo make
 #    vi $BENCH_PATH/pocketsphinx/pocketsphinx-5prealpha/configure
     taskset 0xff sudo make install 
