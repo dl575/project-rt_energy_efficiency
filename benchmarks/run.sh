@@ -109,13 +109,23 @@ if [[ $3 ]] ; then
       PROCESS_CNT_BEFORE=$(pgrep -c 'xpilot')
       #find the window 
       xdotool search --sync --onlyvisible --class "xpilot"  
-      #maximize the window
-      xdotool key alt+F10;        sleep 3;
       #press join
-      xdotool mousemove 65 95;    sleep 3;
+	    if [ $ARCH_TYPE == "amd64" ] ; then 
+        xdotool mousemove 1483 314; sleep 3;
+	    elif [ $ARCH_TYPE == "armhf" ] ; then 
+        #maximize the window
+        xdotool key alt+F10;        sleep 3;
+        xdotool mousemove 65 95;    sleep 3;
+      fi
       xdotool click 1;            sleep 3;
       #press click
-      xdotool mousemove 490 100;  sleep 3;
+	    if [ $ARCH_TYPE == "amd64" ] ; then 
+        xdotool mousemove 1861 325; sleep 3;
+	    elif [ $ARCH_TYPE == "armhf" ] ; then 
+        #maximize the window
+        xdotool key alt+F10;        sleep 3;
+        xdotool mousemove 490 100;  sleep 3;
+      fi
       xdotool click 1;            sleep 3;
       #playing
       while true;
