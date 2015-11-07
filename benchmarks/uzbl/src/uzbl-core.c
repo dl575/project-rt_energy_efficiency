@@ -452,7 +452,7 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     const UzblCommand *info = uzbl_commands_parse (cmd, argv);
 
 //---------------------modified by TJSong----------------------//
-    static int exec_time = 0;
+    static double exec_time = 0;
     static int jump = 0;
 #if HETERO_EN
     int pid = getpid();

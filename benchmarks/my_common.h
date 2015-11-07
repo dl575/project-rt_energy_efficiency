@@ -28,10 +28,10 @@
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
@@ -39,7 +39,7 @@
 #define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
-#define PID_EN 0 //0:pid off, 1:pid on
+#define PID_EN 1 //0:pid off, 1:pid on
 #define PROACTIVE_EN 0 //0:proactive dvfs off, 1:proactvie dvfs on
 
 #define WINDOW_SIZE (5) //window size
@@ -82,8 +82,8 @@
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 0
-#define _ldecode_ 1
+#define _uzbl_ 1
+#define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
@@ -1517,12 +1517,13 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     #endif
 #endif
 
-float pid_controller(int last_time) {
+struct slice_return pid_controller(double last_time) {
   // Define variables
-  float d_error;
-  static float error = 0; // Absolute error
-  static float i_error = 0; // Integrative error
-  static float predicted_time = 0; // Saved prediction time
+  double d_error;
+  static double error = 0; // Absolute error
+  static double i_error = 0; // Integrative error
+  static double predicted_time = 0; // Saved prediction time
+  struct slice_return predicted_exec_time;
 
   // Calculate errors
   // Derivative is new error minus old error 
@@ -1534,8 +1535,9 @@ float pid_controller(int last_time) {
 
   // Update prediction
   predicted_time = predicted_time + PID_P*error + PID_I*i_error + PID_D*d_error;
+  predicted_exec_time.big = predicted_exec_time.little = predicted_time;
 
-  return predicted_time;
+  return predicted_exec_time;
 }
 
 //define exectuion time array for oracle

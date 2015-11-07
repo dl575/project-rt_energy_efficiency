@@ -1061,7 +1061,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 
     //---------------------modified by TJSong----------------------//
     static int job_cnt = 0; //job count
-    static int exec_time = 0;
+    static double exec_time = 0;
     static int jump = 0;
     loop_value_0 = (int *) mmap(NULL, (sizeof *loop_value_0),
         PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);

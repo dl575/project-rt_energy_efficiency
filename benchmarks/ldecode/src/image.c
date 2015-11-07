@@ -223,7 +223,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
     //---------------------modified by TJSong----------------------//
     print_deadline(DEADLINE_TIME); //print deadline 
-    static int exec_time = 0;
+    static double exec_time = 0;
     static int jump = 0;
 #if HETERO_EN
     int pid = getpid();
