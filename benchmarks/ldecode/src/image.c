@@ -704,7 +704,7 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
     exec_time.big = exec_time.little = 0; //initialize
     #if !CVX_EN //off-line training with conservative
       #if ARCH_ARM
-        exec_time = 901.239695*loop_counter[22] + 6519.520788*loop_counter[23] + 70.284927*loop_counter[30] + 70.284927*loop_counter[32] + 24.858624*loop_counter[33] + 55.505205*loop_counter[34] + -25.812506*loop_counter[35] + 9225.181326*loop_counter[39] + 901.243547*loop_counter[40] + 901.240763;
+        exec_time.little = 901.239695*loop_counter[22] + 6519.520788*loop_counter[23] + 70.284927*loop_counter[30] + 70.284927*loop_counter[32] + 24.858624*loop_counter[33] + 55.505205*loop_counter[34] + -25.812506*loop_counter[35] + 9225.181326*loop_counter[39] + 901.243547*loop_counter[40] + 901.240763;
       #elif ARCH_X86
         // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
         exec_time.little = 139.932624*loop_counter[22] + 609.500041*loop_counter[23] +

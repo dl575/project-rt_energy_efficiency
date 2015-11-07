@@ -75,7 +75,7 @@ struct slice_return slice(const char *string, llsp_t *restrict solver)
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time = 564.059987*loop_counter[0] + 120.541985*loop_counter[1] + -99.464568*loop_counter[2] + 2315.843598*loop_counter[3] + 7692.955276;
+      exec_time.little = 564.059987*loop_counter[0] + 120.541985*loop_counter[1] + -99.464568*loop_counter[2] + 2315.843598*loop_counter[3] + 7692.955276;
     #elif ARCH_X86
       exec_time.little = 89.201374*loop_counter[0] + 35.810049*loop_counter[1] +
       74.406801*loop_counter[2] + 523.550068*loop_counter[3] + 952.687095;

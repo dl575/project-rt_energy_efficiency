@@ -1416,7 +1416,7 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
       #endif
     #else //off-line training with cvx    
       #if ARCH_ARM
-        exec_time = 14006.142066*loop_counter[5] + 1475096.509460;
+        exec_time.little = 14006.142066*loop_counter[5] + 1475096.509460;
       #elif ARCH_X86
         exec_time.little = 0;
       #endif

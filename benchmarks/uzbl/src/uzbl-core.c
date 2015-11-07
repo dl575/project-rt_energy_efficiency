@@ -423,7 +423,7 @@ struct slice_return uzbl_commands_run_parsed_slice (const UzblCommand *info,
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time = 4837.591523*loop_counter[1] + 6255.497915*loop_counter[2] + -9742.636246*loop_counter[3] + -9949.730490*loop_counter[4] + -9655.636246*loop_counter[5] + 35773.261409*loop_counter[6] + -4024.594606*loop_counter[7] + -10074.636247*loop_counter[8] + -4875.044724*loop_counter[10] + -9640.636246*loop_counter[11] + 34918.362258*loop_counter[15] + -2268.356559*loop_counter[16] + -10497.805551*loop_counter[18] + -37.453191;
+      exec_time.little = 4837.591523*loop_counter[1] + 6255.497915*loop_counter[2] + -9742.636246*loop_counter[3] + -9949.730490*loop_counter[4] + -9655.636246*loop_counter[5] + 35773.261409*loop_counter[6] + -4024.594606*loop_counter[7] + -10074.636247*loop_counter[8] + -4875.044724*loop_counter[10] + -9640.636246*loop_counter[11] + 34918.362258*loop_counter[15] + -2268.356559*loop_counter[16] + -10497.805551*loop_counter[18] + -37.453191;
     #elif ARCH_X86
       exec_time.little = 0;
     #endif

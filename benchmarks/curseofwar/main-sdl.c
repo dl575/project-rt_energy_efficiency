@@ -163,14 +163,14 @@ struct slice_return run_loop_slice(struct state *st, struct ui *ui,
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time = 5389.590166*loop_counter[11] + 27731.917473*loop_counter[12] + 18.000000;
+      exec_time.little = 5389.590166*loop_counter[11] + 27731.917473*loop_counter[12] + 18.000000;
     #elif ARCH_X86
       exec_time.little = 854.632021*loop_counter[11] + 6137.410898*loop_counter[12] +
         11.000000;
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time = 5614.000000*loop_counter[11] + 31239.000000*loop_counter[12] + 105.000000;
+      exec_time.little = 5614.000000*loop_counter[11] + 31239.000000*loop_counter[12] + 105.000000;
     #elif ARCH_X86
       exec_time.little = 0;
     #endif
