@@ -19,7 +19,7 @@
 
 #include "timing.h"
 
-#define SIZE 30
+#define SIZE 35
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -1381,7 +1381,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time.little = 0;
+      exec_time.little = 937.013763*loop_counter[2] + -181.664594*loop_counter[3] + 18.329178*loop_counter[4] + -19.575174*loop_counter[5] + 7.455174*loop_counter[6] + -181.664593*loop_counter[16] + 18.329182*loop_counter[17] + -181.664589*loop_counter[18] + 18.329181*loop_counter[19] + -181.664584*loop_counter[20] + 18.329181*loop_counter[21] + 4958.293763*loop_counter[24] + -1121.818799*loop_counter[25] + 65.387595*loop_counter[26] + -1121.818793*loop_counter[27] + 65.387595*loop_counter[28] + -1121.818791*loop_counter[29] + 65.387596*loop_counter[30] + 519.493241*loop_counter[31] + 36.626759*loop_counter[32] + -1121.818806*loop_counter[42] + 65.387595*loop_counter[43] + 202.653763*loop_counter[46] + -183.391021*loop_counter[47] + 17.991021*loop_counter[48] + 128.370338*loop_counter[60] + -157.512177*loop_counter[61] + 23.274355*loop_counter[62] + -157.512179*loop_counter[63] + 23.274355*loop_counter[64] + 45.385770*loop_counter[65] + 16.046271*loop_counter[66] + -157.512177*loop_counter[76] + 23.274354*loop_counter[77] + -157.512175*loop_counter[78] + 23.274354*loop_counter[79] + -1527.275646*loop_counter[81] + 49.625215*loop_counter[82] + 49.625215*loop_counter[86] + 49.625215*loop_counter[91] + 6162.146237;
     #elif ARCH_X86
       exec_time.little = 6.184759*loop_counter[2] + 7.020581*loop_counter[3] +
         0.045134*loop_counter[4] + 4.174456*loop_counter[5] +
@@ -4285,7 +4285,7 @@ int main(int argc, char *argv[]) {
     // c=getchar(); //to input automatically
     static int i=0;
     c=65+(i++)%4;
-    new_s = 4*((rand())%4)+4;//4~29
+    new_s = 5*((rand())%4)+4;//4~19
     usleep(100000);
     //---------------------modified by TJSong----------------------//
 

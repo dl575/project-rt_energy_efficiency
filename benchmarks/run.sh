@@ -90,18 +90,49 @@ if [[ $3 ]] ; then
 
     PRE_PWD=`pwd`
     cd $PRE_PWD
+    echo ${BENCH_NAME[$1]}"..."
     if [ ${BENCH_NAME[$1]} == "sha_preread" ] || \
        [ ${BENCH_NAME[$1]} == "rijndael_preread" ] || \
        [ ${BENCH_NAME[$1]} == "stringsearch" ] || \
        [ ${BENCH_NAME[$1]} == "2048_slice" ] || \
        [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
        [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
-      echo ${BENCH_NAME[$1]}"..."
       ./gen_runme_slice.py > runme_slice.sh
       chmod a+x runme_slice.sh
       sleep 3
       cat /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
       taskset $TASKSET_FLAG ./runme_slice.sh
+    elif [ ${BENCH_NAME[$1]} == "xpilot_slice" ] ; then
+      taskset $TASKSET_FLAG ./src/server/xpilots > output_slice.txt &
+      sleep 3;
+      taskset $TASKSET_FLAG ./src/client/xpilot &
+      PROCESS_CNT_BEFORE=$(pgrep -c 'xpilot')
+      #find the window 
+      xdotool search --sync --onlyvisible --class "xpilot"  
+      #maximize the window
+      xdotool key alt+F10;        sleep 3;
+      #press join
+      xdotool mousemove 65 95;    sleep 3;
+      xdotool click 1;            sleep 3;
+      #press click
+      xdotool mousemove 490 100;  sleep 3;
+      xdotool click 1;            sleep 3;
+      #playing
+      while true;
+      do
+        if [[ $PROCESS_CNT_BEFORE > $(pgrep -c 'xpilot') ]] ; then
+          echo "xpilot ends"
+          break
+        fi
+        xdotool keydown Return 
+        xdotool keydown shift+a
+        sleep 3
+        xdotool keyup Return 
+        xdotool keyup shift+a
+      done
+      echo "xdotool done"
+      PID_FREECIV_SERVER=$(pgrep 'xpilot')
+      kill -9 $PID_FREECIV_SERVER
     fi
 
 #    echo ${BENCH_NAME[$1]}"..."
