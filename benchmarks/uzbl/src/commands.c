@@ -370,13 +370,13 @@ struct slice_return uzbl_commands_run_parsed_slice (const UzblCommand *info,
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time.little = 4999.415837*loop_counter[1] + 6462.782184*loop_counter[2] + 36819.485152*loop_counter[6] + 35519.485152*loop_counter[15] + -358.683173;
+      exec_time = 4837.591523*loop_counter[1] + 6255.497915*loop_counter[2] + -9742.636246*loop_counter[3] + -9949.730490*loop_counter[4] + -9655.636246*loop_counter[5] + 35773.261409*loop_counter[6] + -4024.594606*loop_counter[7] + -10074.636247*loop_counter[8] + -4875.044724*loop_counter[10] + -9640.636246*loop_counter[11] + 34918.362258*loop_counter[15] + -2268.356559*loop_counter[16] + -10497.805551*loop_counter[18] + -37.453191;
     #elif ARCH_X86
       exec_time.little = 0;
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-		  exec_time.little = 6720.198020*loop_counter[1] + 6848.277220*loop_counter[2] + -12539.435645*loop_counter[3] + -10249.435645*loop_counter[4] + -12551.435645*loop_counter[5] + 51809.564355*loop_counter[6] + -5779.158425*loop_counter[7] + -12438.435645*loop_counter[8] + -6161.237625*loop_counter[10] + -12549.435645*loop_counter[11] + 33487.564355*loop_counter[15] + -510.158425*loop_counter[16] + -11959.435645*loop_counter[18] + 558.960405;
+      exec_time.little = 5479.168312*loop_counter[1] + 5869.435649*loop_counter[2] + -10511.970297*loop_counter[3] + -8919.970297*loop_counter[4] + -10424.970297*loop_counter[5] + 37641.029703*loop_counter[6] + -4645.534648*loop_counter[7] + -10843.970297*loop_counter[8] + -5002.801985*loop_counter[10] + -10409.970297*loop_counter[11] + 34251.029703*loop_counter[15] + -747.534648*loop_counter[16] + -9908.970297*loop_counter[18] + 476.366336;
     #elif ARCH_X86
       exec_time.little = 0;
     #endif

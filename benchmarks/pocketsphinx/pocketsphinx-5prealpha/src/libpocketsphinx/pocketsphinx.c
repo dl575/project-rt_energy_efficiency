@@ -1410,13 +1410,13 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
     exec_time.big = exec_time.little = 0; //initialize
     #if !CVX_EN //off-line training with conservative
       #if ARCH_ARM
-        exec_time.little = 18330.500000*loop_counter[5] + 517172.000000;
+        exec_time.little = 15127.641970*loop_counter[5] + 105182.852597;
       #elif ARCH_X86
         exec_time.little = 2251.922085*loop_counter[5] + 26589.972569;
       #endif
     #else //off-line training with cvx    
       #if ARCH_ARM
-        exec_time.little = 0;
+        exec_time = 14006.142066*loop_counter[5] + 1475096.509460;
       #elif ARCH_X86
         exec_time.little = 0;
       #endif

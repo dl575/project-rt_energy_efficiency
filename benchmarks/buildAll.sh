@@ -168,7 +168,7 @@ if [ ${SOURCE_FILES[$1]} == "julius/julius-4.3.1/libjulius/src/recogmain.c" ] ; 
 fi
 
 #fix address for uzbl benchmarks
-if [ ${SOURCE_FILES[$1]} == "uzbl/src/commands.c" ] ; then
+if [ ${SOURCE_FILES[$1]} == "uzbl/src/uzbl-core.c" ] ; then
     echo "[uzbl] ./fix_addresses.py"
     cd $BENCH_PATH/${SOURCE_PATH[$1]}
     taskset 0xff ./fix_addresses.py 

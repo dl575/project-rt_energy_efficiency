@@ -123,8 +123,6 @@ if [[ $3 ]] ; then
 	    if [ $ARCH_TYPE == "amd64" ] ; then 
         xdotool mousemove 1861 325; sleep 3;
 	    elif [ $ARCH_TYPE == "armhf" ] ; then 
-        #maximize the window
-        xdotool key alt+F10;        sleep 3;
         xdotool mousemove 490 100;  sleep 3;
       fi
       xdotool click 1;            sleep 3;

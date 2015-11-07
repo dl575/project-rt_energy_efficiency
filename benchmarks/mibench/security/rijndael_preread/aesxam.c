@@ -456,15 +456,7 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time.little = -9.541194*loop_counter[0] + -1.199749*loop_counter[1]
-        + -3.390734*loop_counter[2] + -9.544953*loop_counter[3] +
-        -9.544953*loop_counter[4] + -9.544953*loop_counter[5] +
-        0.282228*loop_counter[6] + -39.207297*loop_counter[7] +
-        0.035283*loop_counter[8] + 0.282245*loop_counter[10] +
-        0.282245*loop_counter[11] + 0.282245*loop_counter[12] +
-        -9.543077*loop_counter[15] + -0.840988*loop_counter[16] +
-        -1.198821*loop_counter[17] + -9.544754*loop_counter[19] +
-        -9.544754*loop_counter[20] + -9.544754*loop_counter[21] + -9.544967;
+      exec_time = 5.436491*loop_counter[0] + 0.676943*loop_counter[1] + 1.923948*loop_counter[2] + 5.434671*loop_counter[3] + 5.434671*loop_counter[4] + 5.434671*loop_counter[5] + 0.297917*loop_counter[6] + -60.886800*loop_counter[7] + 0.037244*loop_counter[8] + 0.297934*loop_counter[10] + 0.297934*loop_counter[11] + 0.297934*loop_counter[12] + 5.437220*loop_counter[15] + 0.728136*loop_counter[16] + 0.677188*loop_counter[17] + 5.439690*loop_counter[19] + 5.439690*loop_counter[20] + 5.439690*loop_counter[21] + 5.439645;
     #elif ARCH_X86
       exec_time.little = -0.395954 + -0.395954*loop_counter[0] +
         -6.335272*loop_counter[1] + -1.583818*loop_counter[2] +
@@ -479,16 +471,7 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time.little = -176.509733*loop_counter[0] +
-        -22.067275*loop_counter[1] + -62.395429*loop_counter[2] +
-        -176.507597*loop_counter[3] + -176.507597*loop_counter[4] +
-        -176.507597*loop_counter[5] + 0.305519*loop_counter[6] +
-        -2849.055084*loop_counter[7] + 0.038208*loop_counter[8] +
-        0.305732*loop_counter[10] + 0.305732*loop_counter[11] +
-        0.305732*loop_counter[12] + -176.507575*loop_counter[15] +
-        1759.938960*loop_counter[16] + -22.066504*loop_counter[17] +
-        -176.498538*loop_counter[19] + -176.498538*loop_counter[20] +
-        -176.498538*loop_counter[21] + -176.498520; 
+      exec_time.little = -1239.762881*loop_counter[0] + -154.974722*loop_counter[1] + -438.323718*loop_counter[2] + -1239.766037*loop_counter[3] + -1239.766037*loop_counter[4] + -1239.766037*loop_counter[5] + 0.548537*loop_counter[6] + 3439.668821*loop_counter[7] + 0.068555*loop_counter[8] + 0.548416*loop_counter[10] + 0.548416*loop_counter[11] + 0.548416*loop_counter[12] + -1239.764467*loop_counter[15] + 61.311764*loop_counter[16] + -154.975721*loop_counter[17] + -1239.763234*loop_counter[19] + -1239.763234*loop_counter[20] + -1239.763234*loop_counter[21] + -1239.763232;
     #elif ARCH_X86
       exec_time.litte = 0;
     #endif

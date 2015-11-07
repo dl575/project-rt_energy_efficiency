@@ -704,7 +704,7 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
     exec_time.big = exec_time.little = 0; //initialize
     #if !CVX_EN //off-line training with conservative
       #if ARCH_ARM
-        exec_time.little = -1989.000000*loop_counter[22] + 239.500000*loop_counter[34] + -968.000000*loop_counter[39] + 0.000000;
+        exec_time = 901.239695*loop_counter[22] + 6519.520788*loop_counter[23] + 70.284927*loop_counter[30] + 70.284927*loop_counter[32] + 24.858624*loop_counter[33] + 55.505205*loop_counter[34] + -25.812506*loop_counter[35] + 9225.181326*loop_counter[39] + 901.243547*loop_counter[40] + 901.240763;
       #elif ARCH_X86
         // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
         exec_time.little = 139.932624*loop_counter[22] + 609.500041*loop_counter[23] +
@@ -715,7 +715,7 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
       #endif
     #else //off-line training with cvx    
       #if ARCH_ARM
-        exec_time.little = -124.329431*loop_counter[22] + 8906.999995*loop_counter[23] + -9.698872*loop_counter[30] + -9.698872*loop_counter[32] + -3.429765*loop_counter[33] + 205.187500*loop_counter[34] + -69.937501*loop_counter[35] + 8776.000000*loop_counter[39] + -124.337120*loop_counter[40] + -124.329343;
+        exec_time.little = -190.405913*loop_counter[22] + 9170.000000*loop_counter[23] + -14.859432*loop_counter[30] + -14.859432*loop_counter[32] + -5.251652*loop_counter[33] + 197.650000*loop_counter[34] + -108.000000*loop_counter[35] + 6760.000000*loop_counter[39] + -190.424113*loop_counter[40] + -190.405792;
       #elif ARCH_X86
       #endif
     #endif

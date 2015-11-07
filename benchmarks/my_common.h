@@ -51,7 +51,7 @@
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 0 //0:off-line training, 1:on-line training
@@ -71,10 +71,10 @@
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 0 //ARM ODROID
-#define ARCH_X86 1 //x86-laptop
+#define ARCH_ARM 1 //ARM ODROID
+#define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 0
+#define _pocketsphinx_ 1
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
@@ -83,7 +83,7 @@
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
-#define _ldecode_ 1
+#define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \

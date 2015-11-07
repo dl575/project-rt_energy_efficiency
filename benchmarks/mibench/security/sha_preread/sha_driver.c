@@ -195,18 +195,7 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
 #if !ONLINE_EN
   #if !CVX_EN //off-line training with conservative
     #if ARCH_ARM
-      exec_time.little = -16.315689*loop_counter[0] +
-        -16.430372*loop_counter[1] + 0.129872*loop_counter[3] +
-        0.016232*loop_counter[4] + 0.005740*loop_counter[5] +
-        0.013732*loop_counter[6] + 0.013732*loop_counter[7] +
-        0.013732*loop_counter[8] + 0.013732*loop_counter[9] +
-        0.435504*loop_counter[10] + 0.054447*loop_counter[11] +
-        0.019237*loop_counter[12] + 0.046027*loop_counter[13] +
-        0.046027*loop_counter[14] + 0.046027*loop_counter[15] +
-        0.046027*loop_counter[16] + 0.262735*loop_counter[17] +
-        0.093040*loop_counter[18] + 0.222649*loop_counter[19] +
-        0.222649*loop_counter[20] + 0.222649*loop_counter[21] +
-        0.222649*loop_counter[22] + 2.096854;
+      exec_time.little = 1.338970*loop_counter[0] + 1.347246*loop_counter[1] + 0.109213*loop_counter[3] + 0.013651*loop_counter[4] + 0.004827*loop_counter[5] + 0.011547*loop_counter[6] + 0.011547*loop_counter[7] + 0.011547*loop_counter[8] + 0.011547*loop_counter[9] + 3.971997*loop_counter[10] + 0.496534*loop_counter[11] + 0.175529*loop_counter[12] + 0.420008*loop_counter[13] + 0.420008*loop_counter[14] + 0.420008*loop_counter[15] + 0.420008*loop_counter[16] + 0.410735*loop_counter[17] + 0.145201*loop_counter[18] + 0.348669*loop_counter[19] + 0.348669*loop_counter[20] + 0.348669*loop_counter[21] + 0.348669*loop_counter[22] + 3.286883;
     #elif ARCH_X86
       exec_time.little = 9.547252*loop_counter[0] + 9.663151*loop_counter[1] +
       0.056890*loop_counter[3] + 0.003556*loop_counter[4] +
@@ -222,7 +211,7 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time.little = -13.295487*loop_counter[0] + -13.405087*loop_counter[1] + 0.122620*loop_counter[3] + 0.015289*loop_counter[4] + 0.005404*loop_counter[5] + 0.012950*loop_counter[6] + 0.012950*loop_counter[7] + 0.012950*loop_counter[8] + 0.012950*loop_counter[9] + -2.649386*loop_counter[10] + -0.331226*loop_counter[11] + -0.117067*loop_counter[12] + -0.280014*loop_counter[13] + -0.280014*loop_counter[14] + -0.280014*loop_counter[15] + -0.280014*loop_counter[16] + -0.679204*loop_counter[17] + -0.238882*loop_counter[18] + -0.575339*loop_counter[19] + -0.575339*loop_counter[20] + -0.575339*loop_counter[21] + -0.575339*loop_counter[22] + -5.483236;
+      exec_time.little = 53.525647*loop_counter[0] + 53.967833*loop_counter[1] + 0.056076*loop_counter[3] + 0.007013*loop_counter[4] + 0.002483*loop_counter[5] + 0.005935*loop_counter[6] + 0.005935*loop_counter[7] + 0.005935*loop_counter[8] + 0.005935*loop_counter[9] + -2.424692*loop_counter[10] + -0.302937*loop_counter[11] + -0.107123*loop_counter[12] + -0.256198*loop_counter[13] + -0.256198*loop_counter[14] + -0.256198*loop_counter[15] + -0.256198*loop_counter[16] + 0.796433*loop_counter[17] + 0.281992*loop_counter[18] + 0.677867*loop_counter[19] + 0.677867*loop_counter[20] + 0.677867*loop_counter[21] + 0.677867*loop_counter[22] + 6.380048;
     #elif ARCH_X86
     #endif
   #endif

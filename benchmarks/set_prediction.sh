@@ -128,7 +128,7 @@ do
     fi
 
     #fix address for uzbl benchmarks
-    if [ ${SOURCE_FILES[$i]} == "uzbl/src/commands.c" ] ; then
+    if [ ${SOURCE_FILES[$i]} == "uzbl/src/uzbl-core.c" ] ; then
         echo "[uzbl] ./fix_addresses.py & make install"
         cd $BENCH_PATH/${SOURCE_PATH[$i]}
         taskset 0xff ./fix_addresses.py 
