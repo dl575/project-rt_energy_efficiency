@@ -145,7 +145,7 @@ if [[ $3 ]] ; then
     elif [ ${BENCH_NAME[$1]} == "uzbl" ] ; then
       taskset 0xff ./fix_addresses.py 
       taskset $TASKSET_FLAG uzbl-browser > output_slice.txt &
-      sleep 10;
+      sleep 30;
       #find the window 1
       xdotool search --sync --onlyvisible --class "uzbl"  
       #maximize the window 1
