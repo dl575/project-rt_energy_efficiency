@@ -41,6 +41,8 @@ extern void print_update_time(double update_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
+extern void print_old_data_removed();
+extern void print_stability(int is_stable, int is_begin);
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 /*
 extern void print_start_temperature();
@@ -220,6 +222,12 @@ void print_est_time(int T_est_big, int T_est_little){
 }
 void print_enter(){
 	printf("\n");
+}
+void print_old_data_removed(){
+	printf("old data removed\n");
+}
+void print_stability(int is_stable, int is_begin){
+  printf("is_stable : %d, is_begin %d\n", is_stable, is_begin);
 }
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){
     printf("\n");
@@ -431,6 +439,18 @@ void print_enter(){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
 	fprintf(time_file, "\n");
+    fclose(time_file);
+}
+void print_old_data_removed(){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+	fprintf(time_file, "old data removed\n");
+    fclose(time_file);
+}
+void print_stability(int is_stable, int is_begin){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+  fprintf(time_file, "is_stable : %d, is_begin %d\n", is_stable, is_begin);
     fclose(time_file);
 }
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little){

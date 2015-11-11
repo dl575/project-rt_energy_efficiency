@@ -1448,7 +1448,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     (void)llsp_solve(solver);
 
     //calculate an error 
-    printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
     error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
@@ -1466,15 +1466,14 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //give up old data by removing factor (if 0.9, decrease by 90%)
     if(!is_init && !is_begin && !is_stable){
     //if(!is_begin && func_is_event(errors, N_EVENT)){
-      printf("old data removed\n");
+      print_old_data_removed();
       remove_factor = 1.00;
       is_begin = 1;
 #if EVENT_EN
       global_margin = 1.2;
 #endif
     }
-    printf("is_stable : %d, is_begin %d\n", is_stable, is_begin);
-    //printf("is_event : %d\n", func_is_event(errors, N_EVENT));
+    print_stability(is_stable, is_begin);
 
     return -1;//return dummy
   }else{
