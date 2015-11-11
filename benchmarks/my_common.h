@@ -23,7 +23,11 @@
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME (double)0
 #define MARGIN (double)1.1
-
+#if _ldecode_
+double global_margin = 1.3;
+#else
+double global_margin = 1.1;
+#endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
@@ -186,46 +190,61 @@
 #define N_FEATURE 23
 #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
 #define SCALE (double)1000
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _rijndael_preread_
 #define N_FEATURE 23
 #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
 #define SCALE (double)1000
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _stringsearch_
 #define N_FEATURE 4
 #define _SLICE_() slice(search_strings[i], solver);
 #define SCALE (double)1
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _2048_slice_
 #define N_FEATURE 95
 #define _SLICE_() main_loop_slice(c, board, new_s, solver);
 #define SCALE (double)1
+#define N_STABLE (3)
+#define N_EVENT (3)
 #elif _curseofwar_slice_sdl_
 #define N_FEATURE 14
 #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
 #define SCALE (double)1
+#define N_STABLE (3)
+#define N_EVENT (2)
 #elif _pocketsphinx_ //fork: no solver
 #define N_FEATURE 11
 #define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
 #define SCALE (double)1
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _xpilot_slice_
 #define N_FEATURE 250
 #define _SLICE_() Main_loop_slice(solver);
 #define SCALE (double)1
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _uzbl_
 #define N_FEATURE 19
 #define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver);
 #define SCALE (double)1
+#define N_STABLE (4)
+#define N_EVENT (3)
 #elif _ldecode_ //fork: no solver
 #define N_FEATURE 42
 #define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
 #define SCALE (double)1
-#else
-#define N_FEATURE 4
-#define SCALE (double)1
+#define N_STABLE (2)
+#define N_EVENT (2)
 #endif
 
-#define N_ERROR (10)
-#define N_STABLE (4)
-#define N_EVENT (3)
+#define EVENT_EN 0
+
+#define N_ERROR N_STABLE
 //#define N_STABLE N_FEATURE
 
 /* codes from https://github.com/TUD-OS/ATLAS */
@@ -528,7 +547,7 @@ void set_freq(double predicted_exec_time, double slice_time,
   static int previous_freq = MAX_FREQ;
   double job_exec_time;
   for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
-    job_exec_time = MARGIN * predicted_exec_time * (double)MAX_FREQ / (double)predicted_freq;
+    job_exec_time = global_margin * predicted_exec_time * (double)MAX_FREQ / (double)predicted_freq;
   #if OVERHEAD_EN // with dvfs + slice overhead
     if(job_exec_time + (double)dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
         break;
@@ -542,7 +561,7 @@ void set_freq(double predicted_exec_time, double slice_time,
   }     
 #elif ARCH_X86	
   //calculate predicted freq and round up by adding 99999
-  predicted_freq = (int)(MARGIN * predicted_exec_time * MAX_FREQ /
+  predicted_freq = (int)(global_margin * predicted_exec_time * MAX_FREQ /
       (deadline_time - slice_time - avg_dvfs_time) + 99999);
 #endif
   //if less then 200000, just set it minimum (200000)
@@ -577,7 +596,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
 #endif
     
     for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
-        T_sum_big = MARGIN * T_est_big * f_max_big / f_new_big;
+        T_sum_big = global_margin * T_est_big * f_max_big / f_new_big;
     #if OVERHEAD_EN // with dvfs + slice overhead
         if(T_sum_big + dvfs_table_big[f_previous_big/100-2][f_new_big/100-2] + slice_time < d)
             break;
@@ -590,7 +609,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
     #endif
     }      
     for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
-        T_sum_little = MARGIN * T_est_little * f_max_little / f_new_little;
+        T_sum_little = global_margin * T_est_little * f_max_little / f_new_little;
         //printf("sum time %d @%d\n", T_sum_little, f_previous_little);
     #if OVERHEAD_EN // with dvfs + slice overhead
         if(T_sum_little + dvfs_table_little[f_previous_little/100-2][f_new_little/100-2] + slice_time < d)
@@ -734,7 +753,7 @@ int set_freq_multiple(int job, int d){
 			//1. Sum total time
 			T_sum = 0;
 			for(j=0; j<i; j++)
-				T_sum += MARGIN * T_est[j];
+				T_sum += global_margin * T_est[j];
             #if OVERHEAD_EN //just add 1000us for simplicity
             T_sum += 1000;
             #endif
@@ -833,8 +852,8 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 			T_sum_big = 0;
 			T_sum_little = 0;
 			for(j=0; j<i; j++){
-				T_sum_big += MARGIN * T_est_big[j];
-				T_sum_little += MARGIN * T_est_little[j];
+				T_sum_big += global_margin * T_est_big[j];
+				T_sum_little += global_margin * T_est_little[j];
             }
             #if OVERHEAD_EN //just add 1000us for simplicity
             T_sum_big += 1000;
@@ -1308,40 +1327,72 @@ static void trisolve(struct matrix m)
 //                      solve MLSR to find (betha)
 // Check errro in consecutive jobs for the interference event
 //////////////////////////////////////////////////////////////////////
-int func_is_stable(double errors[N_ERROR], int n_stable){
-  int avg_error = 0;
-  for(int i = 0; i < n_stable ; i++){
-    avg_error += fabs(errors[i]);
+int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
+#if _ldecode_
+  double margin = 20.0;
+#elif _curseofwar_slice_sdl_
+  double margin = 100.0;//consider time scale
+#else
+  double margin = 10.0;
+#endif
+  int is_stable = 0;
+  if(pre_is_stable == 1){
+    is_stable = 0;
+    for(int i = 0; i < n_stable ; i++){
+      if(fabs(errors[i]) <= margin){
+        is_stable = 1;
+        break;
+      }
+    }
+  }else if(pre_is_stable == 0){
+    int avg_error = 0;
+    for(int i = 0; i < n_stable ; i++){
+      avg_error += fabs(errors[i]);
+    }
+    if(avg_error > margin)
+      is_stable = 0;
+    else
+      is_stable = 1;
+  }else{
+    perror("someting wrong in is_stable");
+    is_stable = -1;
   }
-  avg_error /= n_stable;
-  if(avg_error > 10.0)
-    return 0;
-  else
-    return 1;
+  return is_stable; //if all errors > 10, not stable
 }
-int func_is_event(double errors[N_ERROR], int n_event){
+/*int func_is_event(double errors[N_ERROR], int n_event){
   int is_event = 1;
   int avg_error = 0;
   //if any error in n_event is less than 10%, we count this as just outlier
   //when errors in n_event consecutive jobs, we count this as an event
   for(int i = 0; i < n_event ; i++){
     avg_error += fabs(errors[i]);
+#if _ldecode_
+  if(avg_error > 20.0)
+#else
+  if(avg_error > 10.0)
+#endif
     if(errors[i] < 10.0)
       is_event = 0;
   }
   avg_error /= n_event;
+#if _ldecode_
+  if(avg_error > 20.0)
+#else
   if(avg_error > 10.0)
+#endif
     is_event = 1;
 
   return is_event;
-}
+}*/
 double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
-    int size, int actual_exec_time, int freq)
+    int size, double actual_exec_time, int freq)
 { 
   int i;
-  static double error = 100.0; //error = |actual-predicted|/actual*100
+  static double error = 100.0; //error = |predicted-actual|/actual*100
   static double errors[N_ERROR] = {0}; //save the past errors
   static int is_stable = 0; //indicator whether prediction is stable
+  static int is_begin = 1; //indicator of beginning phase of event
+  static int is_init = 1; //indicator of very initial phase
   static double exec_time = 0; //predicted execution time
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
   static double remove_factor = 0.0; //remove factor
@@ -1358,16 +1409,30 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
 
     //check error in previous job, and decide return value
     //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
-    if(!is_stable){//be conservative until prediction is stable
-#if DELAY_EN
-      return DEADLINE_TIME;
-#else
-      return exec_time;
+
+#if GET_PREDICT//just see how accurate it is, no dvfs
+    return exec_time;
 #endif
+
+    if(!is_stable){//be conservative until prediction is stable
+      if(is_begin)
+        global_margin = 1 + fabs(error*0.01);
+      printf("global_margin %f \n", global_margin);
+        //return DEADLINE_TIME;
+      //global_margin = 1.3;
+      if(is_init)
+        return DEADLINE_TIME;
+      return exec_time;
     }
     //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
-    else//as soon as it is stable, we can use predicted time
+    else{//as soon as it is stable, we can use predicted time
+      is_begin = 0;
+      is_init = 0;//only once
+#if EVENT_EN
+      global_margin = 1.1;
+#endif
       return exec_time;
+    }
   }
   else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
   {
@@ -1383,25 +1448,33 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     (void)llsp_solve(solver);
 
     //calculate an error 
-    error = (scaled_actual_exec_time - (double)exec_time)/scaled_actual_exec_time*100;
+    printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
       errors[j] = errors[j-1];
     errors[0] = error;
 
-    //for(int j=0; j<N_ERROR; j++)
-    //  printf("%f, ", errors[j]);
+    for(int j=0; j<N_ERROR; j++)
+      printf("%f, ", errors[j]);
 
     //check stability
-    is_stable = func_is_stable(errors, N_STABLE);
+    is_stable = func_is_stable(errors, N_STABLE, is_stable);
 
     //While prediction is stable, if we find errors in consecutive jobs, we
     //give up old data by removing factor (if 0.9, decrease by 90%)
-    if(is_stable && func_is_event(errors, N_EVENT)){
+    if(!is_init && !is_begin && !is_stable){
+    //if(!is_begin && func_is_event(errors, N_EVENT)){
       printf("old data removed\n");
       remove_factor = 1.00;
+      is_begin = 1;
+#if EVENT_EN
+      global_margin = 1.2;
+#endif
     }
+    printf("is_stable : %d, is_begin %d\n", is_stable, is_begin);
+    //printf("is_event : %d\n", func_is_event(errors, N_EVENT));
 
     return -1;//return dummy
   }else{

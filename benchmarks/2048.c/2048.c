@@ -19,7 +19,7 @@
 
 #include "timing.h"
 
-#define SIZE 35
+#define SIZE 20
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -4285,7 +4285,7 @@ int main(int argc, char *argv[]) {
     // c=getchar(); //to input automatically
     static int i=0;
     c=65+(i++)%4;
-    new_s = 5*((rand())%4)+4;//4~19
+    new_s = 4*((rand())%4)+4;//4~16
     usleep(100000);
     //---------------------modified by TJSong----------------------//
 

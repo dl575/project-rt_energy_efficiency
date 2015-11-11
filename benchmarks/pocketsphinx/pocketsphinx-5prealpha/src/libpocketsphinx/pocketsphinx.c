@@ -76,32 +76,32 @@
 #include <unistd.h>
 //This should be modified later to one pointer, if we have a time
 llsp_t *solver;
-static int *loop_value_0;
-static int *loop_value_1;
-static int *loop_value_2;
-static int *loop_value_3;
-static int *loop_value_4;
+//static int *loop_value_0;
+//static int *loop_value_1;
+//static int *loop_value_2;
+//static int *loop_value_3;
+//static int *loop_value_4;
 static int *loop_value_5;
-static int *loop_value_6;
-static int *loop_value_7;
-static int *loop_value_8;
-static int *loop_value_9;
-static int *loop_value_10;
+//static int *loop_value_6;
+//static int *loop_value_7;
+//static int *loop_value_8;
+//static int *loop_value_9;
+//static int *loop_value_10;
 
 static double *slice_time_value;
 
 struct loop_return{
-  int loop_0;
-  int loop_1;
-  int loop_2;
-  int loop_3;
-  int loop_4;
+//  int loop_0;
+//  int loop_1;
+//  int loop_2;
+//  int loop_3;
+//  int loop_4;
   int loop_5;
-  int loop_6;
-  int loop_7;
-  int loop_8;
-  int loop_9;
-  int loop_10;
+//  int loop_6;
+//  int loop_7;
+//  int loop_8;
+//  int loop_9;
+//  int loop_10;
 };
 #endif
 //---------------------modified by TJSong----------------------//
@@ -943,7 +943,7 @@ struct loop_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
         while (ps->acmod->n_feat_frame > 0)
         {
           loop_counter[5]++;
-          
+  /*        
           int k_rename0;
           if (ps->pl_window > 0)
           {
@@ -975,7 +975,7 @@ struct loop_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
 
           {}
           {}
-          
+   */       
           acmod_advance(ps->acmod);
           ++nfr_rename0;
         }
@@ -1017,17 +1017,17 @@ struct loop_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
     ;
     struct loop_return ret_loop_counter;
 
-    ret_loop_counter.loop_0 = loop_counter[0];
-    ret_loop_counter.loop_1 = loop_counter[1];
-    ret_loop_counter.loop_2 = loop_counter[2];
-    ret_loop_counter.loop_3 = loop_counter[3];
-    ret_loop_counter.loop_4 = loop_counter[4];
+//    ret_loop_counter.loop_0 = loop_counter[0];
+//    ret_loop_counter.loop_1 = loop_counter[1];
+//    ret_loop_counter.loop_2 = loop_counter[2];
+//    ret_loop_counter.loop_3 = loop_counter[3];
+//    ret_loop_counter.loop_4 = loop_counter[4];
     ret_loop_counter.loop_5 = loop_counter[5];
-    ret_loop_counter.loop_6 = loop_counter[6];
-    ret_loop_counter.loop_7 = loop_counter[7];
-    ret_loop_counter.loop_8 = loop_counter[8];
-    ret_loop_counter.loop_9 = loop_counter[9];
-    ret_loop_counter.loop_10 = loop_counter[10];
+//    ret_loop_counter.loop_6 = loop_counter[6];
+//    ret_loop_counter.loop_7 = loop_counter[7];
+//    ret_loop_counter.loop_8 = loop_counter[8];
+//    ret_loop_counter.loop_9 = loop_counter[9];
+//    ret_loop_counter.loop_10 = loop_counter[10];
 
     return ret_loop_counter;
   }
@@ -1063,28 +1063,28 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     static int job_cnt = 0; //job count
     static double exec_time = 0;
     static int jump = 0;
-    loop_value_0 = (int *) mmap(NULL, (sizeof *loop_value_0),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_1 = (int *) mmap(NULL, (sizeof *loop_value_1),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_2 = (int *) mmap(NULL, (sizeof *loop_value_2),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_3 = (int *) mmap(NULL, (sizeof *loop_value_3),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_4 = (int *) mmap(NULL, (sizeof *loop_value_4),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_0 = (int *) mmap(NULL, (sizeof *loop_value_0),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_1 = (int *) mmap(NULL, (sizeof *loop_value_1),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_2 = (int *) mmap(NULL, (sizeof *loop_value_2),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_3 = (int *) mmap(NULL, (sizeof *loop_value_3),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_4 = (int *) mmap(NULL, (sizeof *loop_value_4),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     loop_value_5 = (int *) mmap(NULL, (sizeof *loop_value_5),
         PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_6 = (int *) mmap(NULL, (sizeof *loop_value_6),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_7 = (int *) mmap(NULL, (sizeof *loop_value_7),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_8 = (int *) mmap(NULL, (sizeof *loop_value_8),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_9 = (int *) mmap(NULL, (sizeof *loop_value_9),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    loop_value_10 = (int *) mmap(NULL, (sizeof *loop_value_10),
-        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_6 = (int *) mmap(NULL, (sizeof *loop_value_6),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_7 = (int *) mmap(NULL, (sizeof *loop_value_7),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_8 = (int *) mmap(NULL, (sizeof *loop_value_8),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_9 = (int *) mmap(NULL, (sizeof *loop_value_9),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+//    loop_value_10 = (int *) mmap(NULL, (sizeof *loop_value_10),
+//        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     slice_time_value = (double *) mmap(NULL, (sizeof *slice_time_value),
         PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 #if HETERO_EN
@@ -1145,17 +1145,17 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
       #elif PROACTIVE_EN /* CASE 7 */
       #endif
 
-      *loop_value_0 = loop_counter_val.loop_0;
-      *loop_value_1 = loop_counter_val.loop_1;
-      *loop_value_2 = loop_counter_val.loop_2;
-      *loop_value_3 = loop_counter_val.loop_3;
-      *loop_value_4 = loop_counter_val.loop_4;
+//      *loop_value_0 = loop_counter_val.loop_0;
+//      *loop_value_1 = loop_counter_val.loop_1;
+//      *loop_value_2 = loop_counter_val.loop_2;
+//      *loop_value_3 = loop_counter_val.loop_3;
+//      *loop_value_4 = loop_counter_val.loop_4;
       *loop_value_5 = loop_counter_val.loop_5;
-      *loop_value_6 = loop_counter_val.loop_6;
-      *loop_value_7 = loop_counter_val.loop_7;
-      *loop_value_8 = loop_counter_val.loop_8;
-      *loop_value_9 = loop_counter_val.loop_9;
-      *loop_value_10 = loop_counter_val.loop_10;
+//      *loop_value_6 = loop_counter_val.loop_6;
+//      *loop_value_7 = loop_counter_val.loop_7;
+//      *loop_value_8 = loop_counter_val.loop_8;
+//      *loop_value_9 = loop_counter_val.loop_9;
+//      *loop_value_10 = loop_counter_val.loop_10;
 
       //---------------------modified by TJSong----------------------//
       _Exit(0);
@@ -1166,17 +1166,17 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 
     //---------------------modified by TJSong----------------------//
     int loop_counter[N_FEATURE] = {0};
-    loop_counter[0]=*loop_value_0;
-    loop_counter[1]=*loop_value_1;
-    loop_counter[2]=*loop_value_2;
-    loop_counter[3]=*loop_value_3;
-    loop_counter[4]=*loop_value_4;
+//    loop_counter[0]=*loop_value_0;
+//    loop_counter[1]=*loop_value_1;
+//    loop_counter[2]=*loop_value_2;
+//    loop_counter[3]=*loop_value_3;
+//    loop_counter[4]=*loop_value_4;
     loop_counter[5]=*loop_value_5;
-    loop_counter[6]=*loop_value_6;
-    loop_counter[7]=*loop_value_7;
-    loop_counter[8]=*loop_value_8;
-    loop_counter[9]=*loop_value_9;
-    loop_counter[10]=*loop_value_10;
+//    loop_counter[6]=*loop_value_6;
+//    loop_counter[7]=*loop_value_7;
+//    loop_counter[8]=*loop_value_8;
+//    loop_counter[9]=*loop_value_9;
+//    loop_counter[10]=*loop_value_10;
 
     double slice_time=*slice_time_value;
     
@@ -1334,7 +1334,7 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
         while (ps->acmod->n_feat_frame > 0)
         {
           loop_counter[5]++;
-          
+/*          
           int k_rename0;
           if (ps->pl_window > 0)
           {
@@ -1366,7 +1366,7 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
 
           {}
           {}
-          
+ */         
           acmod_advance(ps->acmod);
           ++nfr_rename0;
         }
