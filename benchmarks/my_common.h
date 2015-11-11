@@ -25,6 +25,8 @@
 #define MARGIN (double)1.1
 #if _ldecode_
 double global_margin = 1.3;
+#elif _stringsearch_
+double global_margin = 1.2;
 #else
 double global_margin = 1.1;
 #endif
@@ -1410,14 +1412,11 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //check error in previous job, and decide return value
     //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
 
-#if GET_PREDICT//just see how accurate it is, no dvfs
-    return exec_time;
-#endif
 
     if(!is_stable){//be conservative until prediction is stable
       if(is_begin)
         global_margin = 1 + fabs(error*0.01);
-      printf("global_margin %f \n", global_margin);
+      //printf("global_margin %f \n", global_margin);
         //return DEADLINE_TIME;
       //global_margin = 1.3;
       if(is_init)
