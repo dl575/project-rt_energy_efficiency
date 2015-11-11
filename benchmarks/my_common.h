@@ -32,17 +32,17 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 0 //0:use only one core, 1:use both cores
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -57,7 +57,7 @@ double global_margin = 1.1;
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 1 //0:off-line training, 1:on-line training
@@ -77,19 +77,19 @@ double global_margin = 1.1;
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
-#define _sha_preread_ 0
+#define _sha_preread_ 1
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
-#define _ldecode_ 1
+#define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
@@ -118,14 +118,18 @@ double global_margin = 1.1;
       printf("%s", "DEFINE ERROR!!\n");\
       return ERROR_DEFINE;\
   }\
-  llsp_t *solver = llsp_new(N_FEATURE + 1);
+  llsp_t *solver = llsp_new(N_FEATURE + 1);\
+  llsp_t *solver_big = llsp_new(N_FEATURE + 1);\
+  llsp_t *solver_little = llsp_new(N_FEATURE + 1);
   /*  double exec_time = 0;
   static int jump = 0;
   if(check_define()==ERROR_DEFINE){
       printf("%s", "DEFINE ERROR!!\n");
       return ERROR_DEFINE;
   }
-  llsp_t *solver = llsp_new(N_FEATURE + 1);*/
+  llsp_t *solver = llsp_new(N_FEATURE + 1);
+  llsp_t *solver_big = llsp_new(N_FEATURE + 1);
+  llsp_t *solver_little = llsp_new(N_FEATURE + 1);*/
 #define _DEFINE_TIME_() \
   exec_time = exec_timing();\
   int cur_freq = print_freq(); \
@@ -189,11 +193,16 @@ double global_margin = 1.1;
   }*/
 //Depends on benchmarks
 #if _sha_preread_
-#define N_FEATURE 23
-#define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
-#define SCALE (double)1000
-#define N_STABLE (4)
-#define N_EVENT (3)
+  #define N_FEATURE 23
+  #if !HETERO_EN
+    #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
+  #elif HETERO_EN
+    #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, \
+        solver_big, solver_little)
+  #endif
+  #define SCALE (double)1000
+  #define N_STABLE (4)
+  #define N_EVENT (3)
 #elif _rijndael_preread_
 #define N_FEATURE 23
 #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
@@ -308,6 +317,9 @@ void print_freq_power(int f_new_big, int f_new_little, float power_big, float po
 void print_current_core(int current_core, int big_little_cnt);
 void print_est_time(int T_est_big, int T_est_little);
 
+void print_errors(double *errors, int size);
+void print_old_data_removed();
+void print_stability(int is_stable, int is_begin);
 //////////////////////////////////////////////////////////////////////
 //dvfs[i][j] -> dvfs_time from (i+2)*100 Mhz to (j+2)*100 Mhz
 //////////////////////////////////////////////////////////////////////
@@ -578,7 +590,7 @@ void set_freq(double predicted_exec_time, double slice_time,
   return;
 }
 
-void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
+int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
 	int f_new = MAX_FREQ/1000;
@@ -717,7 +729,7 @@ void set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int
 //        fprintf(fp_max_freq_big, "%d", MAX_FREQ_BIG);
 //        fflush(fp_max_freq_big);
     }
-    return;
+    return current_core;
 }
 /*
 	int job : job number
@@ -1479,6 +1491,214 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     return -1;
   }
 }
+
+
+//////////////////////////////////////////////////////////////////////
+// on-line training core function for big core
+// THIS SHOULD BE EXACT COPY OF ABOVE
+// THIS FUNCTION CAN BE SHARED, SO I MADE EXPLICIT COPY FOR SHORT TIME
+// BUT LATER, I SHOULD FIX THIS.
+//////////////////////////////////////////////////////////////////////
+double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_counter,
+    int size, double actual_exec_time, int freq)
+{ 
+  int i;
+  static double error = 100.0; //error = |predicted-actual|/actual*100
+  static double errors[N_ERROR] = {0}; //save the past errors
+  static int is_stable = 0; //indicator whether prediction is stable
+  static int is_begin = 1; //indicator of beginning phase of event
+  static int is_init = 1; //indicator of very initial phase
+  static double exec_time = 0; //predicted execution time
+  static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
+  static double remove_factor = 0.0; //remove factor
+
+  if(type == TYPE_PREDICT)//add selected features, return predicted time
+  {
+    //update params.xx, add 1 to leftmost column for constant term
+    metrics[0] = (double)1/SCALE;
+    for(i = 0; i < N_FEATURE ; i++)
+      metrics[i+1] = (double)loop_counter[i]/SCALE;
+
+    //get predicted time
+    exec_time = llsp_predict(solver, metrics);
+
+    //check error in previous job, and decide return value
+    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
+
+
+    if(!is_stable){//be conservative until prediction is stable
+      if(is_begin)
+        global_margin = 1 + fabs(error*0.01);
+      //printf("global_margin %f \n", global_margin);
+        //return DEADLINE_TIME;
+      //global_margin = 1.3;
+      if(is_init)
+        return DEADLINE_TIME;
+      return exec_time;
+    }
+    //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
+    else{//as soon as it is stable, we can use predicted time
+      is_begin = 0;
+      is_init = 0;//only once
+#if EVENT_EN
+      global_margin = 1.1;
+#endif
+      return exec_time;
+    }
+  }
+  else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
+  {
+    //update params.yy, we assume time is scaled by freq linearly
+    double scaled_actual_exec_time = (double)actual_exec_time *
+      ((double)freq/(double)MAX_FREQ);
+    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    
+    //reset remove_factore as 0 
+    remove_factor = 0.0;
+
+    //solve with updated params.xx and params.yy
+    (void)llsp_solve(solver);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
+
+    //update errors array, keep newest one at the first index 
+    for(int j = N_ERROR-1 ; j > 0; j--)
+      errors[j] = errors[j-1];
+    errors[0] = error;
+
+    print_errors(errors, N_ERROR);
+
+    //check stability
+    is_stable = func_is_stable(errors, N_STABLE, is_stable);
+
+    //While prediction is stable, if we find errors in consecutive jobs, we
+    //give up old data by removing factor (if 0.9, decrease by 90%)
+    if(!is_init && !is_begin && !is_stable){
+    //if(!is_begin && func_is_event(errors, N_EVENT)){
+      print_old_data_removed();
+      remove_factor = 1.00;
+      is_begin = 1;
+#if EVENT_EN
+      global_margin = 1.2;
+#endif
+    }
+    print_stability(is_stable, is_begin);
+
+    return -1;//return dummy
+  }else{
+    perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
+    return -1;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+// on-line training core function for little
+// THIS SHOULD BE EXACT COPY OF ABOVE
+// THIS FUNCTION CAN BE SHARED, SO I MADE EXPLICIT COPY FOR SHORT TIME
+// BUT LATER, I SHOULD FIX THIS.
+//////////////////////////////////////////////////////////////////////
+double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_counter,
+    int size, double actual_exec_time, int freq)
+{ 
+  int i;
+  static double error = 100.0; //error = |predicted-actual|/actual*100
+  static double errors[N_ERROR] = {0}; //save the past errors
+  static int is_stable = 0; //indicator whether prediction is stable
+  static int is_begin = 1; //indicator of beginning phase of event
+  static int is_init = 1; //indicator of very initial phase
+  static double exec_time = 0; //predicted execution time
+  static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
+  static double remove_factor = 0.0; //remove factor
+
+  if(type == TYPE_PREDICT)//add selected features, return predicted time
+  {
+    //update params.xx, add 1 to leftmost column for constant term
+    metrics[0] = (double)1/SCALE;
+    for(i = 0; i < N_FEATURE ; i++)
+      metrics[i+1] = (double)loop_counter[i]/SCALE;
+
+    //get predicted time
+    exec_time = llsp_predict(solver, metrics);
+
+    //check error in previous job, and decide return value
+    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
+
+
+    if(!is_stable){//be conservative until prediction is stable
+      if(is_begin)
+        global_margin = 1 + fabs(error*0.01);
+      //printf("global_margin %f \n", global_margin);
+        //return DEADLINE_TIME;
+      //global_margin = 1.3;
+      if(is_init)
+        return DEADLINE_TIME;
+      return exec_time;
+    }
+    //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
+    else{//as soon as it is stable, we can use predicted time
+      is_begin = 0;
+      is_init = 0;//only once
+#if EVENT_EN
+      global_margin = 1.1;
+#endif
+      return exec_time;
+    }
+  }
+  else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
+  {
+    //update params.yy, we assume time is scaled by freq linearly
+    double scaled_actual_exec_time = (double)actual_exec_time *
+      ((double)freq/(double)MAX_FREQ);
+    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    
+    //reset remove_factore as 0 
+    remove_factor = 0.0;
+
+    //solve with updated params.xx and params.yy
+    (void)llsp_solve(solver);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
+
+    //update errors array, keep newest one at the first index 
+    for(int j = N_ERROR-1 ; j > 0; j--)
+      errors[j] = errors[j-1];
+    errors[0] = error;
+
+    print_errors(errors, N_ERROR);
+
+    //check stability
+    is_stable = func_is_stable(errors, N_STABLE, is_stable);
+
+    //While prediction is stable, if we find errors in consecutive jobs, we
+    //give up old data by removing factor (if 0.9, decrease by 90%)
+    if(!is_init && !is_begin && !is_stable){
+    //if(!is_begin && func_is_event(errors, N_EVENT)){
+      print_old_data_removed();
+      remove_factor = 1.00;
+      is_begin = 1;
+#if EVENT_EN
+      global_margin = 1.2;
+#endif
+    }
+    print_stability(is_stable, is_begin);
+
+    return -1;//return dummy
+  }else{
+    perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
+    return -1;
+  }
+}
+
+
+
+
+
+
+
 
 /*
  * PID-based prediction of execution time.
