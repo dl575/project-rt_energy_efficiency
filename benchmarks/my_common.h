@@ -57,7 +57,7 @@ double global_margin = 1.1;
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 1 //0:off-line training, 1:on-line training
@@ -77,10 +77,10 @@ double global_margin = 1.1;
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 0 //ARM ODROID
-#define ARCH_X86 1 //x86-laptop
+#define ARCH_ARM 1 //ARM ODROID
+#define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 1
+#define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 1
 #define _rijndael_preread_ 0
@@ -590,6 +590,7 @@ void set_freq(double predicted_exec_time, double slice_time,
   return;
 }
 
+/*
 int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
@@ -730,6 +731,101 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
 //        fflush(fp_max_freq_big);
     }
     return current_core;
+}
+*/
+
+int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
+	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
+	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
+	int f_new = MAX_FREQ/1000;
+  int final_freq = MAX_FREQ/1000;
+	int f_new_big = MAX_FREQ_BIG/1000;
+	int f_new_little = MAX_FREQ_LITTLE/1000;
+	int T_sum_big = 0;
+	int T_sum_little = 0;
+	static int f_previous_big = MAX_FREQ_BIG/1000;
+	static int f_previous_little = MAX_FREQ_LITTLE/1000;
+  static int big_cnt = 0;
+  static int little_cnt = 0;
+  static int current_core = CORE; //0: little, 1: big
+  cpu_set_t set;
+  
+  for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
+    T_sum_big = global_margin * T_est_big * f_max_big / f_new_big;
+  #if OVERHEAD_EN // with dvfs + slice overhead
+    if(T_sum_big + dvfs_table_big[f_previous_big/100-2][f_new_big/100-2] + slice_time < d)
+      break;
+  #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+    if(T_sum_big + slice_time < d)
+      break;
+  #else // without dvfs + slice and oracle
+    if(T_sum_big < d)
+      break;
+  #endif
+  }      
+  for(f_new_little = 200; f_new_little < f_max_little+1; f_new_little += 100){
+    T_sum_little = global_margin * T_est_little * f_max_little / f_new_little;
+  #if OVERHEAD_EN // with dvfs + slice overhead
+    if(T_sum_little + dvfs_table_little[f_previous_little/100-2][f_new_little/100-2] + slice_time < d)
+      break;
+  #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
+    if(T_sum_little + slice_time < d)
+      break;
+  #else // without dvfs + slice and oracle
+    if(T_sum_little < d)
+      break;
+  #endif
+  }     
+
+  //round up to be conservative (ex: 123 Mhz -> 200 Mhz, 987 Mhz -> 1000Mhz)
+  f_new_big = ((int)((f_new_big + 99) / 100)) * 100;
+  f_new_little = ((int)((f_new_little + 99) / 100)) * 100;
+  f_new_big = (f_new_big < 200)?(200):(f_new_big);
+  f_new_little = (f_new_little < 200)?(200):(f_new_little);
+
+  //originally power compare, but we found that little is always better 
+  if(f_new_little > 1400){  
+      f_new = f_new_big;
+      if(!current_core){//if it was little core
+          CPU_ZERO( &set );
+          CPU_SET( 4, &set );
+          CPU_SET( 5, &set );
+          CPU_SET( 6, &set );
+          CPU_SET( 7, &set );
+          sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
+      }
+      current_core = 1;
+      print_current_core(current_core, ++big_cnt);
+  }else{
+      f_new = f_new_little;
+      if(current_core){//if it was big core
+          CPU_ZERO( &set );
+          CPU_SET( 0, &set );
+          CPU_SET( 1, &set );
+          CPU_SET( 2, &set );
+          CPU_SET( 3, &set );
+          sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
+      }
+      current_core = 0;
+      print_current_core(current_core, ++little_cnt);
+  }
+  //save previous freq
+  f_previous_big = f_new_big;
+  f_previous_little = f_new_little;
+  //previous freq should not exceed max_freq
+  f_previous_big = (f_previous_big > MAX_FREQ_BIG/1000)?(MAX_FREQ_BIG/1000):(f_previous_big);
+  f_previous_little = (f_previous_little > MAX_FREQ_LITTLE/1000)?(MAX_FREQ_LITTLE/1000):(f_previous_little);
+  //mhz->khz
+  final_freq = f_new*1000;
+  //set maximum frequency, because performance governor always use maximum freq.
+  if(current_core){
+    fprintf(fp_max_freq_big, "%d", final_freq);
+    fflush(fp_max_freq_big);
+  }else{
+    fprintf(fp_max_freq_little, "%d", final_freq);
+    fflush(fp_max_freq_little);
+  }
+  return current_core;
 }
 /*
 	int job : job number
@@ -1137,7 +1233,7 @@ void llsp_add(llsp_t *restrict llsp, const double *restrict metrics,
 		memset(llsp->data, 0, data_size);
 	}
 	
-	/* age out the past a little bit */
+	/* Remove when an event is detected */
 	for (size_t element = 0; element < row_count * column_count; element++)
 		llsp->data[element] *= 1.0 - remove_factor;
 	
