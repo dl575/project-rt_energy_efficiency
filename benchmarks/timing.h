@@ -41,9 +41,6 @@ extern void print_update_time(double update_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
-extern void print_errors(double *errors, int size);
-extern void print_old_data_removed();
-extern void print_stability(int is_stable, int is_begin);
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 /*
 extern void print_start_temperature();
@@ -227,7 +224,7 @@ void print_enter(){
 void print_errors(double *errors, int size){
   int i;
   printf("errors = ");
-  for(int i=0; i<size; i++)
+  for(i=0; i<size; i++)
     printf("%f, ", errors[i]);
   printf("\n");
 }
@@ -454,7 +451,7 @@ void print_errors(double *errors, int size){
     time_file = fopen("times.txt", "a");
   int i;
   fprintf(time_file, "errors = ");
-  for(int i=0; i<size; i++)
+  for(i=0; i<size; i++)
     fprintf(time_file, "%f, ", errors[i]);
   fprintf(time_file, "\n");
     fclose(time_file);

@@ -8,8 +8,13 @@
 #include "timing.h"
 #include <unistd.h>
 
+#if !HETERO_EN
 struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, 
     int flen, llsp_t *restrict solver)
+#elif HETERO_EN
+struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer, 
+    int flen, llsp_t *restrict solver_big, llsp_t *restrict solver_little)
+#endif
 {
   int loop_counter[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   int i;
@@ -216,10 +221,19 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
     #endif
   #endif
 #elif ONLINE_EN
-  #if CORE //on-line training on big core
-  #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-        sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+  #if !HETERO_EN
+    #if CORE //on-line training on big core
+      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
+          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    #else //on-line training on little core
+      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
+          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    #endif
+  #elif HETERO_EN
+    exec_time.big    = get_predicted_time_big(TYPE_PREDICT, solver_big,
+        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    exec_time.little = get_predicted_time_little(TYPE_PREDICT, solver_little,
+        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
   #endif
 #endif
     return exec_time;
@@ -234,6 +248,7 @@ int main(int argc, char **argv)
   //---------------------modified by TJSong----------------------//
   _INIT_();
 #if HETERO_EN
+  static int current_core = CORE; //0: little, 1: big
   int pid = getpid();
 #endif
   //---------------------modified by TJSong----------------------//
@@ -323,7 +338,7 @@ int main(int argc, char **argv)
           start_timing();
           #if OVERHEAD_EN //with overhead
             #if HETERO_EN
-              set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+              current_core = set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
             #else
               #if CORE
                 set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
@@ -333,7 +348,7 @@ int main(int argc, char **argv)
             #endif
           #else //without overhead
             #if HETERO_EN
-              set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
+              current_core = set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
             #else
               #if CORE
                 set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
@@ -426,8 +441,17 @@ int main(int argc, char **argv)
                 || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
                 || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
             start_timing();
-            (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
+            #if !HETERO_EN
+              (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
                 cur_freq);
+            #elif HETERO_EN
+              if(current_core == 1)
+                (void)get_predicted_time_big(TYPE_SOLVE, solver_big, NULL, 0, exec_time,
+                  cur_freq);
+              else if(current_core == 0)
+                (void)get_predicted_time_little(TYPE_SOLVE, solver_little, NULL, 0, exec_time,
+                  cur_freq);
+            #endif
             end_timing();
             update_time = exec_timing();
           #endif
