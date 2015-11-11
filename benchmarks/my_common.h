@@ -23,10 +23,10 @@
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME (double)0
 #define MARGIN (double)1.1
-#if _ldecode_
+#if _ldecode_ || _pocketsphinx_
 double global_margin = 1.3;
 #elif _stringsearch_
-double global_margin = 1.2;
+double global_margin = 1.3;
 #else
 double global_margin = 1.1;
 #endif
@@ -34,15 +34,15 @@ double global_margin = 1.1;
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -80,7 +80,7 @@ double global_margin = 1.1;
 #define ARCH_ARM 1 //ARM ODROID
 #define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 0
+#define _pocketsphinx_ 1
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
@@ -89,7 +89,7 @@ double global_margin = 1.1;
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
-#define _ldecode_ 1
+#define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
@@ -222,7 +222,7 @@ double global_margin = 1.1;
 #define N_FEATURE 11
 #define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
 #define SCALE (double)1
-#define N_STABLE (4)
+#define N_STABLE (3)
 #define N_EVENT (3)
 #elif _xpilot_slice_
 #define N_FEATURE 250
@@ -1332,6 +1332,8 @@ static void trisolve(struct matrix m)
 int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
 #if _ldecode_
   double margin = 20.0;
+#elif _pocketsphinx_
+  double margin = 50.0;//consider time scale
 #elif _curseofwar_slice_sdl_
   double margin = 100.0;//consider time scale
 #else
