@@ -32,10 +32,10 @@ double global_margin = 1.1;
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
@@ -43,7 +43,7 @@ double global_margin = 1.1;
 #define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
-#define PID_EN 1 //0:pid off, 1:pid on
+#define PID_EN 0 //0:pid off, 1:pid on
 #define PROACTIVE_EN 0 //0:proactive dvfs off, 1:proactvie dvfs on
 
 #define WINDOW_SIZE (5) //window size
@@ -58,7 +58,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -78,7 +78,7 @@ double global_margin = 1.1;
 #define ARCH_ARM 1 //ARM ODROID
 #define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 1
+#define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
@@ -87,7 +87,7 @@ double global_margin = 1.1;
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
-#define _ldecode_ 0
+#define _ldecode_ 1
 
 //below benchmarks use file "times.txt" to print log 
 #define F_PRINT ((_pocketsphinx_ || _2048_slice_ \
@@ -1456,8 +1456,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
       errors[j] = errors[j-1];
     errors[0] = error;
 
-    for(int j=0; j<N_ERROR; j++)
-      printf("%f, ", errors[j]);
+    print_errors(errors, N_ERROR);
 
     //check stability
     is_stable = func_is_stable(errors, N_STABLE, is_stable);

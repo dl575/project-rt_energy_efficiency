@@ -41,6 +41,7 @@ extern void print_update_time(double update_time);
 extern void print_current_core(int current_core, int big_little_cnt);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
+extern void print_errors(double *errors, int size);
 extern void print_old_data_removed();
 extern void print_stability(int is_stable, int is_begin);
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
@@ -222,6 +223,13 @@ void print_est_time(int T_est_big, int T_est_little){
 }
 void print_enter(){
 	printf("\n");
+}
+void print_errors(double *errors, int size){
+  int i;
+  printf("errors = ");
+  for(int i=0; i<size; i++)
+    printf("%f, ", errors[i]);
+  printf("\n");
 }
 void print_old_data_removed(){
 	printf("old data removed\n");
@@ -439,6 +447,16 @@ void print_enter(){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
 	fprintf(time_file, "\n");
+    fclose(time_file);
+}
+void print_errors(double *errors, int size){
+    FILE *time_file;
+    time_file = fopen("times.txt", "a");
+  int i;
+  fprintf(time_file, "errors = ");
+  for(int i=0; i<size; i++)
+    fprintf(time_file, "%f, ", errors[i]);
+  fprintf(time_file, "\n");
     fclose(time_file);
 }
 void print_old_data_removed(){
