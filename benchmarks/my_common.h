@@ -34,17 +34,17 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 0 //0:use only one core, 1:use both cores
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -62,7 +62,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -84,13 +84,13 @@ double global_margin = 1.1;
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
-#define _sha_preread_ 0
+#define _sha_preread_ 1
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 1
+#define _uzbl_ 0
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
@@ -119,19 +119,13 @@ double global_margin = 1.1;
   if(check_define()==ERROR_DEFINE){\
       printf("%s", "DEFINE ERROR!!\n");\
       return ERROR_DEFINE;\
-  }\
-  llsp_t *solver = llsp_new(N_FEATURE + 1);\
-  llsp_t *solver_big = llsp_new(N_FEATURE + 1);\
-  llsp_t *solver_little = llsp_new(N_FEATURE + 1);
+  }
   /*  double exec_time = 0;
   static int jump = 0;
   if(check_define()==ERROR_DEFINE){
       printf("%s", "DEFINE ERROR!!\n");
       return ERROR_DEFINE;
-  }
-  llsp_t *solver = llsp_new(N_FEATURE + 1);
-  llsp_t *solver_big = llsp_new(N_FEATURE + 1);
-  llsp_t *solver_little = llsp_new(N_FEATURE + 1);*/
+  }*/
 #define _DEFINE_TIME_() \
   exec_time = exec_timing();\
   int cur_freq = print_freq(); \
@@ -269,6 +263,7 @@ void llsp_add(llsp_t *restrict llsp, const double *restrict metrics,
     double target, double remove_factor);
 const double *llsp_solve(llsp_t *restrict llsp);
 double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics);
+double llsp_predict_from_copy(llsp_t *restrict llsp, const double *restrict metrics, int type);
 void llsp_dispose(llsp_t *restrict llsp);
 
 /* float values below this are considered to be 0 */
@@ -743,7 +738,7 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
 }
 */
 
-int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid){
+int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int avg_dvfs_time, int pid, int is_stable_big, int is_stable_little){
 	int f_max_big = MAX_FREQ_BIG/1000;//khz->mhz
 	int f_max_little = MAX_FREQ_LITTLE/1000;//khz->mhz
 	int f_new = MAX_FREQ/1000;
@@ -792,8 +787,18 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
   f_new_big = (f_new_big < 200)?(200):(f_new_big);
   f_new_little = (f_new_little < 200)?(200):(f_new_little);
 
+  #if ONLINE_EN && _stringsearch_
+    f_new_big = f_new_big + 100;
+    f_new_little = f_new_little + 100;
+  #elif ONLINE_EN && _2048_slice_ //include update overhead
+    f_new_big = f_new_big + 100;
+    f_new_little = f_new_little + 100;
+  #elif ONLINE_EN && _pocketsphinx_
+    f_new_big = f_new_big + 100;
+    f_new_little = f_new_little + 100;
+  #endif
   //originally power compare, but we found that little is always better 
-  if(f_new_little > 1400){  
+  if( (is_stable_little && f_new_little >= 1500) ){   //TO BIG
       f_new = f_new_big;
       if(!current_core){//if it was little core
           CPU_ZERO( &set );
@@ -805,7 +810,7 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
       }
       current_core = 1;
       print_current_core(current_core, ++big_cnt);
-  }else{
+  }else{ // TO LITTLE
       f_new = f_new_little;
       if(current_core){//if it was big core
           CPU_ZERO( &set );
@@ -1291,6 +1296,26 @@ double llsp_predict(llsp_t *restrict llsp, const double *restrict metrics)
 		return llsp->last_measured;
 }
 
+double llsp_predict_from_copy(llsp_t *restrict llsp, const double *restrict metrics, int type)
+{
+  double result = 0.0;
+  static double copied_result[N_FEATURE+1];
+  if (type == 0){ //copy previous model
+    for (size_t i = 0; i < llsp->metrics; i++){
+      copied_result[i] = llsp->result[i];
+    }
+  }else if(type == 1){ //predict from copied model
+    /* calculate prediction by dot product */
+    for (size_t i = 0; i < llsp->metrics; i++){
+      result += copied_result[i] * metrics[i];
+    }
+  }
+	if (result >= EPSILON)
+		return result;
+	else
+		return llsp->last_measured;
+}
+
 void llsp_dispose(llsp_t *restrict llsp)
 {
 	const size_t index_last = llsp->good.columns - 1;
@@ -1447,19 +1472,10 @@ static void trisolve(struct matrix m)
 // Check errro in consecutive jobs for the interference event
 //////////////////////////////////////////////////////////////////////
 int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
-/*#if _ldecode_
-  double margin = 20.0;
-#elif _pocketsphinx_
-  double margin = 50.0;//consider time scale
-#elif _curseofwar_slice_sdl_*/
   double margin = DEADLINE_TIME/10.0;//consider time scale
 #if _2048_slice_
   margin = margin*3;
 #endif
-  /*
-#else
-  double margin = 10.0;
-#endif*/
   int is_stable = 0;
   if(pre_is_stable == 1){
     is_stable = 0;
@@ -1490,31 +1506,6 @@ int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
   }
   return is_stable; //if all errors > 10, not stable
 }
-/*int func_is_event(double errors[N_ERROR], int n_event){
-  int is_event = 1;
-  int avg_error = 0;
-  //if any error in n_event is less than 10%, we count this as just outlier
-  //when errors in n_event consecutive jobs, we count this as an event
-  for(int i = 0; i < n_event ; i++){
-    avg_error += fabs(errors[i]);
-#if _ldecode_
-  if(avg_error > 20.0)
-#else
-  if(avg_error > 10.0)
-#endif
-    if(errors[i] < 10.0)
-      is_event = 0;
-  }
-  avg_error /= n_event;
-#if _ldecode_
-  if(avg_error > 20.0)
-#else
-  if(avg_error > 10.0)
-#endif
-    is_event = 1;
-
-  return is_event;
-}*/
 double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     int size, double actual_exec_time, int freq)
 { 
@@ -1525,6 +1516,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
   static int is_begin = 1; //indicator of beginning phase of event
   static int is_init = 1; //indicator of very initial phase
   static double exec_time = 0; //predicted execution time
+  static double temp_exec_time = 0; //temporary predicted execution time when the model is unstable
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
   static double remove_factor = 0.0; //remove factor
 
@@ -1538,16 +1530,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //get predicted time
     exec_time = llsp_predict(solver, metrics);
 
-    //check error in previous job, and decide return value
-    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
-
-
     if(!is_stable){//be conservative until prediction is stable
-      if(is_begin)
-        global_margin = 1.3;
-      //printf("global_margin %f \n", global_margin);
-        //return DEADLINE_TIME;
-      //global_margin = 1.3;
       if(is_init){
 #if GET_PREDICT
         return exec_time;//for error checking
@@ -1555,14 +1538,23 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
         return DEADLINE_TIME;
 #endif
       }
-      return exec_time;
+      if(is_begin){
+        temp_exec_time = llsp_predict_from_copy(solver, metrics, 1);
+        int avg_error = 0;
+        for(int i = 0; i < N_ERROR ; i++)
+          avg_error += fabs(errors[i]);
+        global_margin = 1 + fabs(avg_error/DEADLINE_TIME);
+        return temp_exec_time;
+      }
+     return exec_time;
     }
     //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
     else{//as soon as it is stable, we can use predicted time
       is_begin = 0;
       is_init = 0;//only once
-#if EVENT_EN
       global_margin = 1.1;
+#if _stringsearch_ 
+      global_margin = 1.3;
 #endif
       return exec_time;
     }
@@ -1572,6 +1564,11 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //update params.yy, we assume time is scaled by freq linearly
     double scaled_actual_exec_time = (double)actual_exec_time *
       ((double)freq/(double)MAX_FREQ);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
+
     llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
@@ -1580,9 +1577,6 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //solve with updated params.xx and params.yy
     (void)llsp_solve(solver);
 
-    //calculate an error 
-    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
-    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1597,17 +1591,14 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //While prediction is stable, if we find errors in consecutive jobs, we
     //give up old data by removing factor (if 0.9, decrease by 90%)
     if(!is_init && !is_begin && !is_stable){
-    //if(!is_begin && func_is_event(errors, N_EVENT)){
       print_old_data_removed();
+      (void)llsp_predict_from_copy(solver, metrics, 0);
       remove_factor = 1.00;
       is_begin = 1;
-#if EVENT_EN
-      global_margin = 1.2;
-#endif
     }
     print_stability(is_stable, is_begin);
-
-    return -1;//return dummy
+    
+    return is_stable;//return dummy
   }else{
     perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
     return -1;
@@ -1625,21 +1616,16 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     int size, double actual_exec_time, int freq)
 { 
   int i;
-  static int once = 1;
   static double error = 100.0; //error = |predicted-actual|/actual*100
-  static double errors[N_ERROR] = {0}; //save the past errors
+  static double errors[N_ERROR] = { [0 ... N_ERROR-1] = DEADLINE_TIME}; //save the past errors
   static int is_stable = 0; //indicator whether prediction is stable
   static int is_begin = 1; //indicator of beginning phase of event
   static int is_init = 1; //indicator of very initial phase
   static double exec_time = 0; //predicted execution time
+  static double temp_exec_time = 0; //temporary predicted execution time when the model is unstable
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
   static double remove_factor = 0.0; //remove factor
- 
-  if(once == 1){
-    for(int j; j<N_ERROR; j++) 
-      errors[j] = DEADLINE_TIME; //initialize
-    once = 0;
-  }
+
   if(type == TYPE_PREDICT)//add selected features, return predicted time
   {
     //update params.xx, add 1 to leftmost column for constant term
@@ -1650,26 +1636,31 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     //get predicted time
     exec_time = llsp_predict(solver, metrics);
 
-    //check error in previous job, and decide return value
-    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
-
-
     if(!is_stable){//be conservative until prediction is stable
-      if(is_begin)
-        global_margin = 1 + fabs(error*0.01);
-      //printf("global_margin %f \n", global_margin);
-        //return DEADLINE_TIME;
-      //global_margin = 1.3;
-      if(is_init)
+      if(is_init){
+#if GET_PREDICT
+        return exec_time;//for error checking
+#else
         return DEADLINE_TIME;
-      return exec_time;
+#endif
+      }
+      if(is_begin){
+        temp_exec_time = llsp_predict_from_copy(solver, metrics, 1);
+        int avg_error = 0;
+        for(int i = 0; i < N_ERROR ; i++)
+          avg_error += fabs(errors[i]);
+        global_margin = 1 + fabs(avg_error/DEADLINE_TIME);
+        return temp_exec_time;
+      }
+     return exec_time;
     }
     //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
     else{//as soon as it is stable, we can use predicted time
       is_begin = 0;
       is_init = 0;//only once
-#if EVENT_EN
       global_margin = 1.1;
+#if _stringsearch_ 
+      global_margin = 1.3;
 #endif
       return exec_time;
     }
@@ -1679,6 +1670,11 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     //update params.yy, we assume time is scaled by freq linearly
     double scaled_actual_exec_time = (double)actual_exec_time *
       ((double)freq/(double)MAX_FREQ);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
+
     llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
@@ -1687,9 +1683,6 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     //solve with updated params.xx and params.yy
     (void)llsp_solve(solver);
 
-    //calculate an error 
-    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
-    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1704,39 +1697,32 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     //While prediction is stable, if we find errors in consecutive jobs, we
     //give up old data by removing factor (if 0.9, decrease by 90%)
     if(!is_init && !is_begin && !is_stable){
-    //if(!is_begin && func_is_event(errors, N_EVENT)){
       print_old_data_removed();
+      (void)llsp_predict_from_copy(solver, metrics, 0);
       remove_factor = 1.00;
       is_begin = 1;
-#if EVENT_EN
-      global_margin = 1.2;
-#endif
     }
     print_stability(is_stable, is_begin);
-
-    return -1;//return dummy
+    
+    return is_stable;//return dummy
   }else{
     perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
     return -1;
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-// on-line training core function for little
-// THIS SHOULD BE EXACT COPY OF ABOVE
-// THIS FUNCTION CAN BE SHARED, SO I MADE EXPLICIT COPY FOR SHORT TIME
-// BUT LATER, I SHOULD FIX THIS.
-//////////////////////////////////////////////////////////////////////
+
 double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_counter,
     int size, double actual_exec_time, int freq)
 { 
   int i;
   static double error = 100.0; //error = |predicted-actual|/actual*100
-  static double errors[N_ERROR] = {0}; //save the past errors
+  static double errors[N_ERROR] = { [0 ... N_ERROR-1] = DEADLINE_TIME}; //save the past errors
   static int is_stable = 0; //indicator whether prediction is stable
   static int is_begin = 1; //indicator of beginning phase of event
   static int is_init = 1; //indicator of very initial phase
   static double exec_time = 0; //predicted execution time
+  static double temp_exec_time = 0; //temporary predicted execution time when the model is unstable
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
   static double remove_factor = 0.0; //remove factor
 
@@ -1750,26 +1736,31 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     //get predicted time
     exec_time = llsp_predict(solver, metrics);
 
-    //check error in previous job, and decide return value
-    //if(fabs(error) > 10.0){//if |error| > 10%, return highest exec time
-
-
     if(!is_stable){//be conservative until prediction is stable
-      if(is_begin)
-        global_margin = 1 + fabs(error*0.01);
-      //printf("global_margin %f \n", global_margin);
-        //return DEADLINE_TIME;
-      //global_margin = 1.3;
-      if(is_init)
+      if(is_init){
+#if GET_PREDICT
+        return exec_time;//for error checking
+#else
         return DEADLINE_TIME;
-      return exec_time;
+#endif
+      }
+      if(is_begin){
+        temp_exec_time = llsp_predict_from_copy(solver, metrics, 1);
+        int avg_error = 0;
+        for(int i = 0; i < N_ERROR ; i++)
+          avg_error += fabs(errors[i]);
+        global_margin = 1 + fabs(avg_error/DEADLINE_TIME);
+        return temp_exec_time;
+      }
+     return exec_time;
     }
     //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
     else{//as soon as it is stable, we can use predicted time
       is_begin = 0;
       is_init = 0;//only once
-#if EVENT_EN
       global_margin = 1.1;
+#if _stringsearch_ 
+      global_margin = 1.3;
 #endif
       return exec_time;
     }
@@ -1779,6 +1770,11 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     //update params.yy, we assume time is scaled by freq linearly
     double scaled_actual_exec_time = (double)actual_exec_time *
       ((double)freq/(double)MAX_FREQ);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
+
     llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
@@ -1787,9 +1783,6 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     //solve with updated params.xx and params.yy
     (void)llsp_solve(solver);
 
-    //calculate an error 
-    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
-    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1804,24 +1797,19 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     //While prediction is stable, if we find errors in consecutive jobs, we
     //give up old data by removing factor (if 0.9, decrease by 90%)
     if(!is_init && !is_begin && !is_stable){
-    //if(!is_begin && func_is_event(errors, N_EVENT)){
       print_old_data_removed();
+      (void)llsp_predict_from_copy(solver, metrics, 0);
       remove_factor = 1.00;
       is_begin = 1;
-#if EVENT_EN
-      global_margin = 1.2;
-#endif
     }
     print_stability(is_stable, is_begin);
-
-    return -1;//return dummy
+    
+    return is_stable;//return dummy
   }else{
     perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
     return -1;
   }
 }
-
-
 
 
 
