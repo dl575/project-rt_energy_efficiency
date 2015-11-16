@@ -19,7 +19,7 @@
 
 #include "timing.h"
 
-#define SIZE 20
+#define SIZE 24
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -378,6 +378,8 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
   }
 
   int loop_counter[95] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int reduced_loop_counter[N_FEATURE] = {0};
+
   switch (c)
   {
     case 97:
@@ -1371,6 +1373,49 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
 #if GET_PREDICT || DEBUG_EN
     //95
     print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
+// non-zero coeffs =  [2, 3, 4, 5, 6, 16, 17, 18, 19, 20, 21, 24, 25, 26,
+// 27, 28, 29, 30, 31, 32, 42, 43, 46, 47, 48, 60, 61, 62, 63, 64, 65, 66,
+// 76, 77, 78, 79, 81, 82, 86, 91]
+    reduced_loop_counter[0] = loop_counter[2];
+    reduced_loop_counter[1] = loop_counter[3];
+    reduced_loop_counter[2] = loop_counter[4];
+    reduced_loop_counter[3] = loop_counter[5];
+    reduced_loop_counter[4] = loop_counter[6];
+    reduced_loop_counter[5] = loop_counter[16];
+    reduced_loop_counter[6] = loop_counter[17];
+    reduced_loop_counter[7] = loop_counter[18];
+    reduced_loop_counter[8] = loop_counter[19];
+    reduced_loop_counter[9] = loop_counter[20];
+    reduced_loop_counter[10] = loop_counter[21];
+    reduced_loop_counter[11] = loop_counter[24];
+    reduced_loop_counter[12] = loop_counter[25];
+    reduced_loop_counter[13] = loop_counter[26];
+    reduced_loop_counter[14] = loop_counter[27];
+    reduced_loop_counter[15] = loop_counter[28];
+    reduced_loop_counter[16] = loop_counter[29];
+    reduced_loop_counter[17] = loop_counter[30];
+    reduced_loop_counter[18] = loop_counter[31];
+    reduced_loop_counter[19] = loop_counter[32];
+    reduced_loop_counter[20] = loop_counter[42];
+    reduced_loop_counter[21] = loop_counter[43];
+    reduced_loop_counter[22] = loop_counter[46];
+    reduced_loop_counter[23] = loop_counter[47];
+    reduced_loop_counter[24] = loop_counter[48];
+    reduced_loop_counter[25] = loop_counter[60];
+    reduced_loop_counter[26] = loop_counter[61];
+    reduced_loop_counter[27] = loop_counter[62];
+    reduced_loop_counter[28] = loop_counter[63];
+    reduced_loop_counter[29] = loop_counter[64];
+    reduced_loop_counter[30] = loop_counter[65];
+    reduced_loop_counter[31] = loop_counter[66];
+    reduced_loop_counter[32] = loop_counter[76];
+    reduced_loop_counter[33] = loop_counter[77];
+    reduced_loop_counter[34] = loop_counter[78];
+    reduced_loop_counter[35] = loop_counter[79];
+    reduced_loop_counter[36] = loop_counter[81];
+    reduced_loop_counter[37] = loop_counter[82];
+    reduced_loop_counter[38] = loop_counter[86];
+    reduced_loop_counter[39] = loop_counter[91];
 #endif
   }
   {
@@ -1414,8 +1459,8 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
 #elif ONLINE_EN
   #if CORE //on-line training on big core
   #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-        sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+        sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
   #endif
 #endif
     return exec_time;
@@ -4252,6 +4297,7 @@ int main(int argc, char *argv[]) {
   uint8_t board[SIZE][SIZE];
   char c;
   bool success;
+  srand(0);
 
   init_time_file();
   //---------------------modified by TJSong----------------------//
@@ -4285,7 +4331,7 @@ int main(int argc, char *argv[]) {
     // c=getchar(); //to input automatically
     static int i=0;
     c=65+(i++)%4;
-    new_s = 4*((rand())%4)+4;//4~16
+    new_s = 4*((rand())%4)+8;//8~20
     usleep(100000);
     //---------------------modified by TJSong----------------------//
 
@@ -4423,6 +4469,7 @@ int main(int argc, char *argv[]) {
     #endif
 
     //---------------------modified by TJSong----------------------//
+    usleep(100000);
     start_timing();
 
     success = main_loop(c, board, new_s);
@@ -4457,7 +4504,7 @@ int main(int argc, char *argv[]) {
     fclose_all();//TJSong
     //---------------------modified by TJSong----------------------//
 
-    if (i > 500)
+    if (i > 1500)
       break;
     if (success) {
       //drawBoard(board);

@@ -28,7 +28,7 @@ def get_arch():
 output = "#!/bin/bash\n"
 output += "./rijndael "
 input_range = range(1, 100)
-for j in xrange(0, 1):
+for j in xrange(0, 10):
   for i in input_range:
     output += "../../../../datasets/"+get_arch()+"/rijndael-50ms/input%d.txt output_large.enc e %s " % (i, gen_key())
 output += "> output_slice.txt\n"

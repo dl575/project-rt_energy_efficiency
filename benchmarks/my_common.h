@@ -23,26 +23,28 @@
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME (double)0
 #define MARGIN (double)1.1
-#if _ldecode_ || _pocketsphinx_
-double global_margin = 1.3;
-#elif _stringsearch_
+#if _ldecode_ 
+double global_margin = 1.1;
+#elif _pocketsphinx_
+double global_margin = 1.1;
+#elif _stringsearch_ 
 double global_margin = 1.3;
 #else
 double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -60,7 +62,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -82,13 +84,13 @@ double global_margin = 1.1;
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
-#define _sha_preread_ 1
+#define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 0
+#define _uzbl_ 1
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
@@ -216,16 +218,16 @@ double global_margin = 1.1;
 #define N_STABLE (4)
 #define N_EVENT (3)
 #elif _2048_slice_
-#define N_FEATURE 95
+#define N_FEATURE 40
 #define _SLICE_() main_loop_slice(c, board, new_s, solver);
 #define SCALE (double)1
-#define N_STABLE (3)
+#define N_STABLE (10)
 #define N_EVENT (3)
 #elif _curseofwar_slice_sdl_
-#define N_FEATURE 14
+#define N_FEATURE 2
 #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
 #define SCALE (double)1
-#define N_STABLE (3)
+#define N_STABLE (5)
 #define N_EVENT (2)
 #elif _pocketsphinx_ //fork: no solver
 #define N_FEATURE 11
@@ -237,16 +239,16 @@ double global_margin = 1.1;
 #define N_FEATURE 250
 #define _SLICE_() Main_loop_slice(solver);
 #define SCALE (double)1
-#define N_STABLE (4)
+#define N_STABLE (3)
 #define N_EVENT (3)
 #elif _uzbl_
 #define N_FEATURE 19
 #define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver);
 #define SCALE (double)1
-#define N_STABLE (4)
+#define N_STABLE (3)
 #define N_EVENT (3)
 #elif _ldecode_ //fork: no solver
-#define N_FEATURE 42
+#define N_FEATURE 9 
 #define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
 #define SCALE (double)1
 #define N_STABLE (2)
@@ -260,7 +262,7 @@ double global_margin = 1.1;
 
 /* codes from https://github.com/TUD-OS/ATLAS */
 #define REMOVE_FACTOR (0.0)
-#define COLUMN_CONTRIBUTION 1.1
+#define COLUMN_CONTRIBUTION 1.0
 typedef struct llsp_s llsp_t;
 llsp_t *llsp_new(size_t count);
 void llsp_add(llsp_t *restrict llsp, const double *restrict metrics, 
@@ -580,6 +582,13 @@ void set_freq(double predicted_exec_time, double slice_time,
 #endif
   //if less then 200000, just set it minimum (200000)
   predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
+  #if ONLINE_EN && _stringsearch_
+    predicted_freq = predicted_freq + 100000;   
+  #elif ONLINE_EN && _2048_slice_ //include update overhead
+    predicted_freq = predicted_freq + 100000;   
+  #elif ONLINE_EN && _pocketsphinx_
+    predicted_freq = predicted_freq + 100000;   
+  #endif
 #if ARCH_ARM
   //remember current frequency to use later
   previous_freq = predicted_freq;
@@ -1342,7 +1351,7 @@ static void stabilize(struct matrix *sort, struct matrix *good)
 	good->columns = sort->columns;
 	memcpy(good->matrix[index_last], sort->matrix[index_last], column_size);
 	
-	/* Drop columns from right to left and watch the residual error.
+	/* Drop columns from righ to left and watch the residual error.
 	 * We would actually copy the whole matrix, but when dropping from the right,
 	 * Givens fixup always affects only the last column, so we hand just the
 	 * last column through all possible positions. */
@@ -1438,19 +1447,28 @@ static void trisolve(struct matrix m)
 // Check errro in consecutive jobs for the interference event
 //////////////////////////////////////////////////////////////////////
 int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
-#if _ldecode_
+/*#if _ldecode_
   double margin = 20.0;
 #elif _pocketsphinx_
   double margin = 50.0;//consider time scale
-#elif _curseofwar_slice_sdl_
-  double margin = 100.0;//consider time scale
+#elif _curseofwar_slice_sdl_*/
+  double margin = DEADLINE_TIME/10.0;//consider time scale
+#if _2048_slice_
+  margin = margin*3;
+#endif
+  /*
 #else
   double margin = 10.0;
-#endif
+#endif*/
   int is_stable = 0;
   if(pre_is_stable == 1){
     is_stable = 0;
     for(int i = 0; i < n_stable ; i++){
+#if _curseofwar_slice_sdl_ || _pocketsphinx_
+      if(fabs(errors[i]) > 3*margin){
+        break;
+      }
+#endif
       if(fabs(errors[i]) <= margin){
         is_stable = 1;
         break;
@@ -1461,6 +1479,7 @@ int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
     for(int i = 0; i < n_stable ; i++){
       avg_error += fabs(errors[i]);
     }
+    avg_error = avg_error/n_stable;
     if(avg_error > margin)
       is_stable = 0;
     else
@@ -1501,7 +1520,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
 { 
   int i;
   static double error = 100.0; //error = |predicted-actual|/actual*100
-  static double errors[N_ERROR] = {0}; //save the past errors
+  static double errors[N_ERROR] = { [0 ... N_ERROR-1] = DEADLINE_TIME}; //save the past errors
   static int is_stable = 0; //indicator whether prediction is stable
   static int is_begin = 1; //indicator of beginning phase of event
   static int is_init = 1; //indicator of very initial phase
@@ -1525,12 +1544,17 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
 
     if(!is_stable){//be conservative until prediction is stable
       if(is_begin)
-        global_margin = 1 + fabs(error*0.01);
+        global_margin = 1.3;
       //printf("global_margin %f \n", global_margin);
         //return DEADLINE_TIME;
       //global_margin = 1.3;
-      if(is_init)
+      if(is_init){
+#if GET_PREDICT
+        return exec_time;//for error checking
+#else
         return DEADLINE_TIME;
+#endif
+      }
       return exec_time;
     }
     //else//if |error| <= 10% (i.e. 90% accuracy), use predicted value
@@ -1558,7 +1582,7 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
 
     //calculate an error 
     //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
-    error = (exec_time-scaled_actual_exec_time)/scaled_actual_exec_time*100;
+    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1601,6 +1625,7 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     int size, double actual_exec_time, int freq)
 { 
   int i;
+  static int once = 1;
   static double error = 100.0; //error = |predicted-actual|/actual*100
   static double errors[N_ERROR] = {0}; //save the past errors
   static int is_stable = 0; //indicator whether prediction is stable
@@ -1609,7 +1634,12 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
   static double exec_time = 0; //predicted execution time
   static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
   static double remove_factor = 0.0; //remove factor
-
+ 
+  if(once == 1){
+    for(int j; j<N_ERROR; j++) 
+      errors[j] = DEADLINE_TIME; //initialize
+    once = 0;
+  }
   if(type == TYPE_PREDICT)//add selected features, return predicted time
   {
     //update params.xx, add 1 to leftmost column for constant term

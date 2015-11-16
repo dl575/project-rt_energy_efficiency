@@ -52,6 +52,7 @@ struct slice_return run_loop_slice(struct state *st, struct ui *ui,
     int pop_variant[MAX_WIDTH][MAX_HEIGHT], int k, llsp_t *restrict solver)
 {
   int loop_counter[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int reduced_loop_counter[N_FEATURE] = {0};
   int finished = 0;
   SDL_Event event;
   k++;
@@ -154,6 +155,8 @@ struct slice_return run_loop_slice(struct state *st, struct ui *ui,
     //14
     print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
 #endif
+    reduced_loop_counter[0] = loop_counter[11];
+    reduced_loop_counter[1] = loop_counter[12];
   }
   {
     predict_exec_time:
@@ -178,8 +181,8 @@ struct slice_return run_loop_slice(struct state *st, struct ui *ui,
 #elif ONLINE_EN
   #if CORE //on-line training on big core
   #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-        sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+        sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
   #endif
 #endif
     return exec_time;
@@ -309,7 +312,7 @@ void run(struct state *st, struct ui *ui,
         dvfs_time = print_dvfs_timing();
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
-        predicted_exec_time = _SLICE_();
+        //predicted_exec_time = _SLICE_();
         moment_timing_print(0); //moment_start
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
         moment_timing_print(0); //moment_start
@@ -403,6 +406,7 @@ void run(struct state *st, struct ui *ui,
       #endif
   
       //---------------------modified by TJSong----------------------//
+      usleep(100000);
       start_timing();
 
       k = run_loop(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k);
@@ -437,7 +441,7 @@ void run(struct state *st, struct ui *ui,
       //---------------------modified by TJSong----------------------//
   
       //---------------------modified by TJSong----------------------//
-      if(cnt++ > 1000)//to end curseofwar
+      if(cnt++ > 2000)//to end curseofwar
         break;
       //---------------------modified by TJSong----------------------//
     }

@@ -8,8 +8,7 @@ output += "rm output_slice.txt\n"
 #\"coastguard_qcif\" \"container_qcif\" \"foreman_qcif\" \"hall_qcif\" \
 #\"mother-daughter_qcif\" \"news_qcif\" \"silent_qcif\")\n"
 output += "videos=(\"akiyo_qcif\" \"akiyo_qcif\" \"akiyo_qcif\" \
-\"akiyo_qcif\" \"akiyo_qcif\" \"akiyo_qcif\" \"akiyo_qcif\" \
-\"akiyo_qcif\" \"akiyo_qcif\" \"akiyo_qcif\")\n"
+\"akiyo_qcif\" \"akiyo_qcif\")\n"
 output += "Index_videos=0\n"
 output += "for video in \"${videos[@]}\"\n"
 output += "  do\n"

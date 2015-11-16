@@ -21,7 +21,7 @@ output = "#!/bin/bash\n"
 output += "./sha "
 for j in xrange(0, 10):
   for i in input_range:
-    output += "../../../../datasets/"+get_arch()+"/sha-50ms/input%d.txt " % (i)
+    output += "../../../../datasets/"+get_arch()+"/sha-50ms-dummy/input%d.txt " % (i)
 output += "> output_slice.txt\n"
 
 print output

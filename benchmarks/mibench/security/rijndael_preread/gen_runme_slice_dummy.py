@@ -30,7 +30,7 @@ output += "./rijndael "
 input_range = range(1, 100)
 for j in xrange(0, 10):
   for i in input_range:
-    output += "../../../../datasets/"+get_arch()+"/rijndael-50ms/input%d.txt output_large.enc e %s " % (i, gen_key())
+    output += "../../../../datasets/"+get_arch()+"/rijndael-50ms-dummy/input%d.txt output_large.enc e %s " % (i, gen_key())
 output += "> output_slice.txt\n"
 print output
 

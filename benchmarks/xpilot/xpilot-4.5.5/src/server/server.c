@@ -4996,7 +4996,7 @@ void Main_loop(void)
         goto wait_for_client_join;
     }else{
         //after certain jobs, finish the game
-        if(main_job_cnt > 1000)
+        if(main_job_cnt > 3000)
             End_game();
     }
 //---------------------modified by TJSong----------------------//

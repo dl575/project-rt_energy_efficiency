@@ -1132,8 +1132,6 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         loop_counter_val = _SLICE_();  
         end_timing();
         *slice_time_value = print_slice_timing();
-
-        moment_timing_print(1); //moment_start
       #elif ORACLE_EN /* CASE 5 */
       #elif PID_EN /* CASE 6 */
         moment_timing_print(0); //moment_start

@@ -268,7 +268,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
         dvfs_time = print_dvfs_timing();
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
-        predicted_exec_time = _SLICE_();
+        //predicted_exec_time = _SLICE_();
         moment_timing_print(0); //moment_start
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
         moment_timing_print(0); //moment_start
@@ -834,8 +834,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
         loop_counter_val = _SLICE_();  
         end_timing();
         *slice_time_value = print_slice_timing();
-
-        moment_timing_print(1); //moment_start
       #elif ORACLE_EN /* CASE 5 */
       #elif PID_EN /* CASE 6 */
         moment_timing_print(0); //moment_start
@@ -868,15 +866,15 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     //---------------------modified by TJSong----------------------//
     int loop_counter[N_FEATURE] = {0};
     // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
-    loop_counter[22]=*loop_value_22;
-    loop_counter[23]=*loop_value_23;
-    loop_counter[30]=*loop_value_30;
-    loop_counter[32]=*loop_value_32;
-    loop_counter[33]=*loop_value_33;
-    loop_counter[34]=*loop_value_34;
-    loop_counter[35]=*loop_value_35;
-    loop_counter[39]=*loop_value_39;
-    loop_counter[40]=*loop_value_40;
+    loop_counter[0]=*loop_value_22;
+    loop_counter[1]=*loop_value_23;
+    loop_counter[2]=*loop_value_30;
+    loop_counter[3]=*loop_value_32;
+    loop_counter[4]=*loop_value_33;
+    loop_counter[5]=*loop_value_34;
+    loop_counter[6]=*loop_value_35;
+    loop_counter[7]=*loop_value_39;
+    loop_counter[8]=*loop_value_40;
 
     double slice_time=*slice_time_value;
     

@@ -4,6 +4,8 @@ source global.sh
 BENCHMARK_FOLDER=${BENCH_NAME[$1]}
 BENCHMARK=$BENCHMARK_FOLDER"-"$4
 
+DUMMY=1
+
 if [[ $# < 4 ]] ; then
   echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
   exit 1
@@ -65,6 +67,14 @@ init(){
 		exit 1
 	fi
 }
+run_dummy(){
+  PRE_PWD=`pwd`
+  cd /$PROJECT_PATH/dummy/
+  /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+#  /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+#  /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
+  cd $PRE_PWD 
+}
 
 init 
 
@@ -98,12 +108,33 @@ if [[ $3 ]] ; then
        [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
        [ ${BENCH_NAME[$1]} == "pocketsphinx" ] || \
        [ ${BENCH_NAME[$1]} == "ldecode" ] ; then
-      ./gen_runme_slice.py > runme_slice.sh
-      chmod a+x runme_slice.sh
-      sleep 3
-      cat /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
-      taskset $TASKSET_FLAG ./runme_slice.sh
-    elif [ ${BENCH_NAME[$1]} == "xpilot_slice" ] ; then
+      if [ $DUMMY == "1" ] ; then #dummy
+        ./gen_runme_slice_dummy.py > runme_slice.sh
+        chmod a+x runme_slice.sh
+        sleep 3
+        taskset $TASKSET_FLAG ./runme_slice.sh &
+        sleep 3;
+        if [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
+          sleep 100;
+        fi
+        sleep 5; run_dummy $2
+        sleep 150; #dummy.sh takes around 150s at lowest freq on little core
+        if [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
+          sleep 250;
+        elif [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
+             [ ${BENCH_NAME[$1]} == "ldecode" ] ; then
+          sleep 200;
+        elif [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
+          sleep 500;
+        fi
+      else #no dummy  
+        ./gen_runme_slice.py > runme_slice.sh
+        chmod a+x runme_slice.sh
+        sleep 3
+        cat /sys/devices/system/cpu/$WHICH_CPU/cpufreq/scaling_governor
+        taskset $TASKSET_FLAG ./runme_slice.sh
+      fi
+   elif [ ${BENCH_NAME[$1]} == "xpilot_slice" ] ; then
       taskset $TASKSET_FLAG ./src/server/xpilots > output_slice.txt &
       sleep 3;
       taskset $TASKSET_FLAG ./src/client/xpilot &
@@ -126,6 +157,9 @@ if [[ $3 ]] ; then
         xdotool mousemove 490 100;  sleep 3;
       fi
       xdotool click 1;            sleep 3;
+      if [ $DUMMY == "1" ] ; then #dummy
+        run_dummy $2
+      fi
       #playing
       while true;
       do
@@ -155,6 +189,9 @@ if [[ $3 ]] ; then
       #type url, go to csl site
       xdotool key o; sleep 1; xdotool type csl.cornell.edu; sleep 1;
       xdotool key Return; sleep 10;
+      if [ $DUMMY == "1" ] ; then #dummy
+        run_dummy $2
+      fi
       #move mouse and click people/research tab
 	    if [ $ARCH_TYPE == "amd64" ] ; then 
         xdotool mousemove 1541 814; xdotool click 1; sleep 10;
@@ -165,10 +202,13 @@ if [[ $3 ]] ; then
       fi
       #refresh/back/forward//scroll 
       xdotool key r;sleep 10;xdotool key b;sleep 10;xdotool key m;sleep 10;
-      xdotool key j;sleep 1;xdotool key j;sleep 1;xdotool key j;sleep 1;
-      xdotool key k;sleep 1;xdotool key k;sleep 1;xdotool key k;sleep 1;
-      xdotool key l;sleep 1;xdotool key l;sleep 1;xdotool key l;sleep 1;
-      xdotool key h;sleep 1;xdotool key h;sleep 1;xdotool key h;sleep 1;
+      for i in `seq 1 100`;
+      do 
+        xdotool key j;sleep 1;xdotool key j;sleep 1;xdotool key j;sleep 1;
+        xdotool key k;sleep 1;xdotool key k;sleep 1;xdotool key k;sleep 1;
+        xdotool key l;sleep 1;xdotool key l;sleep 1;xdotool key l;sleep 1;
+        xdotool key h;sleep 1;xdotool key h;sleep 1;xdotool key h;sleep 1;
+      done
       #close
 	    if [ $ARCH_TYPE == "amd64" ] ; then 
         xdotool mousemove 1448 490; sleep 1; xdotool click 1; sleep 1;
@@ -179,21 +219,7 @@ if [[ $3 ]] ; then
       sleep 30;
     fi
 
-#    echo ${BENCH_NAME[$1]}"..."
-#    ./gen_runme_slice_dummy.py > runme_slice.sh
-#    chmod a+x runme_slice.sh
-#    sleep 3
-#    taskset $TASKSET_FLAG ./runme_slice.sh &
-#    sleep 3;
-#
-#    PRE_PWD=`pwd`
-#    cd /$PROJECT_PATH/dummy/
-#    /$PROJECT_PATH/dummy/dummy.sh $2 &
-#    /$PROJECT_PATH/dummy/dummy.sh $2 &
-#    /$PROJECT_PATH/dummy/dummy.sh $2 &
-#    sleep 120; #dummy.sh takes around 150s at lowest freq on little core
-#    cd $PRE_PWD 
-#
+
     cp $PRE_PWD/output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$2/$BENCHMARK_FOLDER/$BENCHMARK/$3
 else
     echo "specify governor!"
