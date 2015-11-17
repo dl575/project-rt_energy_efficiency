@@ -231,6 +231,9 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     static double exec_time = 0;
     static int jump = 0;
 #if HETERO_EN
+    static int current_core = CORE; //0: little, 1: big
+    static int is_stable_big = 0; //0: not stable
+    static int is_stable_little = 0; //0: not stable
     int pid = getpid();
 #endif
     //---------------------modified by TJSong----------------------//
@@ -815,24 +818,13 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
       // Perform slicing and prediction
       /*
         CASE 0 = to get prediction equation
-        CASE 1 = to get execution deadline
-        CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
         CASE 4 = running on our prediction
-        CASE 5 = running on oracle
         CASE 6 = running on pid
-        CASE 7 = running on proactive DVFS
       */
       struct loop_return loop_counter_val;
       #if GET_PREDICT /* CASE 0 */
         loop_counter_val = _SLICE_();  
-      #elif GET_DEADLINE /* CASE 1 */
-        moment_timing_print(0); //moment_start
-      #elif GET_OVERHEAD /* CASE 2 */
-        start_timing();
-        loop_counter_val = _SLICE_();  
-        end_timing();
-        *slice_time_value = print_slice_timing();
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
         //slice_time=0; dvfs_time=0;
         loop_counter_val = _SLICE_();  
@@ -887,35 +879,30 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     loop_counter[8]=*loop_value_40;
 
     double slice_time=*slice_time_value;
-    
-    double predicted_exec_time = get_predicted_time(TYPE_PREDICT, solver,
-        loop_counter, N_FEATURE, 0, 0);
+    #if !HETERO_EN
+      double predicted_exec_time = get_predicted_time(TYPE_PREDICT, solver,
+          loop_counter, N_FEATURE, 0, 0);
+    #elif HETERO_EN
+      double predicted_exec_time_big = get_predicted_time(TYPE_PREDICT, solver_big,
+          loop_counter, N_FEATURE, 0, 0);
+      double predicted_exec_time_little = get_predicted_time(TYPE_PREDICT,
+          solver_little,
+          loop_counter, N_FEATURE, 0, 0);
+    #endif
+
 
     #if GET_PREDICT /* CASE 0 */
     #elif GET_DEADLINE /* CASE 1 */
-    #elif GET_OVERHEAD /* CASE 2 */
-      start_timing();
-      #if CORE
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-      #else
-        set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-      #endif
-      end_timing();
-      dvfs_time = print_dvfs_timing();
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
       start_timing();
       #if OVERHEAD_EN //with overhead
         #if HETERO_EN
-          set_freq_hetero(predicted_exec_time, predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+          set_freq_hetero(predicted_exec_time_big, predicted_exec_time_little,
+              slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid, is_stable_big,
+              is_stable_little); //do dvfs
         #else
           set_freq(predicted_exec_time, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        #endif
-      #else //without overhead
-        #if HETERO_EN
-          set_freq_hetero(predicted_exec_time, predicted_exec_time, 0, DEADLINE_TIME, 0, pid); //do dvfs
-        #else
-          set_freq(predicted_exec_time, 0, DEADLINE_TIME, 0); //do dvfs
         #endif
       #endif
       end_timing();
@@ -962,8 +949,17 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
         start_timing();
-        (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
+        #if !HETERO_EN
+          (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
             cur_freq);
+        #elif HETERO_EN
+          if     (current_core == 1)
+            is_stable_big    = get_predicted_time_big   (TYPE_SOLVE, 
+                solver_big,    NULL, 0, exec_time, cur_freq);
+          else if(current_core == 0)
+            is_stable_little = get_predicted_time_little(TYPE_SOLVE, 
+                solver_little, NULL, 0, exec_time, cur_freq);
+        #endif
         end_timing();
         update_time = exec_timing();
       #endif

@@ -382,6 +382,7 @@ struct slice_return Main_loop_slice(llsp_t *restrict solver_big, llsp_t *restric
 #endif
 {
   int loop_counter[250] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int reduced_loop_counter[N_FEATURE] = {0};
 {}
 {}
 {}
@@ -2531,6 +2532,83 @@ struct slice_return Main_loop_slice(llsp_t *restrict solver_big, llsp_t *restric
     //250
     print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
 #endif
+    reduced_loop_counter[0] = loop_counter[0];
+    reduced_loop_counter[1] = loop_counter[6];
+    reduced_loop_counter[2] = loop_counter[7];
+    reduced_loop_counter[3] = loop_counter[8];
+    reduced_loop_counter[4] = loop_counter[10];
+    reduced_loop_counter[5] = loop_counter[12];
+    reduced_loop_counter[6] = loop_counter[13];
+    reduced_loop_counter[7] = loop_counter[14];
+    reduced_loop_counter[8] = loop_counter[17];
+    reduced_loop_counter[9] = loop_counter[18];
+    reduced_loop_counter[10] = loop_counter[19];
+    reduced_loop_counter[11] = loop_counter[20];
+    reduced_loop_counter[12] = loop_counter[21];
+    reduced_loop_counter[13] = loop_counter[24];
+    reduced_loop_counter[14] = loop_counter[25];
+    reduced_loop_counter[15] = loop_counter[28];
+    reduced_loop_counter[16] = loop_counter[29];
+    reduced_loop_counter[17] = loop_counter[36];
+    reduced_loop_counter[18] = loop_counter[42];
+    reduced_loop_counter[19] = loop_counter[45];
+    reduced_loop_counter[20] = loop_counter[46];
+    reduced_loop_counter[21] = loop_counter[89];
+    reduced_loop_counter[22] = loop_counter[92];
+    reduced_loop_counter[23] = loop_counter[93];
+    reduced_loop_counter[24] = loop_counter[98];
+    reduced_loop_counter[25] = loop_counter[99];
+    reduced_loop_counter[26] = loop_counter[100];
+    reduced_loop_counter[27] = loop_counter[103];
+    reduced_loop_counter[28] = loop_counter[104];
+    reduced_loop_counter[29] = loop_counter[105];
+    reduced_loop_counter[30] = loop_counter[106];
+    reduced_loop_counter[31] = loop_counter[107];
+    reduced_loop_counter[32] = loop_counter[109];
+    reduced_loop_counter[33] = loop_counter[110];
+    reduced_loop_counter[34] = loop_counter[131];
+    reduced_loop_counter[35] = loop_counter[135];
+    reduced_loop_counter[36] = loop_counter[136];
+    reduced_loop_counter[37] = loop_counter[138];
+    reduced_loop_counter[38] = loop_counter[140];
+    reduced_loop_counter[39] = loop_counter[149];
+    reduced_loop_counter[40] = loop_counter[150];
+    reduced_loop_counter[41] = loop_counter[151];
+    reduced_loop_counter[42] = loop_counter[153];
+    reduced_loop_counter[43] = loop_counter[154];
+    reduced_loop_counter[44] = loop_counter[155];
+    reduced_loop_counter[45] = loop_counter[156];
+    reduced_loop_counter[46] = loop_counter[157];
+    reduced_loop_counter[47] = loop_counter[161];
+    reduced_loop_counter[48] = loop_counter[163];
+    reduced_loop_counter[49] = loop_counter[166];
+    reduced_loop_counter[50] = loop_counter[167];
+    reduced_loop_counter[51] = loop_counter[169];
+    reduced_loop_counter[52] = loop_counter[170];
+    reduced_loop_counter[53] = loop_counter[172];
+    reduced_loop_counter[54] = loop_counter[173];
+    reduced_loop_counter[55] = loop_counter[178];
+    reduced_loop_counter[56] = loop_counter[181];
+    reduced_loop_counter[57] = loop_counter[182];
+    reduced_loop_counter[58] = loop_counter[194];
+    reduced_loop_counter[59] = loop_counter[196];
+    reduced_loop_counter[60] = loop_counter[199];
+    reduced_loop_counter[61] = loop_counter[200];
+    reduced_loop_counter[62] = loop_counter[201];
+    reduced_loop_counter[63] = loop_counter[214];
+    reduced_loop_counter[64] = loop_counter[215];
+    reduced_loop_counter[65] = loop_counter[216];
+    reduced_loop_counter[66] = loop_counter[220];
+    reduced_loop_counter[67] = loop_counter[221];
+    reduced_loop_counter[68] = loop_counter[225];
+    reduced_loop_counter[69] = loop_counter[226];
+    reduced_loop_counter[70] = loop_counter[230];
+    reduced_loop_counter[71] = loop_counter[232];
+    reduced_loop_counter[72] = loop_counter[233];
+    reduced_loop_counter[73] = loop_counter[237];
+    reduced_loop_counter[74] = loop_counter[238];
+    reduced_loop_counter[75] = loop_counter[239];
+    reduced_loop_counter[76] = loop_counter[240];
  }
   {
     predict_exec_time:
@@ -2592,17 +2670,17 @@ struct slice_return Main_loop_slice(llsp_t *restrict solver_big, llsp_t *restric
 #elif ONLINE_EN
   #if !HETERO_EN
     #if CORE //on-line training on big core
-      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+          sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     #else //on-line training on little core
-      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+          sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     #endif
   #elif HETERO_EN
     exec_time.big    = get_predicted_time_big(TYPE_PREDICT, solver_big,
-        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+        reduced_loop_counter, sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     exec_time.little = get_predicted_time_little(TYPE_PREDICT, solver_little,
-        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+        reduced_loop_counter, sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
   #endif
 #endif
     return exec_time;

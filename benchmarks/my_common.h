@@ -230,7 +230,7 @@ double global_margin = 1.1;
 #define N_STABLE (3)
 #define N_EVENT (3)
 #elif _xpilot_slice_
-#define N_FEATURE 250
+#define N_FEATURE 77
 #define _SLICE_() Main_loop_slice(solver);
 #define SCALE (double)1
 #define N_STABLE (3)

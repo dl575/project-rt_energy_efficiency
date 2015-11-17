@@ -1464,17 +1464,17 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
 #elif ONLINE_EN
   #if !HETERO_EN
     #if CORE //on-line training on big core
-      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+          sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     #else //on-line training on little core
-      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, reduced_loop_counter,
+          sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     #endif
   #elif HETERO_EN
     exec_time.big    = get_predicted_time_big(TYPE_PREDICT, solver_big,
-        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+        reduced_loop_counter, sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
     exec_time.little = get_predicted_time_little(TYPE_PREDICT, solver_little,
-        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+        reduced_loop_counter, sizeof(reduced_loop_counter)/sizeof(reduced_loop_counter[0]), 0, 0);
   #endif
 #endif
     return exec_time;
