@@ -85,7 +85,12 @@ OldSliceParams old_slice;
 #include <unistd.h>
 //This should be modified later to one pointer, if we have a time
 // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
-llsp_t *solver;
+#if HETERO_EN
+  llsp_t *solver_big;
+  llsp_t *solver_little;
+#elif !HETERO_EN
+  llsp_t *solver;
+#endif
 static int *loop_value_22;
 static int *loop_value_23;
 static int *loop_value_30;
@@ -753,7 +758,12 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   static int once = 0;
   // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
   if(once == 0){
+#if HETERO_EN
+    solver_big = llsp_new(N_FEATURE + 1);
+    solver_little = llsp_new(N_FEATURE + 1);
+#elif !HETERO_EN
     solver = llsp_new(N_FEATURE + 1);
+#endif
     loop_value_22 = (int *) mmap(NULL, (sizeof *loop_value_22),
         PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     loop_value_23 = (int *) mmap(NULL, (sizeof *loop_value_23),

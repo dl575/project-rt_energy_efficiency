@@ -75,7 +75,12 @@
 #include <sys/wait.h>
 #include <unistd.h>
 //This should be modified later to one pointer, if we have a time
-llsp_t *solver;
+#if HETERO_EN
+  llsp_t *solver_big;
+  llsp_t *solver_little;
+#elif !HETERO_EN
+  llsp_t *solver;
+#endif
 //static int *loop_value_0;
 //static int *loop_value_1;
 //static int *loop_value_2;
@@ -1113,7 +1118,6 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
       */
       struct loop_return loop_counter_val;
       #if GET_PREDICT /* CASE 0 */
-        loop_counter_val = _SLICE_();  
       #elif GET_DEADLINE /* CASE 1 */
         moment_timing_print(0); //moment_start
       #elif GET_OVERHEAD /* CASE 2 */

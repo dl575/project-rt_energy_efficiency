@@ -791,7 +791,12 @@ done:
 
 //---------------------modified by TJSong----------------------//
 #if ONLINE_EN
-extern llsp_t *solver;
+#if HETERO_EN
+  extern llsp_t *solver_big;
+  extern llsp_t *solver_little;
+#elif !HETERO_EN
+  extern llsp_t *solver;
+#endif
 #endif
 //---------------------modified by TJSong----------------------//
 int
@@ -800,7 +805,12 @@ main(int32 argc, char *argv[])
     //---------------------modified by TJSong----------------------//
     init_time_file();
 #if ONLINE_EN
+#if HETERO_EN
+    solver_big = llsp_new(N_FEATURE + 1);
+    solver_little = llsp_new(N_FEATURE + 1);
+#elif !HETERO_EN
     solver = llsp_new(N_FEATURE + 1);
+#endif
 #endif
     //---------------------modified by TJSong----------------------//
 

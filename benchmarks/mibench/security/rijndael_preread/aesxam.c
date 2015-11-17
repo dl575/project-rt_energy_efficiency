@@ -248,8 +248,13 @@ int decfile(FILE *fin, FILE *fout, aes *ctx, char* ifn, char* ofn)
     return 0;
 }
 
+#if !HETERO_EN
 struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn, 
     char *file_buffer, int flen, llsp_t *restrict solver)
+#elif HETERO_EN
+struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn, 
+    char *file_buffer, int flen, llsp_t *restrict solver_big, llsp_t *restrict solver_little)
+#endif
 {
   int loop_counter[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   char inbuf[16];
@@ -477,13 +482,21 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
     #endif
   #endif
 #elif ONLINE_EN
-  #if CORE //on-line training on big core
-  #else //on-line training on little core
-    exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
-        sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+  #if !HETERO_EN
+    #if CORE //on-line training on big core
+      exec_time.big    = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
+          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    #else //on-line training on little core
+      exec_time.little = get_predicted_time(TYPE_PREDICT, solver, loop_counter,
+          sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    #endif
+  #elif HETERO_EN
+    exec_time.big    = get_predicted_time_big(TYPE_PREDICT, solver_big,
+        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
+    exec_time.little = get_predicted_time_little(TYPE_PREDICT, solver_little,
+        loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]), 0, 0);
   #endif
 #endif
- 
     return exec_time;
   }
 }
@@ -497,7 +510,14 @@ int main(int argc, char *argv[])
   //---------------------modified by TJSong----------------------//
   _INIT_();
 #if HETERO_EN
+  static int current_core = CORE; //0: little, 1: big
+  static int is_stable_big = 0; //0: not stable
+  static int is_stable_little = 0; //0: not stable
   int pid = getpid();
+  llsp_t *solver_big = llsp_new(N_FEATURE + 1);
+  llsp_t *solver_little = llsp_new(N_FEATURE + 1);
+#elif !HETERO_EN
+  llsp_t *solver = llsp_new(N_FEATURE + 1);
 #endif
   //---------------------modified by TJSong----------------------//
 
@@ -598,34 +618,13 @@ int main(int argc, char *argv[])
       predicted_exec_time.little = 0;
       /*
         CASE 0 = to get prediction equation
-        CASE 1 = to get execution deadline
-        CASE 2 = to get overhead deadline
         CASE 3 = running on default linux governors
         CASE 4 = running on our prediction
-        CASE 5 = running on oracle
         CASE 6 = running on pid
-        CASE 7 = running on proactive DVFS
       */
       #if GET_PREDICT /* CASE 0 */
         predicted_exec_time = _SLICE_();
-      #elif GET_DEADLINE /* CASE 1 */
-        moment_timing_print(0); //moment_start
-      #elif GET_OVERHEAD /* CASE 2 */
-        start_timing();
-        predicted_exec_time = _SLICE_();
-        end_timing();
-        slice_time = print_slice_timing();
-
-        start_timing();
-      #if CORE
-          set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-      #else
-          set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-      #endif
-        end_timing();
-        dvfs_time = print_dvfs_timing();
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
-        //slice_time=0; dvfs_time=0;
         predicted_exec_time = _SLICE_();
         moment_timing_print(0); //moment_start
       #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
@@ -639,22 +638,14 @@ int main(int argc, char *argv[])
         start_timing();
         #if OVERHEAD_EN //with overhead
           #if HETERO_EN
-            set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid); //do dvfs
+            current_core = set_freq_hetero(predicted_exec_time.big, 
+                predicted_exec_time.little, slice_time, DEADLINE_TIME, 
+                AVG_DVFS_TIME, pid, is_stable_big, is_stable_little); //do dvfs
           #else
             #if CORE
               set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
             #else
               set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-            #endif
-          #endif
-        #else //without overhead
-          #if HETERO_EN
-            set_freq_hetero(predicted_exec_time.big, predicted_exec_time.little, 0, DEADLINE_TIME, 0, pid); //do dvfs
-          #else
-            #if CORE
-              set_freq(predicted_exec_time.big, 0, DEADLINE_TIME, 0); //do dvfs
-            #else
-              set_freq(predicted_exec_time.little, 0, DEADLINE_TIME, 0); //do dvfs
             #endif
           #endif
         #endif
@@ -663,22 +654,6 @@ int main(int argc, char *argv[])
 
         moment_timing_print(1); //moment_start
       #elif ORACLE_EN /* CASE 5 */
-        //slice_time=0;
-        static int job_cnt = 0; //job count
-        predicted_exec_time  = exec_time_arr[job_cnt];
-        moment_timing_print(0); //moment_start
-        
-        start_timing();
-        #if CORE
-          set_freq(predicted_exec_time.big, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        #else
-          set_freq(predicted_exec_time.little, slice_time, DEADLINE_TIME, AVG_DVFS_TIME); //do dvfs
-        #endif
-        end_timing();
-        dvfs_time = print_dvfs_timing();
-        
-        moment_timing_print(1); //moment_start
-        job_cnt++;
       #elif PID_EN /* CASE 6 */
         moment_timing_print(0); //moment_start
         
@@ -698,26 +673,8 @@ int main(int argc, char *argv[])
         
         moment_timing_print(1); //moment_start
       #elif PROACTIVE_EN /* CASE 7 */
-        static int job_number = 0; //job count
-        moment_timing_print(0); //moment_start
-
-        start_timing();
-        //Now, let's assume no slice time like ORACLE
-        end_timing();
-        slice_time = print_slice_timing();
-
-        start_timing();
-        #if HETERO_EN 
-          jump = set_freq_multiple_hetero(job_number, DEADLINE_TIME, pid); //do dvfs
-        #elif !HETERO_EN
-          jump = set_freq_multiple(job_number, DEADLINE_TIME); //do dvfs
-        #endif
-        end_timing();
-        dvfs_time = print_dvfs_timing();
-        
-        moment_timing_print(1); //moment_start
-        job_number++;
       #endif
+
       //---------------------modified by TJSong----------------------//
       start_timing();
 
@@ -741,8 +698,17 @@ int main(int argc, char *argv[])
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
               || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
           start_timing();
-          (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
+          #if !HETERO_EN
+            (void)get_predicted_time(TYPE_SOLVE, solver, NULL, 0, exec_time,
               cur_freq);
+          #elif HETERO_EN
+            if     (current_core == 1)
+              is_stable_big    = get_predicted_time_big   (TYPE_SOLVE, 
+                  solver_big,    NULL, 0, exec_time, cur_freq);
+            else if(current_core == 0)
+              is_stable_little = get_predicted_time_little(TYPE_SOLVE, 
+                  solver_little, NULL, 0, exec_time, cur_freq);
+          #endif
           end_timing();
           update_time = exec_timing();
         #endif
