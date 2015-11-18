@@ -216,7 +216,20 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time.little = 53.525647*loop_counter[0] + 53.967833*loop_counter[1] + 0.056076*loop_counter[3] + 0.007013*loop_counter[4] + 0.002483*loop_counter[5] + 0.005935*loop_counter[6] + 0.005935*loop_counter[7] + 0.005935*loop_counter[8] + 0.005935*loop_counter[9] + -2.424692*loop_counter[10] + -0.302937*loop_counter[11] + -0.107123*loop_counter[12] + -0.256198*loop_counter[13] + -0.256198*loop_counter[14] + -0.256198*loop_counter[15] + -0.256198*loop_counter[16] + 0.796433*loop_counter[17] + 0.281992*loop_counter[18] + 0.677867*loop_counter[19] + 0.677867*loop_counter[20] + 0.677867*loop_counter[21] + 0.677867*loop_counter[22] + 6.380048;
+      /*exec_time.little = 53.525647*loop_counter[0] +
+       * 53.967833*loop_counter[1] + 0.056076*loop_counter[3] +
+       * 0.007013*loop_counter[4] + 0.002483*loop_counter[5] +
+       * 0.005935*loop_counter[6] + 0.005935*loop_counter[7] +
+       * 0.005935*loop_counter[8] + 0.005935*loop_counter[9] +
+       * -2.424692*loop_counter[10] + -0.302937*loop_counter[11] +
+       * -0.107123*loop_counter[12] + -0.256198*loop_counter[13] +
+       * -0.256198*loop_counter[14] + -0.256198*loop_counter[15] +
+       * -0.256198*loop_counter[16] + 0.796433*loop_counter[17] +
+       * 0.281992*loop_counter[18] + 0.677867*loop_counter[19] +
+       * 0.677867*loop_counter[20] + 0.677867*loop_counter[21] +
+       * 0.677867*loop_counter[22] + 6.380048;*/
+      exec_time.little = -5.066004*loop_counter[0] + -5.198613*loop_counter[1] + 0.210721*loop_counter[3] + 0.013170*loop_counter[4] + 0.003293*loop_counter[5] + 0.010537*loop_counter[6] + 0.010537*loop_counter[7] + 0.010537*loop_counter[8] + 0.010537*loop_counter[9] + -0.000431*loop_counter[10] + -0.006902*loop_counter[11] + -0.027606*loop_counter[12] + -0.008628*loop_counter[13] + -0.008628*loop_counter[14] + -0.008628*loop_counter[15] + -0.008628*loop_counter[16] + 0.000132*loop_counter[17] + 0.197178*loop_counter[18] + 0.000235*loop_counter[19] + 0.000235*loop_counter[20] + 0.000235*loop_counter[21] + 0.000235*loop_counter[22] + 0.000008;
+
     #elif ARCH_X86
     #endif
   #endif

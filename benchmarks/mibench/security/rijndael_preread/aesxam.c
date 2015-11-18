@@ -476,7 +476,10 @@ struct slice_return encfile_slice(FILE *fout, aes *ctx, char *fn,
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time = 239.421416*loop_counter[0] + 29.695794*loop_counter[1] + 85.233833*loop_counter[2] + 239.754827*loop_counter[3] + 239.754827*loop_counter[4] + 239.754827*loop_counter[5] + 0.244873*loop_counter[6] + 1872.199305*loop_counter[7] + 0.030949*loop_counter[8] + 0.247272*loop_counter[10] + 0.247272*loop_counter[11] + 0.247272*loop_counter[12] + 241.325348*loop_counter[15] + -151.029518*loop_counter[16] + 29.906689*loop_counter[17] + 241.447124*loop_counter[19] + 241.447124*loop_counter[20] + 241.447124*loop_counter[21] + 239.401758;
+      /*
+      exec_time.little = 239.421416*loop_counter[0] + 29.695794*loop_counter[1] + 85.233833*loop_counter[2] + 239.754827*loop_counter[3] + 239.754827*loop_counter[4] + 239.754827*loop_counter[5] + 0.244873*loop_counter[6] + 1872.199305*loop_counter[7] + 0.030949*loop_counter[8] + 0.247272*loop_counter[10] + 0.247272*loop_counter[11] + 0.247272*loop_counter[12] + 241.325348*loop_counter[15] + -151.029518*loop_counter[16] + 29.906689*loop_counter[17] + 241.447124*loop_counter[19] + 241.447124*loop_counter[20] + 241.447124*loop_counter[21] + 239.401758;*/
+      exec_time.little = -55.919323*loop_counter[0] + -894.709170*loop_counter[1] + -223.677292*loop_counter[2] + -55.919323*loop_counter[3] + -55.919323*loop_counter[4] + -55.919323*loop_counter[5] + 100.332706*loop_counter[6] + 34477.120027*loop_counter[7] + -1.544445*loop_counter[8] + -24.711120*loop_counter[10] + -24.711120*loop_counter[11] + -24.711120*loop_counter[12] + -55.919323*loop_counter[15] + -488.214038*loop_counter[16] + -894.709170*loop_counter[17] + -55.919323*loop_counter[19] + -55.919323*loop_counter[20] + -55.919323*loop_counter[21] + -55.919323;
+
     #elif ARCH_X86
       exec_time.litte = 0;
     #endif

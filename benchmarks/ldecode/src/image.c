@@ -730,7 +730,14 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
       #endif
     #else //off-line training with cvx    
       #if ARCH_ARM
-        exec_time.little = -190.405913*loop_counter[22] + 9170.000000*loop_counter[23] + -14.859432*loop_counter[30] + -14.859432*loop_counter[32] + -5.251652*loop_counter[33] + 197.650000*loop_counter[34] + -108.000000*loop_counter[35] + 6760.000000*loop_counter[39] + -190.424113*loop_counter[40] + -190.405792;
+        /*exec_time.little = -190.405913*loop_counter[22] +
+         * 9170.000000*loop_counter[23] + -14.859432*loop_counter[30] +
+         * -14.859432*loop_counter[32] + -5.251652*loop_counter[33] +
+         * 197.650000*loop_counter[34] + -108.000000*loop_counter[35] +
+         * 6760.000000*loop_counter[39] + -190.424113*loop_counter[40] +
+         * -190.405792;*/
+        exec_time.little = 1723.011030*loop_counter[22] + 1338.006737*loop_counter[23] + 134.418141*loop_counter[30] + 134.418141*loop_counter[32] + 47.523989*loop_counter[33] + 43.249999*loop_counter[34] + 385.006737*loop_counter[39] + 1723.003935*loop_counter[40] + 1723.011272;
+
       #elif ARCH_X86
       #endif
     #endif
