@@ -17,7 +17,7 @@ fi
 xdotool key KP_Enter
 
 if [[ $# < 2 ]] ; then
-    echo 'USAGE : ./run.sh [big/little/hetero] [no_dummy/dummy]'
+    echo 'USAGE : ./run.sh [big/little/hetero] [no_dummy/dummy_0/dummy_1]'
     exit 1
 fi
 
@@ -26,10 +26,15 @@ if [ $1 != "big" ] && [ $1 != "little" ] && [ $1 != "hetero" ] ; then
     exit 1
 fi
 
-if [ $2 == "dummy" ] ; then
-  sed -i -e 's/'"DUMMY=1"'/'"DUMMY=0"'/g' $BENCH_PATH/run.sh
-else
+if [ $2 == "dummy_0" ] ; then
   sed -i -e 's/'"DUMMY=0"'/'"DUMMY=1"'/g' $BENCH_PATH/run.sh
+  sed -i -e 's/'"DUMMY_LEVEL=1"'/'"DUMMY_LEVEL=0"'/g' $BENCH_PATH/run.sh
+elif [ $2 == "dummy_1" ] ; then
+  sed -i -e 's/'"DUMMY=0"'/'"DUMMY=1"'/g' $BENCH_PATH/run.sh
+  sed -i -e 's/'"DUMMY_LEVEL=0"'/'"DUMMY_LEVEL=1"'/g' $BENCH_PATH/run.sh
+else
+  sed -i -e 's/'"DUMMY=1"'/'"DUMMY=0"'/g' $BENCH_PATH/run.sh
+  sed -i -e 's/'"DUMMY_LEVEL=1"'/'"DUMMY_LEVEL=0"'/g' $BENCH_PATH/run.sh
 fi
 TEMP_PWD=`pwd`
 
