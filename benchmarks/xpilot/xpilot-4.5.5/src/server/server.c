@@ -89,8 +89,8 @@ char xpilots_versionid[] = "@(#)$" TITLE " $";
 //---------------------modified by TJSong----------------------//
 double exec_time = 0;
 int main_job_cnt = 0;
+int current_core = CORE; //0: little, 1: big
 #if HETERO_EN
-  int current_core = CORE; //0: little, 1: big
   int is_stable_big = 0; //0: not stable
   int is_stable_little = 0; //0: not stable
   llsp_t *solver_big;
@@ -259,7 +259,12 @@ int main(int argc, char **argv)
     xpprintf("sched returned!?");
     End_game();
 #endif
+#if HETERO_EN
+    llsp_dispose(solver_big);
+    llsp_dispose(solver_little);
+#elif !HETERO_EN
     llsp_dispose(solver);
+#endif
 
     return 1;
 }

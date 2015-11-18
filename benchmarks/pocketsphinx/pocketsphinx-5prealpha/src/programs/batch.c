@@ -848,7 +848,12 @@ main(int32 argc, char *argv[])
 
     //---------------------modified by TJSong----------------------//
 #if ONLINE_EN
+#if HETERO_EN
+    llsp_dispose(solver_big);
+    llsp_dispose(solver_little);
+#elif !HETERO_EN
     llsp_dispose(solver);
+#endif
 #endif
     //---------------------modified by TJSong----------------------//
 

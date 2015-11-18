@@ -473,7 +473,10 @@ uzbl_commands_run (const gchar *cmd, GString *result)
 //---------------------modified by TJSong----------------------//
     static double exec_time = 0;
     static int jump = 0;
+    static int current_core = CORE; //0: not stable
 #if HETERO_EN
+    static int is_stable_big = 0; //0: not stable
+    static int is_stable_little = 0; //0: not stable
     int pid = getpid();
 #endif
     if(check_define()==ERROR_DEFINE){
@@ -619,10 +622,21 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     #endif
 
     _DELAY_();
+		
+    fclose_all();
 
-    _PRINT_INFO_();
-
-		fclose_all();
+    #if HETERO_EN
+      print_predicted_time(predicted_exec_time.big);
+      print_predicted_time(predicted_exec_time.little);
+      print_current_core(current_core);
+    #elif !HETERO_EN
+      #if CORE
+        print_predicted_time(predicted_exec_time.big);
+      #else
+        print_predicted_time(predicted_exec_time.little);
+      #endif
+    #endif
+  
 //---------------------modified by TJSong----------------------//
  
     uzbl_commands_args_free (argv);

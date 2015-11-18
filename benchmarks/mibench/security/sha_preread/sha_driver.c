@@ -247,8 +247,8 @@ int main(int argc, char **argv)
 
   //---------------------modified by TJSong----------------------//
   _INIT_();
+  static int current_core = CORE;
 #if HETERO_EN
-  static int current_core = CORE; //0: little, 1: big
   static int is_stable_big = 0; //0: not stable
   static int is_stable_little = 0; //0: not stable
   int pid = getpid();

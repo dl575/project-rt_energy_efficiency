@@ -1092,8 +1092,8 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
 //        PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     slice_time_value = (double *) mmap(NULL, (sizeof *slice_time_value),
         PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-#if HETERO_EN
     static int current_core = CORE; //0: little, 1: big
+#if HETERO_EN
     static int is_stable_big = 0; //0: not stable
     static int is_stable_little = 0; //0: not stable
     int pid = getpid();
@@ -1258,10 +1258,17 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     #endif
 
     _DELAY_();
-    
-    print_predicted_time(predicted_exec_time);
 
     fclose_all();//TJSong
+
+    #if HETERO_EN
+      print_predicted_time(predicted_exec_time_big);
+      print_predicted_time(predicted_exec_time_little);
+      print_current_core(current_core);
+    #elif !HETERO_EN
+      print_predicted_time(predicted_exec_time);
+    #endif
+
     //---------------------modified by TJSong----------------------//
     ckd_free(data);
   }else{
@@ -1415,7 +1422,7 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
       #endif
     #else //off-line training with cvx    
       #if ARCH_ARM
-        exec_time.little = 14006.142066*loop_counter[5] + 1475096.509460;
+        exec_time = 13440.146587*loop_counter[5] + 1396312.505660;
       #elif ARCH_X86
         exec_time.little = 0;
       #endif
@@ -1594,7 +1601,17 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
         job_number++;
       #endif
 
-      _PRINT_INFO_();
+      #if HETERO_EN 
+        print_predicted_time(predicted_exec_time.big);
+        print_predicted_time(predicted_exec_time.little);
+        print_current_core(current_core);
+      #elif !HETERO_EN
+        #if CORE
+          print_predicted_time(predicted_exec_time.big);
+        #else
+          print_predicted_time(predicted_exec_time.little);
+        #endif
+      #endif
       //---------------------modified by TJSong----------------------//
       _Exit(0);
     } else {

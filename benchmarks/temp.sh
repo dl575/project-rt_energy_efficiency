@@ -16,8 +16,8 @@ else
 fi
 xdotool key KP_Enter
 
-if [[ $# < 1 ]] ; then
-    echo 'USAGE : ./run.sh [big/little/hetero]'
+if [[ $# < 2 ]] ; then
+    echo 'USAGE : ./run.sh [big/little/hetero] [no_dummy/dummy]'
     exit 1
 fi
 
@@ -26,6 +26,11 @@ if [ $1 != "big" ] && [ $1 != "little" ] && [ $1 != "hetero" ] ; then
     exit 1
 fi
 
+if [ $2 == "dummy" ] ; then
+  sed -i -e 's/'"DUMMY=1"'/'"DUMMY=0"'/g' $BENCH_PATH/run.sh
+else
+  sed -i -e 's/'"DUMMY=0"'/'"DUMMY=1"'/g' $BENCH_PATH/run.sh
+fi
 TEMP_PWD=`pwd`
 
 #kill power_monitor process
@@ -34,9 +39,9 @@ sudo kill -9 $PID_POWER_MONITOR
 
 #build power_monitor depends on big/little
 if [ $1 != "hetero" ] ; then
-    cd $POWER_MONITOR_PATH
-    echo "entered "`pwd`
-    ./power_monitor.sh $1
+  cd $POWER_MONITOR_PATH
+  echo "entered "`pwd`
+  ./power_monitor.sh $1
 fi
 
 for (( i=0; i<${#BENCH_NAME[@]}; i++ ));
@@ -50,44 +55,58 @@ do
     if [ $ARCH_TYPE == "armhf" ] ; then 
       #run power_monitor
       if [ $1 == "big" ] ; then
-          rm -rf ../power_monitor/output_power.txt
-          sudo taskset 0x0f ../power_monitor/power_monitor > ../power_monitor/output_power.txt &
+        rm -rf ../power_monitor/output_power.txt
+        sudo taskset 0x0f ../power_monitor/power_monitor > ../power_monitor/output_power.txt &
       elif [ $1 == "little" ] ; then
-          rm -rf ../power_monitor/output_power.txt
-          sudo taskset 0xf0 ../power_monitor/power_monitor > ../power_monitor/output_power.txt &
+        rm -rf ../power_monitor/output_power.txt
+        sudo taskset 0xf0 ../power_monitor/power_monitor > ../power_monitor/output_power.txt &
       elif [ $1 == "hetero" ] ; then
-          rm -rf ../power_monitor/output_power.txt
-          sudo taskset 0xff ../power_monitor/power_monitor_both > ../power_monitor/output_power.txt &
+        rm -rf ../power_monitor/output_power.txt
+        sudo taskset 0xff ../power_monitor/power_monitor_both > ../power_monitor/output_power.txt &
       fi
     fi
       
-      # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
-      # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
-      
-      # 1. LINUX Governor
-      echo ${SWEEP[$j]}
-      taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
-      ./runAll.sh $i $1 performance ${SWEEP[$j]}
-      ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+    # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
+    # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
+    
+    # 1. LINUX Governor
+    echo ${SWEEP[$j]}
+    taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
+    ./runAll.sh $i $1 performance ${SWEEP[$j]}
+    ./runAll.sh $i $1 interactive ${SWEEP[$j]}
 
-      #disable convex
-      sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    # 2. PID
+    taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
+    ./runAll.sh $i $1 pid ${SWEEP[$j]}
 
-      # 2. Prediction offline
-      taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
-      ./runAll.sh $i $1 offline ${SWEEP[$j]}
-      
-      # 3. Prediction online
-      taskset 0xff ./buildAll.sh $i $1 online ${SWEEP[$j]}
-      ./runAll.sh $i $1 online ${SWEEP[$j]}
+#    #disable convex
+#    sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+#    # 3. Prediction offline with no penalty
+#    taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
+#    ./runAll.sh $i $1 offline-no-penalty ${SWEEP[$j]}
+   
+    #enable convex
+    sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    # 4. Prediction offline with under prediction penalty
+    taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
+    ./runAll.sh $i $1 offline-under-penalty ${SWEEP[$j]}
 
-      #kill power_monitor process
-      if [ $ARCH_TYPE == "armhf" ] ; then 
-        sleep 30
-        PID_POWER_MONITOR=$(pgrep 'power_monitor')
-        sudo kill -9 $PID_POWER_MONITOR
-        cp $POWER_MONITOR_PATH/output_power.txt $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
-      fi
+    # 5. Prediction online with no penalty
+    taskset 0xff ./buildAll.sh $i $1 online ${SWEEP[$j]}
+    ./runAll.sh $i $1 online ${SWEEP[$j]}
+
+    if [ $2 == "dummy" ] ; then
+      taskset 0xff ./buildAll.sh $i $1 online+hetero ${SWEEP[$j]}
+      ./runAll.sh $i $1 online+hetero ${SWEEP[$j]}
+    fi
+
+    #kill power_monitor process
+    if [ $ARCH_TYPE == "armhf" ] ; then 
+      sleep 30
+      PID_POWER_MONITOR=$(pgrep 'power_monitor')
+      sudo kill -9 $PID_POWER_MONITOR
+      cp $POWER_MONITOR_PATH/output_power.txt $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
+    fi
   done
 
   # set SWEEP as 1

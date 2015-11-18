@@ -38,7 +38,7 @@ extern void print_exec_time(double exec_time);
 extern void print_total_time(double exec_time);
 extern void print_delay_time(double delay_time, double actual_delay_time);
 extern void print_update_time(double update_time);
-extern void print_current_core(int current_core, int big_little_cnt);
+extern void print_current_core(int current_core);
 extern void print_est_time(int T_est_big, int T_est_little);
 extern void print_enter();
 extern void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
@@ -205,12 +205,14 @@ void print_update_time(double exec_time){
     printf("time_update %d = %d us\n", instance_number, (int)exec_time);
     instance_number++;
 }
-void print_current_core(int current_core, int big_little_cnt){
+void print_current_core(int current_core){
+    static int big_cnt = 0;
+    static int little_cnt = 0;
     printf("current_core : %d\n", current_core);
     if(current_core == 1)
-        printf("big %d times\n", big_little_cnt);
+        printf("big %d times\n", big_cnt++);
     else if(current_core ==0)
-        printf("little %d times\n", big_little_cnt);
+        printf("little %d times\n", little_cnt++);
 }
 void print_est_time(int T_est_big, int T_est_little){
 	if(T_est_little == -99)//if -99, it's not hetero
@@ -421,14 +423,16 @@ void print_update_time(double exec_time){
     instance_number++;
     fclose(time_file);
 }
-void print_current_core(int current_core, int big_little_cnt){
+void print_current_core(int current_core){
     FILE *time_file;
     time_file = fopen("times.txt", "a");
+    static int big_cnt = 0;
+    static int little_cnt = 0;
     fprintf(time_file, "current_core : %d\n", current_core);
     if(current_core == 1)
-        fprintf(time_file, "big %d times\n", big_little_cnt);
+        fprintf(time_file, "big %d times\n", big_cnt++);
     else if(current_core ==0)
-        fprintf(time_file, "little %d times\n", big_little_cnt);
+        fprintf(time_file, "little %d times\n", little_cnt++);
     fclose(time_file);
 }
 void print_est_time(int T_est_big, int T_est_little){

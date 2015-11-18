@@ -4316,8 +4316,8 @@ int main(int argc, char *argv[]) {
   init_time_file();
   //---------------------modified by TJSong----------------------//
   _INIT_();
-#if HETERO_EN
   static int current_core = CORE; //0: little, 1: big
+#if HETERO_EN
   static int is_stable_big = 0; //0: not stable
   static int is_stable_little = 0; //0: not stable
   int pid = getpid();
@@ -4470,7 +4470,7 @@ int main(int argc, char *argv[]) {
     fclose_all();//TJSong
     //---------------------modified by TJSong----------------------//
 
-    if (i > 1500)
+    if (i > 500)
       break;
     if (success) {
       //drawBoard(board);

@@ -134,6 +134,12 @@ elif [ $3 == "online" ] ; then
     sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 	  sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+elif [ $3 == "online+hetero" ] ; then
+    sed -i -e 's/'"$CORE_BIG"'/'"$CORE_LITTLE"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$HETERO_DISABLED"'/'"$HETERO_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$PREDICT_DISABLED"'/'"$PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$OVERHEAD_DISABLED"'/'"$OVERHEAD_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+	  sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
 function sweep {

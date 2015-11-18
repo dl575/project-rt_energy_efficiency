@@ -23,28 +23,29 @@
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME (double)0
 #define MARGIN (double)1.1
+#define UNDER_PENALTY 100
 #if _ldecode_ 
 double global_margin = 1.1;
 #elif _pocketsphinx_
 double global_margin = 1.1;
 #elif _stringsearch_ 
-double global_margin = 1.3;
+double global_margin = 1.1;
 #else
 double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -62,7 +63,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -84,9 +85,9 @@ double global_margin = 1.1;
 
 #define _pocketsphinx_ 0
 #define _stringsearch_ 0
-#define _sha_preread_ 1
+#define _sha_preread_ 0
 #define _rijndael_preread_ 0
-#define _xpilot_slice_ 0
+#define _xpilot_slice_ 1
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
@@ -120,7 +121,7 @@ double global_margin = 1.1;
       printf("%s", "DEFINE ERROR!!\n");\
       return ERROR_DEFINE;\
   }
-  /*  double exec_time = 0;
+  /*double exec_time = 0;
   static int jump = 0;
   if(check_define()==ERROR_DEFINE){
       printf("%s", "DEFINE ERROR!!\n");
@@ -172,6 +173,7 @@ double global_margin = 1.1;
   if(HETERO_EN){\
     print_predicted_time(predicted_exec_time.big);\
     print_predicted_time(predicted_exec_time.little);\
+    print_current_core(current_core);\
   }else{\
     if(CORE)\
       print_predicted_time(predicted_exec_time.big);\
@@ -181,6 +183,7 @@ double global_margin = 1.1;
   /*if(HETERO_EN){
     print_predicted_time(predicted_exec_time.big);
     print_predicted_time(predicted_exec_time.little);
+    print_current_core(current_core);
   }else{
     if(CORE)
       print_predicted_time(predicted_exec_time.big);
@@ -194,59 +197,91 @@ double global_margin = 1.1;
     #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, solver)
   #elif HETERO_EN
     #define _SLICE_() sha_stream_slice(&sha_info, file_buffer, flen, \
-        solver_big, solver_little)
+      solver_big, solver_little)
   #endif
   #define SCALE (double)1000
   #define N_STABLE (4)
   #define N_EVENT (3)
 #elif _rijndael_preread_
-#define N_FEATURE 23
-#define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
-#define SCALE (double)1000
-#define N_STABLE (4)
-#define N_EVENT (3)
+  #define N_FEATURE 23
+  #if !HETERO_EN
+    #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver)
+  #elif HETERO_EN
+    #define _SLICE_() encfile_slice(fout, ctx, argv[argv_i + 1], file_buffer, flen, solver_big, solver_little)
+  #endif
+  #define SCALE (double)1000
+  #define N_STABLE (4)
+  #define N_EVENT (3)
 #elif _stringsearch_
-#define N_FEATURE 4
-#define _SLICE_() slice(search_strings[i], solver);
-#define SCALE (double)1
-#define N_STABLE (4)
-#define N_EVENT (3)
+  #define N_FEATURE 4
+  #if !HETERO_EN
+    #define _SLICE_() slice(search_strings[i], solver);
+  #elif HETERO_EN
+    #define _SLICE_() slice(search_strings[i], solver_big, solver_little);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (4)
+  #define N_EVENT (3)
 #elif _2048_slice_
-#define N_FEATURE 40
-#define _SLICE_() main_loop_slice(c, board, new_s, solver);
-#define SCALE (double)1
-#define N_STABLE (10)
-#define N_EVENT (3)
+  #define N_FEATURE 40
+  #if !HETERO_EN
+    #define _SLICE_() main_loop_slice(c, board, new_s, solver);
+  #elif HETERO_EN
+    #define _SLICE_() main_loop_slice(c, board, new_s, solver_big, solver_little);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (10)
+  #define N_EVENT (3)
 #elif _curseofwar_slice_sdl_
-#define N_FEATURE 2
-#define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
-#define SCALE (double)1
-#define N_STABLE (5)
-#define N_EVENT (2)
+  #define N_FEATURE 2
+  #if !HETERO_EN
+    #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver);
+  #elif HETERO_EN
+    #define _SLICE_() run_loop_slice(st, ui, screen, tileset, typeface, uisurf, tile_variant, pop_variant, k, solver_big, solver_little);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (5)
+  #define N_EVENT (2)
 #elif _pocketsphinx_ //fork: no solver
-#define N_FEATURE 11
-#define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
-#define SCALE (double)1
-#define N_STABLE (3)
-#define N_EVENT (3)
+  #define N_FEATURE 11
+  #if !HETERO_EN
+    #define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
+  #elif HETERO_EN
+    #define _SLICE_() ps_process_raw_slice(ps, data, total, FALSE, TRUE);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (3)
+  #define N_EVENT (3)
 #elif _xpilot_slice_
-#define N_FEATURE 77
-#define _SLICE_() Main_loop_slice(solver);
-#define SCALE (double)1
-#define N_STABLE (3)
-#define N_EVENT (3)
+  #define N_FEATURE 77
+  #if !HETERO_EN
+    #define _SLICE_() Main_loop_slice(solver);
+  #elif HETERO_EN
+    #define _SLICE_() Main_loop_slice(solver_big, solver_little);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (3)
+  #define N_EVENT (3)
 #elif _uzbl_
-#define N_FEATURE 19
-#define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver);
-#define SCALE (double)1
-#define N_STABLE (3)
-#define N_EVENT (3)
+  #define N_FEATURE 19
+  #if !HETERO_EN
+    #define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver);
+  #elif HETERO_EN
+    #define _SLICE_() uzbl_commands_run_parsed_slice(info, argv, result, solver_big, solver_little);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (3)
+  #define N_EVENT (3)
 #elif _ldecode_ //fork: no solver
-#define N_FEATURE 9 
-#define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
-#define SCALE (double)1
-#define N_STABLE (2)
-#define N_EVENT (2)
+  #define N_FEATURE 9 
+  #if !HETERO_EN
+    #define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
+  #elif HETERO_EN
+    #define _SLICE_() decode_one_frame_inner_loop_slice(img, inp, current_header);
+  #endif
+  #define SCALE (double)1
+  #define N_STABLE (2)
+  #define N_EVENT (2)
 #endif
 
 #define EVENT_EN 0
@@ -311,7 +346,7 @@ FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
 FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
-void print_current_core(int current_core, int big_little_cnt);
+void print_current_core(int current_core);
 void print_est_time(int T_est_big, int T_est_little);
 
 void print_errors(double *errors, int size);
@@ -554,13 +589,15 @@ void sleep_in_delay(double delay_time, int cur_freq){
 void set_freq(double predicted_exec_time, double slice_time, 
     double deadline_time, double avg_dvfs_time){
   int predicted_freq = MAX_FREQ;
+  //consider update overhead, we need to modify this as paremeter later.
+  int update_time = 0;
 #if ARCH_ARM
   static int previous_freq = MAX_FREQ;
   double job_exec_time;
   for(predicted_freq = 200000; predicted_freq < MAX_FREQ+1; predicted_freq += 100000){
     job_exec_time = global_margin * predicted_exec_time * (double)MAX_FREQ / (double)predicted_freq;
   #if OVERHEAD_EN // with dvfs + slice overhead
-    if(job_exec_time + (double)dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time < deadline_time)
+    if(job_exec_time + (double)dvfs_table[previous_freq/100000-2][predicted_freq/100000-2] + slice_time + update_time < deadline_time)
         break;
   #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
     if(job_exec_time + slice_time < deadline_time)
@@ -577,13 +614,16 @@ void set_freq(double predicted_exec_time, double slice_time,
 #endif
   //if less then 200000, just set it minimum (200000)
   predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
-  #if ONLINE_EN && _stringsearch_
+  //consider update overhead, we need to modify this as paremeter later.
+  /*#if ONLINE_EN
+    #if _2048_slice_ //include update overhead
     predicted_freq = predicted_freq + 100000;   
-  #elif ONLINE_EN && _2048_slice_ //include update overhead
+    #elif _pocketsphinx_
     predicted_freq = predicted_freq + 100000;   
-  #elif ONLINE_EN && _pocketsphinx_
+    #elif _ldecode_
     predicted_freq = predicted_freq + 100000;   
-  #endif
+    #endif
+  #endif*/
 #if ARCH_ARM
   //remember current frequency to use later
   previous_freq = predicted_freq;
@@ -787,15 +827,10 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
   f_new_big = (f_new_big < 200)?(200):(f_new_big);
   f_new_little = (f_new_little < 200)?(200):(f_new_little);
 
-  #if ONLINE_EN && _stringsearch_
-    f_new_big = f_new_big + 100;
-    f_new_little = f_new_little + 100;
-  #elif ONLINE_EN && _2048_slice_ //include update overhead
-    f_new_big = f_new_big + 100;
-    f_new_little = f_new_little + 100;
-  #elif ONLINE_EN && _pocketsphinx_
-    f_new_big = f_new_big + 100;
-    f_new_little = f_new_little + 100;
+  #if ONLINE_EN//include overhead manually, move out later
+    #if _curseofwar_slice_sdl_ || _pocketsphinx_ || _ldecode_ || _rijndael_preread_
+    f_new_big += 100; f_new_little += 100;
+    #endif
   #endif
   //originally power compare, but we found that little is always better 
   if( (is_stable_little && f_new_little >= 1500) ){   //TO BIG
@@ -809,7 +844,7 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
           sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
       }
       current_core = 1;
-      print_current_core(current_core, ++big_cnt);
+      //print_current_core(current_core, ++big_cnt);
   }else{ // TO LITTLE
       f_new = f_new_little;
       if(current_core){//if it was big core
@@ -821,7 +856,7 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
           sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
       }
       current_core = 0;
-      print_current_core(current_core, ++little_cnt);
+      //print_current_core(current_core, ++little_cnt);
   }
   //save previous freq
   f_previous_big = f_new_big;
@@ -1047,7 +1082,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
                 #endif
             }
             current_core = 1;
-            print_current_core(current_core, ++big_cnt);
+           // print_current_core(current_core, ++big_cnt);
         }else if(power_big[f_new_big/100-2] > power_little[f_new_little/100-2]){
             f_new = f_new_little;
             //printf("little %d times\n", ++little_cnt);
@@ -1069,12 +1104,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
                 #endif
             }
             current_core = 0;
-            print_current_core(current_core, ++little_cnt);
-        }else{
-            if(current_core)
-                print_current_core(current_core, ++big_cnt);
-            else
-                print_current_core(current_core, ++little_cnt);
+            //print_current_core(current_core, ++little_cnt);
         }
            
 	}else{
@@ -1086,10 +1116,6 @@ int set_freq_multiple_hetero(int job, int d, int pid){
         //    printf("big %d times\n", ++big_cnt);
         //else
         //    printf("little %d times\n", ++little_cnt);
-        if(current_core)
-            print_current_core(current_core, ++big_cnt);
-        else
-            print_current_core(current_core, ++little_cnt);
 	}
 	//printf("jump = %d\n", jump);
 
@@ -1568,6 +1594,12 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
     //calculate an error 
     //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
     error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
+
+    if(error < 0){
+      for(int j = 0; j < N_FEATURE + 1; j++)
+        metrics[j] *= UNDER_PENALTY;
+      scaled_actual_exec_time *= UNDER_PENALTY;
+    }
 
     llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     

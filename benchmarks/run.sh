@@ -5,6 +5,7 @@ BENCHMARK_FOLDER=${BENCH_NAME[$1]}
 BENCHMARK=$BENCHMARK_FOLDER"-"$4
 
 DUMMY=1
+DUMMY_LEVEL=1
 
 if [[ $# < 4 ]] ; then
   echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
@@ -70,8 +71,12 @@ init(){
 run_dummy(){
   PRE_PWD=`pwd`
   cd /$PROJECT_PATH/dummy/
-  /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
-#  /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+  if [ $DUMMY_LEVEL == "0" ] ; then #dummy
+    /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+  elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
+    /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+    /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+  fi
 #  /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
   cd $PRE_PWD 
 }
@@ -118,9 +123,13 @@ if [[ $3 ]] ; then
           sleep 100;
         fi
         sleep 5; run_dummy $2
-        sleep 150; #dummy.sh takes around 150s at lowest freq on little core
+        if [ $DUMMY_LEVEL == "0" ] ; then #dummy
+          sleep 150; #dummy.sh takes around 150s at lowest freq on little core
+        elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
+          sleep 300; #dummy.sh takes around 150s at lowest freq on little core
+        fi
         if [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
-          sleep 250;
+          sleep 50;
         elif [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
              [ ${BENCH_NAME[$1]} == "ldecode" ] ; then
           sleep 200;
@@ -150,12 +159,16 @@ if [[ $3 ]] ; then
         xdotool mousemove 65 95;    sleep 3;
       fi
       xdotool click 1;            sleep 3;
+      xdotool click 1;            sleep 3;
+      xdotool click 1;            sleep 3;
       #press click
 	    if [ $ARCH_TYPE == "amd64" ] ; then 
         xdotool mousemove 1861 325; sleep 3;
 	    elif [ $ARCH_TYPE == "armhf" ] ; then 
         xdotool mousemove 490 100;  sleep 3;
       fi
+      xdotool click 1;            sleep 3;
+      xdotool click 1;            sleep 3;
       xdotool click 1;            sleep 3;
       if [ $DUMMY == "1" ] ; then #dummy
         run_dummy $2
@@ -176,6 +189,11 @@ if [[ $3 ]] ; then
       echo "xdotool done"
       PID_FREECIV_SERVER=$(pgrep 'xpilot')
       kill -9 $PID_FREECIV_SERVER
+      if [ $DUMMY_LEVEL == "0" ] ; then #dummy
+        sleep 60; #dummy.sh takes around 150s at lowest freq on little core
+      elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
+        sleep 200; #dummy.sh takes around 150s at lowest freq on little core
+      fi
     elif [ ${BENCH_NAME[$1]} == "uzbl" ] ; then
       taskset 0xff ./fix_addresses.py 
       taskset $TASKSET_FLAG uzbl-browser > output_slice.txt &
@@ -202,7 +220,7 @@ if [[ $3 ]] ; then
       fi
       #refresh/back/forward//scroll 
       xdotool key r;sleep 10;xdotool key b;sleep 10;xdotool key m;sleep 10;
-      for i in `seq 1 100`;
+      for i in `seq 1 20`;
       do 
         xdotool key j;sleep 1;xdotool key j;sleep 1;xdotool key j;sleep 1;
         xdotool key k;sleep 1;xdotool key k;sleep 1;xdotool key k;sleep 1;

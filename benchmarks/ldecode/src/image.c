@@ -231,9 +231,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     static double exec_time = 0;
     static int jump = 0;
 #if HETERO_EN
-    static int current_core = CORE; //0: little, 1: big
-    static int is_stable_big = 0; //0: not stable
-    static int is_stable_little = 0; //0: not stable
     int pid = getpid();
 #endif
     //---------------------modified by TJSong----------------------//
@@ -369,7 +366,17 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
         job_number++;
       #endif
 
-      _PRINT_INFO_();
+      #if HETERO_EN 
+        print_predicted_time(predicted_exec_time.big);
+        print_predicted_time(predicted_exec_time.little);
+        print_current_core(current_core);
+      #elif !HETERO_EN
+        #if CORE
+          print_predicted_time(predicted_exec_time.big);
+        #else
+          print_predicted_time(predicted_exec_time.little);
+        #endif
+      #endif
       //---------------------modified by TJSong----------------------//
       _Exit(0);
     } else {
@@ -757,7 +764,6 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
   }
   int job_cnt = 300 * video_index; //job count
   printf("job_cnt %d\n", job_cnt); //job count
-  fopen_all(); //fopen for frequnecy file
   static int once = 0;
   // non-zero coeffs =  [22, 23, 30, 32, 33, 34, 35, 39, 40]
   if(once == 0){
@@ -803,10 +809,14 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     }
 
     //---------------------modified by TJSong----------------------//
+    fopen_all(); //fopen for frequnecy file
     print_deadline(DEADLINE_TIME); //print deadline 
     static int exec_time = 0;
     static int jump = 0;
+    static int current_core = CORE; //0: little, 1: big
 #if HETERO_EN
+    static int is_stable_big = 0; //0: not stable
+    static int is_stable_little = 0; //0: not stable
     int pid = getpid();
 #endif
     //---------------------modified by TJSong----------------------//
@@ -967,13 +977,21 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
 
     _DELAY_();
     
-    print_predicted_time(predicted_exec_time);
+    fclose_all();//TJSong
+
+    #if HETERO_EN
+      print_predicted_time(predicted_exec_time_big);
+      print_predicted_time(predicted_exec_time_little);
+      print_current_core(current_core);
+    #elif !HETERO_EN
+      print_predicted_time(predicted_exec_time);
+    #endif
+
     //---------------------modified by TJSong----------------------//
 
   }
 
   //---------------------modified by TJSong----------------------//
-  fclose_all();//TJSong
   //---------------------modified by TJSong----------------------//
 
   exit_picture();

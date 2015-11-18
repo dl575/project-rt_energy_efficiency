@@ -86,7 +86,7 @@ struct slice_return slice(const char *string, llsp_t *restrict solver_big, llsp_
     #endif
   #else //off-line training with cvx    
     #if ARCH_ARM
-      exec_time.little = 576.552520*loop_counter[0] + 136.692308*loop_counter[1] + -115.860212*loop_counter[2] + 3214.937135*loop_counter[3] + 8824.678249;
+      exec_time = 622.177862*loop_counter[0] + 122.081081*loop_counter[1] + -155.664348*loop_counter[2] + 2778.772456*loop_counter[3] + 9077.524841;
     #elif ARCH_X86
     #endif
   #endif
@@ -5509,8 +5509,8 @@ NULL};
 
   //---------------------modified by TJSong----------------------//
   _INIT_();
-#if HETERO_EN
   static int current_core = CORE; //0: little, 1: big
+#if HETERO_EN
   static int is_stable_big = 0; //0: not stable
   static int is_stable_little = 0; //0: not stable
   int pid = getpid();
