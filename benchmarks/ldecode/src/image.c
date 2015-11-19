@@ -915,7 +915,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
       start_timing();
       #if OVERHEAD_EN //with overhead
         #if HETERO_EN
-          set_freq_hetero(predicted_exec_time_big, predicted_exec_time_little,
+          current_core = set_freq_hetero(predicted_exec_time_big, predicted_exec_time_little,
               slice_time, DEADLINE_TIME, AVG_DVFS_TIME, pid, is_stable_big,
               is_stable_little); //do dvfs
         #else
