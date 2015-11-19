@@ -241,6 +241,7 @@ if [[ $3 ]] ; then
       sudo kill -9 $PID_DUMMY
       PID_CC=$(pgrep 'cc')
       sudo kill -9 $PID_CC
+      sleep 5
     ) 200>/var/lock/lockfile
 else
     echo "specify governor!"

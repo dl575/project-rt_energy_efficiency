@@ -1228,7 +1228,14 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     end_timing();
 
     //---------------------modified by TJSong----------------------//
-    _DEFINE_TIME_();
+
+    exec_time = exec_timing();
+    static int cur_freq = 0;
+    static int delay_time = 0;
+    static int actual_delay_time = 0;
+    static int additional_dvfs_times = 0;
+    static int update_time = 0;
+    cur_freq = print_freq(current_core); 
 
     #if IDLE_EN
       additional_dvfs_times =
