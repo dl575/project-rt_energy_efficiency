@@ -45,9 +45,6 @@ elif [ $2 == "hetero" ] ; then
     sed -i -e 's/'"$HETERO_DISABLED"'/'"$HETERO_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 fi
 
-# set predictor
-sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-
 # disable DEBUG_EN
 sed -i -e 's/'"$DEBUG_ENABLED"'/'"$DEBUG_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
 
