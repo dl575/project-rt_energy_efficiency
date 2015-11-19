@@ -1469,6 +1469,7 @@ ps_decode_raw(ps_decoder_t *ps, FILE *rawfh,
     static int job_cnt = 0; //job count
     static int exec_time = 0;
     static int jump = 0;
+    static int current_core = CORE; //0: little, 1: big
 #if HETERO_EN
     int pid = getpid();
 #endif

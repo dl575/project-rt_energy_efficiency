@@ -230,6 +230,7 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
     print_deadline(DEADLINE_TIME); //print deadline 
     static double exec_time = 0;
     static int jump = 0;
+    static int current_core = CORE; //0: little, 1: big
 #if HETERO_EN
     int pid = getpid();
 #endif
