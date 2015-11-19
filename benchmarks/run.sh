@@ -4,8 +4,8 @@ source global.sh
 BENCHMARK_FOLDER=${BENCH_NAME[$1]}
 BENCHMARK=$BENCHMARK_FOLDER"-"$4
 
-DUMMY=1
-DUMMY_LEVEL=1
+DUMMY=0
+DUMMY_LEVEL=0
 
 if [[ $# < 4 ]] ; then
   echo 'USAGE : ./run.sh [bench index] [big/little] [governors] [sweep]'
@@ -75,6 +75,7 @@ run_dummy(){
     /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
   elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
     /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+    sleep 3;
     /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
   fi
 #  /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
@@ -103,6 +104,10 @@ if [[ $3 ]] ; then
     sleep 1;
     echo $3"..."
 
+    PID_DUMMY=$(pgrep 'dummy')
+    sudo kill -9 $PID_DUMMY
+    sudo rm -rf /var/lock/lockfile
+
     PRE_PWD=`pwd`
     cd $PRE_PWD
     echo ${BENCH_NAME[$1]}"..."
@@ -116,26 +121,18 @@ if [[ $3 ]] ; then
       if [ $DUMMY == "1" ] ; then #dummy
         ./gen_runme_slice_dummy.py > runme_slice.sh
         chmod a+x runme_slice.sh
-        sleep 3
-        taskset $TASKSET_FLAG ./runme_slice.sh &
-        sleep 3;
+        echo "[In critical section 1 : Try Lock]"
+        (
+          flock -e 200
+          echo "[In critical section 1 : Get Lock]"
+          sleep 2
+          taskset $TASKSET_FLAG ./runme_slice.sh &
+        ) 200>/var/lock/lockfile
+
         if [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
           sleep 100;
         fi
-        sleep 5; run_dummy $2
-        if [ $DUMMY_LEVEL == "0" ] ; then #dummy
-          sleep 150; #dummy.sh takes around 150s at lowest freq on little core
-        elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
-          sleep 300; #dummy.sh takes around 150s at lowest freq on little core
-        fi
-        if [ ${BENCH_NAME[$1]} == "2048_slice" ] ; then
-          sleep 50;
-        elif [ ${BENCH_NAME[$1]} == "curseofwar_slice_sdl" ] || \
-             [ ${BENCH_NAME[$1]} == "ldecode" ] ; then
-          sleep 200;
-        elif [ ${BENCH_NAME[$1]} == "pocketsphinx" ] ; then
-          sleep 500;
-        fi
+        sleep 10; run_dummy $2
       else #no dummy  
         ./gen_runme_slice.py > runme_slice.sh
         chmod a+x runme_slice.sh
@@ -189,11 +186,6 @@ if [[ $3 ]] ; then
       echo "xdotool done"
       PID_FREECIV_SERVER=$(pgrep 'xpilot')
       kill -9 $PID_FREECIV_SERVER
-      if [ $DUMMY_LEVEL == "0" ] ; then #dummy
-        sleep 60; #dummy.sh takes around 150s at lowest freq on little core
-      elif [ $DUMMY_LEVEL == "1" ] ; then #dummy
-        sleep 200; #dummy.sh takes around 150s at lowest freq on little core
-      fi
     elif [ ${BENCH_NAME[$1]} == "uzbl" ] ; then
       taskset 0xff ./fix_addresses.py 
       taskset $TASKSET_FLAG uzbl-browser > output_slice.txt &
@@ -237,8 +229,15 @@ if [[ $3 ]] ; then
       sleep 30;
     fi
 
-
-    cp $PRE_PWD/output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$2/$BENCHMARK_FOLDER/$BENCHMARK/$3
+    echo "[In critical section 2 : Try Lock]"
+    (
+      flock -e 200
+      echo "[In critical section 2 : Get Lock]"
+      sleep 2
+      cp $PRE_PWD/output_slice.txt $PROJECT_PATH/dvfs_sim/data_odroid/$2/$BENCHMARK_FOLDER/$BENCHMARK/$3
+      PID_DUMMY=$(pgrep 'dummy')
+      sudo kill -9 $PID_DUMMY
+    ) 200>/var/lock/lockfile
 else
     echo "specify governor!"
     exit 1
