@@ -35,17 +35,17 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 0 //0:use only one core, 1:use both cores
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 0 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -60,10 +60,10 @@ double global_margin = 1.1;
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -80,12 +80,12 @@ double global_margin = 1.1;
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 0 //ARM ODROID
-#define ARCH_X86 1 //x86-laptop
+#define ARCH_ARM 1 //ARM ODROID
+#define ARCH_X86 0 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 1
-#define _sha_preread_ 0
+#define _stringsearch_ 0
+#define _sha_preread_ 1
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
@@ -852,9 +852,6 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
       f_new = f_new_big;
       if(!current_core){//if it was little core
           CPU_ZERO( &set );
-          CPU_SET( 4, &set );
-          CPU_SET( 5, &set );
-          CPU_SET( 6, &set );
           CPU_SET( 7, &set );
           sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
       }
@@ -864,9 +861,6 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
       f_new = f_new_little;
       if(current_core){//if it was big core
           CPU_ZERO( &set );
-          CPU_SET( 0, &set );
-          CPU_SET( 1, &set );
-          CPU_SET( 2, &set );
           CPU_SET( 3, &set );
           sched_setaffinity( pid, sizeof( cpu_set_t ), &set );
       }
