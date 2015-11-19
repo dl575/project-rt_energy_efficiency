@@ -37,14 +37,14 @@ double global_margin = 1.1;
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 0 //0:delay off, 1:delay on
+#define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 1 //to get prediction equation
+#define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 0 //0:prediction off, 1:prediction on
-#define CVX_EN 0 //0:prediction off, 1:prediction on
+#define CVX_EN 1 //0:prediction off, 1:prediction on
 #define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
@@ -87,11 +87,11 @@ double global_margin = 1.1;
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
-#define _xpilot_slice_ 1
+#define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 0
+#define _uzbl_ 1
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
@@ -341,9 +341,14 @@ double exec_timing_local();
 double slice_time=0;
 double dvfs_time=0;
 
-FILE *fp_max_freq; //File pointer scaling_max_freq
-FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
-FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
+#if ARCH_ARM
+  FILE *fp_max_freq; //File pointer scaling_max_freq
+  FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
+  FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
+#elif ARCH_X86
+  FILE *fp_max_freq; //File pointer scaling_max_freq
+  FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
+#endif
 
 void print_freq_power(int f_new_big, int f_new_little, float power_big, float power_little);
 void print_current_core(int current_core);
@@ -517,25 +522,28 @@ int check_define(void){
 
 void fopen_all(void){
 #if ARCH_ARM
-  #if CORE //big
-  if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-    printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-    return;
-  }
-  #else //little
-  if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-    return;
-  }
+  #if !HETERO_EN
+    #if CORE //big
+      if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+        printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+      }
+    #else //little
+      if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+        printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+        return;
+      }
+    #endif
+  #elif HETERO_EN
+    if(NULL == (fp_max_freq_big = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
+      printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
+    if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
+      printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
+      return;
+    }
   #endif
-  if(NULL == (fp_max_freq_big = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq", "w"))){
-    printf("(big) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-    return;
-  }
-  if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq", "w"))){
-    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-    return;
-  }
 #elif ARCH_X86
   if(NULL == (fp_max_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
     printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
@@ -549,11 +557,17 @@ void fopen_all(void){
 }
 
 void fclose_all(void){
-  fclose(fp_max_freq);
 #if ARCH_ARM
-  fclose(fp_max_freq_big);
-#endif
+  #if !HETERO_EN
+    fclose(fp_max_freq);
+  #elif HETERO_EN
+    fclose(fp_max_freq_big);
+    fclose(fp_max_freq_little);
+  #endif
+#elif ARCH_ARM
+  fclose(fp_max_freq);
   fclose(fp_max_freq_little);
+#endif
   return;
 }
 
