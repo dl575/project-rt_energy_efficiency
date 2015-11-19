@@ -590,9 +590,14 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     end_timing();
 
     //---------------------modified by TJSong----------------------//
-		fopen_all();
 
- _DEFINE_TIME_();
+    exec_time = exec_timing();
+    static int cur_freq = 0;
+    static int delay_time = 0;
+    static int actual_delay_time = 0;
+    static int additional_dvfs_times = 0;
+    static int update_time = 0;
+    cur_freq = print_freq();
 
     #if IDLE_EN
       additional_dvfs_times =
@@ -600,7 +605,8 @@ uzbl_commands_run (const gchar *cmd, GString *result)
         dvfs_table[MIN_FREQ/100000-2][cur_freq/100000-2];
     #endif
 
-    #if ONLINE_EN /* CASE 0, 2, 3 and 4 */
+
+    #if ONLINE_EN 
       #if GET_PREDICT || GET_OVERHEAD \
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN) \
             || (!PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN) 
@@ -623,8 +629,6 @@ uzbl_commands_run (const gchar *cmd, GString *result)
 
     _DELAY_();
 		
-    fclose_all();
-
     #if HETERO_EN
       print_predicted_time(predicted_exec_time.big);
       print_predicted_time(predicted_exec_time.little);
