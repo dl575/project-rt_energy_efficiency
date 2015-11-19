@@ -35,7 +35,7 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 0 //0:use only one core, 1:use both cores
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
@@ -43,9 +43,9 @@ double global_margin = 1.1;
 #define GET_PREDICT 0 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define PREDICT_EN 1 //0:prediction off, 1:prediction on
 #define CVX_EN 1 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -63,7 +63,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -87,11 +87,11 @@ double global_margin = 1.1;
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
-#define _xpilot_slice_ 0
+#define _xpilot_slice_ 1
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
-#define _uzbl_ 1
+#define _uzbl_ 0
 #define _ldecode_ 0
 
 //below benchmarks use file "times.txt" to print log 
@@ -1615,7 +1615,8 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
       scaled_actual_exec_time *= UNDER_PENALTY;
     }
 
-    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    if(fabs(error) < 5*DEADLINE_TIME)
+      llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
     remove_factor = 0.0;
@@ -1721,7 +1722,14 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
     error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
 
-    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    if(error < 0){
+      for(int j = 0; j < N_FEATURE + 1; j++)
+        metrics[j] *= UNDER_PENALTY;
+      scaled_actual_exec_time *= UNDER_PENALTY;
+    }
+
+    if(fabs(error) < 5*DEADLINE_TIME)
+      llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
     remove_factor = 0.0;
@@ -1756,7 +1764,6 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
     return -1;
   }
 }
-
 
 double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_counter,
     int size, double actual_exec_time, int freq)
@@ -1821,7 +1828,14 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
     error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
 
-    llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+    if(error < 0){
+      for(int j = 0; j < N_FEATURE + 1; j++)
+        metrics[j] *= UNDER_PENALTY;
+      scaled_actual_exec_time *= UNDER_PENALTY;
+    }
+
+    if(fabs(error) < 5*DEADLINE_TIME)
+      llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
     
     //reset remove_factore as 0 
     remove_factor = 0.0;
