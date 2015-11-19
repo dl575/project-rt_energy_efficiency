@@ -597,7 +597,7 @@ uzbl_commands_run (const gchar *cmd, GString *result)
     static int actual_delay_time = 0;
     static int additional_dvfs_times = 0;
     static int update_time = 0;
-    cur_freq = print_freq();
+    cur_freq = print_freq(current_core);
 
     #if IDLE_EN
       additional_dvfs_times =

@@ -35,17 +35,17 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define CVX_EN 1 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
+#define CVX_EN 0 //0:prediction off, 1:prediction on
+#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -60,10 +60,10 @@ double global_margin = 1.1;
 #define LASSO_COEFF (0) //lasso coefficient
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -80,14 +80,14 @@ double global_margin = 1.1;
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
+#define _stringsearch_ 1
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
-#define _xpilot_slice_ 1
+#define _xpilot_slice_ 0
 #define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
@@ -129,13 +129,13 @@ double global_margin = 1.1;
   }*/
 #define _DEFINE_TIME_() \
   exec_time = exec_timing();\
-  int cur_freq = print_freq(); \
+  int cur_freq = print_freq(current_core); \
   int delay_time = 0;\
   int actual_delay_time = 0;\
   int additional_dvfs_times = 0;\
   int update_time = 0;
   /*exec_time = exec_timing();
-  int cur_freq = print_freq(); 
+  int cur_freq = print_freq(current_core); 
   int delay_time = 0;
   int actual_delay_time = 0;
   int additional_dvfs_times = 0;
@@ -347,6 +347,7 @@ double dvfs_time=0;
   FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 #elif ARCH_X86
   FILE *fp_max_freq; //File pointer scaling_max_freq
+  FILE *fp_max_freq_big; //File pointer scaling_max_freq for big core
   FILE *fp_max_freq_little; //File pointer scaling_max_freq for little core
 #endif
 
@@ -1153,21 +1154,21 @@ int set_freq_multiple_hetero(int job, int d, int pid){
 
 
 #if !F_PRINT //just use printf
-int print_freq(void){
+int print_freq(int current_core){
   FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
   int khz; //Value (khz) at start point.
 #if ARCH_ARM
-#if CORE
+if(current_core == 1){
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return -1;
   }
   if(fscanf(fp_freq, "%d", &khz)<0)
     return -1;
-  printf("little core freq : %dkhz\n", khz);  
+  printf("big core freq : %dkhz\n", khz);  
   fclose(fp_freq);
   return khz;
-#else
+}else if(current_core == 0){
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return -1;
@@ -1177,7 +1178,7 @@ int print_freq(void){
   printf("little core freq : %dkhz\n", khz);  
   fclose(fp_freq);
   return khz;
-#endif
+}
 #elif ARCH_X86
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
@@ -1191,24 +1192,24 @@ int print_freq(void){
 #endif
 }
 #elif F_PRINT //some benchmarks use file "times.txt" to print log 
-int print_freq(void){
+int print_freq(int current_core){
   FILE *fp_freq; //File pointer of freq of A7 (LITTLE) core or A15 (big) core power sensor file
   int khz; //Value (khz) at start point.
   FILE *time_file;
   time_file = fopen("times.txt", "a");
 #if ARCH_ARM
-#if CORE
+if(current_core == 1){
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return -1;
   }
   if(fscanf(fp_freq, "%d", &khz)<0)
     return -1;
-  fprintf(time_file, "little core freq : %dkhz\n", khz);  
+  fprintf(time_file, "big core freq : %dkhz\n", khz);  
   fclose(fp_freq);
   fclose(time_file); 
   return khz;
-#else
+}else if(current_core == 0){
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return -1;
@@ -1219,7 +1220,7 @@ int print_freq(void){
   fclose(fp_freq);
   fclose(time_file); 
   return khz;
-#endif
+}
 #elif ARCH_X86
   if(NULL == (fp_freq = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq", "r"))){
     printf("ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
