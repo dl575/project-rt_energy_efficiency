@@ -900,9 +900,9 @@ int decode_one_frame(struct img_par *img,struct inp_par *inp, struct snr_par *sn
       double predicted_exec_time = get_predicted_time(TYPE_PREDICT, solver,
           loop_counter, N_FEATURE, 0, 0);
     #elif HETERO_EN
-      double predicted_exec_time_big = get_predicted_time(TYPE_PREDICT, solver_big,
+      double predicted_exec_time_big = get_predicted_time_big(TYPE_PREDICT, solver_big,
           loop_counter, N_FEATURE, 0, 0);
-      double predicted_exec_time_little = get_predicted_time(TYPE_PREDICT,
+      double predicted_exec_time_little = get_predicted_time_little(TYPE_PREDICT,
           solver_little,
           loop_counter, N_FEATURE, 0, 0);
     #endif
