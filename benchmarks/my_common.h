@@ -35,7 +35,7 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 0 //0:use only one core, 1:use both cores
+#define HETERO_EN 1 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
@@ -804,6 +804,9 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
   static int little_cnt = 0;
   static int current_core = CORE; //0: little, 1: big
   cpu_set_t set;
+#if !ONLINE_EN
+  is_stable_big = is_stable_little = 1;
+#endif
   
   for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
     T_sum_big = global_margin * T_est_big * f_max_big / f_new_big;
@@ -838,11 +841,11 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
   f_new_big = (f_new_big < 200)?(200):(f_new_big);
   f_new_little = (f_new_little < 200)?(200):(f_new_little);
 
-  #if ONLINE_EN//include overhead manually, move out later
+ /* #if ONLINE_EN//include overhead manually, move out later
     #if _curseofwar_slice_sdl_ || _pocketsphinx_ || _ldecode_ || _rijndael_preread_
     f_new_big += 100; f_new_little += 100;
     #endif
-  #endif
+  #endif*/
   //originally power compare, but we found that little is always better 
   if( (is_stable_little && f_new_little >= 1500) ){   //TO BIG
       f_new = f_new_big;

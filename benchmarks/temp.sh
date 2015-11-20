@@ -80,43 +80,32 @@ do
     # ex) ./buildAll.sh [bench_index] [big/little] [prediction/oracle/pid dis/en] [sweep]
     # ex) ./runAll.sh [bench_index] [big/little] [govenors] [sweep]
     
-    if [ $1 != "hetero" ] ; then
-      if [ $2 == "no_delay" ] ; then
-        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-        taskset 0xff ./buildAll.sh $i $1 set_prediction_offline ${SWEEP[$j]}
-        ./runAll.sh $i $1 offline-dummy.txt ${SWEEP[$j]}
-        taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
-        ./runAll.sh $i $1 online-dummy.txt ${SWEEP[$j]}
-      else
-        # 1. LINUX Governor
-        echo ${SWEEP[$j]}
-        taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
-        ./runAll.sh $i $1 performance ${SWEEP[$j]}
-        ./runAll.sh $i $1 interactive ${SWEEP[$j]}
-  
-        # 2. PID
-        taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
-        ./runAll.sh $i $1 pid ${SWEEP[$j]}
-  
-  #    #disable convex
-  #    sed -i -e 's/'"$CVX_ENABLED"'/'"$CVX_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
-  #    # 3. Prediction offline with no penalty
-  #    taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
-  #    ./runAll.sh $i $1 offline-no-penalty ${SWEEP[$j]}
-      
-        #enable convex
-        sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-        # 4. Prediction offline with under prediction penalty
-        taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
-        ./runAll.sh $i $1 offline-under-penalty ${SWEEP[$j]}
-  
-        # 5. Prediction online with no penalty
-        taskset 0xff ./buildAll.sh $i $1 online ${SWEEP[$j]}
-        ./runAll.sh $i $1 online ${SWEEP[$j]}
-      fi
-    elif [ $1 == "hetero" ] ; then
-      taskset 0xff ./buildAll.sh $i $1 online+hetero ${SWEEP[$j]}
-      ./runAll.sh $i $1 online+hetero ${SWEEP[$j]}
+    if [ $2 == "no_delay" ] ; then
+      sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_offline ${SWEEP[$j]}
+      ./runAll.sh $i $1 offline.txt ${SWEEP[$j]}
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 online.txt ${SWEEP[$j]}
+    else
+      # 1. LINUX Governor
+      echo ${SWEEP[$j]}
+#      taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
+#      ./runAll.sh $i $1 performance ${SWEEP[$j]}
+#      ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+#
+#      # 2. PID
+#      taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
+#      ./runAll.sh $i $1 pid ${SWEEP[$j]}
+    
+      #enable convex
+      sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+      # 4. Prediction offline with under prediction penalty
+      taskset 0xff ./buildAll.sh $i $1 offline ${SWEEP[$j]}
+      ./runAll.sh $i $1 offline-under-penalty ${SWEEP[$j]}
+
+      # 5. Prediction online with no penalty
+      taskset 0xff ./buildAll.sh $i $1 online ${SWEEP[$j]}
+      ./runAll.sh $i $1 online ${SWEEP[$j]}
     fi
 
     #kill power_monitor process
@@ -126,7 +115,7 @@ do
         PID_POWER_MONITOR=$(pgrep 'power_monitor')
         sudo kill -9 $PID_POWER_MONITOR
         cp $POWER_MONITOR_PATH/output_power*.txt $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
-        if [ $1 == "hetero" ] ; then
+       if [ $1 == "hetero" ] ; then
           cp $POWER_MONITOR_PATH/output_power*.txt $DATA_ODROID_PATH/little/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
           cp $DATA_ODROID_PATH/$1/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}/*hetero* $DATA_ODROID_PATH/little/${BENCH_NAME[$i]}/${BENCH_NAME[$i]}"-"${SWEEP[$j]}
         fi
