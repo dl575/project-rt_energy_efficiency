@@ -229,6 +229,17 @@ struct slice_return sha_stream_slice(SHA_INFO *sha_info, char *file_buffer,
        * 0.677867*loop_counter[20] + 0.677867*loop_counter[21] +
        * 0.677867*loop_counter[22] + 6.380048;*/
       exec_time.little = -5.066004*loop_counter[0] + -5.198613*loop_counter[1] + 0.210721*loop_counter[3] + 0.013170*loop_counter[4] + 0.003293*loop_counter[5] + 0.010537*loop_counter[6] + 0.010537*loop_counter[7] + 0.010537*loop_counter[8] + 0.010537*loop_counter[9] + -0.000431*loop_counter[10] + -0.006902*loop_counter[11] + -0.027606*loop_counter[12] + -0.008628*loop_counter[13] + -0.008628*loop_counter[14] + -0.008628*loop_counter[15] + -0.008628*loop_counter[16] + 0.000132*loop_counter[17] + 0.197178*loop_counter[18] + 0.000235*loop_counter[19] + 0.000235*loop_counter[20] + 0.000235*loop_counter[21] + 0.000235*loop_counter[22] + 0.000008;
+      exec_time.big = -13.891408*loop_counter[0] + -14.082207*loop_counter[1] +
+        0.122227*loop_counter[3] + 0.007639*loop_counter[4] +
+        0.001910*loop_counter[5] + 0.006111*loop_counter[6] +
+        0.006111*loop_counter[7] + 0.006111*loop_counter[8] +
+        0.006111*loop_counter[9] + 0.000025*loop_counter[10] +
+        0.000392*loop_counter[11] + 0.001569*loop_counter[12] +
+        0.000490*loop_counter[13] + 0.000490*loop_counter[14] +
+        0.000490*loop_counter[15] + 0.000490*loop_counter[16] +
+        -0.000027*loop_counter[17] + -0.026362*loop_counter[18] +
+        -0.000030*loop_counter[19] + -0.000030*loop_counter[20] +
+        -0.000030*loop_counter[21] + -0.000030*loop_counter[22] + -0.000002;
 
     #elif ARCH_X86
     #endif

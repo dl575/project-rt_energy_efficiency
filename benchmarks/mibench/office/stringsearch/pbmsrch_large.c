@@ -90,7 +90,8 @@ struct slice_return slice(const char *string, llsp_t *restrict solver_big, llsp_
        * 122.081081*loop_counter[1] + -155.664348*loop_counter[2] +
        * 2778.772456*loop_counter[3] + 9077.524841;*/
       exec_time.little = 560.663610*loop_counter[0] + 119.430000*loop_counter[1] + -66.893610*loop_counter[2] + 2891.853610*loop_counter[3] + 7980.806390;
-
+      exec_time.big = 219.777985*loop_counter[0] + 83.172131*loop_counter[1] +
+        15.805621*loop_counter[2] + 779.354059*loop_counter[3] + 2437.984306;
     #elif ARCH_X86
     #endif
   #endif
