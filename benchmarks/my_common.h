@@ -34,18 +34,18 @@ double global_margin = 1.1;
 double global_margin = 1.1;
 #endif
 //manually set below
-#define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define CORE 1 //0:LITTLE, 1:big
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
-#define DELAY_EN 1 //0:delay off, 1:delay on
+#define DELAY_EN 0 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
 
-#define GET_PREDICT 0 //to get prediction equation
+#define GET_PREDICT 1 //to get prediction equation
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
-#define PREDICT_EN 1 //0:prediction off, 1:prediction on
+#define PREDICT_EN 0 //0:prediction off, 1:prediction on
 #define CVX_EN 1 //0:prediction off, 1:prediction on
-#define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
+#define OVERHEAD_EN 0 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
 #define PID_EN 0 //0:pid off, 1:pid on
@@ -63,7 +63,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 1 //0:off-line training, 1:on-line training
+#define ONLINE_EN 0 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -83,9 +83,9 @@ double global_margin = 1.1;
 #define ARCH_ARM 1 //ARM ODROID
 #define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 0
+#define _pocketsphinx_ 1
 #define _stringsearch_ 0
-#define _sha_preread_ 1
+#define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
 #define _2048_slice_ 0
@@ -606,6 +606,11 @@ void set_freq(double predicted_exec_time, double slice_time,
   int predicted_freq = MAX_FREQ;
   //consider update overhead, we need to modify this as paremeter later.
   int update_time = 0;
+  #if ONLINE_EN
+    #if _2048_slice_ //include update overhead
+    update_time = 1000;
+    #endif
+  #endif
 #if ARCH_ARM
   static int previous_freq = MAX_FREQ;
   double job_exec_time;
@@ -630,11 +635,6 @@ void set_freq(double predicted_exec_time, double slice_time,
   //if less then 200000, just set it minimum (200000)
   predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
   //consider update overhead, we need to modify this as paremeter later.
- /* #if ONLINE_EN
-    #if _2048_slice_ //include update overhead
-    predicted_freq = predicted_freq + 100000;   
-    #endif
-  #endif*/
 #if ARCH_ARM
   //remember current frequency to use later
   previous_freq = predicted_freq;
@@ -807,11 +807,17 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
 #if !ONLINE_EN
   is_stable_big = is_stable_little = 1;
 #endif
+  int update_time = 0;
+  #if ONLINE_EN
+    #if _2048_slice_ //include update overhead
+    update_time = 1000;
+    #endif
+  #endif
   
   for(f_new_big = 200; f_new_big < f_max_big+1; f_new_big += 100){
     T_sum_big = global_margin * T_est_big * f_max_big / f_new_big;
   #if OVERHEAD_EN // with dvfs + slice overhead
-    if(T_sum_big + dvfs_table_big[f_previous_big/100-2][f_new_big/100-2] + slice_time < d)
+    if(T_sum_big + dvfs_table_big[f_previous_big/100-2][f_new_big/100-2] + slice_time + update_time < d)
       break;
   #elif SLICE_OVERHEAD_ONLY_EN // with slice overhead only
     if(T_sum_big + slice_time < d)

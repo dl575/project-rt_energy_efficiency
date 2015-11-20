@@ -19,7 +19,7 @@
 
 #include "timing.h"
 
-#define SIZE 32
+#define SIZE 30
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -4354,7 +4354,7 @@ int main(int argc, char *argv[]) {
     // c=getchar(); //to input automatically
     static int i=0;
     c=65+(i++)%4;
-    new_s = 4*((rand())%7)+8;//8~24
+    new_s = 4*((rand())%5)+8;//8~24
     usleep(100000);
     //---------------------modified by TJSong----------------------//
 
@@ -4377,7 +4377,7 @@ int main(int argc, char *argv[]) {
     #if GET_PREDICT /* CASE 0 */
       predicted_exec_time = _SLICE_();
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
-      predicted_exec_time = _SLICE_();
+      //predicted_exec_time = _SLICE_();
       moment_timing_print(0); //moment_start
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
       moment_timing_print(0); //moment_start
