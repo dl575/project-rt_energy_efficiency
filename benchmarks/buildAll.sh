@@ -83,9 +83,11 @@ sed -i -e 's/'"$ONLINE_ENABLED"'/'"$ONLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FIL
 if [ $3 == "set_prediction_offline" ] ; then
     sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$ONLINE_ENABLED"'/'"$ONLINE_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$GET_PREDICT_DISABLED"'/'"$GET_PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "set_prediction_online" ] ; then
     sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$ONLINE_DISABLED"'/'"$ONLINE_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
+    sed -i -e 's/'"$GET_PREDICT_DISABLED"'/'"$GET_PREDICT_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
 elif [ $3 == "set_prediction_pid_en" ] ; then
     sed -i -e 's/'"$DELAY_ENABLED"'/'"$DELAY_DISABLED"'/g' $BENCH_PATH/$COMMON_FILE
     sed -i -e 's/'"$PID_DISABLED"'/'"$PID_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE

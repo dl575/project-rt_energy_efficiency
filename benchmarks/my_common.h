@@ -35,7 +35,7 @@ double global_margin = 1.1;
 #endif
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
-#define HETERO_EN 1 //0:use only one core, 1:use both cores
+#define HETERO_EN 0 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 1 //0:delay off, 1:delay on
 #define IDLE_EN 0 //0:idle off, 1:idle on
@@ -44,7 +44,7 @@ double global_margin = 1.1;
 #define GET_OVERHEAD 0 // to get execution deadline
 #define GET_DEADLINE 0 //to get overhead deadline
 #define PREDICT_EN 1 //0:prediction off, 1:prediction on
-#define CVX_EN 0 //0:prediction off, 1:prediction on
+#define CVX_EN 1 //0:prediction off, 1:prediction on
 #define OVERHEAD_EN 1 //0:dvfs+slice overhead off, 1:dvfs+slice overhead on
 #define SLICE_OVERHEAD_ONLY_EN 0 //0:dvfs overhead off, 1:dvfs overhead on
 #define ORACLE_EN 0 //0:oracle off, 1:oracle on
@@ -630,12 +630,8 @@ void set_freq(double predicted_exec_time, double slice_time,
   //if less then 200000, just set it minimum (200000)
   predicted_freq = (predicted_freq < MIN_FREQ || predicted_exec_time <= 1)?(MIN_FREQ):(predicted_freq);
   //consider update overhead, we need to modify this as paremeter later.
-  /*#if ONLINE_EN
+ /* #if ONLINE_EN
     #if _2048_slice_ //include update overhead
-    predicted_freq = predicted_freq + 100000;   
-    #elif _pocketsphinx_
-    predicted_freq = predicted_freq + 100000;   
-    #elif _ldecode_
     predicted_freq = predicted_freq + 100000;   
     #endif
   #endif*/
@@ -1610,15 +1606,14 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
       scaled_actual_exec_time *= UNDER_PENALTY;
     }
 
-    if(fabs(error) < 5*DEADLINE_TIME)
+
+    if(fabs(error) < 5*DEADLINE_TIME){
       llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
-    
-    //reset remove_factore as 0 
-    remove_factor = 0.0;
-
-    //solve with updated params.xx and params.yy
-    (void)llsp_solve(solver);
-
+      //reset remove_factore as 0 
+      remove_factor = 0.0;
+      //solve with updated params.xx and params.yy
+      (void)llsp_solve(solver);
+    }
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1723,15 +1718,14 @@ double get_predicted_time_big(int type, llsp_t *restrict solver, int *loop_count
       scaled_actual_exec_time *= UNDER_PENALTY;
     }
 
-    if(fabs(error) < 5*DEADLINE_TIME)
+
+    if(fabs(error) < 5*DEADLINE_TIME){
       llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
-    
-    //reset remove_factore as 0 
-    remove_factor = 0.0;
-
-    //solve with updated params.xx and params.yy
-    (void)llsp_solve(solver);
-
+      //reset remove_factore as 0 
+      remove_factor = 0.0;
+      //solve with updated params.xx and params.yy
+      (void)llsp_solve(solver);
+    }
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1829,15 +1823,14 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
       scaled_actual_exec_time *= UNDER_PENALTY;
     }
 
-    if(fabs(error) < 5*DEADLINE_TIME)
+
+    if(fabs(error) < 5*DEADLINE_TIME){
       llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
-    
-    //reset remove_factore as 0 
-    remove_factor = 0.0;
-
-    //solve with updated params.xx and params.yy
-    (void)llsp_solve(solver);
-
+      //reset remove_factore as 0 
+      remove_factor = 0.0;
+      //solve with updated params.xx and params.yy
+      (void)llsp_solve(solver);
+    }
 
     //update errors array, keep newest one at the first index 
     for(int j = N_ERROR-1 ; j > 0; j--)
@@ -1865,7 +1858,6 @@ double get_predicted_time_little(int type, llsp_t *restrict solver, int *loop_co
     return -1;
   }
 }
-
 
 
 
