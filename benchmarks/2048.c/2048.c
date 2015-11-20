@@ -1378,6 +1378,7 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
 #if GET_PREDICT || DEBUG_EN
     //95
     print_array(loop_counter, sizeof(loop_counter)/sizeof(loop_counter[0]));
+#endif
 // non-zero coeffs =  [2, 3, 4, 5, 6, 16, 17, 18, 19, 20, 21, 24, 25, 26,
 // 27, 28, 29, 30, 31, 32, 42, 43, 46, 47, 48, 60, 61, 62, 63, 64, 65, 66,
 // 76, 77, 78, 79, 81, 82, 86, 91]
@@ -1421,7 +1422,6 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
     reduced_loop_counter[37] = loop_counter[82];
     reduced_loop_counter[38] = loop_counter[86];
     reduced_loop_counter[39] = loop_counter[91];
-#endif
   }
   {
     predict_exec_time:
