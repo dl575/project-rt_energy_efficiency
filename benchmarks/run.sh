@@ -79,7 +79,32 @@ run_dummy(){
     /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
     sleep 3;
     /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+  elif [ $DUMMY_LEVEL == "2" ] ; then #dummy
+    /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
+  elif [ $DUMMY_LEVEL == "3" ] ; then #dummy
+    /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy4.sh $1 & #$1 is $2 in main
+  elif [ $DUMMY_LEVEL == "4" ] ; then #dummy
+    /$PROJECT_PATH/dummy/dummy.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy2.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy4.sh $1 & #$1 is $2 in main
+    sleep 3;
+    /$PROJECT_PATH/dummy/dummy5.sh $1 & #$1 is $2 in main
   fi
+
 #  /$PROJECT_PATH/dummy/dummy3.sh $1 & #$1 is $2 in main
   cd $PRE_PWD 
 }

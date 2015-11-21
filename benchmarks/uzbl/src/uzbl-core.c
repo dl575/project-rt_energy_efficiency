@@ -440,6 +440,8 @@ struct slice_return uzbl_commands_run_parsed_slice (const UzblCommand *info,
   #else //off-line training with cvx    
     #if ARCH_ARM
       exec_time.little = 5479.168312*loop_counter[1] + 5869.435649*loop_counter[2] + -10511.970297*loop_counter[3] + -8919.970297*loop_counter[4] + -10424.970297*loop_counter[5] + 37641.029703*loop_counter[6] + -4645.534648*loop_counter[7] + -10843.970297*loop_counter[8] + -5002.801985*loop_counter[10] + -10409.970297*loop_counter[11] + 34251.029703*loop_counter[15] + -747.534648*loop_counter[16] + -9908.970297*loop_counter[18] + 476.366336;
+      exec_time.big = 7596.247785*loop_counter[1] + 10583.345906*loop_counter[2] + -16530.544623*loop_counter[3] + -5907.544623*loop_counter[4] + -16492.544623*loop_counter[5] + 53932.455377*loop_counter[6] + -6329.198717*loop_counter[7] + -16449.544623*loop_counter[8] + -8823.296837*loop_counter[10] + -16481.544623*loop_counter[11] + 53982.455377*loop_counter[15] + -5481.198717*loop_counter[16] + -16646.544623*loop_counter[18] + -1227.049068;
+
     #elif ARCH_X86
       exec_time.little = 0;
     #endif
