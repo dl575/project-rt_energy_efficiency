@@ -1431,6 +1431,7 @@ struct slice_return ps_process_raw_slice(ps_decoder_t *ps, const int16 *data,
       #if ARCH_ARM
         //exec_time.little = 13440.146587*loop_counter[5] + 1396312.505660;
         exec_time.little = 10323.597788*loop_counter[5] + 1417150.637580;
+        exec_time.big = 5463.018864*loop_counter[5] + 47958.736239;
       #elif ARCH_X86
         exec_time.little = 0;
       #endif

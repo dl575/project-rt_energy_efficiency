@@ -738,7 +738,11 @@ struct slice_return decode_one_frame_inner_loop_slice(struct img_par *img, struc
          * 6760.000000*loop_counter[39] + -190.424113*loop_counter[40] +
          * -190.405792;*/
         exec_time.little = 1723.011030*loop_counter[22] + 1338.006737*loop_counter[23] + 134.418141*loop_counter[30] + 134.418141*loop_counter[32] + 47.523989*loop_counter[33] + 43.249999*loop_counter[34] + 385.006737*loop_counter[39] + 1723.003935*loop_counter[40] + 1723.011272;
-
+        exec_time.big = 3911.483670*loop_counter[22] + 1442.152097*loop_counter[23]
+          + 305.141708*loop_counter[30] + 305.141708*loop_counter[32] +
+          107.883718*loop_counter[33] + -267.794410*loop_counter[34] +
+          2469.329640*loop_counter[39] + 3911.483611*loop_counter[40] +
+          3911.483531;
       #elif ARCH_X86
       #endif
     #endif

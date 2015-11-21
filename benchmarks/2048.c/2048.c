@@ -19,7 +19,7 @@
 
 #include "timing.h"
 
-#define SIZE 32
+#define SIZE 30
 uint32_t score=0;
 uint8_t scheme=0;
 
@@ -1458,6 +1458,26 @@ struct slice_return main_loop_slice(char c, uint8_t board[SIZE][SIZE],
     #if ARCH_ARM
       //exec_time.little = 1623.486563*loop_counter[2] + -42.893065*loop_counter[3] + 16.286125*loop_counter[4] + -577.936322*loop_counter[5] + -0.663678*loop_counter[6] + -42.893062*loop_counter[16] + 16.286125*loop_counter[17] + -42.893062*loop_counter[18] + 16.286125*loop_counter[19] + -42.893062*loop_counter[20] + 16.286125*loop_counter[21] + 1438.526563*loop_counter[24] + 5.092514*loop_counter[25] + 15.314973*loop_counter[26] + 5.092511*loop_counter[27] + 15.314973*loop_counter[28] + 5.092511*loop_counter[29] + 15.314973*loop_counter[30] + -623.027475*loop_counter[31] + -1.852525*loop_counter[32] + 5.092520*loop_counter[42] + 15.314970*loop_counter[43] + 1316.993230*loop_counter[46] + -580.442447*loop_counter[47] + 11.895781*loop_counter[48] + 1278.933622*loop_counter[60] + -984.961214*loop_counter[61] + 88.422447*loop_counter[62] + -984.961227*loop_counter[63] + 88.422447*loop_counter[64] + 452.171295*loop_counter[65] + 159.866735*loop_counter[66] + -984.961226*loop_counter[76] + 88.422448*loop_counter[77] + -984.961228*loop_counter[78] + 88.422448*loop_counter[79] + -1161.257553*loop_counter[81] + 51.979184*loop_counter[82] + 51.979184*loop_counter[86] + 51.979184*loop_counter[91] + 5018.473437;
       exec_time.little = -67.231348*loop_counter[2] + 58.575009*loop_counter[3] + 1.000935*loop_counter[4] + 34.828905*loop_counter[5] + 0.353887*loop_counter[6] + 58.575012*loop_counter[16] + 1.000935*loop_counter[17] + 58.575012*loop_counter[18] + 1.000935*loop_counter[19] + 58.575012*loop_counter[20] + 1.000936*loop_counter[21] + 231.701985*loop_counter[24] + 41.404763*loop_counter[25] + 2.229951*loop_counter[26] + 41.404764*loop_counter[27] + 2.229952*loop_counter[28] + 41.404765*loop_counter[29] + 2.229952*loop_counter[30] + 24.619398*loop_counter[31] + 0.788412*loop_counter[32] + 41.404766*loop_counter[42] + 2.229953*loop_counter[43] + 63.701985*loop_counter[46] + 156.187261*loop_counter[47] + 1.123572*loop_counter[48] + 63.817052*loop_counter[60] + 60.372796*loop_counter[61] + 2.250656*loop_counter[62] + 60.372797*loop_counter[63] + 2.250656*loop_counter[64] + 22.562728*loop_counter[65] + 7.977126*loop_counter[66] + 60.372797*loop_counter[76] + 2.250656*loop_counter[77] + 60.372798*loop_counter[78] + 2.250656*loop_counter[79] + 244.946072*loop_counter[81] + 3.061587*loop_counter[82] + 3.061587*loop_counter[86] + 3.061587*loop_counter[91] + 273.298015;
+      exec_time.little = 40.831529*loop_counter[2] + 52.980182*loop_counter[3] +
+        1.431399*loop_counter[4] + 31.502216*loop_counter[5] +
+        0.506076*loop_counter[6] + 52.980181*loop_counter[16] +
+        1.431399*loop_counter[17] + 52.980181*loop_counter[18] +
+        1.431399*loop_counter[19] + 52.980181*loop_counter[20] +
+        1.431399*loop_counter[21] + -49.279552*loop_counter[24] +
+        55.745005*loop_counter[25] + 1.330070*loop_counter[26] +
+        55.745005*loop_counter[27] + 1.330070*loop_counter[28] +
+        55.745005*loop_counter[29] + 1.330070*loop_counter[30] +
+        33.146180*loop_counter[31] + 0.470252*loop_counter[32] +
+        55.744999*loop_counter[42] + 1.330070*loop_counter[43] +
+        -257.612916*loop_counter[46] + 167.865356*loop_counter[47] +
+        1.190947*loop_counter[48] + -1.875636*loop_counter[60] +
+        71.911844*loop_counter[61] + 1.831572*loop_counter[62] +
+        71.911843*loop_counter[63] + 1.831572*loop_counter[64] +
+        -0.663152*loop_counter[65] + -0.234458*loop_counter[66] +
+        71.911846*loop_counter[76] + 1.831572*loop_counter[77] +
+        71.911846*loop_counter[78] + 1.831572*loop_counter[79] +
+        267.426311*loop_counter[81] + 2.814823*loop_counter[82] +
+        2.814823*loop_counter[86] + 2.814823*loop_counter[91] + -267.387089;
 
     #elif ARCH_X86
       exec_time.little = 0;
@@ -4354,7 +4374,7 @@ int main(int argc, char *argv[]) {
     // c=getchar(); //to input automatically
     static int i=0;
     c=65+(i++)%4;
-    new_s = 4*((rand())%7)+8;//8~24
+    new_s = 4*((rand())%5)+8;//8~24
     usleep(100000);
     //---------------------modified by TJSong----------------------//
 
@@ -4377,7 +4397,7 @@ int main(int argc, char *argv[]) {
     #if GET_PREDICT /* CASE 0 */
       predicted_exec_time = _SLICE_();
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && !PREDICT_EN /* CASE 3 */
-      predicted_exec_time = _SLICE_();
+      //predicted_exec_time = _SLICE_();
       moment_timing_print(0); //moment_start
     #elif !PROACTIVE_EN && !ORACLE_EN && !PID_EN && PREDICT_EN /* CASE 4 */
       moment_timing_print(0); //moment_start
