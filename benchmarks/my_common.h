@@ -34,7 +34,7 @@ double global_margin = 1.1;
 double global_margin = 1.1;
 #endif
 //manually set below
-#define CORE 1 //0:LITTLE, 1:big
+#define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
 
 #define DELAY_EN 0 //0:delay off, 1:delay on
@@ -63,7 +63,7 @@ double global_margin = 1.1;
 #define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
-#define ONLINE_EN 0 //0:off-line training, 1:on-line training
+#define ONLINE_EN 1 //0:off-line training, 1:on-line training
 #define TYPE_PREDICT 0 //add selected features and return predicted time
 #define TYPE_SOLVE 1 //add actual exec time and do optimization at on-line
 
@@ -83,12 +83,12 @@ double global_margin = 1.1;
 #define ARCH_ARM 1 //ARM ODROID
 #define ARCH_X86 0 //x86-laptop
 
-#define _pocketsphinx_ 1
+#define _pocketsphinx_ 0
 #define _stringsearch_ 0
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
-#define _2048_slice_ 0
+#define _2048_slice_ 1
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
@@ -895,7 +895,6 @@ int set_freq_hetero(int T_est_big, int T_est_little, int slice_time, int d, int 
 	int d : deadline
     int w : window size
     return jump
-*/
 int set_freq_multiple(int job, int d){
 	int w=WINDOW_SIZE;
 	int i, j, k, brk;
@@ -1150,6 +1149,7 @@ int set_freq_multiple_hetero(int job, int d, int pid){
     }
     return jump;
 }
+*/
 
 
 #if !F_PRINT //just use printf
@@ -1651,6 +1651,104 @@ double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
   }
 }
 
+/*
+#define SWEEP_STABLE (5)
+int func_is_stable(double errors[N_ERROR], int n_stable, int pre_is_stable){
+  static int stable_cnt = 0;
+  int is_stable = 0;
+  if(stable_cnt >= SWEEP_STABLE)
+    is_stable = 1;
+  stable_cnt++;
+  return is_stable; //if all errors > 10, not stable
+}
+double get_predicted_time(int type, llsp_t *restrict solver, int *loop_counter,
+    int size, double actual_exec_time, int freq)
+{ 
+  int i;
+  static double error = 100.0; //error = |predicted-actual|/actual*100
+  static double errors[N_ERROR] = { [0 ... N_ERROR-1] = DEADLINE_TIME}; //save the past errors
+  static int is_stable = 0; //indicator whether prediction is stable
+  static int is_begin = 1; //indicator of beginning phase of event
+  static int is_init = 1; //indicator of very initial phase
+  static double exec_time = 0; //predicted execution time
+  static double temp_exec_time = 0; //temporary predicted execution time when the model is unstable
+  static double metrics[N_FEATURE+1] = {0}; //For constant term, increase size by 1
+  static double remove_factor = 0.0; //remove factor
+
+  if(type == TYPE_PREDICT)//add selected features, return predicted time
+  {
+    //update params.xx, add 1 to leftmost column for constant term
+    metrics[0] = (double)1/SCALE;
+    for(i = 0; i < N_FEATURE ; i++)
+      metrics[i+1] = (double)loop_counter[i]/SCALE;
+
+    //get predicted time
+    //exec_time = llsp_predict(solver, metrics);
+
+    if(is_stable){//be conservative until prediction is stable
+        temp_exec_time = llsp_predict_from_copy(solver, metrics, 1);
+        int avg_error = 0;
+        for(int i = 0; i < N_ERROR ; i++)
+          avg_error += fabs(errors[i]);
+        global_margin = 1 + fabs(avg_error/DEADLINE_TIME);
+        return temp_exec_time;
+     }
+    else{//as soon as it is stable, we can use predicted time
+      return DEADLINE_TIME;
+    }
+  }
+  else if(type == TYPE_SOLVE)//add actual exec time, do optimization on-line
+  {
+    //update params.yy, we assume time is scaled by freq linearly
+    double scaled_actual_exec_time = (double)actual_exec_time *
+      ((double)freq/(double)MAX_FREQ);
+
+    //calculate an error 
+    //printf("predicted time %f, actual time %f, scaled actual time %f\n", exec_time, actual_exec_time, scaled_actual_exec_time);
+    error = (exec_time-scaled_actual_exec_time);//absolute error (us) compared to DEADLINE_TIME /scaled_actual_exec_time*100;
+
+    if(error < 0){
+      for(int j = 0; j < N_FEATURE + 1; j++)
+        metrics[j] *= UNDER_PENALTY;
+      scaled_actual_exec_time *= UNDER_PENALTY;
+    }
+
+
+    if(!is_stable){
+      llsp_add(solver, metrics, scaled_actual_exec_time, remove_factor);
+      //reset remove_factore as 0 
+      remove_factor = 0.0;
+      //solve with updated params.xx and params.yy
+      (void)llsp_solve(solver);
+    }
+
+    //update errors array, keep newest one at the first index 
+    for(int j = N_ERROR-1 ; j > 0; j--)
+      errors[j] = errors[j-1];
+    errors[0] = error;
+
+    print_errors(errors, N_ERROR);
+
+    //check stability
+    is_stable = func_is_stable(errors, N_STABLE, is_stable);
+
+    //While prediction is stable, if we find errors in consecutive jobs, we
+    //give up old data by removing factor (if 0.9, decrease by 90%)
+    if(is_stable){
+      print_old_data_removed();
+      (void)llsp_predict_from_copy(solver, metrics, 0);
+      remove_factor = 1.00;
+      is_begin = 1;
+    }
+    print_stability(is_stable, is_begin);
+    
+    return is_stable;//return dummy
+  }else{
+    perror( "unknown type (should be TYPE_UPDATE or TYPE_SOLVE)" );
+    return -1;
+  }
+}
+*/
 
 //////////////////////////////////////////////////////////////////////
 // on-line training core function for big core
