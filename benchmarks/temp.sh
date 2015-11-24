@@ -82,20 +82,49 @@ do
     
     if [ $2 == "no_delay" ] ; then
       sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
-      taskset 0xff ./buildAll.sh $i $1 set_prediction_offline ${SWEEP[$j]}
-      ./runAll.sh $i $1 offline.txt ${SWEEP[$j]}
+#      taskset 0xff ./buildAll.sh $i $1 set_prediction_offline ${SWEEP[$j]}
+#      ./runAll.sh $i $1 offline.txt ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (5)"'/'"SWEEP_STABLE (5)"'/g' $BENCH_PATH/$COMMON_FILE
       taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
-      ./runAll.sh $i $1 online.txt ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_5 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (5)"'/'"SWEEP_STABLE (10)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_10 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (10)"'/'"SWEEP_STABLE (15)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_15 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (15)"'/'"SWEEP_STABLE (20)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_20 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (20)"'/'"SWEEP_STABLE (25)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_25 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (25)"'/'"SWEEP_STABLE (30)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_30 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (30)"'/'"SWEEP_STABLE (35)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_35 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (35)"'/'"SWEEP_STABLE (40)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_40 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (40)"'/'"SWEEP_STABLE (45)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_45 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (45)"'/'"SWEEP_STABLE (50)"'/g' $BENCH_PATH/$COMMON_FILE
+      taskset 0xff ./buildAll.sh $i $1 set_prediction_online ${SWEEP[$j]}
+      ./runAll.sh $i $1 sample_50 ${SWEEP[$j]}
+      sed -i -e 's/'"SWEEP_STABLE (50)"'/'"SWEEP_STABLE (5)"'/g' $BENCH_PATH/$COMMON_FILE
     else
       # 1. LINUX Governor
       echo ${SWEEP[$j]}
-#      taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
-#      ./runAll.sh $i $1 performance ${SWEEP[$j]}
-#      ./runAll.sh $i $1 interactive ${SWEEP[$j]}
-#
-#      # 2. PID
-#      taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
-#      ./runAll.sh $i $1 pid ${SWEEP[$j]}
+      taskset 0xff ./buildAll.sh $i $1 predict_dis ${SWEEP[$j]}
+      ./runAll.sh $i $1 performance ${SWEEP[$j]}
+      ./runAll.sh $i $1 interactive ${SWEEP[$j]}
+
+     # 2. PID
+      taskset 0xff ./buildAll.sh $i $1 pid_en ${SWEEP[$j]}
+      ./runAll.sh $i $1 pid ${SWEEP[$j]}
     
       #enable convex
       sed -i -e 's/'"$CVX_DISABLED"'/'"$CVX_ENABLED"'/g' $BENCH_PATH/$COMMON_FILE
@@ -124,7 +153,7 @@ do
   done
 
   # set SWEEP as 1
-  sed -i -e 's/'"SWEEP (${SWEEP[$j-1]})"'/'"SWEEP (100)"'/g' $BENCH_PATH/$COMMON_FILE
+#  sed -i -e 's/'"SWEEP (${SWEEP[$j-1]})"'/'"SWEEP (100)"'/g' $BENCH_PATH/$COMMON_FILE
  
 done
 
