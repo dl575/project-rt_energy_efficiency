@@ -22,17 +22,8 @@
 //constant
 #define ERROR_DEFINE -1
 #define AVG_DVFS_TIME (double)0
-#define MARGIN (double)1.1
-#define UNDER_PENALTY 100
-#if _ldecode_ 
-double global_margin = 1.1;
-#elif _pocketsphinx_
-double global_margin = 1.1;
-#elif _stringsearch_ 
-double global_margin = 1.1;
-#else
-double global_margin = 1.1;
-#endif
+double global_margin = 1.1; //This is changed when interference happens
+
 //manually set below
 #define CORE 0 //0:LITTLE, 1:big
 #define HETERO_EN 0 //0:use only one core, 1:use both cores
@@ -58,9 +49,10 @@ double global_margin = 1.1;
 #define SWEEP (100) //sweep deadline (e.g, if 90, deadline*0.9)
 #define CVX_COEFF (100) //cvx coefficient
 #define LASSO_COEFF (0) //lasso coefficient
+#define UNDER_PENALTY (100) //under-prediction penalty
 
 //always set this as 1 on ODROID
-#define DVFS_EN 1 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
+#define DVFS_EN 0 //1:change dvfs, 1:don't change dvfs (e.g., not running on ODROID)
 
 //ONLINE related
 #define ONLINE_EN 1 //0:off-line training, 1:on-line training
@@ -80,15 +72,15 @@ double global_margin = 1.1;
 #define MIN_FREQ (1199000)
 #endif
 
-#define ARCH_ARM 1 //ARM ODROID
-#define ARCH_X86 0 //x86-laptop
+#define ARCH_ARM 0 //ARM ODROID
+#define ARCH_X86 1 //x86-laptop
 
 #define _pocketsphinx_ 0
-#define _stringsearch_ 0
+#define _stringsearch_ 1
 #define _sha_preread_ 0
 #define _rijndael_preread_ 0
 #define _xpilot_slice_ 0
-#define _2048_slice_ 1
+#define _2048_slice_ 0
 #define _curseofwar_slice_sdl_ 0
 #define _curseofwar_slice_ 0
 #define _uzbl_ 0
@@ -190,7 +182,8 @@ double global_margin = 1.1;
     else
       print_predicted_time(predicted_exec_time.little);
   }*/
-//Depends on benchmarks
+
+//constant for on-line scheme, depends on benchmarks
 #if _sha_preread_
   #define N_FEATURE 23
   #if !HETERO_EN
@@ -201,7 +194,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1000
   #define N_STABLE (4)
-  #define N_EVENT (3)
 #elif _rijndael_preread_
   #define N_FEATURE 23
   #if !HETERO_EN
@@ -211,7 +203,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1000
   #define N_STABLE (4)
-  #define N_EVENT (3)
 #elif _stringsearch_
   #define N_FEATURE 4
   #if !HETERO_EN
@@ -221,7 +212,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (4)
-  #define N_EVENT (3)
 #elif _2048_slice_
   #define N_FEATURE 40
   #if !HETERO_EN
@@ -231,7 +221,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (10)
-  #define N_EVENT (3)
 #elif _curseofwar_slice_sdl_
   #define N_FEATURE 2
   #if !HETERO_EN
@@ -241,7 +230,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (5)
-  #define N_EVENT (2)
 #elif _pocketsphinx_ //fork: no solver
   #define N_FEATURE 11
   #if !HETERO_EN
@@ -251,7 +239,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (3)
-  #define N_EVENT (3)
 #elif _xpilot_slice_
   #define N_FEATURE 77
   #if !HETERO_EN
@@ -261,7 +248,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (3)
-  #define N_EVENT (3)
 #elif _uzbl_
   #define N_FEATURE 19
   #if !HETERO_EN
@@ -271,7 +257,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (3)
-  #define N_EVENT (3)
 #elif _ldecode_ //fork: no solver
   #define N_FEATURE 9 
   #if !HETERO_EN
@@ -281,7 +266,6 @@ double global_margin = 1.1;
   #endif
   #define SCALE (double)1
   #define N_STABLE (2)
-  #define N_EVENT (2)
 #endif
 
 #define EVENT_EN 0
@@ -550,10 +534,6 @@ void fopen_all(void){
     printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
     return;
   }
-  if(NULL == (fp_max_freq_little = fopen("/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq", "w"))){
-    printf("(LITTLE) ERROR : FILE READ FAILED (SEE IF FILE IS PRIVILEGED)\n");
-    return;
-  }
 #endif
 }
 
@@ -565,9 +545,8 @@ void fclose_all(void){
     fclose(fp_max_freq_big);
     fclose(fp_max_freq_little);
   #endif
-#elif ARCH_ARM
+#elif ARCH_X86
   fclose(fp_max_freq);
-  fclose(fp_max_freq_little);
 #endif
   return;
 }

@@ -5647,11 +5647,13 @@ NULL};
     fclose_all();//TJSong
     //---------------------modified by TJSong----------------------//
 
+    /*
     printf("\"%s\" is%s in \"%s\"", find_strings[i],
         here ? "" : " not", search_strings[i]);
     if (here)
       printf(" [\"%s\"]", here);
     putchar('\n');
+    */
   }
   return 0;
 }
