@@ -23,13 +23,13 @@ int main(void)
     int rc;
     
     //big
-    if(NULL == (fp_power_big = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r"))){
+    if(NULL == (fp_power_big = fopen("/sys/bus/i2c/drivers/INA231/2-0040/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return -1;
     }
     fclose(fp_power_big); 
     //LITTLE    
-    if(NULL == (fp_power_little = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r"))){
+    if(NULL == (fp_power_little = fopen("/sys/bus/i2c/drivers/INA231/2-0045/sensor_W", "r"))){
         printf("ERROR : FILE READ FAILED\n");
         return -1;
     }
@@ -37,9 +37,9 @@ int main(void)
     while(1){
 
         //big
-        fp_power_big = fopen("/sys/bus/i2c/drivers/INA231/3-0040/sensor_W", "r");
+        fp_power_big = fopen("/sys/bus/i2c/drivers/INA231/2-0040/sensor_W", "r");
         //LITTLE    
-        fp_power_little = fopen("/sys/bus/i2c/drivers/INA231/3-0045/sensor_W", "r");
+        fp_power_little = fopen("/sys/bus/i2c/drivers/INA231/2-0045/sensor_W", "r");
         
         gettimeofday(&s, NULL);
         fscanf(fp_power_big, "%f", &watt_big);
