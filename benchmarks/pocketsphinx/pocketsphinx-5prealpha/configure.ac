@@ -5,7 +5,7 @@ AC_INIT(pocketsphinx, 5prealpha)
 AM_INIT_AUTOMAKE([no-define foreign])
 AC_CONFIG_MACRO_DIR([m4])
 
-CFLAGS=${CFLAGS:--g -O2 -Wall}
+CFLAGS=${CFLAGS:--g -O2 -Wall -D_GNU_SOURCE -std=c99}
 
 AC_CANONICAL_HOST
 AC_PROG_CC
@@ -147,12 +147,12 @@ it was installed in a non-standard prefix.])])
       SPHINXBASE_PREFIX=`pkg-config --variable=prefix sphinxbase`
    fi
    
-   LIBS="$LIBS $SPHINXBASE_LIBS"
+   LIBS="$LIBS $SPHINXBASE_LIBS -lm -ldl"
    CPPFLAGS="$CPPFLAGS $SPHINXBASE_CFLAGS"
    SPHINXBASE_SWIG="$SPHINXBASE_PREFIX/share/sphinxbase/swig"
    AC_CHECK_HEADER(sphinx_config.h,,[AC_MSG_FAILURE([SphinxBase was not found on your system.])])
 else
-   LIBS="$LIBS -lsphinxbase"
+   LIBS="$LIBS -lsphinxbase -lm -ldl"
    LDFLAGS="$LDFLAGS -L$sphinxbase/src/libsphinxad \
 		     -L$sphinxbase/src/libsphinxbase"
    CPPFLAGS="$CPPFLAGS -I$sphinxbase/include"
