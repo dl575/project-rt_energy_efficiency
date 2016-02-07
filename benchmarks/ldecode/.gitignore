@@ -1,1 +1,10 @@
 obj/*.o.dbg
+
+dependencies
+bin/ldecod.dbg.exe
+dataDec.txt
+gmon.out
+log.dec
+test.264
+test_dec.yuv
+
