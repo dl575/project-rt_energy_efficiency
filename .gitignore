@@ -25,6 +25,14 @@ dvfs_sim/data_odroid/*
 dvfs_sim/data/*
 dvfs_sim/predict_times/*
 power_monitor/power_monitor
+power_monitor/power_monitor_both
+
+benchmarks/mibench/office/stringsearch/search_large
+benchmarks/mibench/security/rijndael_preread/output_large.enc
+benchmarks/mibench/security/rijndael_preread/rijndael
+benchmarks/mibench/security/sha_preread/sha
+
+benchmarks/uzbl/src/function_addresses.h
 
 benchmarks/xpilot/xpilot-4.5.5/Makefile
 benchmarks/xpilot/xpilot-4.5.5/contrib/Makefile

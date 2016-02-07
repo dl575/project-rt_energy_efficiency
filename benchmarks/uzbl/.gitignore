@@ -11,3 +11,4 @@ uzbl.desktop
 uzbl-browser.1
 /build
 bin/uzbl-browser
+src/function_addresses.h
