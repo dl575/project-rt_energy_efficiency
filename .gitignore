@@ -34,6 +34,7 @@ benchmarks/mibench/security/sha_preread/sha
 
 benchmarks/uzbl/src/function_addresses.h
 
+benchmarks/xpilot/xpilot-4.5.5/README.txt
 benchmarks/xpilot/xpilot-4.5.5/Makefile
 benchmarks/xpilot/xpilot-4.5.5/contrib/Makefile
 benchmarks/xpilot/xpilot-4.5.5/contrib/msub/Makefile
